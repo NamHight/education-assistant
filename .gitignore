@@ -1,0 +1,77 @@
+# .NET Core
+bin/
+obj/
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Auto-generated files
+*.vspscc
+*.vssscc
+
+# Rider
+.idea/
+
+# Visual Studio Code
+.vscode/
+
+# ASP.NET Scaffolding
+ScaffoldingReadMe.txt
+
+# React TypeScript
+# Dependencies
+node_modules/
+# Dependency directories
+jspm_packages/
+
+# TypeScript
+*.tsbuildinfo
+
+# Optional npm cache directory
+.npm
+.eslintcache
+
+# Optional REPL history
+.node_repl_history
+
+# Output directory
+dist/
+build/
+
+# Vite
+.vite/
+.vitepress/dist
+
+# Static
+.static_cache/
+
+# Testing
+coverage/
+
+# IDE
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# Logs
+logs/
+*.log
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Misc
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
