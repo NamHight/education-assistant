@@ -61,6 +61,8 @@ public class GiangVien : BaseEntity
     public virtual ICollection<LopHoc>? DanhSachLopHoc { get; set; }
 
     [Column("tai_khoan_id")] public Guid? TaiKhoanId { get; set; }
-
     [ForeignKey("TaiKhoanId")] public virtual TaiKhoan? TaiKhoan { get; set; }
+
+    public virtual ICollection<QuaTrinhCongTac>? DanhSachCongTac { get; set; }
+    public virtual ICollection<LopHocPhan>? DanhSachLopHocPhan { get; set; }
 }

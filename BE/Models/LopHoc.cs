@@ -23,4 +23,6 @@ public class LopHoc : BaseEntity
     [Column("giang_vien_id")] public Guid? GiangVienId { get; set; }
 
     [ForeignKey("GiangVienId")] public virtual GiangVien GiangVien { get; set; }
+
+    public virtual ICollection<SinhVien>? DanhSachSinhVien { get; set; }
 }
