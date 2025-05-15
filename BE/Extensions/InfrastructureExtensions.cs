@@ -14,14 +14,23 @@ public static class InfrastructureExtensions
     {
         services.Configure<IISOptions>(options => { });
         //kết nối với database
-        services.AddPooledDbContextFactory<RepositoryContext>(
+        services.AddDbContext<RepositoryContext>(
             options =>
             {
                 options.UseMySql(configuration.GetConnectionString("DefaultConnection"),
                     ServerVersion.AutoDetect(configuration.GetConnectionString("DefaultConnection")),
                     option => { option.EnableRetryOnFailure(5, TimeSpan.FromSeconds(30), null); }
                 );
-            }, 150);
+            });
+        services.AddDbContextFactory<RepositoryContext>(
+            options =>
+            {
+                options.UseMySql(configuration.GetConnectionString("DefaultConnection"),
+                    ServerVersion.AutoDetect(configuration.GetConnectionString("DefaultConnection")),
+                    option => { option.EnableRetryOnFailure(5, TimeSpan.FromSeconds(30), null); }
+                );
+            }, ServiceLifetime.Scoped);
+
         return services;
     }
 }

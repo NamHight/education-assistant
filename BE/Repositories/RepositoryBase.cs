@@ -6,51 +6,41 @@ namespace Education_assistant.Repositories;
 
 public abstract class RepositoryBase<T> : IRepositoryBase<T> where T : class
 {
-    private readonly IDbContextFactory<RepositoryContext> _contextFactory;
-    private RepositoryContext _context;
+    private readonly RepositoryContext _context;
 
-    protected RepositoryBase(IDbContextFactory<RepositoryContext> contextFactory)
+    protected RepositoryBase(RepositoryContext repositoryContext)
     {
-        _contextFactory = contextFactory;
+        _context = repositoryContext;
     }
 
-    protected RepositoryContext Context
-    {
-        get
-        {
-            if (_context == null)
-                _context = _contextFactory.CreateDbContext();
-            return _context;
-        }
-    }
 
     public IQueryable<T> FindAll(bool trackChanges)
     {
         return !trackChanges
-            ? Context.Set<T>().AsNoTracking()
-            : Context.Set<T>();
+            ? _context.Set<T>().AsNoTracking()
+            : _context.Set<T>();
     }
 
     public IQueryable<T> FindByCondition(Expression<Func<T, bool>> expression, bool trackChanges)
     {
         return !trackChanges
-            ? Context.Set<T>().Where(expression).AsNoTracking()
-            : Context.Set<T>().Where(expression);
+            ? _context.Set<T>().Where(expression).AsNoTracking()
+            : _context.Set<T>().Where(expression);
     }
 
     public async Task Create(T entity)
     {
-        await Context.Set<T>().AddAsync(entity);
+        await _context.Set<T>().AddAsync(entity);
     }
 
     public void Update(T entity)
     {
-        Context.Set<T>().Update(entity);
+        _context.Set<T>().Update(entity);
     }
 
     public void Delete(T entity)
     {
-        Context.Set<T>().Remove(entity);
+        _context.Set<T>().Remove(entity);
     }
 
     public void Dispose()

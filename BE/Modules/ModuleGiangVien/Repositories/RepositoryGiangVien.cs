@@ -7,7 +7,7 @@ namespace Education_assistant.Modules.ModuleGiangVien.Repositories;
 
 public class RepositoryGiangVien : RepositoryBase<GiangVien>, IRepositoryGiangVien
 {
-    public RepositoryGiangVien(IDbContextFactory<RepositoryContext> contextFactory) : base(contextFactory)
+    public RepositoryGiangVien(RepositoryContext repositoryContext) : base(repositoryContext)
     {
     }
 

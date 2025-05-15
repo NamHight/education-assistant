@@ -1,4 +1,6 @@
-﻿namespace Education_assistant.Extensions;
+﻿using Education_assistant.Mappers;
+
+namespace Education_assistant.Extensions;
 
 // -Lớp trình bày sử dụng đăng ký dịch vụ liên quan đến controller trên api
 //   + Tập trung hóa cấu hình phần giao diện
@@ -10,11 +12,9 @@ public static class PresentationExtensions
     public static IServiceCollection AddPresentation(this IServiceCollection services)
     {
         var assembly = typeof(PresentationExtensions).Assembly;
-
         services.AddControllers()
             .AddApplicationPart(assembly);
-
-
+        services.AddAutoMapper(typeof(MapperProfile).Assembly);
         return services;
     }
 }
