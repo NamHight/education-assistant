@@ -25,6 +25,7 @@ public class RepositoryContext : DbContext
     public DbSet<QuaTrinhCongTac>? QuaTrinhCongTacs { get; set; }
     public DbSet<SinhVien>? SinhViens { get; set; }
     public DbSet<Truong>? Truongs { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<TaiKhoan>().HasQueryFilter(e => e.DeletedAt == null);
@@ -45,5 +46,12 @@ public class RepositoryContext : DbContext
         modelBuilder.Entity<Truong>().HasQueryFilter(e => e.DeletedAt == null);
 
         base.OnModelCreating(modelBuilder);
+    }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        optionsBuilder.UseMySql(
+            "Server=mysql-9b0f82c-finsr8280-699e.l.aivencloud.com;Port=13062;Database=defaultdb;Uid=avnadmin;Pwd=AVNS_IFVW5PgZf1fPf36BdDw;",
+            ServerVersion.Parse("8.0.30-mysql"));
     }
 }
