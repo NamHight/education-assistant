@@ -77,3 +77,7 @@ Thumbs.db
 .env.production.local
 
 internal_logs/
+
+appsettings*.json
+*/appsettings*.json
+**/secrets/*
