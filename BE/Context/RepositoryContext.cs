@@ -50,8 +50,11 @@ public class RepositoryContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
+        var connectionString = Environment.GetEnvironmentVariable("CONNECTION_DATABASE_STRING");
+        if (string.IsNullOrEmpty(connectionString))
+            throw new InvalidOperationException("Connection string is not set in environment variables.");
         optionsBuilder.UseMySql(
-            "Server=mysql-9b0f82c-finsr8280-699e.l.aivencloud.com;Port=13062;Database=defaultdb;Uid=avnadmin;Pwd=AVNS_IFVW5PgZf1fPf36BdDw;",
+            connectionString,
             ServerVersion.Parse("8.0.30-mysql"));
     }
 }

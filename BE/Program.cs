@@ -1,9 +1,11 @@
+using DotNetEnv;
 using Education_assistant.Extensions;
 using NLog;
 
 var builder = WebApplication.CreateBuilder(args);
+Env.Load();
+builder.Configuration.AddEnvironmentVariables();
 LogManager.LoadConfiguration(string.Concat(Directory.GetCurrentDirectory(), "/nlog.config"));
-
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
