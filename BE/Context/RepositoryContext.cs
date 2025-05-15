@@ -47,11 +47,4 @@ public class RepositoryContext : DbContext
 
         base.OnModelCreating(modelBuilder);
     }
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        optionsBuilder.UseMySql(
-            "Server=mysql-9b0f82c-finsr8280-699e.l.aivencloud.com;Port=13062;Database=defaultdb;Uid=avnadmin;Pwd=AVNS_IFVW5PgZf1fPf36BdDw;",
-            ServerVersion.Parse("8.0.30-mysql"));
-    }
 }
