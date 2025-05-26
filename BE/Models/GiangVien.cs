@@ -6,7 +6,7 @@ namespace Education_assistant.Models;
 [Table("giang_vien")]
 public class GiangVien : BaseEntity
 {
-    [Column("ho_ten")] [MaxLength(255)] public string? HoTen { get; set; }
+    [Column("ho_ten")][MaxLength(255)] public string? HoTen { get; set; }
 
     [Column("email")]
     [Required(ErrorMessage = "Email không được để trống")]
@@ -39,7 +39,7 @@ public class GiangVien : BaseEntity
     [DataType(DataType.Date)]
     public DateTime? NgayVaoTruong { get; set; }
 
-    [Column("trinh_do")] [MaxLength(255)] public string? TrinhDo { get; set; }
+    [Column("trinh_do")][MaxLength(255)] public string? TrinhDo { get; set; }
 
     [Column("chuyen_nganh")]
     [MaxLength(255)]
@@ -63,6 +63,9 @@ public class GiangVien : BaseEntity
     [Column("tai_khoan_id")] public Guid? TaiKhoanId { get; set; }
     [ForeignKey("TaiKhoanId")] public virtual TaiKhoan? TaiKhoan { get; set; }
 
-    public virtual ICollection<QuaTrinhCongTac>? DanhSachCongTac { get; set; }
+    [Column("khoa_id")] public Guid? KhoaId { get; set; }
+    [ForeignKey("KhoaId")] public virtual Khoa? Khoa { get; set; }
+
     public virtual ICollection<LopHocPhan>? DanhSachLopHocPhan { get; set; }
+    public virtual ICollection<ChiTietLopHocPhan>? DanhSachChiTietLopHocPhan { get; set; }
 }
