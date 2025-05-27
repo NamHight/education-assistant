@@ -1,0 +1,54 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\DoAnWebTotNghiep\\DoAn\\education-assistant\\BE\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{9E9B6578-34AF-4D5C-A80D-37D71969670E}|Education-assistant.csproj|d:\\doanwebtotnghiep\\doan\\education-assistant\\be\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{9E9B6578-34AF-4D5C-A80D-37D71969670E}|Education-assistant.csproj|solutionrelative:appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9E9B6578-34AF-4D5C-A80D-37D71969670E}|Education-assistant.csproj|d:\\doanwebtotnghiep\\doan\\education-assistant\\be\\models\\20250514092856_initial.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9E9B6578-34AF-4D5C-A80D-37D71969670E}|Education-assistant.csproj|solutionrelative:models\\20250514092856_initial.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 1,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "20250514092856_Initial.cs",
+              "DocumentMoniker": "D:\\DoAnWebTotNghiep\\DoAn\\education-assistant\\BE\\Models\\20250514092856_Initial.cs",
+              "RelativeDocumentMoniker": "Models\\20250514092856_Initial.cs",
+              "ToolTip": "D:\\DoAnWebTotNghiep\\DoAn\\education-assistant\\BE\\Models\\20250514092856_Initial.cs",
+              "RelativeToolTip": "Models\\20250514092856_Initial.cs",
+              "ViewState": "AgIAAGcAAAAAAAAAAAAQwAkAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-15T11:54:43.867Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "D:\\DoAnWebTotNghiep\\DoAn\\education-assistant\\BE\\appsettings.json",
+              "RelativeDocumentMoniker": "appsettings.json",
+              "ToolTip": "D:\\DoAnWebTotNghiep\\DoAn\\education-assistant\\BE\\appsettings.json",
+              "RelativeToolTip": "appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-05-15T11:38:33.66Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
