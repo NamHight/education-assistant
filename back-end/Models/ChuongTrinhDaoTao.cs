@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Education_assistant.Models;
+
 [Table("chuong_trinh_dao_tao")]
 public class ChuongTrinhDaoTao : BaseEntity
 {
@@ -28,14 +29,13 @@ public class ChuongTrinhDaoTao : BaseEntity
 
     [Column("thoi_gian")] public DateTime ThoiGian { get; set; }
     [Column("hoc_phi")] public decimal HocPhi { get; set; }
-    [Column("mo_ta")] public string MoTa {get; set;}
+    [Column("mo_ta")] public string? MoTa { get; set; }
     [Column("tong_so_tin_chi")] public int TongSoTinChi { get; set; }
 
     [Column("khoa_id")] public Guid? KhoaId { get; set; }
     [ForeignKey("KhoaId")] public virtual Khoa? Khoa { get; set; }
+    public virtual ICollection<HocBa>? DanhSachHocBa { get; set; }
+    public virtual ICollection<SinhVienChuongTrinhDaoTao>? DanhSachSinhVienChuongTrinhDaoTao { get; set; }
+    public virtual ICollection<ChiTietChuongTrinhDaoTao>? DanhSachChiTietChuongTrinhDaoTao { get; set; }
 
-    public virtual HoSoHocTap? HoSoHocTap { get; set; }
-    public virtual ICollection<MonHocDaoTao>? DanhSachMonHocDaoTao { get; set; }
-    public virtual ICollection<SinhVien>? DanhSachSinhVien { get; set; }
-
-}
+}   

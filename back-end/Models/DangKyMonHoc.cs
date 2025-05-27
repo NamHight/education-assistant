@@ -5,9 +5,9 @@ namespace Education_assistant.Models;
 [Table("dang_ky_mon_hoc")]
 public class DangKyMonHoc : BaseEntity
 {
-    [Column("ngay_dang_ky_hoc")] public DateTime NgayDangKyHoc { get; set; }
-    [Column("diem")] public decimal Diem { get; set; }
-    [Column("ghi_chu")] public string GhiChu { get; set; }
+    [Column("ngay_dang_ky_hoc")] [Required] public DateTime NgayDangKyHoc { get; set; }
+    [Column("diem")] public decimal? Diem { get; set; }
+    [Column("ghi_chu")] public string? GhiChu { get; set; }
 
     [Column("trang_thai")]
     [Range(1, 4, ErrorMessage = "Trạng thái không hợp lệ")]

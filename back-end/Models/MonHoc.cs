@@ -33,18 +33,19 @@ public class MonHoc : BaseEntity
     public int? LoaiMonHoc { get; set; }
 
     [NotMapped]
-    public LoaiMonHocEnum? LoaiMonHocEnum 
-    { 
+    public LoaiMonHocEnum? LoaiMonHocEnum
+    {
         get => LoaiMonHoc.HasValue ? (LoaiMonHocEnum)LoaiMonHoc.Value : null;
-        set => LoaiMonHoc = value.HasValue ? (int)value.Value: null;
+        set => LoaiMonHoc = value.HasValue ? (int)value.Value : null;
     }
 
-    [Column("khoa_id")] public Guid? KhoaId {get; set;}
+    [Column("khoa_id")] public Guid? KhoaId { get; set; }
 
     [ForeignKey("KhoaId")] public virtual Khoa? Khoa { get; set; }
 
-    public virtual ICollection<DiemSo>? DanhSachDiemSo { get; set; }
-    public virtual ICollection<MonHocDaoTao>? DanhSachMonHocDaoTao { get; set; }
+    public virtual ICollection<HocBa>? DanhSachHocBa { get; set; }
     public virtual ICollection<LopHocPhan>? DanhSachLopHocPhan { get; set; }
-    public virtual ICollection<DiemTong>? DanhSachDiemTong { get; set; }
+    
+    public virtual ICollection<ChiTietChuongTrinhDaoTao>? DanhSachChiTietChuongTrinhDaoTao { get; set; }
+    //chi tiết lớp hoc phần
 }

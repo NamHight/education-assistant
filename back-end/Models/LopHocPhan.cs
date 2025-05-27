@@ -25,21 +25,19 @@ public class LopHocPhan : BaseEntity
     public int? TrangThai { get; set; }
 
     [NotMapped]
-    public LopHocPhanTrangThaiEnum? LopHocPhanTrangThaiEnum 
-    { 
+    public LopHocPhanTrangThaiEnum? LopHocPhanTrangThaiEnum
+    {
         get => TrangThai.HasValue ? (LopHocPhanTrangThaiEnum)TrangThai.Value : null;
-        set => TrangThai = value.HasValue ? (int)value.Value: null;
+        set => TrangThai = value.HasValue ? (int)value.Value : null;
     }
 
     [Column("mon_hoc_id")] public Guid? MonHocId { get; set; }
     [ForeignKey("MonHocId")] public virtual MonHoc? MonHoc { get; set; }
 
-    [Column("hoc_ky_id")] public Guid? HocKyId { get; set; }
-    [ForeignKey("HocKyId")] public virtual HocKy? HocKy { get; set; }
-
     [Column("giang_vien_id")] public Guid? GiangVienId { get; set; }
     [ForeignKey("GiangVienId")] public virtual GiangVien? GiangVien { get; set; }
-    
-    public virtual ICollection<DiemTong>? DanhSachDiemTong { get; set; }
+
     public virtual ICollection<DangKyMonHoc>? DanhSachDangKyMonHoc { get; set; }
+    public virtual ICollection<HocBa>? ĐanhSachHocBa { get; set; }
+    public virtual ICollection<ChiTietLopHocPhan>? DanhSachChiTietLopHocPhan { get; set; }
 }

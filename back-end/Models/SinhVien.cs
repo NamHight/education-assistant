@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Education_assistant.Models;
+
 [Table("sinh_vien")]
 public class SinhVien : BaseEntity
 {
@@ -49,29 +50,36 @@ public class SinhVien : BaseEntity
     [Column("dia_chi")]
     [Required(ErrorMessage = "Địa chỉ không được để trống")]
     [MaxLength(255, ErrorMessage = "Địa chỉ không được quá 255 ký tự")]
-    public string DiaChi { get; set; } 
+    public string DiaChi { get; set; }
 
-    [Column("trang_thai")]
+    [Column("trang_thai_sinh_vien")]
     [Range(1, 5, ErrorMessage = "Giá trị trạng thái không hợp lệ")]
-    public int? TrangThai { get; set; }
+    public int? TrangThaiSinhVien { get; set; }
     [NotMapped]
     public SinhVienTrangThaiEnum? SinhVienTrangThaiEnum
     {
-        get => TrangThai.HasValue ? (SinhVienTrangThaiEnum)TrangThai.Value : null;
-        set => TrangThai = value.HasValue ? (int)value.Value : null;
+        get => TrangThaiSinhVien.HasValue ? (SinhVienTrangThaiEnum)TrangThaiSinhVien.Value : null;
+        set => TrangThaiSinhVien = value.HasValue ? (int)value.Value : null;
+    }
+
+    [Column("tinh_trang_hoc_tap")]
+    [Range(1, 5, ErrorMessage = "Giá trị tình trạng học tập không hợp lệ")]
+    public int? TinhTrangHocTap { get; set; }
+    [NotMapped]
+    public TinhTrangHocTapSinhVienEnum? TinhTrangHocTapSinhVienEnum
+    {
+        get => TinhTrangHocTap.HasValue ? (TinhTrangHocTapSinhVienEnum)TinhTrangHocTap.Value : null;
+        set => TinhTrangHocTap = value.HasValue ? (int)value.Value : null;
     }
 
     [Column("ngay_tot_nghiep")] public DateTime NgayTotNghiep { get; set; }
     [Column("ngay_nhap_hoc")] public DateTime NgayNhapHoc { get; set; }
-    
-    [Column("dao_tao_id")] public Guid? DaoTaoId { get; set; }
-    [ForeignKey("DaoTaoId")] public virtual ChuongTrinhDaoTao? ChuongTrinhDaoTao { get; set; }
+
     [Column("lop_hoc_id")] public Guid? LopHocId { get; set; }
     [ForeignKey("LopHocId")] public virtual LopHoc? LopHoc { get; set; }
 
-    public virtual HoSoHocTap? HoSoHocTap { get; set; }
-    public virtual ICollection<DiemTong>? DanhSachDiemTong { get; set; }
     public virtual ICollection<DangKyMonHoc>? DanhSachDangKyMonHoc { get; set; }
-    public virtual ICollection<DiemSo>? DanhSachDiemSo { get; set; }
-
+    public virtual ICollection<SinhVienChuongTrinhDaoTao>? DanhSachSinhVienChuongTrinhDaoTao { get; set; }
+    public virtual ICollection<HocBa>? DanhSachHocBa { get; set; }
+    public virtual ICollection<ChiTietLopHocPhan>? DanhSachChiTietLopHocPhan { get; set; }
 }
