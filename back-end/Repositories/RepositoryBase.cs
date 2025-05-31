@@ -6,7 +6,7 @@ namespace Education_assistant.Repositories;
 
 public abstract class RepositoryBase<T> : IRepositoryBase<T> where T : class
 {
-    private readonly RepositoryContext _context;
+    protected readonly RepositoryContext _context;
 
     protected RepositoryBase(RepositoryContext repositoryContext)
     {
@@ -35,7 +35,7 @@ public abstract class RepositoryBase<T> : IRepositoryBase<T> where T : class
 
     public void Update(T entity)
     {
-        _context.Set<T>().Update(entity);
+         _context.Set<T>().Update(entity);
     }
 
     public void Delete(T entity)

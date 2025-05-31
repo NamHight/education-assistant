@@ -22,6 +22,11 @@ public static class ExceptionExtensions
                     context.Response.StatusCode = contextFeature.Error switch
                     {
                         NotFoundException => StatusCodes.Status404NotFound,
+                        BadRequestException => StatusCodes.Status400BadRequest,
+                        ExistedException => StatusCodes.Status409Conflict,
+                        UnauthorizedAccessException => StatusCodes.Status401Unauthorized,
+                        ManyRequestException => StatusCodes.Status429TooManyRequests,
+                        ForbiddenException => StatusCodes.Status403Forbidden,
                         _ => StatusCodes.Status500InternalServerError
                     };
                     logger.LogError($"Something went wrong: {contextFeature.Error}");

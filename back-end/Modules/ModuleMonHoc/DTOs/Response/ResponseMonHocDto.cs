@@ -1,0 +1,19 @@
+using System;
+using Education_assistant.Modules.ModuleKhoa.DTOs.Response;
+
+namespace Education_assistant.Modules.ModuleMonHoc.DTOs.Response;
+
+public class ResponseMonHocDto
+{
+    public Guid Id { get; set; }
+    public string MaMonHoc { get; set; } = string.Empty;
+    public string TenMonHoc { get; set; } = string.Empty;
+    public int SoTinChi { get; set; }
+    public string MoTa { get; set; } = string.Empty;
+    public int SoTiet { get; set; }
+    public string LoaiMon { get; set; } = string.Empty;
+    public Guid KhoaId { get; set; }
+    public ResponseKhoaDto Khoa { get; set; } = null!;
+    public DateTime? CreatedAt { get; set; }
+    public DateTime? UpdatedAt { get; set; }
+}
