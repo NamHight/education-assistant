@@ -1,8 +1,14 @@
 ﻿using Education_assistant.Modules.ModuleGiangVien.Services;
+using Education_assistant.Modules.ModuleKhoa.Services;
+using Education_assistant.Modules.ModuleMonHoc.Services;
+using Education_assistant.Modules.ModuleTruong.Services;
 
 namespace Education_assistant.Services.ServiceMaster;
 
 public interface IServiceMaster
 {
     IServiceGiangVien GiangVien { get; }
+    IServiceTruong Truong { get; }
+    IServiceKhoa Khoa { get; }
+    IServiceMonHoc MonHoc { get; }
 }

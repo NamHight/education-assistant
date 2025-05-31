@@ -1,4 +1,5 @@
 ﻿using Education_assistant.Mappers;
+using Newtonsoft.Json;
 
 namespace Education_assistant.Extensions;
 
@@ -13,7 +14,12 @@ public static class PresentationExtensions
     {
         var assembly = typeof(PresentationExtensions).Assembly;
         services.AddControllers()
-            .AddApplicationPart(assembly);
+            .AddApplicationPart(assembly)
+            .AddNewtonsoftJson(options =>
+            {
+                options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+            });
+
         services.AddAutoMapper(typeof(MapperProfile).Assembly);
         return services;
     }

@@ -1,6 +1,7 @@
 using DotNetEnv;
 using Education_assistant.Contracts.LoggerServices;
 using Education_assistant.Extensions;
+using Education_assistant.Mappers;
 using NLog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,6 +17,7 @@ builder.Configuration
 LogManager.LoadConfiguration(string.Concat(Directory.GetCurrentDirectory(), "/nlog.config"));
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
 
 builder.Services
     .AddEnv(builder.Configuration)
@@ -34,7 +36,7 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
-    app.UseDeveloperExceptionPage();
+    // app.UseDeveloperExceptionPage();
 }
 else
 {
