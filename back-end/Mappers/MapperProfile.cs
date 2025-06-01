@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Education_assistant.Models;
+using Education_assistant.Models.Enums;
 using Education_assistant.Modules.ModuleKhoa.DTOs.Request;
 using Education_assistant.Modules.ModuleKhoa.DTOs.Response;
 using Education_assistant.Modules.ModuleMonHoc.DTOs.Request;
@@ -15,10 +16,15 @@ public class MapperProfile : Profile
 {
     public MapperProfile()
     {
-        CreateMap<TaiKhoan, RequestTaiKhoanDto>()
-            .ReverseMap();
+        CreateMap<RequestAddTaiKhoanDto, TaiKhoan>()
+            .ForMember(dest => dest.LoaiTaiKhoaEnum,
+            opt => opt.MapFrom(src => ParseEnum<LoaiTaiKhoaEnum>(src.LoaiTKhoan, "Loại tài khoản add")));
+        CreateMap<RequestUpdateTaiKhoanDto, TaiKhoan>()
+            .ForMember(dest => dest.LoaiTaiKhoaEnum,
+            opt => opt.MapFrom(src => ParseEnum<LoaiTaiKhoaEnum>(src.LoaiTKhoan, "Loại tài khoản update")));
         CreateMap<TaiKhoan, ResponseTaiKhoanDto>()
-            .ReverseMap();
+            .ForMember(dest => dest.LoaiTKhoan, opt => opt.MapFrom(src => src.LoaiTaiKhoaEnum.ToString()));
+
         //map truong
         CreateMap<Truong, RequestAddTruongDto>()
             .ReverseMap();

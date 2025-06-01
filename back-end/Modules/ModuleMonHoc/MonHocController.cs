@@ -18,7 +18,7 @@ namespace Education_assistant.Modules.ModuleMonHoc
             _serviceMaster = serviceMaster;
         }
         [HttpGet("get-all-monhoc")]
-        public async Task<ActionResult> GetTruongAsync([FromQuery] ParamBaseDto paramBaseDto)
+        public async Task<ActionResult> GetAllMonHocAsync([FromQuery] ParamBaseDto paramBaseDto)
         {
             var result = await _serviceMaster.MonHoc.GetAllPaginationAndSearchAsync(paramBaseDto);
             Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(result.page));
@@ -43,7 +43,7 @@ namespace Education_assistant.Modules.ModuleMonHoc
             return NoContent();
         }
         [HttpDelete("delete-monhoc/{id}")]
-        public async Task<ActionResult> DeleteTruongAsync(Guid id)
+        public async Task<ActionResult> DeleteMonHocAsync(Guid id)
         {
             await _serviceMaster.MonHoc.DeleteAsync(id);
             return NoContent();

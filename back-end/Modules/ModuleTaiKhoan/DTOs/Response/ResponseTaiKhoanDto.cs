@@ -9,5 +9,6 @@ public class ResponseTaiKhoanDto
     public Guid Id { get; set; }
     public string Email { get; set; } = string.Empty;
     public bool Status { get; set; }
+    public string LoaiTKhoan { get; set; } = string.Empty;
     public virtual GiangVien? GiangVien { get; set; }
 }

@@ -1,5 +1,7 @@
 using System;
+using System.Linq.Expressions;
 using Education_assistant.Context;
+using Education_assistant.Extensions;
 using Education_assistant.Models;
 using Education_assistant.Repositories;
 using Education_assistant.Repositories.Paginations;
@@ -23,14 +25,22 @@ public class RepositoryTaiKhoan : RepositoryBase<TaiKhoan>, IRepositoryTaiKhoan
         Delete(taiKhoan);
     }
 
-    public async Task<PagedListAsync<TaiKhoan>> GetAllPaginatedAndSearchOrSortAsync(int page, int limit, string search)
+    public async Task<PagedListAsync<TaiKhoan>?> GetAllTaiKhoanAsync(int page, int limit, string search, string sortBy, string sortByOder)
     {
-         if (!string.IsNullOrEmpty(search))
-        {
-            var taiKhoans = FindByCondition(item => item.Email.Contains(search), false);
-            return await PagedListAsync<TaiKhoan>.ToPagedListAsync(taiKhoans, page, limit);
-        }
-        return await PagedListAsync<TaiKhoan>.ToPagedListAsync(_context.TaiKhoans, page, limit);
+        return await PagedListAsync<TaiKhoan>.ToPagedListAsync(_context.TaiKhoans!
+                                                                    .SearchBy(search, item => item.Email)
+                                                                    .SortByOptions(sortBy, sortByOder, new Dictionary<string, Expression<Func<TaiKhoan, object>>>
+                                                                    {
+                                                                        ["createat"] = item => item.CreatedAt,
+                                                                        ["updateat"] = item => item.UpdatedAt!,
+                                                                        ["deleteat"] = item => item.DeletedAt!
+                                                                    })
+                                                                    , page, limit);
+    }
+
+    public async Task<TaiKhoan?> GetTaiKhoanByEmailAsync(string email, bool trackChanges)
+    {
+        return await FindByCondition(item => item.Email == email, trackChanges).FirstOrDefaultAsync();
     }
 
     public async Task<TaiKhoan?> GetTaiKhoanByIdAsync(Guid id, bool trackChanges)

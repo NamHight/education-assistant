@@ -1,8 +1,10 @@
 using System;
+using System.Security.Cryptography;
 using AutoMapper;
+using BCrypt.Net;
 using Education_assistant.Contracts.LoggerServices;
 using Education_assistant.Exceptions;
-using Education_assistant.Exceptions.ThrowError;
+using Education_assistant.Exceptions.ThrowError.ThrowErrorTaiKhoans;
 using Education_assistant.Models;
 using Education_assistant.Modules.ModuleTaiKhoan.DTOs.Request;
 using Education_assistant.Modules.ModuleTaiKhoan.DTOs.Response;
@@ -24,75 +26,122 @@ public class ServiceTaiKhoan : IServiceTaiKhoan
         _mapper = mapper;
     }
 
-    public async Task<ResponseTaiKhoanDto> CreateAsync(RequestTaiKhoanDto request)
+    public async Task<ResponseTaiKhoanDto> CreateAsync(RequestAddTaiKhoanDto request)
     {
         if (request is null)
         {
-            // throw new BadRequestException("Tài khoản có thông tin không đầy đủ");
+            throw new TaiKhoanBadRequestException("Thông tin tài khoản không đầy đủ!.");
         }
-        var taiKhoan = await _repositoryMaster.TaiKhoan.GetTaiKhoanByIdAsync(request.Id, false);
-        if (taiKhoan is not null)
+        var taikhoanExistting = await _repositoryMaster.TaiKhoan.GetTaiKhoanByEmailAsync(request.Email, false);
+        if (taikhoanExistting is not null)
         {
-            // throw new ExistedException("Tài khoản đã tồn tại");
+            throw new TaiKhoanExistedException(request.Email);
         }
-        try
+        request.Password = HashPassword(request.Password);
+        var newTaiKhoan = _mapper.Map<TaiKhoan>(request);
+        await _repositoryMaster.ExecuteInTransactionAsync(async () =>
         {
-            await _repositoryMaster.BeginTransactionAsync();
-            var newTaiKhoan = _mapper.Map<TaiKhoan>(request);
-
             await _repositoryMaster.TaiKhoan.CreateAsync(newTaiKhoan);
+        });
+        _loggerService.LogInfo("Thêm tài khoản thành công.");
+        var taiKhoanDto = _mapper.Map<ResponseTaiKhoanDto>(newTaiKhoan);
+        return taiKhoanDto;
+    }
 
-            await _repositoryMaster.SaveChangesAsync();
-            await _repositoryMaster.CommitTransactionAsync();
-            _loggerService.LogInfo("thêm tài khoản giảng viên thành công");
-            var taiKhoanDto = _mapper.Map<ResponseTaiKhoanDto>(newTaiKhoan);
-            return taiKhoanDto;
-        }
-        catch (Exception e)
+    public async Task DeleteAsync(Guid id)
+    {
+        if (id == Guid.Empty)
         {
-            _loggerService.LogError($"Thêm tài khoản giảng viên không thành công: {e}");
-            await _repositoryMaster.RollbackTransactionAsync();
-            throw new Exception(e.Message);
+            throw new TaiKhoanBadRequestException($"Tài khoản với id: {id} không được bỏ trống!.");
         }
+        var taiKhoan = await _repositoryMaster.TaiKhoan.GetTaiKhoanByIdAsync(id, false);
+        if (taiKhoan is null)
+        {
+            throw new TaiKhoanNotFoundException(id);
+        }
+        await _repositoryMaster.ExecuteInTransactionAsync(async () =>
+        {
+            _repositoryMaster.TaiKhoan.DeleteTaiKhoan(taiKhoan);
+            await Task.CompletedTask;
+        });
+        _loggerService.LogInfo("Xóa tài khoản thành công");
     }
 
-    public Task DeleteAsync(Guid id)
+    public async Task<(IEnumerable<ResponseTaiKhoanDto> data, PageInfo page)> GetAllTaiKhoaAsync(ParamBaseDto paramBaseDto)
     {
-        // var taiKhoan = await _repositoryMaster.TaiKhoan.GetTaiKhoanByIdAsync(id, false);
-        // try
-        // {
-
-        // }
-        // catch (Exception e)
-        // {
-        //     _loggerService.LogError($"Xóa tài khoản không thành công: {e}");
-        //     throw new Exception(e.Message);
-        // }
-        throw new NotImplementedException();
+        var taikhoans = await _repositoryMaster.TaiKhoan.GetAllTaiKhoanAsync(paramBaseDto.page, paramBaseDto.limit, paramBaseDto.search, paramBaseDto.sortBy, paramBaseDto.sortByOder);
+        var taiKhoaDto = _mapper.Map<IEnumerable<ResponseTaiKhoanDto>>(taikhoans);
+        return (data: taiKhoaDto, page: taikhoans!.PageInfo);
     }
 
-    public Task DeleteAsync(int id)
+    public async Task<ResponseTaiKhoanDto> GetTaiKhoanByIdAsync(Guid id, bool trackChanges)
     {
-        throw new NotImplementedException();
+        if (id == Guid.Empty)
+        {
+            throw new TaiKhoanBadRequestException($"Tài khoản với id: {id} không được bỏ trống!.");
+        }
+        var taikhoan = await _repositoryMaster.TaiKhoan.GetTaiKhoanByIdAsync(id, trackChanges);
+        if (taikhoan is null)
+        {
+            throw new TaiKhoanNotFoundException(id);
+        }
+        var taiKhoanDto = _mapper.Map<ResponseTaiKhoanDto>(taikhoan);
+        return taiKhoanDto;
     }
 
-    public Task<(IEnumerable<ResponseTaiKhoanDto> data, PageInfo page)> GetAllPaginationAndSearchAsync(ParamPageAndSearchBaseDto paramBaseDto)
+    public async Task UpdateAsync(Guid id, RequestUpdateTaiKhoanDto request)
     {
-        throw new NotImplementedException();
+        if (id != request.Id)
+        {
+            throw new TaiKhoanBadRequestException($"Id: {id} và Id: {request.Id} của tài khoản không giống nhau!");
+        }
+        if (request is null)
+        {
+            throw new TaiKhoanBadRequestException("Thông tin tài khoản không đầy đủ");
+        }
+        var taiKhoan = await _repositoryMaster.TaiKhoan.GetTaiKhoanByIdAsync(id, false);
+        if (taiKhoan is null)
+        {
+            throw new TaiKhoanNotFoundException(id);
+        }
+        var taiKhoanUpdate = _mapper.Map<TaiKhoan>(request);
+        await _repositoryMaster.ExecuteInTransactionAsync(async () =>
+        {
+            _repositoryMaster.TaiKhoan.UpdateTaiKhoan(taiKhoanUpdate);
+            await Task.CompletedTask;
+        });
+        _loggerService.LogInfo("Cập nhật tài khoản thành công.");
     }
 
-    public Task<ResponseTaiKhoanDto> GetRoleByIdAsync(int id, bool trackChanges)
+
+    public async Task UpdateStatusAsync(Guid id)
     {
-        throw new NotImplementedException();
+        if (id == Guid.Empty)
+        {
+            throw new TaiKhoanBadRequestException($"Tài khoản với id: {id} không được bỏ trống!.");
+        }
+        var taikhoanUpdate = await _repositoryMaster.TaiKhoan.GetTaiKhoanByIdAsync(id, false);
+        if (taikhoanUpdate is null)
+        {
+            throw new TaiKhoanNotFoundException(id);
+        }
+        taikhoanUpdate.Status = taikhoanUpdate.Status == true ? false : true;
+        await _repositoryMaster.ExecuteInTransactionAsync(async () =>
+        {
+            _repositoryMaster.TaiKhoan.UpdateTaiKhoan(taikhoanUpdate);
+            await Task.CompletedTask;
+        });
+        _loggerService.LogInfo("Cập nhật trạng thái tài khoản thành công!");
+
     }
 
-    public Task UpdateAsync(int id, RequestTaiKhoanDto request)
+    private string HashPassword(string password)
     {
-        throw new NotImplementedException();
+        return BCrypt.Net.BCrypt.HashPassword(password);
     }
 
-    public Task UpdateStatusAsync(int id)
+    private bool VerifyPassword(string password, string HashPassword)
     {
-        throw new NotImplementedException();
+        return BCrypt.Net.BCrypt.Verify(password, HashPassword);
     }
 }
