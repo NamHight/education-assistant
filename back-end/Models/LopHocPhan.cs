@@ -10,6 +10,10 @@ public class LopHocPhan : BaseEntity
     [Required(ErrorMessage = "Mã học phần không được để trống")]
     [MaxLength(255, ErrorMessage = "Mã học phần không được quá 255 ký tự")]
     public string MaHocPhan { get; set; }
+    [Column("ma_hoc_phan")]
+    [Required(ErrorMessage = "Mã học phần không được để trống")]
+    [MaxLength(255, ErrorMessage = "Mã học phần không được quá 255 ký tự")]
+    public string TenLopHocPhan { get; set; }
 
     [Column("phong_hoc")]
     [Required(ErrorMessage = "Phòng học không được để trống")]

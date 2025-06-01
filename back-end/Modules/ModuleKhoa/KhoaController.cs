@@ -31,19 +31,19 @@ namespace Education_assistant.Modules.ModuleKhoa
             return Ok(result);
         }
         [HttpPost("add-khoa")]
-        public async Task<ActionResult> AddTruongAsync([FromBody] RequestAddKhoaDto model)
+        public async Task<ActionResult> AddKhoaAsync([FromBody] RequestAddKhoaDto model)
         {
             var result = await _serviceMaster.Khoa.CreateAsync(model);
             return Ok(result);
         }
         [HttpPut("update-khoa/{id}")]
-        public async Task<ActionResult> UpdateTruongAsync(Guid id, [FromBody] RequestUpdateKhoaDto model)
+        public async Task<ActionResult> UpdateKhoaAsync(Guid id, [FromBody] RequestUpdateKhoaDto model)
         {
             await _serviceMaster.Khoa.UpdateAsync(id, model);
             return NoContent();
         }
         [HttpDelete("delete-khoa/{id}")]
-        public async Task<ActionResult> DeleteTruongAsync(Guid id)
+        public async Task<ActionResult> DeleteKhoaAsync(Guid id)
         {
             await _serviceMaster.Khoa.DeleteAsync(id);
             return NoContent();

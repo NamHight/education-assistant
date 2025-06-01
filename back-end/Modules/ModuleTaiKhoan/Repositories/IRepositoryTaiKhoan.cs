@@ -6,8 +6,9 @@ namespace Education_assistant.Modules.ModuleTaiKhoan.Repositories;
 
 public interface IRepositoryTaiKhoan
 {
-    Task<PagedListAsync<TaiKhoan>> GetAllPaginatedAndSearchOrSortAsync(int page, int limit, string search);  
+    Task<PagedListAsync<TaiKhoan>?> GetAllTaiKhoanAsync(int page, int limit, string search, string sortBy, string sortByOder);  
     Task<TaiKhoan?> GetTaiKhoanByIdAsync(Guid id, bool trackChanges);
+    Task<TaiKhoan?> GetTaiKhoanByEmailAsync(string email, bool trackChanges);
     Task CreateAsync(TaiKhoan taiKhoan);
     void UpdateTaiKhoan(TaiKhoan taiKhoan);
     void DeleteTaiKhoan(TaiKhoan taiKhoan);
