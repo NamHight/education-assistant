@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Education_assistant.Models.Enums;
 
 namespace Education_assistant.Models;
 
@@ -27,6 +28,16 @@ public class TaiKhoan : BaseEntity
     [Column("reset_expires")] public DateTime? ResetTokenExpires { get; set; }
 
     [Column("trang_thai")] [Required] public bool Status { get; set; }
+    [Column("loai_tai_khoan")]
+    [Range(1, 2, ErrorMessage = "Loại tài khoản không hợp lệ")]
+    public int? LoaiTaiKhoan { get; set; }
+
+    [NotMapped]
+    public LoaiTaiKhoaEnum? LoaiTaiKhoaEnum
+    {
+        get => LoaiTaiKhoan.HasValue ? (LoaiTaiKhoaEnum)LoaiTaiKhoan.Value : null;
+        set => LoaiTaiKhoan = value.HasValue ? (int)value.Value : null;
+    }
 
     public virtual GiangVien? GiangVien { get; set; }
 }

@@ -1,0 +1,52 @@
+using System.Text.Json;
+using Education_assistant.Modules.ModuleTruong.DTOs.Request;
+using Education_assistant.Services.BaseDtos;
+using Education_assistant.Services.ServiceMaster;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+
+namespace Education_assistant.Modules.ModuleTruong
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class TruongController : ControllerBase
+    {
+        private readonly IServiceMaster _serviceMaster;
+
+        public TruongController(IServiceMaster serviceMaster)
+        {
+            _serviceMaster = serviceMaster;
+        }
+        [HttpGet("get-truong")]
+        public async Task<ActionResult> GetTruongAsync([FromQuery] ParamPageAndSearchBaseDto paramBaseDto)
+        {
+            var result = await _serviceMaster.Truong.GetAllPaginationAndSearchAsync(paramBaseDto);
+            Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(result.page));
+            return Ok(result.data);
+        }
+        [HttpGet("get-id-truong/{id}")]
+        public async Task<ActionResult> GetTruongByIdAsync(Guid id)
+        {
+            var result = await _serviceMaster.Truong.GetTruongByIdAsync(id, false);
+            return Ok(result);
+        }
+        [HttpPost("add-truong")]
+        public async Task<ActionResult> AddTruongAsync([FromBody] RequestAddTruongDto model)
+        {
+            var result = await _serviceMaster.Truong.CreateAsync(model);
+            return Ok(result);
+        }
+        [HttpPut("update-truong/{id}")]
+        public async Task<ActionResult> UpdateTruongAsync(Guid id, [FromBody] RequestUpdateTruongDto model)
+        {
+            await _serviceMaster.Truong.UpdateAsync(id, model);
+            return NoContent();
+        }
+        [HttpDelete("delete-truong/{id}")]
+        public async Task<ActionResult> DeleteTruongAsync(Guid id)
+        {
+            await _serviceMaster.Truong.DeleteAsync(id);
+            return NoContent();
+        }
+    }
+}
