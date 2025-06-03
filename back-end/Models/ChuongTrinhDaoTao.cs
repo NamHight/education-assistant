@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Education_assistant.Models.Enums;
 
 namespace Education_assistant.Models;
 
@@ -9,25 +10,27 @@ public class ChuongTrinhDaoTao : BaseEntity
     [Column("ma_chuong_trinh")]
     [Required(ErrorMessage = "Mã chương trình không được để trống")]
     [MaxLength(255, ErrorMessage = "Mã chương trình không được quá 255 ký tự")]
-    public string MaChuongTrinh { get; set; }
+    public string MaChuongTrinh { get; set; } = string.Empty;
 
     [Column("ten_chuong_trinh")]
     [Required(ErrorMessage = "Tên chương trình không được để trống")]
     [MaxLength(255, ErrorMessage = "Tên chương trình không được quá 255 ký tự")]
-    public string TenChuongTrinh { get; set; }
+    public string TenChuongTrinh { get; set; } = string.Empty;
 
-    [Column("loai_bang_cap")]
+    [Column("loai_chuong_trinh_dao_tao")]
     [Range(1, 2, ErrorMessage = "Loại bằng cấp không hợp lệ")]
-    public int? LoaiBangCap { get; set; }
+    public int? LoaiChuonTrinhDaoTao { get; set; }
 
     [NotMapped]
-    public LoaiBangCapEnum? LoaiBangCapEnum
+    public LoaiChuongTrinhDaoTaoEnum? LoaiChuongTrinhDaoTaoEnum
     {
-        get => LoaiBangCap.HasValue ? (LoaiBangCapEnum)LoaiBangCap.Value : null;
-        set => LoaiBangCap = value.HasValue ? (int)value.Value : null;
+        get => LoaiChuonTrinhDaoTao.HasValue ? (LoaiChuongTrinhDaoTaoEnum)LoaiChuonTrinhDaoTao.Value : null;
+        set => LoaiChuonTrinhDaoTao = value.HasValue ? (int)value.Value : null;
     }
 
-    [Column("thoi_gian")] public DateTime ThoiGian { get; set; }
+    [Column("thoi_gian_dao_tao")]
+    [Required(ErrorMessage = "Thời gian đào tạo không được để trống")]
+    public string ThoiGianDaoTao { get; set; } = string.Empty;
     [Column("hoc_phi")] public decimal HocPhi { get; set; }
     [Column("mo_ta")] public string? MoTa { get; set; }
     [Column("tong_so_tin_chi")] public int TongSoTinChi { get; set; }

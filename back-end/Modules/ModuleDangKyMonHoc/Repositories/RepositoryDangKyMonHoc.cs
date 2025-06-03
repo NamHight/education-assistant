@@ -25,7 +25,7 @@ public class RepositoryDangKyMonHoc : RepositoryBase<DangKyMonHoc>, IRepositoryD
 
     public async Task<PagedListAsync<DangKyMonHoc>> GetAllPaginatedAndSearchOrSortAsync(int page, int limit)
     {
-        return await PagedListAsync<DangKyMonHoc>.ToPagedListAsync(_context.DangKyMonHocs, page, limit);
+        return await PagedListAsync<DangKyMonHoc>.ToPagedListAsync(_context.DangKyMonHocs!, page, limit);
     }
 
     public async Task<DangKyMonHoc?> GetDangKyMonHocByIdAsync(Guid id, bool trackChanges)

@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Education_assistant.Models.Enums;
 
 namespace Education_assistant.Models;
 
@@ -17,14 +18,14 @@ public class ChiTietLopHocPhan : BaseEntity
     [Column("ghi_chu")]
     public string? GhiChu { get; set; }
 
-    [Column("trang_thai")]
+    [Column("trang_thai_diem")]
     [Range(1, 2, ErrorMessage = "Trạng thái không hợp lệ")]
     public int? TrangThai { get; set; }
 
     [NotMapped]
     public TrangThaiChiTietLopHocPhanEnum? TrangThaiChiTietLopHocPhanEnum
-    { 
-        get => TrangThai.HasValue ? (TrangThaiChiTietLopHocPhanEnum)TrangThai.Value : null; 
+    {
+        get => TrangThai.HasValue ? (TrangThaiChiTietLopHocPhanEnum)TrangThai.Value : null;
         set => TrangThai = value.HasValue ? (int)value.Value : null;
     }
 

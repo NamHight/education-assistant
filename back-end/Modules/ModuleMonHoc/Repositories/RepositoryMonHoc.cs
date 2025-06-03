@@ -29,8 +29,8 @@ public class RepositoryMonHoc : RepositoryBase<MonHoc>, IRepositoryMonHoc
                                                                                 .SortByOptions(sortBy, sortByOrder, new Dictionary<string, System.Linq.Expressions.Expression<Func<MonHoc, object>>>
                                                                                 {
                                                                                     ["createat"] = item => item.CreatedAt,
-                                                                                    ["updateat"] = item => item.UpdatedAt,
-                                                                                    ["deleteat"] = item => item.DeletedAt
+                                                                                    ["updateat"] = item => item.UpdatedAt!,
+                                                                                    ["deleteat"] = item => item.DeletedAt!
                                                                                 })
                                                                                 , page, limit);
     }

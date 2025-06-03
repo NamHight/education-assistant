@@ -1,5 +1,9 @@
-﻿using Education_assistant.Modules.ModuleGiangVien.Services;
+﻿using Education_assistant.Modules.ModuleBoMon.Services;
+using Education_assistant.Modules.ModuleChiTietChuongTrinhDaoTao.Services;
+using Education_assistant.Modules.ModuleChuongTrinhDaoTao.Services;
+using Education_assistant.Modules.ModuleGiangVien.Services;
 using Education_assistant.Modules.ModuleKhoa.Services;
+using Education_assistant.Modules.ModuleLopHocPhan.Services;
 using Education_assistant.Modules.ModuleMonHoc.Services;
 using Education_assistant.Modules.ModuleTaiKhoan.Services;
 using Education_assistant.Modules.ModuleTruong.Services;
@@ -13,4 +17,8 @@ public interface IServiceMaster
     IServiceKhoa Khoa { get; }
     IServiceMonHoc MonHoc { get; }
     IServiceTaiKhoan TaiKhoan { get; }
+    IServiceChuongTrinhDaoTao ChuongTrinhDaoTao { get; }
+    IServiceChiTietChuongTrinhDaoTao ChiTietChuongTrinhDaoTao { get; }
+    IServiceBoMon BoMon { get; }
+    IServiceLopHocPhan LopHocPhan { get; }
 }

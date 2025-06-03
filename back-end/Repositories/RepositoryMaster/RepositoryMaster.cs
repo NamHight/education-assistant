@@ -1,4 +1,6 @@
 ﻿using Education_assistant.Context;
+using Education_assistant.Contracts.LoggerServices;
+using Education_assistant.Modules.ModuleBoMon.Repositories;
 using Education_assistant.Modules.ModuleChiTietChuongTrinhDaoTao.Repositories;
 using Education_assistant.Modules.ModuleChiTietLopHocPhan.Repositories;
 using Education_assistant.Modules.ModuleChuongTrinhDaoTao.Repositories;
@@ -39,12 +41,15 @@ public class RepositoryMaster : IRepositoryMaster
     private readonly Lazy<IRepositorySinhVienChuongTrinhDaoTao> _repositorySinhVienChuongTrinhDaoTao;
     private readonly Lazy<IRepositoryTaiKhoan> _repositoryTaiKhoan;
     private readonly Lazy<IRepositoryTruong> _repositoryTruong;
+    private readonly Lazy<IRepositoryBoMon> _repositoryBoMon;
 
+
+    private readonly ILoggerService _loggerService;
     private bool _disposed;
     private IDbContextTransaction _transaction;
 
 
-    public RepositoryMaster(RepositoryContext repositoryContext, IDbContextFactory<RepositoryContext> contextFactory)
+    public RepositoryMaster(RepositoryContext repositoryContext, IDbContextFactory<RepositoryContext> contextFactory, ILoggerService loggerService)
     {
         _repositoryContext = repositoryContext;
         _contextFactory = contextFactory;
@@ -63,6 +68,8 @@ public class RepositoryMaster : IRepositoryMaster
         _repositorySinhVienChuongTrinhDaoTao = new Lazy<IRepositorySinhVienChuongTrinhDaoTao>(() => new RepositorySinhVienChuongTrinhDaoTao(repositoryContext));
         _repositoryTaiKhoan = new Lazy<IRepositoryTaiKhoan>(() => new RepositoryTaiKhoan(repositoryContext));
         _repositoryTruong = new Lazy<IRepositoryTruong>(() => new RepositoryTruong(repositoryContext));
+        _repositoryBoMon = new Lazy<IRepositoryBoMon>(() => new RepositoryBoMon(repositoryContext));
+        _loggerService = loggerService;
     }
 
     public IRepositoryGiangVien GiangVien => _repositoryGiangVien.Value;
@@ -94,6 +101,7 @@ public class RepositoryMaster : IRepositoryMaster
 
     public IRepositoryTruong Truong => _repositoryTruong.Value;
 
+    public IRepositoryBoMon BoMon => _repositoryBoMon.Value;
 
     public async Task BeginTransactionAsync()
     {
@@ -109,7 +117,7 @@ public class RepositoryMaster : IRepositoryMaster
         finally
         {
             _transaction?.Dispose();
-            _transaction = null;
+            _transaction = null!;
         }
     }
 
@@ -119,7 +127,7 @@ public class RepositoryMaster : IRepositoryMaster
         {
             await _transaction.RollbackAsync();
             await _transaction.DisposeAsync();
-            _transaction = null;
+            _transaction = null!;
         }
     }
 
@@ -185,6 +193,7 @@ public class RepositoryMaster : IRepositoryMaster
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
+                _loggerService.LogError($"Error transaction: {ex.Message}");
                 throw new Exception($"Lỗi hệ thống!: {ex.Message}");
             }
         });

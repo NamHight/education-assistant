@@ -1,5 +1,7 @@
 using System;
+using System.Linq.Expressions;
 using Education_assistant.Context;
+using Education_assistant.Extensions;
 using Education_assistant.Models;
 using Education_assistant.Repositories;
 using Education_assistant.Repositories.Paginations;
@@ -23,14 +25,15 @@ public class RepositoryLopHocPhan : RepositoryBase<LopHocPhan>, IRepositoryLopHo
         Delete(lopHocPhan);
     }
 
-    public async Task<PagedListAsync<LopHocPhan>> GetAllPaginatedAndSearchOrSortAsync(int page, int limit, string search)
+    public async Task<PagedListAsync<LopHocPhan>?> GetAllLopHocPhanAsync(int page, int limit, string search, string sortBy, string sortByOder)
     {
-        if (!string.IsNullOrEmpty(search))
-        {
-            var lopHocPhans = FindByCondition(item => item.PhongHoc.Contains(search), false);
-            return await PagedListAsync<LopHocPhan>.ToPagedListAsync(lopHocPhans, page, limit);
-        }
-        return await PagedListAsync<LopHocPhan>.ToPagedListAsync(_context.LopHocPhans, page, limit);
+        return await PagedListAsync<LopHocPhan>.ToPagedListAsync(_context.LopHocPhans!.SearchBy(search, item => item.MaHocPhan)
+                                                        .SortByOptions(sortBy, sortByOder, new Dictionary<string, Expression<Func<LopHocPhan, object>>>
+                                                        {   
+                                                            ["siso"] = item => item.SiSo,
+                                                            ["createat"] = item => item.CreatedAt,
+                                                            ["updateat"] = item => item.UpdatedAt!,
+                                                        }), page, limit);              
     }
 
     public async Task<LopHocPhan?> GetLopHocPhanByIdAsync(Guid id, bool trackChanges)

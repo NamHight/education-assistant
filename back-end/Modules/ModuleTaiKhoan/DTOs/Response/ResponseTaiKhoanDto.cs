@@ -11,4 +11,7 @@ public class ResponseTaiKhoanDto
     public bool Status { get; set; }
     public string LoaiTKhoan { get; set; } = string.Empty;
     public virtual GiangVien? GiangVien { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public DateTime? UpdatedAt { get; set; }
+    public DateTime? DeletedAt { get; set; }
 }

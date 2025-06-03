@@ -6,7 +6,7 @@ namespace Education_assistant.Modules.ModuleChiTietChuongTrinhDaoTao.Repositorie
 
 public interface IRepositoryChiTietChuongTrinhDaoTao
 {
-    Task<PagedListAsync<ChiTietChuongTrinhDaoTao>> GetAllPaginatedAndSearchOrSortAsync(int page, int limit);  
+    Task<PagedListAsync<ChiTietChuongTrinhDaoTao>?> GetAllChiTietChuongTrinhDaoTaoAsync(int page, int limit);  
     Task<ChiTietChuongTrinhDaoTao?> GetChiTietChuongTrinhDaoTaoByIdAsync(Guid id, bool trackChanges);
     Task CreateAsync(ChiTietChuongTrinhDaoTao chiTietChuongTrinhDaoTao);
     void UpdateChiTietChuongTrinhDaoTao(ChiTietChuongTrinhDaoTao chiTietChuongTrinhDaoTao);

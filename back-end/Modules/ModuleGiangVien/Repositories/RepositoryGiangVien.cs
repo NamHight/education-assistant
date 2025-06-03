@@ -1,18 +1,50 @@
-﻿using Education_assistant.Context;
+﻿using System.Linq.Expressions;
+using Education_assistant.Context;
+using Education_assistant.Extensions;
 using Education_assistant.Models;
 using Education_assistant.Repositories;
+using Education_assistant.Repositories.Paginations;
 using Microsoft.EntityFrameworkCore;
 
 namespace Education_assistant.Modules.ModuleGiangVien.Repositories;
 
 public class RepositoryGiangVien : RepositoryBase<GiangVien>, IRepositoryGiangVien
 {
-    public RepositoryGiangVien(RepositoryContext repositoryContext) : base(repositoryContext)
+    public RepositoryGiangVien(RepositoryContext context) : base(context)
     {
     }
 
-    public async Task<IEnumerable<GiangVien>> GetAllAsync(bool trackChanges)
+    public async Task CreateAsync(GiangVien giangVien)
     {
-        return await FindAll(trackChanges).ToListAsync();
+        await Create(giangVien);
+    }
+
+    public void DeleteGiangVien(GiangVien giangVien)
+    {
+        Delete(giangVien);
+    }
+
+    public async Task<PagedListAsync<GiangVien>?> GetAllGiangVienAsync(int page, int limit, string search, string sortBy, string sortByOrder)
+    {
+        return await PagedListAsync<GiangVien>.ToPagedListAsync(_context.GiangViens!.SearchBy(search, item => item.HoTen!)
+                                .IgnoreQueryFilters()
+                                .OrderBy(item => item.DeletedAt != null)
+                                .SortByOptions(sortBy, sortByOrder, new Dictionary<string, Expression<Func<GiangVien, object>>>
+                                {
+                                    ["createat"] = item => item.CreatedAt,
+                                    ["ngaysinh"] = item => item.NgaySinh!,
+                                    ["ngayvaotruong"] = item => item.NgayVaoTruong!,
+                                    ["updateat"] = item => item.UpdatedAt!,
+                                }).AsNoTracking(), page, limit);
+    }
+
+    public async Task<GiangVien?> GetGiangVienByIdAsync(Guid id, bool trackChanges)
+    {
+        return await FindByCondition(item => item.Id == id, trackChanges).FirstOrDefaultAsync();
+    }
+
+    public void UpdateGiangVien(GiangVien giangVien)
+    {
+        Update(giangVien);
     }
 }

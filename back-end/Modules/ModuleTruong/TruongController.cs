@@ -2,6 +2,7 @@ using System.Text.Json;
 using Education_assistant.Modules.ModuleTruong.DTOs.Request;
 using Education_assistant.Services.BaseDtos;
 using Education_assistant.Services.ServiceMaster;
+using FashionShop_API.Filters;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,32 +18,33 @@ namespace Education_assistant.Modules.ModuleTruong
         {
             _serviceMaster = serviceMaster;
         }
-        [HttpGet("get-truong")]
+        [HttpGet("")]
         public async Task<ActionResult> GetTruongAsync([FromQuery] ParamPageAndSearchBaseDto paramBaseDto)
         {
             var result = await _serviceMaster.Truong.GetAllPaginationAndSearchAsync(paramBaseDto);
             Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(result.page));
             return Ok(result.data);
         }
-        [HttpGet("get-id-truong/{id}")]
+        [HttpGet("{id}")]
         public async Task<ActionResult> GetTruongByIdAsync(Guid id)
         {
             var result = await _serviceMaster.Truong.GetTruongByIdAsync(id, false);
             return Ok(result);
         }
-        [HttpPost("add-truong")]
+        // [ServiceFilter(typeof(ValidationFilter))]
+        [HttpPost("")]
         public async Task<ActionResult> AddTruongAsync([FromBody] RequestAddTruongDto model)
         {
             var result = await _serviceMaster.Truong.CreateAsync(model);
             return Ok(result);
         }
-        [HttpPut("update-truong/{id}")]
+        [HttpPut("{id}")]
         public async Task<ActionResult> UpdateTruongAsync(Guid id, [FromBody] RequestUpdateTruongDto model)
         {
             await _serviceMaster.Truong.UpdateAsync(id, model);
             return NoContent();
         }
-        [HttpDelete("delete-truong/{id}")]
+        [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteTruongAsync(Guid id)
         {
             await _serviceMaster.Truong.DeleteAsync(id);

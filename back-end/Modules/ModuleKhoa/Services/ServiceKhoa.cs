@@ -63,7 +63,7 @@ public class ServiceKhoa : IServiceKhoa
     {
         var khoas = await _repositoryMaster.Khoa.GetAllPaginatedAndSearchOrSortAsync(paramBaseDto.page, paramBaseDto.limit, paramBaseDto.search, paramBaseDto.sortBy, paramBaseDto.sortByOder);
         var khoaDto = _mapper.Map<IEnumerable<ResponseKhoaDto>>(khoas);
-        return (data: khoaDto, page: khoas.PageInfo);
+        return (data: khoaDto, page: khoas!.PageInfo);
     }
 
     public async Task<ResponseKhoaDto> GetKhoaByIdAsync(Guid id, bool trackChanges)

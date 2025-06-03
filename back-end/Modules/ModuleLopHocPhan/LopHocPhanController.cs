@@ -1,0 +1,52 @@
+using System.Text.Json;
+using Education_assistant.Modules.ModuleLopHocPhan.DTOs.Request;
+using Education_assistant.Services.BaseDtos;
+using Education_assistant.Services.ServiceMaster;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+
+namespace Education_assistant.Modules.ModuleLopHocPhan
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class LopHocPhanController : ControllerBase
+    {
+        private readonly IServiceMaster _serviceMaster;
+
+        public LopHocPhanController(IServiceMaster serviceMaster)
+        {
+            _serviceMaster = serviceMaster;
+        }
+        [HttpGet]
+        public async Task<ActionResult> GetAllLopHocPhanAsync([FromQuery] ParamBaseDto paramBaseDto)
+        {
+            var result = await _serviceMaster.LopHocPhan.GetAllLopHocPhanAsync(paramBaseDto);
+            Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(result.page));
+            return Ok(result.data);
+        }
+        [HttpGet("{id}")]
+        public async Task<ActionResult> GetLopHocPhanByIdAsync(Guid id)
+        {
+            var result = await _serviceMaster.LopHocPhan.GetLopHocPhanByIdAsync(id, false);
+            return Ok(result);
+        }
+        [HttpPost]
+        public async Task<ActionResult> AddLopHocPhanAsync([FromBody] RequestAddLopHocPhanDto model)
+        {
+            var result = await _serviceMaster.LopHocPhan.CreateAsync(model);
+            return Ok(result);
+        }
+        [HttpPut("{id}")]
+        public async Task<ActionResult> UpdateLopHocPhanAsync(Guid id, [FromBody] RequestUpdateLopHocPhanDto model)
+        {
+            await _serviceMaster.LopHocPhan.UpdateAsync(id, model);
+            return NoContent();
+        }
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteLopHocPhanAsync(Guid id)
+        {
+            await _serviceMaster.LopHocPhan.DeleteAsync(id);
+            return NoContent();
+        }
+    }
+}

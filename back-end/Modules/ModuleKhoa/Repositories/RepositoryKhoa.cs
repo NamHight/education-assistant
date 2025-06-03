@@ -31,8 +31,7 @@ public class RepositoryKhoa : RepositoryBase<Khoa>, IRepositoryKhoa
                                                                 .SortByOptions(sortBy, sortByOder, new Dictionary<string, Expression<Func<Khoa, object>>>
                                                                 {
                                                                     ["createat"] = item => item.CreatedAt,
-                                                                    ["updateat"] = item => item.UpdatedAt,
-                                                                    ["deleteat"] = item => item.DeletedAt
+                                                                    ["updateat"] = item => item.UpdatedAt!,
                                                                 })
                                                                 , page, limit);
     }

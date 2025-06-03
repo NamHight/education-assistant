@@ -25,7 +25,7 @@ public class RepositoryChiTietLopHocPhan : RepositoryBase<ChiTietLopHocPhan>, IR
 
     public async Task<PagedListAsync<ChiTietLopHocPhan>> GetAllPaginatedAndSearchOrSortAsync(int page, int limit)
     {
-        return await PagedListAsync<ChiTietLopHocPhan>.ToPagedListAsync(_context.ChiTietLopHocPhans, page, limit);
+        return await PagedListAsync<ChiTietLopHocPhan>.ToPagedListAsync(_context.ChiTietLopHocPhans!, page, limit);
     }
 
     public async Task<ChiTietLopHocPhan?> GetChiTietLopHocPhanByIdAsync(Guid id, bool trackChanges)

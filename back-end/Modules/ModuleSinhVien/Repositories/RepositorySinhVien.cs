@@ -30,7 +30,7 @@ public class RepositorySinhVien : RepositoryBase<SinhVien>, IRepositorySinhVien
             var sinhviens = FindByCondition(item => item.HoTen.Contains(search), false);
             return await PagedListAsync<SinhVien>.ToPagedListAsync(sinhviens, page, limit);
         }
-        return await PagedListAsync<SinhVien>.ToPagedListAsync(_context.SinhViens, page, limit);
+        return await PagedListAsync<SinhVien>.ToPagedListAsync(_context.SinhViens!, page, limit);
     }
 
     public async Task<SinhVien?> GetSinhVienByIdAsync(Guid id, bool trackChanges)

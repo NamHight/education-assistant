@@ -26,14 +26,14 @@ public class ServiceMonHoc : IServiceMonHoc
     {
         if (request is null)
         {
-            throw new MonHocBadRequestException("Thông tin trường đầu vào không đủ thông tin!");
+            throw new MonHocBadRequestException("Thông tin bộ môn đầu vào không đủ thông tin!");
         }
         var newMonHoc = _mapper.Map<MonHoc>(request);
         await _repositoryMaster.ExecuteInTransactionAsync(async () =>
         {
             await _repositoryMaster.MonHoc.CreateAsync(newMonHoc);
         });
-        _loggerService.LogInfo("Thêm thông tin trường thành công.");
+        _loggerService.LogInfo("Thêm thông tin bộ môn thành công.");
         var monHocDto = _mapper.Map<ResponseMonHocDto>(newMonHoc);
         return monHocDto;
     }
@@ -42,7 +42,7 @@ public class ServiceMonHoc : IServiceMonHoc
     {
         if (id == Guid.Empty)
         {
-            throw new MonHocBadRequestException($"Trường với {id} không được bỏ trống!");
+            throw new MonHocBadRequestException($"Môn học với {id} không được bỏ trống!");
         }
         var monHoc = await _repositoryMaster.MonHoc.GetMonHocByIdAsync(id, false);
         if (monHoc is null)
@@ -61,7 +61,7 @@ public class ServiceMonHoc : IServiceMonHoc
     {
         var monHocs = await _repositoryMaster.MonHoc.GetAllPaginatedAndSearchOrSortAsync(paramBaseDto.page, paramBaseDto.limit, paramBaseDto.search, paramBaseDto.sortBy, paramBaseDto.sortByOder);
         var monHocDto = _mapper.Map<IEnumerable<ResponseMonHocDto>>(monHocs);
-        return (data: monHocDto, page: monHocs.PageInfo);
+        return (data: monHocDto, page: monHocs!.PageInfo);
     }
 
     public async Task<ResponseMonHocDto> GetMonHocByIdAsync(Guid id, bool trackChanges)
@@ -79,11 +79,7 @@ public class ServiceMonHoc : IServiceMonHoc
     {
         if (id != request.Id)
         {
-            throw new MonHocBadRequestException($"Id và Id của trường không giống nhau!");
-        }
-        if (request is null)
-        {
-            throw new MonHocBadRequestException($"Thông tin trường không đầy đủ!");
+            throw new MonHocBadRequestException($"Id và Id của môn học không giống nhau!");
         }
         var truong = await _repositoryMaster.MonHoc.GetMonHocByIdAsync(id, false);
         if (truong is null)

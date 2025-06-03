@@ -4,6 +4,7 @@ using Education_assistant.Services.BaseDtos;
 using Education_assistant.Services.ServiceMaster;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using NLog.Filters;
 
 namespace Education_assistant.Modules.ModuleMonHoc
 {
@@ -17,32 +18,32 @@ namespace Education_assistant.Modules.ModuleMonHoc
         {
             _serviceMaster = serviceMaster;
         }
-        [HttpGet("get-all-monhoc")]
+        [HttpGet]
         public async Task<ActionResult> GetAllMonHocAsync([FromQuery] ParamBaseDto paramBaseDto)
         {
             var result = await _serviceMaster.MonHoc.GetAllPaginationAndSearchAsync(paramBaseDto);
             Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(result.page));
             return Ok(result.data);
         }
-        [HttpGet("get-id-monhoc/{id}")]
+        [HttpGet("{id}")]
         public async Task<ActionResult> GetMonHocByIdAsync(Guid id)
         {
             var result = await _serviceMaster.MonHoc.GetMonHocByIdAsync(id, false);
             return Ok(result);
         }
-        [HttpPost("add-monhoc")]
+        [HttpPost("")]
         public async Task<ActionResult> AddMonHocAsync([FromBody] RequestAddMonHocDto model)
         {
             var result = await _serviceMaster.MonHoc.CreateAsync(model);
             return Ok(result);
         }
-        [HttpPut("update-monhoc/{id}")]
-        public async Task<ActionResult> UpdateMonHocsAsync(Guid id, [FromBody] RequestUpdateMonHocDto model)
+        [HttpPut("{id}")]
+        public async Task<ActionResult> UpdateMonHocAsync(Guid id, [FromBody] RequestUpdateMonHocDto model)
         {
             await _serviceMaster.MonHoc.UpdateAsync(id, model);
             return NoContent();
         }
-        [HttpDelete("delete-monhoc/{id}")]
+        [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteMonHocAsync(Guid id)
         {
             await _serviceMaster.MonHoc.DeleteAsync(id);

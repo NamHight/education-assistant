@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Education_assistant.Models.Enums;
 
 namespace Education_assistant.Models;
 

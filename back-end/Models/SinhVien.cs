@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Education_assistant.Models.Enums;
 
 namespace Education_assistant.Models;
 
@@ -13,22 +14,22 @@ public class SinhVien : BaseEntity
     [Column("cccd")]
     [Required(ErrorMessage = "Căn cước công dân không được để trống")]
     [MaxLength(255, ErrorMessage = "Căn cước công dân không được quá 255 ký tự")]
-    public string CCCD { get; set; }
+    public string CCCD { get; set; } = string.Empty;
 
     [Column("anh_dai_dien")]
     [Required(ErrorMessage = "Ảnh đại diện không được để trống")]
     [MaxLength(255, ErrorMessage = "Ảnh đại diện không được quá 255 ký tự")]
-    public string AnhDaiDien { get; set; }
+    public string AnhDaiDien { get; set; } = string.Empty;
 
     [Column("ho_ten")]
     [Required(ErrorMessage = "Họ và tên không được để trống")]
     [MaxLength(255, ErrorMessage = "Họ và tên không được quá 255 ký tự")]
-    public string HoTen { get; set; }
+    public string HoTen { get; set; } = string.Empty;
 
     [Column("email")]
     [Required(ErrorMessage = "Email không được để trống")]
     [EmailAddress(ErrorMessage = "Email không hợp lệ")]
-    public string Email { get; set; }
+    public string Email { get; set; } = string.Empty;
 
     [Column("so_dien_thoai")]
     [MaxLength(15)]
@@ -50,20 +51,20 @@ public class SinhVien : BaseEntity
     [Column("dia_chi")]
     [Required(ErrorMessage = "Địa chỉ không được để trống")]
     [MaxLength(255, ErrorMessage = "Địa chỉ không được quá 255 ký tự")]
-    public string DiaChi { get; set; }
+    public string DiaChi { get; set; } = string.Empty;
 
     [Column("trang_thai_sinh_vien")]
     [Range(1, 5, ErrorMessage = "Giá trị trạng thái không hợp lệ")]
     public int? TrangThaiSinhVien { get; set; }
     [NotMapped]
-    public SinhVienTrangThaiEnum? SinhVienTrangThaiEnum
+    public TrangThaiSinhVienEnum? TrangThaiSinhVienEnum
     {
-        get => TrangThaiSinhVien.HasValue ? (SinhVienTrangThaiEnum)TrangThaiSinhVien.Value : null;
+        get => TrangThaiSinhVien.HasValue ? (TrangThaiSinhVienEnum)TrangThaiSinhVien.Value : null;
         set => TrangThaiSinhVien = value.HasValue ? (int)value.Value : null;
     }
 
     [Column("tinh_trang_hoc_tap")]
-    [Range(1, 5, ErrorMessage = "Giá trị tình trạng học tập không hợp lệ")]
+    [Range(1, 6, ErrorMessage = "Giá trị tình trạng học tập không hợp lệ")]
     public int? TinhTrangHocTap { get; set; }
     [NotMapped]
     public TinhTrangHocTapSinhVienEnum? TinhTrangHocTapSinhVienEnum

@@ -1,5 +1,7 @@
 using System;
+using System.Linq.Expressions;
 using Education_assistant.Context;
+using Education_assistant.Extensions;
 using Education_assistant.Models;
 using Education_assistant.Repositories;
 using Education_assistant.Repositories.Paginations;
@@ -23,19 +25,27 @@ public class RepositoryChuongTrinhDaoTao : RepositoryBase<ChuongTrinhDaoTao>, IR
         Delete(chuongTrinhDaoTao);
     }
 
-    public async Task<PagedListAsync<ChuongTrinhDaoTao>> GetAllPaginatedAndSearchOrSortAsync(int page, int limit, string search)
+    public async Task<PagedListAsync<ChuongTrinhDaoTao>?> GetAllPaginatedAndSearchOrSortAsync(int page, int limit, string search, string sortBy, string sortByOrder)
     {
-        if (!string.IsNullOrEmpty(search))
-        {
-            var chuongTrinhDaoTaos = FindByCondition(item => item.TenChuongTrinh.Contains(search), false);
-            return await PagedListAsync<ChuongTrinhDaoTao>.ToPagedListAsync(chuongTrinhDaoTaos, page, limit);
-        }
-        return await PagedListAsync<ChuongTrinhDaoTao>.ToPagedListAsync(_context.ChuongTrinhDaoTaos, page, limit);
+        return await PagedListAsync<ChuongTrinhDaoTao>.ToPagedListAsync(_context.ChuongTrinhDaoTaos!.SearchBy(search, item => item.TenChuongTrinh)
+                                                    .SortByOptions(sortBy, sortByOrder, new Dictionary<string, Expression<Func<ChuongTrinhDaoTao, object>>>
+                                                    {
+                                                        ["hocphi"] = item => item.HocPhi,
+                                                        ["tongsotinchi"] = item => item.TongSoTinChi,
+                                                        ["createat"] = item => item.CreatedAt,
+                                                        ["updateat"] = item => item.UpdatedAt!,
+                                                    })
+                                                    , page, limit);
     }
 
     public async Task<ChuongTrinhDaoTao?> GetChuongTrinhDaoTaoByIdAsync(Guid id, bool trackChanges)
     {
        return await FindByCondition(item => item.Id == id, trackChanges).FirstOrDefaultAsync();
+    }
+
+    public async Task<ChuongTrinhDaoTao?> GetChuongTrinhDaoTaoByMaAsync(string maChuongTrinh, bool trackChanges)
+    {
+        return await FindByCondition(item => item.MaChuongTrinh == maChuongTrinh, trackChanges).FirstOrDefaultAsync();
     }
 
     public void UpdateChuongTrinhDaoTao(ChuongTrinhDaoTao chuongTrinhDaoTao)

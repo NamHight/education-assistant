@@ -1,4 +1,5 @@
 ﻿using Education_assistant.Context;
+using Education_assistant.Modules.ModuleBoMon.Repositories;
 using Education_assistant.Modules.ModuleChiTietChuongTrinhDaoTao.Repositories;
 using Education_assistant.Modules.ModuleChiTietLopHocPhan.Repositories;
 using Education_assistant.Modules.ModuleChuongTrinhDaoTao.Repositories;
@@ -34,6 +35,7 @@ public interface IRepositoryMaster : IDisposable
     IRepositorySinhVienChuongTrinhDaoTao SinhVienChuongTrinhDaoTao { get; }
     IRepositoryTaiKhoan TaiKhoan { get; }
     IRepositoryTruong Truong { get; }
+    IRepositoryBoMon BoMon { get; }
 
     public Task ExecuteInTransactionAsync(Func<Task> operation);
 

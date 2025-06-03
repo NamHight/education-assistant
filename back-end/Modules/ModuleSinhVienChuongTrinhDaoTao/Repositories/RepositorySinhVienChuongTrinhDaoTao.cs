@@ -26,7 +26,7 @@ public class RepositorySinhVienChuongTrinhDaoTao : RepositoryBase<SinhVienChuong
 
     public async Task<PagedListAsync<SinhVienChuongTrinhDaoTao>> GetAllPaginatedAndSearchOrSortAsync(int page, int limit)
     {
-        return await PagedListAsync<SinhVienChuongTrinhDaoTao>.ToPagedListAsync(_context.SinhVienChuongTrinhDaoTaos, page, limit);
+        return await PagedListAsync<SinhVienChuongTrinhDaoTao>.ToPagedListAsync(_context.SinhVienChuongTrinhDaoTaos!, page, limit);
     }
 
     public async Task<SinhVienChuongTrinhDaoTao?> GetSinhVienChuongTrinhDaoTaoByIdAsync(Guid id, bool trackChanges)

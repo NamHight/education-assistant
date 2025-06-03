@@ -11,7 +11,7 @@ public class ValidationFilter() : IActionFilter
         var controller = context.RouteData.Values["controller"];
         var param = context
             .ActionArguments
-            .SingleOrDefault(item => item.Value.ToString().Contains("Dto")).Value;
+            .SingleOrDefault(item => item.Value!.ToString()!.Contains("Dto")).Value;
         if (param is null)
         {
             context.Result = new BadRequestObjectResult($"Object is null. Controller: {controller}, action: {action}");
