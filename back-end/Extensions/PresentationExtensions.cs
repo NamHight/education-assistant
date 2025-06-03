@@ -1,4 +1,5 @@
 ﻿using Education_assistant.Mappers;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Education_assistant.Extensions;
 
@@ -15,6 +16,7 @@ public static class PresentationExtensions
         services.AddControllers()
             .AddApplicationPart(assembly);
         services.AddAutoMapper(typeof(MapperProfile).Assembly);
+        services.Configure<ApiBehaviorOptions>(options => { options.SuppressModelStateInvalidFilter = true; });
         return services;
     }
 }
