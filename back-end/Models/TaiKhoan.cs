@@ -11,13 +11,13 @@ public class TaiKhoan : BaseEntity
     [Required(ErrorMessage = "Email không được để trống")]
     [MaxLength(255, ErrorMessage = "Email không được quá 255 ký tự")]
     [EmailAddress(ErrorMessage = "Email không hợp lệ")]
-    public string Email { get; set; }
+    public string Email { get; set; } = string.Empty;
 
     [Column("password")]
     [Required(ErrorMessage = "Mật khẩu không được để trống")]
     [MaxLength(255, ErrorMessage = "Mật khẩu không được quá 255 ký tự")]
     [DataType(DataType.Password)]
-    public string Password { get; set; }
+    public string Password { get; set; } = string.Empty;
 
     [Column("ngay_dang_nhap")] public DateTime? LastLoginDate { get; set; }
 
@@ -27,9 +27,9 @@ public class TaiKhoan : BaseEntity
 
     [Column("reset_expires")] public DateTime? ResetTokenExpires { get; set; }
 
-    [Column("trang_thai")] [Required] public bool Status { get; set; }
+    [Column("trang_thai")][Required] public bool Status { get; set; } = true;
     [Column("loai_tai_khoan")]
-    [Range(1, 2, ErrorMessage = "Loại tài khoản không hợp lệ")]
+    [Range(1, 3, ErrorMessage = "Loại tài khoản không hợp lệ")]
     public int? LoaiTaiKhoan { get; set; }
 
     [NotMapped]

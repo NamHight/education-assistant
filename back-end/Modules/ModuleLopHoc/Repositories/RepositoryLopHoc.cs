@@ -30,7 +30,7 @@ public class RepositoryLopHoc : RepositoryBase<LopHoc>, IRepositoryLopHoc
             var lopHocs = FindByCondition(item => item.TenLopHoc.Contains(search), false);
             return await PagedListAsync<LopHoc>.ToPagedListAsync(lopHocs, page, limit);
         }
-        return await PagedListAsync<LopHoc>.ToPagedListAsync(_context.LopHocs, page, limit);
+        return await PagedListAsync<LopHoc>.ToPagedListAsync(_context.LopHocs!, page, limit);
     }
 
     public async Task<LopHoc?> GetLopHocByIdAsync(Guid id, bool trackChanges)

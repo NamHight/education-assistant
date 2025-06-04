@@ -8,44 +8,38 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1"/>
-        <PackageReference Include="BCrypt.Net-Next" Version="4.0.3"/>
-        <PackageReference Include="DotNetEnv" Version="3.1.1"/>
-        <PackageReference Include="FluentValidation" Version="11.11.0"/>
-        <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0"/>
-        <PackageReference Include="Microsoft.AspNetCore.JsonPatch" Version="10.0.0-preview.3.25172.1"/>
-        <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.10"/>
-        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.10"/>
-        <PackageReference Include="Microsoft.AspNetCore.SignalR.Common" Version="8.0.14"/>
-        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.14"/>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="8.0.14"/>
+        <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
+        <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+        <PackageReference Include="DotNetEnv" Version="3.1.1" />
+        <PackageReference Include="FluentValidation" Version="11.11.0" />
+        <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
+        <PackageReference Include="Microsoft.AspNetCore.JsonPatch" Version="10.0.0-preview.3.25172.1" />
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.10" />
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.10" />
+        <PackageReference Include="Microsoft.AspNetCore.SignalR.Common" Version="8.0.14" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.14" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="8.0.14" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.14">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="8.0.14"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="8.0.14" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.0-preview.4.25258.110">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="10.0.0-preview.3.25172.1"/>
-        <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="9.0.0"/>
-        <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.EntityFrameworkCore" Version="9.0.0"/>
-        <PackageReference Include="NLog.Extensions.Logging" Version="5.4.0"/>
-        <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="8.0.3"/>
-        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2"/>
+        <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="10.0.0-preview.3.25172.1" />
+        <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="9.0.0" />
+        <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.EntityFrameworkCore" Version="9.0.0" />
+        <PackageReference Include="NLog.Extensions.Logging" Version="5.4.0" />
+        <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="8.0.3" />
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
         <PackageReference Include="Z.EntityFramework.Extensions.EFCore" Version="8.103.8.1" />
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="Modules\ModuleChiTietChuongTrinhDaoTao\Services\"/>
-        <Folder Include="Modules\ModuleChiTietLopHocPhan\Services\"/>
-        <Folder Include="Modules\ModuleChuongTrinhDaoTao\Services\"/>
-        <Folder Include="Modules\ModuleDangKyMonHoc\Services\"/>
-        <Folder Include="Modules\ModuleGiangVien\Dtos\"/>
-        <Folder Include="Modules\ModuleHocBa\Services\"/>
-        <Folder Include="Modules\ModuleLichBieu\Services\"/>
-        <Folder Include="Modules\ModuleSinhVien\Services\"/>
+        <Folder Include="Modules\ModuleHocBa\Services\" />
+        <Folder Include="Modules\ModuleLichBieu\Services\" />
     </ItemGroup>
 
 </Project>

@@ -8,12 +8,10 @@ public class ResponseMonHocDto
     public Guid Id { get; set; }
     public string MaMonHoc { get; set; } = string.Empty;
     public string TenMonHoc { get; set; } = string.Empty;
-    public int SoTinChi { get; set; }
     public string MoTa { get; set; } = string.Empty;
-    public int SoTiet { get; set; }
-    public string LoaiMon { get; set; } = string.Empty;
     public Guid KhoaId { get; set; }
     public ResponseKhoaDto Khoa { get; set; } = null!;
     public DateTime? CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
+    public DateTime? DeletedAt { get; set; }
 }

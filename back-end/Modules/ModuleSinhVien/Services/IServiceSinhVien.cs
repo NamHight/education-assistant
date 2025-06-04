@@ -1,0 +1,19 @@
+using System;
+using Education_assistant.Modules.ModuleSinhVien.DTOs.Param;
+using Education_assistant.Modules.ModuleSinhVien.DTOs.Request;
+using Education_assistant.Modules.ModuleSinhVien.DTOs.Response;
+using Education_assistant.Repositories.Paginations;
+using Education_assistant.Services.BaseDtos;
+
+namespace Education_assistant.Modules.ModuleSinhVien.Services;
+
+public interface IServiceSinhVien
+{
+    Task<(IEnumerable<ResponseSinhVienDto> data, PageInfo page)> GetAllSinhVienAsync(ParamBaseDto paramBaseDto);
+    Task<(IEnumerable<ResponseSinhVienDto> data, PageInfo page)> GetAllSinhVienByLopIdAsync(ParamSinhVienByLopDto paramBaseDto);
+    Task<ResponseSinhVienDto> GetSinhVienByIdAsync(Guid id, bool trackChanges);
+    Task<ResponseSinhVienDto> CreateAsync(RequestAddSinhVienDto request);
+    Task<ResponseSinhVienDto> ReStoreSinhVienAsync(Guid id);
+    Task UpdateAsync(Guid id, RequestUpdateSinhVienDto request);
+    Task DeleteAsync(Guid id);
+}

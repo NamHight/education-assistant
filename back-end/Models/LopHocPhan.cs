@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Education_assistant.Models.Enums;
 
 namespace Education_assistant.Models;
 
@@ -9,17 +10,8 @@ public class LopHocPhan : BaseEntity
     [Column("ma_hoc_phan")]
     [Required(ErrorMessage = "Mã học phần không được để trống")]
     [MaxLength(255, ErrorMessage = "Mã học phần không được quá 255 ký tự")]
-    public string MaHocPhan { get; set; }
-    [Column("ten_lop_hoc_phan")]
-    [Required(ErrorMessage = "Mã học phần không được để trống")]
-    [MaxLength(255, ErrorMessage = "Mã học phần không được quá 255 ký tự")]
-    public string TenLopHocPhan { get; set; }
-
-    [Column("phong_hoc")]
-    [Required(ErrorMessage = "Phòng học không được để trống")]
-    [MaxLength(255, ErrorMessage = "Phòng học không được quá 255 ký tự")]
-    public string PhongHoc { get; set; }
-
+    public string MaHocPhan { get; set; } = string.Empty;
+    
     [Column("si_so")]
     [Required(ErrorMessage = "Sỉ số không được để trống")]
     public int SiSo { get; set; }
@@ -29,9 +21,9 @@ public class LopHocPhan : BaseEntity
     public int? TrangThai { get; set; }
 
     [NotMapped]
-    public LopHocPhanTrangThaiEnum? LopHocPhanTrangThaiEnum
+    public TrangThaiLopHocPhanEnum? TrangThaiLopHocPhanEnum
     {
-        get => TrangThai.HasValue ? (LopHocPhanTrangThaiEnum)TrangThai.Value : null;
+        get => TrangThai.HasValue ? (TrangThaiLopHocPhanEnum)TrangThai.Value : null;
         set => TrangThai = value.HasValue ? (int)value.Value : null;
     }
 
