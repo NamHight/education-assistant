@@ -81,5 +81,7 @@ public class MapperProfile : Profile
         CreateMap<RequestAddNganhDto, Nganh>();
         CreateMap<RequestUpdateNganhDto, Nganh>();
         CreateMap<Nganh, ResponseNganhDto>();
+        
+        
     }
 }
