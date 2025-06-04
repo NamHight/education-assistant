@@ -85,6 +85,7 @@ public class ServiceChuongTrinhDaoTao : IServiceChuongTrinhDaoTao
             throw new ChuongTrinhDaoTaoNotFoundException(id);
         }
         var ctDaoTaoUpdate = _mapper.Map<ChuongTrinhDaoTao>(request);
+        ctDaoTaoUpdate.UpdatedAt = DateTime.Now;    
         await _repositoryMaster.ExecuteInTransactionAsync(async () =>
         {
             _repositoryMaster.ChuongTrinhDaoTao.UpdateChuongTrinhDaoTao(ctDaoTaoUpdate);

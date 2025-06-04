@@ -5,6 +5,8 @@ using Education_assistant.Modules.ModuleChiTietLopHocPhan.Repositories;
 using Education_assistant.Modules.ModuleChuongTrinhDaoTao.Repositories;
 using Education_assistant.Modules.ModuleDangKyMonHoc.Repositories;
 using Education_assistant.Modules.ModuleGiangVien.Repositories;
+using Education_assistant.Modules.ModuleGiangVien.Repositories.GiangViens;
+using Education_assistant.Modules.ModuleGiangVien.Repositories.TaiKhoans;
 using Education_assistant.Modules.ModuleHocBa.Repositories;
 using Education_assistant.Modules.ModuleKhoa.Repositories;
 using Education_assistant.Modules.ModuleLichBieu.Repositories;
@@ -13,7 +15,6 @@ using Education_assistant.Modules.ModuleLopHocPhan.Repositories;
 using Education_assistant.Modules.ModuleMonHoc.Repositories;
 using Education_assistant.Modules.ModuleSinhVien.Repositories;
 using Education_assistant.Modules.ModuleSinhVienChuongTrinhDaoTaoChuongTrinhDaoTao.Repositories;
-using Education_assistant.Modules.ModuleTaiKhoan.Repositories;
 using Education_assistant.Modules.ModuleTruong.Repositories;
 
 namespace Education_assistant.Repositories.RepositoryMaster;

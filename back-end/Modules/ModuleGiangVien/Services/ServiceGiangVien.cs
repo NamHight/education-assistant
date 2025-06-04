@@ -87,6 +87,23 @@ public sealed class ServiceGiangVien : IServiceGiangVien
         return giangVienDto;
     }
 
+    public async Task<ResponseGiangVienDto> ReStoreGiangVienAsync(Guid id)
+    {
+        var giangVien = await _repositoryMaster.GiangVien.GetGiangVienDeleteAsync(id, false);
+        if (giangVien is null)
+        {
+            throw new GiangVienNotFoundException(id);
+        }
+        giangVien.DeletedAt = null;
+        await _repositoryMaster.ExecuteInTransactionAsync(async () =>
+        {
+            _repositoryMaster.GiangVien.UpdateGiangVien(giangVien);
+            await Task.CompletedTask;
+        });
+        var giangVienDto = _mapper.Map<ResponseGiangVienDto>(giangVien);
+        return giangVienDto;
+    }
+
     public async Task UpdateAsync(Guid id, RequestUpdateGiangVienDto request)
     {
         if (id != request.Id)
@@ -99,6 +116,7 @@ public sealed class ServiceGiangVien : IServiceGiangVien
             throw new GiangVienNotFoundException(id);
         }
         var giangVienUpdate = _mapper.Map<GiangVien>(request);
+        giangVienUpdate.UpdatedAt = DateTime.Now;
         await _repositoryMaster.ExecuteInTransactionAsync(async () =>
         {
             _repositoryMaster.GiangVien.UpdateGiangVien(giangVienUpdate);

@@ -31,6 +31,12 @@ public class GiangVienController : ControllerBase
         var result = await _serviceMaster.GiangVien.GetGiangVienByIdAsync(id, false);
         return Ok(result);
     }
+    [HttpPut("{id}/restore")]
+    public async Task<ActionResult> GetReStoreGiangVienAsync(Guid id)
+    {
+        var result = await _serviceMaster.GiangVien.ReStoreGiangVienAsync(id);
+        return Ok(result);
+    }
     [HttpPost]
     [ServiceFilter(typeof(ValidationFilter))]
     public async Task<ActionResult> AddGiangVienAsync([FromBody] RequestAddGiangVienDto model)

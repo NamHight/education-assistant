@@ -39,10 +39,8 @@
     <ItemGroup>
         <Folder Include="Modules\ModuleChiTietLopHocPhan\Services\" />
         <Folder Include="Modules\ModuleDangKyMonHoc\Services\" />
-        <Folder Include="Modules\ModuleGiangVien\Repositories\TaiKhoans\" />
         <Folder Include="Modules\ModuleHocBa\Services\" />
         <Folder Include="Modules\ModuleLichBieu\Services\" />
-        <Folder Include="Modules\ModuleNganh\Repositories\" />
         <Folder Include="Modules\ModuleNganh\Services\" />
         <Folder Include="Modules\ModuleSinhVien\Services\" />
     </ItemGroup>

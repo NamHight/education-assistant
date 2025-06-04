@@ -7,7 +7,7 @@ using Education_assistant.Repositories;
 using Education_assistant.Repositories.Paginations;
 using Microsoft.EntityFrameworkCore;
 
-namespace Education_assistant.Modules.ModuleTaiKhoan.Repositories;
+namespace Education_assistant.Modules.ModuleGiangVien.Repositories.TaiKhoans;
 
 public class RepositoryTaiKhoan : RepositoryBase<TaiKhoan>, IRepositoryTaiKhoan
 {

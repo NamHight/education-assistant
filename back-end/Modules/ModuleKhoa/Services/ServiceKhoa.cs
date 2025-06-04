@@ -93,6 +93,7 @@ public class ServiceKhoa : IServiceKhoa
             throw new KhoaNotFoundException(id);
         }
         var khoaUpdate = _mapper.Map<Khoa>(request);
+        khoaUpdate.UpdatedAt = DateTime.Now;
         await _repositoryMaster.ExecuteInTransactionAsync(async () =>
         {
             _repositoryMaster.Khoa.UpdateKhoa(khoaUpdate);

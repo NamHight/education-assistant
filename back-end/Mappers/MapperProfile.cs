@@ -15,8 +15,6 @@ using Education_assistant.Modules.ModuleLopHocPhan.DTOs.Request;
 using Education_assistant.Modules.ModuleLopHocPhan.DTOs.Response;
 using Education_assistant.Modules.ModuleMonHoc.DTOs.Request;
 using Education_assistant.Modules.ModuleMonHoc.DTOs.Response;
-using Education_assistant.Modules.ModuleTaiKhoan.DTOs.Request;
-using Education_assistant.Modules.ModuleTaiKhoan.DTOs.Response;
 using Education_assistant.Modules.ModuleTruong.DTOs.Request;
 using Education_assistant.Modules.ModuleTruong.DTOs.Response;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
@@ -27,15 +25,6 @@ public class MapperProfile : Profile
 {
     public MapperProfile()
     {
-        //map tai khoan
-        CreateMap<RequestAddTaiKhoanDto, TaiKhoan>()
-            .ForMember(dest => dest.LoaiTaiKhoaEnum,
-            opt => opt.MapFrom(src => ParseEnum<LoaiTaiKhoaEnum>(src.LoaiTKhoan, "Loại tài khoản add")));
-        CreateMap<RequestUpdateTaiKhoanDto, TaiKhoan>()
-            .ForMember(dest => dest.LoaiTaiKhoaEnum,
-            opt => opt.MapFrom(src => ParseEnum<LoaiTaiKhoaEnum>(src.LoaiTKhoan, "Loại tài khoản update")));
-        CreateMap<TaiKhoan, ResponseTaiKhoanDto>()
-            .ForMember(dest => dest.LoaiTKhoan, opt => opt.MapFrom(src => src.LoaiTaiKhoaEnum.ToString()));
         //map truong
         CreateMap<RequestAddTruongDto, Truong>();
         CreateMap<RequestUpdateTruongDto, Truong>();

@@ -83,6 +83,7 @@ public class ServiceLopHocPhan : IServiceLopHocPhan
             throw new LopHocPhanNotFoundException(id);
         }
         var lopHocPhanUpdate = _mapper.Map<LopHocPhan>(request);
+        lopHocPhanUpdate.UpdatedAt = DateTime.Now;
         await _repositoryMaster.ExecuteInTransactionAsync(async () =>
         {
             _repositoryMaster.LopHocPhan.UpdateLopHocPhan(lopHocPhanUpdate);

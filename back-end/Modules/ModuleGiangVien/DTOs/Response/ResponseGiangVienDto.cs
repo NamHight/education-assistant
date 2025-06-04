@@ -23,4 +23,5 @@ public class ResponseGiangVienDto
     public Guid? BoMonId { get; set; }
     public DateTime? CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
+    public DateTime? DeletedAt { get; set; }
 }

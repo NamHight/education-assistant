@@ -6,7 +6,7 @@ using Education_assistant.Repositories;
 using Education_assistant.Repositories.Paginations;
 using Microsoft.EntityFrameworkCore;
 
-namespace Education_assistant.Modules.ModuleGiangVien.Repositories;
+namespace Education_assistant.Modules.ModuleGiangVien.Repositories.GiangViens;
 
 public class RepositoryGiangVien : RepositoryBase<GiangVien>, IRepositoryGiangVien
 {
@@ -43,8 +43,14 @@ public class RepositoryGiangVien : RepositoryBase<GiangVien>, IRepositoryGiangVi
         return await FindByCondition(item => item.Id == id, trackChanges).FirstOrDefaultAsync();
     }
 
+    public async Task<GiangVien?> GetGiangVienDeleteAsync(Guid id, bool trackChanges)
+    {
+        return await FindByCondition(item => item.Id == id, trackChanges).IgnoreQueryFilters().FirstOrDefaultAsync();
+    }
+
     public void UpdateGiangVien(GiangVien giangVien)
     {
         Update(giangVien);
     }
+    
 }

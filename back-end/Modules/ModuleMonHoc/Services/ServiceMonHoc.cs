@@ -87,6 +87,7 @@ public class ServiceMonHoc : IServiceMonHoc
             throw new MonHocNotFoundException(id);
         }
         var monHocUpdate = _mapper.Map<MonHoc>(request);
+        monHocUpdate.UpdatedAt = DateTime.Now;
         await _repositoryMaster.ExecuteInTransactionAsync(async () =>
         {
             _repositoryMaster.MonHoc.UpdateMonHoc(monHocUpdate);

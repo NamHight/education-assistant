@@ -80,6 +80,7 @@ public class ServiceBoMon : IServiceBoMon
             throw new BoMonNotFoundException(id);
         }
         var boMonUpdate = _mapper.Map<BoMon>(request);
+        boMonUpdate.UpdatedAt = DateTime.Now;
         await _repositoryMaster.ExecuteInTransactionAsync(async () =>
         {
             _repositoryMaster.BoMon.UpdateBoMon(boMonUpdate);
