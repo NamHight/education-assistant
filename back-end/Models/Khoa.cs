@@ -41,4 +41,5 @@ public class Khoa : BaseEntity
     public virtual ICollection<ChuongTrinhDaoTao>? DanhSachChuongTrinhDaoTao { get; set; }
     public virtual ICollection<MonHoc>? DanhSachMonHoc { get; set; }
     public virtual ICollection<GiangVien>? DanhSachGiangVien { get; set; }
+    public virtual ICollection<Nganh>? DanhSachNganh { get; set; }
 }

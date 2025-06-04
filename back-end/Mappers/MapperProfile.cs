@@ -1,14 +1,29 @@
 ﻿using AutoMapper;
 using Education_assistant.Models;
 using Education_assistant.Models.Enums;
+using Education_assistant.Modules.ModuleBoMon.DTOs.Request;
+using Education_assistant.Modules.ModuleBoMon.DTOs.Response;
+using Education_assistant.Modules.ModuleChiTietChuongTrinhDaoTao.DTOs.Request;
+using Education_assistant.Modules.ModuleChiTietChuongTrinhDaoTao.DTOs.Response;
+using Education_assistant.Modules.ModuleChiTietLopHocPhan.DTOs.Request;
+using Education_assistant.Modules.ModuleChiTietLopHocPhan.DTOs.Response;
+using Education_assistant.Modules.ModuleChuongTrinhDaoTao.DTOs.Request;
+using Education_assistant.Modules.ModuleChuongTrinhDaoTao.DTOs.Response;
+using Education_assistant.Modules.ModuleGiangVien.DTOs.Request;
+using Education_assistant.Modules.ModuleGiangVien.DTOs.Response;
 using Education_assistant.Modules.ModuleKhoa.DTOs.Request;
 using Education_assistant.Modules.ModuleKhoa.DTOs.Response;
+using Education_assistant.Modules.ModuleLopHocPhan.DTOs.Request;
+using Education_assistant.Modules.ModuleLopHocPhan.DTOs.Response;
 using Education_assistant.Modules.ModuleMonHoc.DTOs.Request;
 using Education_assistant.Modules.ModuleMonHoc.DTOs.Response;
-using Education_assistant.Modules.ModuleTaiKhoan.DTOs.Request;
-using Education_assistant.Modules.ModuleTaiKhoan.DTOs.Response;
+using Education_assistant.Modules.ModuleNganh.DTOs.Request;
+using Education_assistant.Modules.ModuleNganh.DTOs.Response;
+using Education_assistant.Modules.ModuleSinhVien.DTOs.Request;
+using Education_assistant.Modules.ModuleSinhVien.DTOs.Response;
 using Education_assistant.Modules.ModuleTruong.DTOs.Request;
 using Education_assistant.Modules.ModuleTruong.DTOs.Response;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
 
 namespace Education_assistant.Mappers;
 
@@ -16,47 +31,55 @@ public class MapperProfile : Profile
 {
     public MapperProfile()
     {
-        CreateMap<RequestAddTaiKhoanDto, TaiKhoan>()
-            .ForMember(dest => dest.LoaiTaiKhoaEnum,
-            opt => opt.MapFrom(src => ParseEnum<LoaiTaiKhoaEnum>(src.LoaiTKhoan, "Loại tài khoản add")));
-        CreateMap<RequestUpdateTaiKhoanDto, TaiKhoan>()
-            .ForMember(dest => dest.LoaiTaiKhoaEnum,
-            opt => opt.MapFrom(src => ParseEnum<LoaiTaiKhoaEnum>(src.LoaiTKhoan, "Loại tài khoản update")));
-        CreateMap<TaiKhoan, ResponseTaiKhoanDto>()
-            .ForMember(dest => dest.LoaiTKhoan, opt => opt.MapFrom(src => src.LoaiTaiKhoaEnum.ToString()));
-
         //map truong
-        CreateMap<Truong, RequestAddTruongDto>()
-            .ReverseMap();
-        CreateMap<Truong, RequestUpdateTruongDto>()
-            .ReverseMap();
-        CreateMap<Truong, ResponseTruongDto>()
-            .ReverseMap();
+        CreateMap<RequestAddTruongDto, Truong>();
+        CreateMap<RequestUpdateTruongDto, Truong>();
+        CreateMap<Truong, ResponseTruongDto>();
         //map khoa
-        CreateMap<Khoa, RequestAddKhoaDto>()
-            .ReverseMap();
-        CreateMap<Khoa, RequestUpdateKhoaDto>()
-            .ReverseMap();
-        CreateMap<Khoa, ResponseKhoaDto>()
-            .ReverseMap();
+        CreateMap<RequestAddKhoaDto, Khoa>();
+        CreateMap<RequestUpdateKhoaDto, Khoa>();
+        CreateMap<Khoa, ResponseKhoaDto>();
         //map monhoc
-        CreateMap<RequestAddMonHocDto, MonHoc>()
-            .ForMember(dest => dest.LoaiMonHocEnum,
-                    opt => opt.MapFrom(src => ParseEnum<LoaiMonHocEnum>(src.LoaiMon, "Loại môn học add")));
-        CreateMap<RequestUpdateMonHocDto, MonHoc>()
-            .ForMember(dest => dest.LoaiMonHocEnum,
-                    opt => opt.MapFrom(src => ParseEnum<LoaiMonHocEnum>(src.LoaiMon, "Loại môn học update")));
-        CreateMap<MonHoc, ResponseMonHocDto>()
-            .ForMember(dest => dest.LoaiMon, opt => opt.MapFrom(src => src.LoaiMonHocEnum.ToString()));
-    }
-    //method parseEnum generic
-    private static TEnum ParseEnum<TEnum>(string? value, string fieldName = "giá trị")
-     where TEnum : struct, Enum
-    {
-        if (Enum.TryParse<TEnum>(value, true, out var result))
-        {
-            return result;
-        }
-        throw new ArgumentException($"{fieldName} không hợp lệ. Giá trị hợp lệ: {string.Join(", ", Enum.GetNames(typeof(TEnum)))}");
+        CreateMap<RequestAddMonHocDto, MonHoc>();
+        CreateMap<RequestUpdateMonHocDto, MonHoc>();
+        CreateMap<MonHoc, ResponseMonHocDto>();
+
+        //map chuong trinh dao tao
+        CreateMap<RequestAddChuongTrinhDaoTaoDto, ChuongTrinhDaoTao>();
+        CreateMap<RequestUpdateChuongTrinhDaoTaoDto, ChuongTrinhDaoTao>();
+        CreateMap<ChuongTrinhDaoTao, ResponseChuongTrinhDaoTaoDto>();
+        //map chi tiết chương trình đào tạo 
+        CreateMap<RequestAddChiTietChuongTrinhDaoTaoDto, ChiTietChuongTrinhDaoTao>();
+        CreateMap<RequestUpdateChiTietChuongTrinhDaoTaoDto, ChiTietChuongTrinhDaoTao>();
+        CreateMap<ChiTietChuongTrinhDaoTao, ResponseChiTietChuongTrinhDaoTaoDto>();
+
+        //map bộ môn
+        CreateMap<RequestAddBoMonDto, BoMon>();
+        CreateMap<RequestUpdateBoMonDto, BoMon>();
+        CreateMap<BoMon, ResponseBoMonDto>();
+
+        //map lớp học phần
+        CreateMap<RequestAddLopHocPhanDto, LopHocPhan>();
+        CreateMap<RequestUpdateLopHocPhanDto, LopHocPhan>();
+        CreateMap<LopHocPhan, ResponseLopHocPhanDto>();
+
+        //map giangvien
+        CreateMap<RequestAddGiangVienDto, GiangVien>();
+        CreateMap<RequestUpdateGiangVienDto, GiangVien>();
+        CreateMap<GiangVien, ResponseGiangVienDto>();
+        //chi tiết lớp học phần
+        CreateMap<RequestAddChiTietLopHocPhanDto, ChiTietLopHocPhan>();
+        CreateMap<RequestUpdateChiTietLopHocPhanDto, ChiTietLopHocPhan>();
+        CreateMap<ChiTietLopHocPhan, ResponseChiTietLopHocPhanDto>();
+
+        //map sinh vien
+        CreateMap<RequestAddSinhVienDto, SinhVien>();
+        CreateMap<RequestUpdateSinhVienDto, SinhVien>();
+        CreateMap<SinhVien, ResponseSinhVienDto>();
+
+        //map ngành
+        CreateMap<RequestAddNganhDto, Nganh>();
+        CreateMap<RequestUpdateNganhDto, Nganh>();
+        CreateMap<Nganh, ResponseNganhDto>();
     }
 }

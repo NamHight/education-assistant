@@ -23,9 +23,9 @@ public class RepositoryChiTietChuongTrinhDaoTao : RepositoryBase<ChiTietChuongTr
         Delete(chiTietChuongTrinhDaoTao);
     }
 
-    public async Task<PagedListAsync<ChiTietChuongTrinhDaoTao>> GetAllPaginatedAndSearchOrSortAsync(int page, int limit)
+    public async Task<PagedListAsync<ChiTietChuongTrinhDaoTao>?> GetAllChiTietChuongTrinhDaoTaoAsync(int page, int limit)
     {
-        return await PagedListAsync<ChiTietChuongTrinhDaoTao>.ToPagedListAsync(_context.ChiTietChuongTrinhDaoTaos, page, limit);
+        return await PagedListAsync<ChiTietChuongTrinhDaoTao>.ToPagedListAsync(_context.ChiTietChuongTrinhDaoTaos!, page, limit);
     }
 
     public async Task<ChiTietChuongTrinhDaoTao?> GetChiTietChuongTrinhDaoTaoByIdAsync(Guid id, bool trackChanges)

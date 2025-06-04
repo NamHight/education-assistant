@@ -25,7 +25,7 @@ public class RepositoryHocBa : RepositoryBase<HocBa>, IRepositoryHocBa
 
     public async Task<PagedListAsync<HocBa>> GetAllPaginatedAndSearchOrSortAsync(int page, int limit)
     {
-        return await PagedListAsync<HocBa>.ToPagedListAsync(_context.HocBas, page, limit);
+        return await PagedListAsync<HocBa>.ToPagedListAsync(_context.HocBas!, page, limit);
     }
 
     public async Task<HocBa?> GetHocBaByIdAsync(Guid id, bool trackChanges)

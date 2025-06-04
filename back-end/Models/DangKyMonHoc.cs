@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Education_assistant.Models.Enums;
 
 namespace Education_assistant.Models;
 [Table("dang_ky_mon_hoc")]
@@ -14,9 +15,9 @@ public class DangKyMonHoc : BaseEntity
     public int? TrangThai { get; set; }
 
     [NotMapped]
-    public DangKyMonHocTrangThaiEnum? DangKyMonHocTrangThaiEnum
+    public TrangThaiDangKyMonHocEnum? TrangThaiDangKyMonHocEnum
     { 
-        get => TrangThai.HasValue ? (DangKyMonHocTrangThaiEnum)TrangThai.Value : null; 
+        get => TrangThai.HasValue ? (TrangThaiDangKyMonHocEnum)TrangThai.Value : null; 
         set => TrangThai = value.HasValue ? (int)value.Value : null;
     }
 

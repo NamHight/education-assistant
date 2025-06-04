@@ -25,7 +25,7 @@ public class RepositoryLichBieu : RepositoryBase<LichBieu>, IRepositoryLichBieu
 
     public async Task<PagedListAsync<LichBieu>> GetAllPaginatedAndSearchOrSortAsync(int page, int limit)
     {
-        return await PagedListAsync<LichBieu>.ToPagedListAsync(_context.LichBieus, page, limit);
+        return await PagedListAsync<LichBieu>.ToPagedListAsync(_context.LichBieus!, page, limit);
     }
 
     public async Task<LichBieu?> GetLichBieuByIdAsync(Guid id, bool trackChanges)

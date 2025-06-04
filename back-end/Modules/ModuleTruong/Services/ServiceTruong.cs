@@ -2,7 +2,7 @@ using System;
 using AutoMapper;
 using Education_assistant.Contracts.LoggerServices;
 using Education_assistant.Exceptions;
-using Education_assistant.Exceptions.ThrowError.ThrowErrorTruongs;
+using Education_assistant.Exceptions.ThrowError.TruongExceptions;
 using Education_assistant.Models;
 using Education_assistant.Modules.ModuleTruong.DTOs.Request;
 using Education_assistant.Modules.ModuleTruong.DTOs.Response;

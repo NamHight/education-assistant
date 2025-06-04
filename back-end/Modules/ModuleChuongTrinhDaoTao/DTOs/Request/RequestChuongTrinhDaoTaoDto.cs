@@ -1,0 +1,51 @@
+using System;
+using System.ComponentModel.DataAnnotations;
+
+namespace Education_assistant.Modules.ModuleChuongTrinhDaoTao.DTOs.Request;
+
+public class RequestAddChuongTrinhDaoTaoDto
+{
+    [Required(ErrorMessage = "Mã chương trình không được để trống")]
+    [MaxLength(255, ErrorMessage = "Mã chương trình không được quá 255 ký tự")]
+    public string MaChuongTrinh { get; set; } = string.Empty;
+
+    [Required(ErrorMessage = "Tên chương trình không được để trống")]
+    [MaxLength(255, ErrorMessage = "Tên chương trình không được quá 255 ký tự")]
+    public string TenChuongTrinh { get; set; } = string.Empty;
+
+    [Required(ErrorMessage = "Loai chương trình không được để trống")]
+    public int LoaiChuongTrinhDaoTaoEnum { get; set; }
+    [Required(ErrorMessage = "Thời gian đào tạo không được để trống")]
+    public string ThoiGianDaoTao { get; set; } = string.Empty;
+    [Required(ErrorMessage = "Học phí không được để trống")]
+    public decimal HocPhi { get; set; }
+    public string? MoTa { get; set; }
+    [Required(ErrorMessage = "Tổng số tín chỉ không được để trống")]
+    public int TongSoTinChi { get; set; }
+    [Required(ErrorMessage = "Id khoa không được để trống")]
+    public Guid? KhoaId { get; set; }
+}
+public class RequestUpdateChuongTrinhDaoTaoDto
+{
+    [Required(ErrorMessage = "Id không được để trống")]
+    public Guid Id { get; set; }
+    [Required(ErrorMessage = "Mã chương trình không được để trống")]
+    [MaxLength(255, ErrorMessage = "Mã chương trình không được quá 255 ký tự")]
+    public string MaChuongTrinh { get; set; } = string.Empty;
+
+    [Required(ErrorMessage = "Tên chương trình không được để trống")]
+    [MaxLength(255, ErrorMessage = "Tên chương trình không được quá 255 ký tự")]
+    public string TenChuongTrinh { get; set; } = string.Empty;
+
+    [Required(ErrorMessage = "Loai chương trình không được để trống")]
+    public int LoaiChuongTrinhDaoTaoEnum { get; set; }
+    [Required(ErrorMessage = "Thời gian đào tạo không được để trống")]
+    public string ThoiGianDaoTao { get; set; } = string.Empty;
+    [Required(ErrorMessage = "Học phí không được để trống")]
+    public decimal HocPhi { get; set; }
+    public string? MoTa { get; set; }
+    [Required(ErrorMessage = "Tổng số tín chỉ không được để trống")]
+    public int TongSoTinChi { get; set; }
+    [Required(ErrorMessage = "Id khoa không được để trống")]
+    public Guid? KhoaId { get; set; }
+}
