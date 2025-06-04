@@ -1,5 +1,6 @@
 ﻿using Education_assistant.Mappers;
 using Newtonsoft.Json;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Education_assistant.Extensions;
 
@@ -21,6 +22,7 @@ public static class PresentationExtensions
             });
 
         services.AddAutoMapper(typeof(MapperProfile).Assembly);
+        services.Configure<ApiBehaviorOptions>(options => { options.SuppressModelStateInvalidFilter = true; });
         return services;
     }
 }

@@ -31,7 +31,6 @@ builder.Services
     .AddInfrastructure(builder.Configuration)
     .AddPresentation();
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-Console.WriteLine($"Connection failed: {connectionString}");
 var app = builder.Build();
 var logger = app.Services.GetRequiredService<ILoggerService>();
 app.ConfigureExceptionHandler(logger);
