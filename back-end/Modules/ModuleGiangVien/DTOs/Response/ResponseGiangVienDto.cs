@@ -7,8 +7,8 @@ public class ResponseGiangVienDto
     public Guid Id { get; set; }
     public string? HoTen { get; set; }
     public string Email { get; set; } = string.Empty;
-    public string? ChucVuGiangVien { get; set; }
-    public string? GioiTinhGiangVien { get; set; }
+    public int? ChucVuGiangVienEnum { get; set; }
+    public int? GioiTinhEnum { get; set; }
     public DateTime? NgaySinh { get; set; }
     public string? CCCD { get; set; } = string.Empty;
     public string? SoDienThoai { get; set; }
@@ -17,7 +17,7 @@ public class ResponseGiangVienDto
     public string? TrinhDo { get; set; }
     public string? ChuyenNganh { get; set; }
     public string? AnhDaiDien { get; set; }
-    public string? TrangThaiGiaoVien { get; set; }
+    public int? TrangThaiGiangVienEnum { get; set; }
     public Guid? TaiKhoanId { get; set; }
     public Guid? KhoaId { get; set; }
     public Guid? BoMonId { get; set; }

@@ -2,7 +2,7 @@ using System;
 using System.Security.Cryptography;
 using AutoMapper;
 using Education_assistant.Contracts.LoggerServices;
-using Education_assistant.Exceptions.ThrowError.ThrowErrorChuongTrinhDaoTaos;
+using Education_assistant.Exceptions.ThrowError.ChuongTrinhDaoTaoExceptions;
 using Education_assistant.Models;
 using Education_assistant.Modules.ModuleChuongTrinhDaoTao.DTOs.Request;
 using Education_assistant.Modules.ModuleChuongTrinhDaoTao.DTOs.Response;

@@ -17,6 +17,8 @@ using Education_assistant.Modules.ModuleLopHocPhan.DTOs.Request;
 using Education_assistant.Modules.ModuleLopHocPhan.DTOs.Response;
 using Education_assistant.Modules.ModuleMonHoc.DTOs.Request;
 using Education_assistant.Modules.ModuleMonHoc.DTOs.Response;
+using Education_assistant.Modules.ModuleNganh.DTOs.Request;
+using Education_assistant.Modules.ModuleNganh.DTOs.Response;
 using Education_assistant.Modules.ModuleSinhVien.DTOs.Request;
 using Education_assistant.Modules.ModuleSinhVien.DTOs.Response;
 using Education_assistant.Modules.ModuleTruong.DTOs.Request;
@@ -43,23 +45,13 @@ public class MapperProfile : Profile
         CreateMap<MonHoc, ResponseMonHocDto>();
 
         //map chuong trinh dao tao
-        CreateMap<RequestAddChuongTrinhDaoTaoDto, ChuongTrinhDaoTao>()
-            .ForMember(dest => dest.LoaiChuongTrinhDaoTaoEnum,
-                    opt => opt.MapFrom(src => ParseEnum<LoaiChuongTrinhDaoTaoEnum>(src.LoaiChuongTrinh, "Loai chương trình đào tạo add")));
-        CreateMap<RequestUpdateChuongTrinhDaoTaoDto, ChuongTrinhDaoTao>()
-            .ForMember(dest => dest.LoaiChuongTrinhDaoTaoEnum,
-                    opt => opt.MapFrom(src => ParseEnum<LoaiChuongTrinhDaoTaoEnum>(src.LoaiChuongTrinh, "Loại chương trình đào tạo update")));
-        CreateMap<ChuongTrinhDaoTao, ResponseChuongTrinhDaoTaoDto>()
-            .ForMember(dest => dest.LoaiChuongTrinh, opt => opt.MapFrom(src => src.LoaiChuongTrinhDaoTaoEnum.ToString()));
+        CreateMap<RequestAddChuongTrinhDaoTaoDto, ChuongTrinhDaoTao>();
+        CreateMap<RequestUpdateChuongTrinhDaoTaoDto, ChuongTrinhDaoTao>();
+        CreateMap<ChuongTrinhDaoTao, ResponseChuongTrinhDaoTaoDto>();
         //map chi tiết chương trình đào tạo 
-        CreateMap<RequestAddChiTietChuongTrinhDaoTaoDto, ChiTietChuongTrinhDaoTao>()
-            .ForMember(dest => dest.LoaiMonHocEnum,
-                opt => opt.MapFrom(src => ParseEnum<LoaiMonHocEnum>(src.LoaiMon, "add chi tiết chương trình đào tạo")));
-        CreateMap<RequestUpdateChiTietChuongTrinhDaoTaoDto, ChiTietChuongTrinhDaoTao>()
-            .ForMember(dest => dest.LoaiMonHocEnum,
-                opt => opt.MapFrom(src => ParseEnum<LoaiMonHocEnum>(src.LoaiMon, "update chi tiết chương trình đào tạo")));
-        CreateMap<ChiTietChuongTrinhDaoTao, ResponseChiTietChuongTrinhDaoTaoDto>()
-            .ForMember(dest => dest.LoaiMon, opt => opt.MapFrom(src => src.LoaiMonHocEnum.ToString()));
+        CreateMap<RequestAddChiTietChuongTrinhDaoTaoDto, ChiTietChuongTrinhDaoTao>();
+        CreateMap<RequestUpdateChiTietChuongTrinhDaoTaoDto, ChiTietChuongTrinhDaoTao>();
+        CreateMap<ChiTietChuongTrinhDaoTao, ResponseChiTietChuongTrinhDaoTaoDto>();
 
         //map bộ môn
         CreateMap<RequestAddBoMonDto, BoMon>();
@@ -67,29 +59,14 @@ public class MapperProfile : Profile
         CreateMap<BoMon, ResponseBoMonDto>();
 
         //map lớp học phần
-        CreateMap<RequestAddLopHocPhanDto, LopHocPhan>()
-            .ForMember(dest => dest.TrangThaiLopHocPhanEnum, opt => opt.MapFrom(src => ParseEnum<TrangThaiLopHocPhanEnum>(src.TrangThaiLop, "add lớp học phần")));
-        CreateMap<RequestUpdateLopHocPhanDto, LopHocPhan>()
-            .ForMember(dest => dest.TrangThaiLopHocPhanEnum, opt => opt.MapFrom(src => ParseEnum<TrangThaiLopHocPhanEnum>(src.TrangThaiLop, "update lớp học phần")));
-        CreateMap<LopHocPhan, ResponseLopHocPhanDto>()
-            .ForMember(dest => dest.TrangThaiLop, opt => opt.MapFrom(src => src.TrangThaiLopHocPhanEnum.ToString()));
+        CreateMap<RequestAddLopHocPhanDto, LopHocPhan>();
+        CreateMap<RequestUpdateLopHocPhanDto, LopHocPhan>();
+        CreateMap<LopHocPhan, ResponseLopHocPhanDto>();
 
         //map giangvien
-        CreateMap<RequestAddGiangVienDto, GiangVien>()
-            .ForMember(dest => dest.ChucVuGiangVienEnum, opt => opt.MapFrom(src => ParseEnum<ChucVuGiangVienEnum>(src.ChucVuGiangVien, "add chức vụ giảng viên")))
-            .ForMember(dest => dest.GioiTinhEnum, opt => opt.MapFrom(src => ParseEnum<GioiTinhEnum>(src.GioiTinhGiangVien, "add giới tính giảng viên")))
-            .ForMember(dest => dest.TrangThaiGiangVienEnum, opt => opt.MapFrom(src => ParseEnum<TrangThaiGiangVienEnum>(src.TrangThaiGiangVien, "add giới tính giảng viên")));
-
-        CreateMap<RequestUpdateGiangVienDto, GiangVien>()
-            .ForMember(dest => dest.ChucVuGiangVienEnum, opt => opt.MapFrom(src => ParseEnum<ChucVuGiangVienEnum>(src.ChucVuGiangVien, "update chức vụ giảng viên")))
-            .ForMember(dest => dest.GioiTinhEnum, opt => opt.MapFrom(src => ParseEnum<GioiTinhEnum>(src.GioiTinhGiangVien, "update giới tính giảng viên")))
-            .ForMember(dest => dest.TrangThaiGiangVienEnum, opt => opt.MapFrom(src => ParseEnum<TrangThaiGiangVienEnum>(src.TrangThaiGiangVien, "update giới tính giảng viên")));
-
-        CreateMap<GiangVien, ResponseGiangVienDto>()
-            .ForMember(dest => dest.ChucVuGiangVien, opt => opt.MapFrom(src => src.ChucVuGiangVienEnum.ToString()))
-            .ForMember(dest => dest.GioiTinhGiangVien, opt => opt.MapFrom(src => src.GioiTinhEnum.ToString()))
-            .ForMember(dest => dest.TrangThaiGiaoVien, opt => opt.MapFrom(src => src.TrangThaiGiangVienEnum.ToString()));
-
+        CreateMap<RequestAddGiangVienDto, GiangVien>();
+        CreateMap<RequestUpdateGiangVienDto, GiangVien>();
+        CreateMap<GiangVien, ResponseGiangVienDto>();
         //chi tiết lớp học phần
         CreateMap<RequestAddChiTietLopHocPhanDto, ChiTietLopHocPhan>();
         CreateMap<RequestUpdateChiTietLopHocPhanDto, ChiTietLopHocPhan>();
@@ -99,15 +76,10 @@ public class MapperProfile : Profile
         CreateMap<RequestAddSinhVienDto, SinhVien>();
         CreateMap<RequestUpdateSinhVienDto, SinhVien>();
         CreateMap<SinhVien, ResponseSinhVienDto>();
-    }
-    //method parseEnum generic
-    private static TEnum ParseEnum<TEnum>(string? value, string fieldName = "giá trị")
-     where TEnum : struct, Enum
-    {
-        if (Enum.TryParse<TEnum>(value, true, out var result))
-        {
-            return result;
-        }
-        throw new ArgumentException($"{fieldName} không hợp lệ. Giá trị hợp lệ: {string.Join(", ", Enum.GetNames(typeof(TEnum)))}");
+
+        //map ngành
+        CreateMap<RequestAddNganhDto, Nganh>();
+        CreateMap<RequestUpdateNganhDto, Nganh>();
+        CreateMap<Nganh, ResponseNganhDto>();
     }
 }

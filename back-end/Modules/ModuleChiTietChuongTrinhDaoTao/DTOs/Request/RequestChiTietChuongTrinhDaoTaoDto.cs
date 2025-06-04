@@ -20,8 +20,8 @@ public class RequestAddChiTietChuongTrinhDaoTaoDto
     [Required(ErrorMessage = "Điểm tích lũy không được để trống")]
     public bool DiemTichLuy { get; set; }
 
-    [Required(ErrorMessage = "Điểm tích lũy không được để trống")]
-    public string LoaiMon { get; set; } = string.Empty;
+    [Required(ErrorMessage = "Loại môn không được để trống")]
+    public int? LoaiMonHocEnum { get; set; }
 }
 public class RequestUpdateChiTietChuongTrinhDaoTaoDto
 {
@@ -43,6 +43,6 @@ public class RequestUpdateChiTietChuongTrinhDaoTaoDto
     [Required(ErrorMessage = "Điểm tích lũy không được để trống")]
     public bool DiemTichLuy { get; set; }
 
-    [Required(ErrorMessage = "Điểm tích lũy không được để trống")]
-    public string LoaiMon { get; set; } = string.Empty;
+    [Required(ErrorMessage = "Loại môn không được để trống")]
+    public int? LoaiMonHocEnum { get; set; }
 }

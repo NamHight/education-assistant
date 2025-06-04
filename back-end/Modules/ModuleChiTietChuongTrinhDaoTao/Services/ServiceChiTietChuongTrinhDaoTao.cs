@@ -1,7 +1,7 @@
 using System;
 using AutoMapper;
 using Education_assistant.Contracts.LoggerServices;
-using Education_assistant.Exceptions.ThrowError.ThrowErrorChiTietChuongTrinhDaoTao;
+using Education_assistant.Exceptions.ThrowError.ChiTietChuongTrinhDaoTaoExceptions;
 using Education_assistant.Models;
 using Education_assistant.Modules.ModuleChiTietChuongTrinhDaoTao.DTOs.Request;
 using Education_assistant.Modules.ModuleChiTietChuongTrinhDaoTao.DTOs.Response;

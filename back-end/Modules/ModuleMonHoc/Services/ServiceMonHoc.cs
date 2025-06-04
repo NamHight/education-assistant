@@ -1,7 +1,7 @@
 using System;
 using AutoMapper;
 using Education_assistant.Contracts.LoggerServices;
-using Education_assistant.Exceptions.ThrowError.ThrowErrorMonHoc;
+using Education_assistant.Exceptions.ThrowError.MonHocExceptions;
 using Education_assistant.Models;
 using Education_assistant.Modules.ModuleMonHoc.DTOs.Request;
 using Education_assistant.Modules.ModuleMonHoc.DTOs.Response;

@@ -7,7 +7,7 @@ public class ResponseChuongTrinhDaoTaoDto
     public Guid Id { get; set; }
     public string MaChuongTrinh { get; set; } = string.Empty;
     public string TenChuongTrinh { get; set; } = string.Empty;
-    public string LoaiChuongTrinh { get; set; } = string.Empty;
+    public int LoaiChuongTrinhDaoTaoEnum { get; set; }
     public string ThoiGianDaoTao { get; set; } = string.Empty;
     public decimal HocPhi { get; set; }
     public string? MoTa { get; set; }

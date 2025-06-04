@@ -12,7 +12,7 @@ public class RequestAddLopHocPhanDto
     [Required(ErrorMessage = "Sỉ số không được để trống")]
     public int SiSo { get; set; }
     [Required(ErrorMessage = "Trạng thái không được để trống")]
-    public string? TrangThaiLop { get; set; } = string.Empty;
+    public int TrangThaiLopHocPhanEnum { get; set; } 
 
     [Required(ErrorMessage = "Id Môn học không được để trống")]
     public Guid? MonHocId { get; set; }
@@ -32,7 +32,7 @@ public class RequestUpdateLopHocPhanDto
     [Required(ErrorMessage = "Sỉ số không được để trống")]
     public int SiSo { get; set; }
     [Required(ErrorMessage = "Trạng thái không được để trống")]
-    public string? TrangThaiLop { get; set; } = string.Empty;
+    public int TrangThaiLopHocPhanEnum { get; set; } 
 
     [Required(ErrorMessage = "Id Môn học không được để trống")]
     public Guid? MonHocId { get; set; }

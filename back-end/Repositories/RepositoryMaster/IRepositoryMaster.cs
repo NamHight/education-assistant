@@ -11,6 +11,7 @@ using Education_assistant.Modules.ModuleLichBieu.Repositories;
 using Education_assistant.Modules.ModuleLopHoc.Repositories;
 using Education_assistant.Modules.ModuleLopHocPhan.Repositories;
 using Education_assistant.Modules.ModuleMonHoc.Repositories;
+using Education_assistant.Modules.ModuleNganh.Repositories;
 using Education_assistant.Modules.ModuleSinhVien.Repositories;
 using Education_assistant.Modules.ModuleTruong.Repositories;
 
@@ -32,6 +33,7 @@ public interface IRepositoryMaster : IDisposable
     IRepositoryTaiKhoan TaiKhoan { get; }
     IRepositoryTruong Truong { get; }
     IRepositoryBoMon BoMon { get; }
+    IRepositoryNganh Nganh { get; }
 
     public Task ExecuteInTransactionAsync(Func<Task> operation);
 

@@ -1,8 +1,7 @@
 using System;
 using AutoMapper;
 using Education_assistant.Contracts.LoggerServices;
-using Education_assistant.Exceptions.ThrowError.ThrowErrorKhoas;
-using Education_assistant.Exceptions.ThrowError.ThrowErrorTruongs;
+using Education_assistant.Exceptions.ThrowError.KhoaExceptions;
 using Education_assistant.Models;
 using Education_assistant.Modules.ModuleKhoa.DTOs.Request;
 using Education_assistant.Modules.ModuleKhoa.DTOs.Response;
@@ -26,10 +25,6 @@ public class ServiceKhoa : IServiceKhoa
     }
     public async Task<ResponseKhoaDto> CreateAsync(RequestAddKhoaDto request)
     {
-        if (request is null)
-        {
-            throw new KhoaBadRequestException("Thông tin Khoa đầu vào không đủ thông tin!");
-        }
         var newKhoa = _mapper.Map<Khoa>(request);
         await _repositoryMaster.ExecuteInTransactionAsync(async () =>
         {
@@ -82,10 +77,6 @@ public class ServiceKhoa : IServiceKhoa
         if (id != request.Id)
         {
             throw new KhoaBadRequestException($"Id: {id} và Id: {request.Id} của khoa không giống nhau!");
-        }
-        if (request is null)
-        {
-            throw new TruongBadRequestException($"Thông tin khoa không đầy đủ!");
         }
         var khoa = await _repositoryMaster.Khoa.GetKhoaByIdAsync(id, false);
         if (khoa is null)

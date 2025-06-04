@@ -2,7 +2,6 @@ using System;
 using AutoMapper;
 using Education_assistant.Contracts.LoggerServices;
 using Education_assistant.Exceptions.ThrowError.BoMonExceptions;
-using Education_assistant.Exceptions.ThrowError.ThrowErrorMonHoc;
 using Education_assistant.Models;
 using Education_assistant.Modules.ModuleBoMon.DTOs.Request;
 using Education_assistant.Modules.ModuleBoMon.DTOs.Response;
@@ -62,7 +61,7 @@ public class ServiceBoMon : IServiceBoMon
         var boMon = await _repositoryMaster.BoMon.GetBoMonByIdAsync(id, false);
         if (boMon is null)
         {
-            throw new MonHocNotFoundException(id);
+            throw new BoMonNotFoundException(id);
         }
         var boMonDto = _mapper.Map<ResponseBoMonDto>(boMon);
         return boMonDto;

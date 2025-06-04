@@ -1,6 +1,6 @@
 using System;
 
-namespace Education_assistant.Exceptions.ThrowError.ThrowErrorKhoas;
+namespace Education_assistant.Exceptions.ThrowError.KhoaExceptions;
 
 public class KhoaBadRequestException : BadRequestException
 {

@@ -10,7 +10,7 @@ public class ResponseChiTietChuongTrinhDaoTaoDto
     public Guid? BoMonId { get; set; }
     public int SoTinChi { get; set; }
     public bool DiemTichLuy { get; set; }
-    public string LoaiMon { get; set; } = string.Empty;
+    public int LoaiMonHocEnum { get; set; }
     public DateTime? CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
 }

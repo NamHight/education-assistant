@@ -1,6 +1,6 @@
 using System;
 
-namespace Education_assistant.Exceptions.ThrowError.ThrowErrorChuongTrinhDaoTaos;
+namespace Education_assistant.Exceptions.ThrowError.ChuongTrinhDaoTaoExceptions;
 
 public class ChuongTrinhDaoTaoBadRequestException : BadRequestException
 {

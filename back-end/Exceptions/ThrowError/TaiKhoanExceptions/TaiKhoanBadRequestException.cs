@@ -1,6 +1,6 @@
 using System;
 
-namespace Education_assistant.Exceptions.ThrowError.ThrowErrorTaiKhoans;
+namespace Education_assistant.Exceptions.ThrowError.TaiKhoanExceptions;
 
 public class TaiKhoanBadRequestException : BadRequestException
 {

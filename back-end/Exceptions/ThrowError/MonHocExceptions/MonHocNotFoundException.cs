@@ -1,6 +1,6 @@
 using System;
 
-namespace Education_assistant.Exceptions.ThrowError.ThrowErrorMonHoc;
+namespace Education_assistant.Exceptions.ThrowError.MonHocExceptions;
 
 public class MonHocNotFoundException : NotFoundException
 {

@@ -6,6 +6,7 @@ using Education_assistant.Modules.ModuleGiangVien.Services;
 using Education_assistant.Modules.ModuleKhoa.Services;
 using Education_assistant.Modules.ModuleLopHocPhan.Services;
 using Education_assistant.Modules.ModuleMonHoc.Services;
+using Education_assistant.Modules.ModuleNganh.Services;
 using Education_assistant.Modules.ModuleSinhVien.Services;
 using Education_assistant.Modules.ModuleTruong.Services;
 
@@ -23,4 +24,5 @@ public interface IServiceMaster
     IServiceLopHocPhan LopHocPhan { get; }
     IServiceChiTietLopHocPhan ChiTietLopHocPhan { get; }
     IServiceSinhVien SinhVien { get; }
+    IServiceNganh Nganh { get; }
 }

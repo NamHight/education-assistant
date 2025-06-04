@@ -1,6 +1,6 @@
 using System;
 
-namespace Education_assistant.Exceptions.ThrowError.ThrowErrorChiTietChuongTrinhDaoTao;
+namespace Education_assistant.Exceptions.ThrowError.ChiTietChuongTrinhDaoTaoExceptions;
 
 public class ChiTietChuongTrinhDaoTaoNotFoundException : NotFoundException
 {

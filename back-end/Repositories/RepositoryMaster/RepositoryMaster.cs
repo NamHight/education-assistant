@@ -12,6 +12,7 @@ using Education_assistant.Modules.ModuleLichBieu.Repositories;
 using Education_assistant.Modules.ModuleLopHoc.Repositories;
 using Education_assistant.Modules.ModuleLopHocPhan.Repositories;
 using Education_assistant.Modules.ModuleMonHoc.Repositories;
+using Education_assistant.Modules.ModuleNganh.Repositories;
 using Education_assistant.Modules.ModuleSinhVien.Repositories;
 using Education_assistant.Modules.ModuleTruong.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -37,9 +38,10 @@ public class RepositoryMaster : IRepositoryMaster
     private readonly Lazy<IRepositoryTaiKhoan> _repositoryTaiKhoan;
     private readonly Lazy<IRepositoryTruong> _repositoryTruong;
     private readonly Lazy<IRepositoryBoMon> _repositoryBoMon;
+    private readonly Lazy<IRepositoryNganh> _repositoryNganh;
     private readonly ILoggerService _loggerService;
     private bool _disposed;
-    private IDbContextTransaction _transaction;
+    private IDbContextTransaction? _transaction;
 
 
     public RepositoryMaster(RepositoryContext repositoryContext, IDbContextFactory<RepositoryContext> contextFactory, ILoggerService loggerService)
@@ -60,6 +62,7 @@ public class RepositoryMaster : IRepositoryMaster
         _repositoryTaiKhoan = new Lazy<IRepositoryTaiKhoan>(() => new RepositoryTaiKhoan(repositoryContext));
         _repositoryTruong = new Lazy<IRepositoryTruong>(() => new RepositoryTruong(repositoryContext));
         _repositoryBoMon = new Lazy<IRepositoryBoMon>(() => new RepositoryBoMon(repositoryContext));
+        _repositoryNganh = new Lazy<IRepositoryNganh>(() => new RepositoryNganh(repositoryContext));
         _loggerService = loggerService;
     }
 
@@ -90,6 +93,8 @@ public class RepositoryMaster : IRepositoryMaster
 
     public IRepositoryBoMon BoMon => _repositoryBoMon.Value;
 
+    public IRepositoryNganh Nganh => _repositoryNganh.Value;
+
     public async Task BeginTransactionAsync()
     {
         _transaction = await _repositoryContext.Database.BeginTransactionAsync();
@@ -99,7 +104,7 @@ public class RepositoryMaster : IRepositoryMaster
     {
         try
         {
-            await _transaction.CommitAsync();
+            await _transaction!.CommitAsync();
         }
         finally
         {

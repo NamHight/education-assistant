@@ -12,7 +12,7 @@ namespace Education_assistant.Modules.ModuleKhoa
     [ApiController]
     public class KhoaController : ControllerBase
     {
-         private readonly IServiceMaster _serviceMaster;
+        private readonly IServiceMaster _serviceMaster;
 
         public KhoaController(IServiceMaster serviceMaster)
         {
