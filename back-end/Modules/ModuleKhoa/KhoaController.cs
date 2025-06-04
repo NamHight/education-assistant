@@ -2,6 +2,7 @@ using System.Text.Json;
 using Education_assistant.Modules.ModuleKhoa.DTOs.Request;
 using Education_assistant.Services.BaseDtos;
 using Education_assistant.Services.ServiceMaster;
+using FashionShop_API.Filters;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -31,12 +32,14 @@ namespace Education_assistant.Modules.ModuleKhoa
             return Ok(result);
         }
         [HttpPost("")]
+        [ServiceFilter(typeof(ValidationFilter))]
         public async Task<ActionResult> AddKhoaAsync([FromBody] RequestAddKhoaDto model)
         {
             var result = await _serviceMaster.Khoa.CreateAsync(model);
             return Ok(result);
         }
         [HttpPut("{id}")]
+        [ServiceFilter(typeof(ValidationFilter))]
         public async Task<ActionResult> UpdateKhoaAsync(Guid id, [FromBody] RequestUpdateKhoaDto model)
         {
             await _serviceMaster.Khoa.UpdateAsync(id, model);

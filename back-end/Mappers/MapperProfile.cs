@@ -17,6 +17,8 @@ using Education_assistant.Modules.ModuleLopHocPhan.DTOs.Request;
 using Education_assistant.Modules.ModuleLopHocPhan.DTOs.Response;
 using Education_assistant.Modules.ModuleMonHoc.DTOs.Request;
 using Education_assistant.Modules.ModuleMonHoc.DTOs.Response;
+using Education_assistant.Modules.ModuleSinhVien.DTOs.Request;
+using Education_assistant.Modules.ModuleSinhVien.DTOs.Response;
 using Education_assistant.Modules.ModuleTruong.DTOs.Request;
 using Education_assistant.Modules.ModuleTruong.DTOs.Response;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
@@ -92,6 +94,11 @@ public class MapperProfile : Profile
         CreateMap<RequestAddChiTietLopHocPhanDto, ChiTietLopHocPhan>();
         CreateMap<RequestUpdateChiTietLopHocPhanDto, ChiTietLopHocPhan>();
         CreateMap<ChiTietLopHocPhan, ResponseChiTietLopHocPhanDto>();
+
+        //map sinh vien
+        CreateMap<RequestAddSinhVienDto, SinhVien>();
+        CreateMap<RequestUpdateSinhVienDto, SinhVien>();
+        CreateMap<SinhVien, ResponseSinhVienDto>();
     }
     //method parseEnum generic
     private static TEnum ParseEnum<TEnum>(string? value, string fieldName = "giá trị")

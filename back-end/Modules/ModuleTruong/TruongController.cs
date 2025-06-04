@@ -33,12 +33,14 @@ namespace Education_assistant.Modules.ModuleTruong
         }
         // [ServiceFilter(typeof(ValidationFilter))]
         [HttpPost("")]
+        [ServiceFilter(typeof(ValidationFilter))]
         public async Task<ActionResult> AddTruongAsync([FromBody] RequestAddTruongDto model)
         {
             var result = await _serviceMaster.Truong.CreateAsync(model);
             return Ok(result);
         }
         [HttpPut("{id}")]
+        [ServiceFilter(typeof(ValidationFilter))]
         public async Task<ActionResult> UpdateTruongAsync(Guid id, [FromBody] RequestUpdateTruongDto model)
         {
             await _serviceMaster.Truong.UpdateAsync(id, model);

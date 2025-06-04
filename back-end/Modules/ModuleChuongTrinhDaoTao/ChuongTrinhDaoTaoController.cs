@@ -31,14 +31,15 @@ namespace Education_assistant.Modules.ModuleChuongTrinhDaoTao
             var result = await _serviceMaster.ChuongTrinhDaoTao.GetChuongTrinhDaoTaoByIdAsync(id, false);
             return Ok(result);
         }
-        [ServiceFilter(typeof(ValidationFilter))]
         [HttpPost]
+        [ServiceFilter(typeof(ValidationFilter))]
         public async Task<ActionResult> AddChuongTrinhDaoTaoAsync([FromBody] RequestAddChuongTrinhDaoTaoDto model)
         {
             var result = await _serviceMaster.ChuongTrinhDaoTao.CreateAsync(model);
             return CreatedAtRoute("GetChuongTrinhDaoTaoId", new { id = result.Id }, result);
         }
         [HttpPut("{id}")]
+        [ServiceFilter(typeof(ValidationFilter))]
         public async Task<ActionResult> UpdateChuongTrinhDaoTaosAsync(Guid id, [FromBody] RequestUpdateChuongTrinhDaoTaoDto model)
         {
             await _serviceMaster.ChuongTrinhDaoTao.UpdateAsync(id, model);

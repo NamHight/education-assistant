@@ -2,6 +2,7 @@ using System.Text.Json;
 using Education_assistant.Modules.ModuleChiTietLopHocPhan.DTOs.Request;
 using Education_assistant.Services.BaseDtos;
 using Education_assistant.Services.ServiceMaster;
+using FashionShop_API.Filters;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -31,12 +32,14 @@ namespace Education_assistant.Modules.ModuleChiTietLopHocPhan
             return Ok(result);
         }
         [HttpPost]
+        [ServiceFilter(typeof(ValidationFilter))]
         public async Task<ActionResult> AddChiTietLopHocPhanAsync([FromBody] RequestAddChiTietLopHocPhanDto model)
         {
             var result = await _serviceMaster.ChiTietLopHocPhan.CreateAsync(model);
             return Ok(result);
         }
         [HttpPut("{id}")]
+        [ServiceFilter(typeof(ValidationFilter))]
         public async Task<ActionResult> UpdateChiTietLopHocPhanAsync(Guid id, [FromBody] RequestUpdateChiTietLopHocPhanDto model)
         {
             await _serviceMaster.ChiTietLopHocPhan.UpdateAsync(id, model);

@@ -38,11 +38,9 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="Modules\ModuleDangKyMonHoc\Services\" />
         <Folder Include="Modules\ModuleHocBa\Services\" />
         <Folder Include="Modules\ModuleLichBieu\Services\" />
         <Folder Include="Modules\ModuleNganh\Services\" />
-        <Folder Include="Modules\ModuleSinhVien\Services\" />
     </ItemGroup>
 
 </Project>

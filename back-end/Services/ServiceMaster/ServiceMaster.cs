@@ -9,6 +9,7 @@ using Education_assistant.Modules.ModuleGiangVien.Services;
 using Education_assistant.Modules.ModuleKhoa.Services;
 using Education_assistant.Modules.ModuleLopHocPhan.Services;
 using Education_assistant.Modules.ModuleMonHoc.Services;
+using Education_assistant.Modules.ModuleSinhVien.Services;
 using Education_assistant.Modules.ModuleTruong.Services;
 using Education_assistant.Repositories.RepositoryMaster;
 
@@ -25,6 +26,7 @@ public class ServiceMaster : IServiceMaster
     private readonly Lazy<IServiceBoMon> _boMon;
     private readonly Lazy<IServiceLopHocPhan> _lopHocPhan;
     private readonly Lazy<IServiceChiTietLopHocPhan> _chiTietLopHocPhan;
+    private readonly Lazy<IServiceSinhVien> _sinhVien;
 
     public ServiceMaster(IRepositoryMaster repositoryMaster, ILoggerService loggerService, IMapper mapper, IPasswordHash password)
     {
@@ -37,6 +39,7 @@ public class ServiceMaster : IServiceMaster
         _boMon = new Lazy<IServiceBoMon>(() => new ServiceBoMon(repositoryMaster, loggerService, mapper));
         _lopHocPhan = new Lazy<IServiceLopHocPhan>(() => new ServiceLopHocPhan(repositoryMaster, loggerService, mapper));
         _chiTietLopHocPhan = new Lazy<IServiceChiTietLopHocPhan>(() => new ServiceChiTietLopHocPhan(repositoryMaster, loggerService, mapper));
+        _sinhVien = new Lazy<IServiceSinhVien>(() => new ServiceSinhVien(repositoryMaster, loggerService, mapper));
     }
 
     public IServiceGiangVien GiangVien => _giangVien.Value;
@@ -48,5 +51,7 @@ public class ServiceMaster : IServiceMaster
     public IServiceBoMon BoMon => _boMon.Value;
     public IServiceLopHocPhan LopHocPhan => _lopHocPhan.Value;
 
-    public IServiceChiTietLopHocPhan ChiTietLopHocPhan => _chiTietLopHocPhan.Value; 
+    public IServiceChiTietLopHocPhan ChiTietLopHocPhan => _chiTietLopHocPhan.Value;
+
+    public IServiceSinhVien SinhVien => _sinhVien.Value;
 }

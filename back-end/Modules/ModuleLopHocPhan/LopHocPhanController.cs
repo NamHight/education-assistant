@@ -2,6 +2,7 @@ using System.Text.Json;
 using Education_assistant.Modules.ModuleLopHocPhan.DTOs.Request;
 using Education_assistant.Services.BaseDtos;
 using Education_assistant.Services.ServiceMaster;
+using FashionShop_API.Filters;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -31,12 +32,14 @@ namespace Education_assistant.Modules.ModuleLopHocPhan
             return Ok(result);
         }
         [HttpPost]
+        [ServiceFilter(typeof(ValidationFilter))]
         public async Task<ActionResult> AddLopHocPhanAsync([FromBody] RequestAddLopHocPhanDto model)
         {
             var result = await _serviceMaster.LopHocPhan.CreateAsync(model);
             return Ok(result);
         }
         [HttpPut("{id}")]
+        [ServiceFilter(typeof(ValidationFilter))]
         public async Task<ActionResult> UpdateLopHocPhanAsync(Guid id, [FromBody] RequestUpdateLopHocPhanDto model)
         {
             await _serviceMaster.LopHocPhan.UpdateAsync(id, model);

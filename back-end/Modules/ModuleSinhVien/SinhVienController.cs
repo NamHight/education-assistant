@@ -1,0 +1,70 @@
+using System.Text.Json;
+using Education_assistant.Modules.ModuleSinhVien.DTOs.Param;
+using Education_assistant.Modules.ModuleSinhVien.DTOs.Request;
+using Education_assistant.Services.BaseDtos;
+using Education_assistant.Services.ServiceMaster;
+using FashionShop_API.Filters;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+
+namespace Education_assistant.Modules.ModuleSinhVien
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class SinhVienController : ControllerBase
+    {
+        private readonly IServiceMaster _serviceMaster;
+
+    public SinhVienController(IServiceMaster serviceMaster)
+    {
+        _serviceMaster = serviceMaster;
+    }
+
+    [HttpGet]
+    public async Task<ActionResult> GetAllSinhVienAsync([FromQuery] ParamBaseDto paramBaseDto)
+    {
+        var result = await _serviceMaster.SinhVien.GetAllSinhVienAsync(paramBaseDto);
+        Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(result.page));
+        return Ok(result.data);
+    }
+    [HttpGet("id-lop")]
+    public async Task<ActionResult> GetAllSinhVienByLopAsync([FromQuery] ParamSinhVienByLopDto paramBaseDto)
+    {
+        var result = await _serviceMaster.SinhVien.GetAllSinhVienByLopIdAsync(paramBaseDto);
+        Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(result.page));
+        return Ok(result.data);
+    }
+    [HttpGet("{id}")]
+    public async Task<ActionResult> GetSinhVienByIdAsync(Guid id)
+    {
+        var result = await _serviceMaster.SinhVien.GetSinhVienByIdAsync(id, false);
+        return Ok(result);
+    }
+    [HttpPut("{id}/restore")]
+    public async Task<ActionResult> GetReStoreSinhVienAsync(Guid id)
+    {
+        var result = await _serviceMaster.SinhVien.ReStoreSinhVienAsync(id);
+        return Ok(result);
+    }
+    [HttpPost]
+    [ServiceFilter(typeof(ValidationFilter))]
+    public async Task<ActionResult> AddSinhVienAsync([FromBody] RequestAddSinhVienDto model)
+    {
+        var result = await _serviceMaster.SinhVien.CreateAsync(model);
+        return Ok(result);
+    }
+    [HttpPut("{id}")]
+    [ServiceFilter(typeof(ValidationFilter))]
+    public async Task<ActionResult> UpdateSinhVienAsync(Guid id, [FromBody] RequestUpdateSinhVienDto model)
+    {
+        await _serviceMaster.SinhVien.UpdateAsync(id, model);
+        return NoContent();
+    }
+    [HttpDelete("{id}")]
+    public async Task<ActionResult> DeleteSinhVienAsync(Guid id)
+    {
+        await _serviceMaster.SinhVien.DeleteAsync(id);
+        return NoContent();
+    }
+    }
+}
