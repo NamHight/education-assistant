@@ -34,10 +34,10 @@
         <PackageReference Include="NLog.Extensions.Logging" Version="5.4.0" />
         <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="8.0.3" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+        <PackageReference Include="Z.EntityFramework.Extensions.EFCore" Version="8.103.8.1" />
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="Modules\ModuleChiTietLopHocPhan\Services\" />
         <Folder Include="Modules\ModuleDangKyMonHoc\Services\" />
         <Folder Include="Modules\ModuleHocBa\Services\" />
         <Folder Include="Modules\ModuleLichBieu\Services\" />

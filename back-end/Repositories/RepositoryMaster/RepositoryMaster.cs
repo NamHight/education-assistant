@@ -106,7 +106,7 @@ public class RepositoryMaster : IRepositoryMaster
 
     public async Task BeginTransactionAsync()
     {
-         _transaction = await _repositoryContext.Database.BeginTransactionAsync();
+        _transaction = await _repositoryContext.Database.BeginTransactionAsync();
     }
 
     public async Task CommitTransactionAsync()
@@ -179,6 +179,7 @@ public class RepositoryMaster : IRepositoryMaster
     }
 
     //method thực thi các db cùng trong một transaction với retry strategy
+    //dùng khi cud bình thường
     public async Task ExecuteInTransactionAsync(Func<Task> operation)
     {
         var strategy = _repositoryContext.Database.CreateExecutionStrategy();
@@ -189,6 +190,30 @@ public class RepositoryMaster : IRepositoryMaster
             {
                 await operation();
                 await _repositoryContext.SaveChangesAsync();
+                await transaction.CommitAsync();
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                _loggerService.LogError($"Error transaction: {ex.Message}");
+                throw new Exception($"Lỗi hệ thống!: {ex.Message}");
+            }
+        });
+    }
+    //dùng cho update hàng loạt
+    public async Task BulkUpdateEntityAsync<T>(IList<T> entities) where T : class
+    {
+        await _repositoryContext.BulkUpdateAsync(entities);
+    }
+    public async Task ExecuteInTransactionBulkEntityAsync(Func<Task> operation)
+    {
+        var strategy = _repositoryContext.Database.CreateExecutionStrategy();
+        await strategy.ExecuteAsync(async () =>
+        {
+            await using var transaction = await _repositoryContext.Database.BeginTransactionAsync();
+            try
+            {
+                await operation();
                 await transaction.CommitAsync();
             }
             catch (Exception ex)

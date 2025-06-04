@@ -5,6 +5,8 @@ using Education_assistant.Modules.ModuleBoMon.DTOs.Request;
 using Education_assistant.Modules.ModuleBoMon.DTOs.Response;
 using Education_assistant.Modules.ModuleChiTietChuongTrinhDaoTao.DTOs.Request;
 using Education_assistant.Modules.ModuleChiTietChuongTrinhDaoTao.DTOs.Response;
+using Education_assistant.Modules.ModuleChiTietLopHocPhan.DTOs.Request;
+using Education_assistant.Modules.ModuleChiTietLopHocPhan.DTOs.Response;
 using Education_assistant.Modules.ModuleChuongTrinhDaoTao.DTOs.Request;
 using Education_assistant.Modules.ModuleChuongTrinhDaoTao.DTOs.Response;
 using Education_assistant.Modules.ModuleGiangVien.DTOs.Request;
@@ -80,12 +82,16 @@ public class MapperProfile : Profile
             .ForMember(dest => dest.ChucVuGiangVienEnum, opt => opt.MapFrom(src => ParseEnum<ChucVuGiangVienEnum>(src.ChucVuGiangVien, "update chức vụ giảng viên")))
             .ForMember(dest => dest.GioiTinhEnum, opt => opt.MapFrom(src => ParseEnum<GioiTinhEnum>(src.GioiTinhGiangVien, "update giới tính giảng viên")))
             .ForMember(dest => dest.TrangThaiGiangVienEnum, opt => opt.MapFrom(src => ParseEnum<TrangThaiGiangVienEnum>(src.TrangThaiGiangVien, "update giới tính giảng viên")));
-            
+
         CreateMap<GiangVien, ResponseGiangVienDto>()
             .ForMember(dest => dest.ChucVuGiangVien, opt => opt.MapFrom(src => src.ChucVuGiangVienEnum.ToString()))
             .ForMember(dest => dest.GioiTinhGiangVien, opt => opt.MapFrom(src => src.GioiTinhEnum.ToString()))
             .ForMember(dest => dest.TrangThaiGiaoVien, opt => opt.MapFrom(src => src.TrangThaiGiangVienEnum.ToString()));
 
+        //chi tiết lớp học phần
+        CreateMap<RequestAddChiTietLopHocPhanDto, ChiTietLopHocPhan>();
+        CreateMap<RequestUpdateChiTietLopHocPhanDto, ChiTietLopHocPhan>();
+        CreateMap<ChiTietLopHocPhan, ResponseChiTietLopHocPhanDto>();
     }
     //method parseEnum generic
     private static TEnum ParseEnum<TEnum>(string? value, string fieldName = "giá trị")

@@ -3,6 +3,7 @@ using Education_assistant.Contracts.LoggerServices;
 using Education_assistant.helpers.implements;
 using Education_assistant.Modules.ModuleBoMon.Services;
 using Education_assistant.Modules.ModuleChiTietChuongTrinhDaoTao.Services;
+using Education_assistant.Modules.ModuleChiTietLopHocPhan.Services;
 using Education_assistant.Modules.ModuleChuongTrinhDaoTao.Services;
 using Education_assistant.Modules.ModuleGiangVien.Services;
 using Education_assistant.Modules.ModuleKhoa.Services;
@@ -23,6 +24,7 @@ public class ServiceMaster : IServiceMaster
     private readonly Lazy<IServiceChiTietChuongTrinhDaoTao> _chiTietChuongTrinhDaoTao;
     private readonly Lazy<IServiceBoMon> _boMon;
     private readonly Lazy<IServiceLopHocPhan> _lopHocPhan;
+    private readonly Lazy<IServiceChiTietLopHocPhan> _chiTietLopHocPhan;
 
     public ServiceMaster(IRepositoryMaster repositoryMaster, ILoggerService loggerService, IMapper mapper, IPasswordHash password)
     {
@@ -34,6 +36,7 @@ public class ServiceMaster : IServiceMaster
         _chiTietChuongTrinhDaoTao = new Lazy<IServiceChiTietChuongTrinhDaoTao>(() => new ServiceChiTietChuongTrinhDaoTao(repositoryMaster, loggerService, mapper));
         _boMon = new Lazy<IServiceBoMon>(() => new ServiceBoMon(repositoryMaster, loggerService, mapper));
         _lopHocPhan = new Lazy<IServiceLopHocPhan>(() => new ServiceLopHocPhan(repositoryMaster, loggerService, mapper));
+        _chiTietLopHocPhan = new Lazy<IServiceChiTietLopHocPhan>(() => new ServiceChiTietLopHocPhan(repositoryMaster, loggerService, mapper));
     }
 
     public IServiceGiangVien GiangVien => _giangVien.Value;
@@ -44,4 +47,6 @@ public class ServiceMaster : IServiceMaster
     public IServiceChiTietChuongTrinhDaoTao ChiTietChuongTrinhDaoTao => _chiTietChuongTrinhDaoTao.Value;
     public IServiceBoMon BoMon => _boMon.Value;
     public IServiceLopHocPhan LopHocPhan => _lopHocPhan.Value;
+
+    public IServiceChiTietLopHocPhan ChiTietLopHocPhan => _chiTietLopHocPhan.Value; 
 }
