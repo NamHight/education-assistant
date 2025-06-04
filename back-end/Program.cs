@@ -5,6 +5,7 @@ using Education_assistant.Mappers;
 using NLog;
 
 var builder = WebApplication.CreateBuilder(args);
+
 Env.Load();
 builder.Configuration.AddEnvironmentVariables();
 

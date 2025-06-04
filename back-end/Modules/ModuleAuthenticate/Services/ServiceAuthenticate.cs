@@ -16,4 +16,6 @@ public class ServiceAuthenticate : IServiceAuthenticate
         _loggerService = loggerService;
         _mapper = mapper;
     }
+    
+
 }
