@@ -38,6 +38,7 @@ public interface IRepositoryMaster : IDisposable
     public Task ExecuteInTransactionAsync(Func<Task> operation);
 
     Task BulkUpdateEntityAsync<T>(IList<T> entities) where T : class;
+    Task BulkAddEntityAsync<T>(IList<T> entities) where T : class;
     Task ExecuteInTransactionBulkEntityAsync(Func<Task> operation);
 
     RepositoryContext CreateNewContext();

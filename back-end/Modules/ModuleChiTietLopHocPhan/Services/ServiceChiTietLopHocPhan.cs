@@ -8,6 +8,7 @@ using Education_assistant.Modules.ModuleChiTietLopHocPhan.DTOs.Response;
 using Education_assistant.Repositories.Paginations;
 using Education_assistant.Repositories.RepositoryMaster;
 using Education_assistant.Services.BaseDtos;
+using OfficeOpenXml;
 
 namespace Education_assistant.Modules.ModuleChiTietLopHocPhan.Services;
 
@@ -66,6 +67,29 @@ public class ServiceChiTietLopHocPhan : IServiceChiTietLopHocPhan
         }
         var diemSoDto = _mapper.Map<ResponseChiTietLopHocPhanDto>(diemSo);
         return diemSoDto;
+    }
+
+    public async Task ImportFileExcelAsync(IFormFile file)
+    {
+        var listDiemSo = new List<ChiTietLopHocPhan>();
+        using (var stream = new MemoryStream())
+        {
+            await file.CopyToAsync(stream);
+            ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
+            using (var package = new ExcelPackage(stream))
+            {
+                ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+                int rowCount = worksheet.Dimension.Rows;
+
+                for (int row = 2; row < rowCount; row++)
+                {
+                    // var product = new ChiTietLopHocPhan
+                    // {
+                        
+                    // }
+                }
+            }
+        }
     }
 
     public async Task UpdateAsync(Guid id, RequestUpdateChiTietLopHocPhanDto request)
