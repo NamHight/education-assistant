@@ -87,7 +87,7 @@ public class MapperProfile : Profile
         CreateMap<RequestAddNganhDto, Nganh>();
         CreateMap<RequestUpdateNganhDto, Nganh>();
         CreateMap<Nganh, ResponseNganhDto>();
-
+        
         //map lớp học
         CreateMap<RequestAddLopHocDto, LopHoc>();
         CreateMap<RequestUpdateLopHocDto, LopHoc>();
