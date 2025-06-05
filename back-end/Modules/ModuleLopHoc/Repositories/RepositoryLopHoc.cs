@@ -27,7 +27,7 @@ public class RepositoryLopHoc : RepositoryBase<LopHoc>, IRepositoryLopHoc
     {
         if (!string.IsNullOrEmpty(search))
         {
-            var lopHocs = FindByCondition(item => item.TenLopHoc.Contains(search), false);
+            var lopHocs = FindByCondition(item => item.MaLopHoc.Contains(search), false);
             return await PagedListAsync<LopHoc>.ToPagedListAsync(lopHocs, page, limit);
         }
         return await PagedListAsync<LopHoc>.ToPagedListAsync(_context.LopHocs!, page, limit);

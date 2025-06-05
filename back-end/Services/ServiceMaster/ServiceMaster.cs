@@ -7,9 +7,12 @@ using Education_assistant.Modules.ModuleChiTietLopHocPhan.Services;
 using Education_assistant.Modules.ModuleChuongTrinhDaoTao.Services;
 using Education_assistant.Modules.ModuleGiangVien.Services;
 using Education_assistant.Modules.ModuleKhoa.Services;
+using Education_assistant.Modules.ModuleLichBieu.Services;
+using Education_assistant.Modules.ModuleLopHoc.Services;
 using Education_assistant.Modules.ModuleLopHocPhan.Services;
 using Education_assistant.Modules.ModuleMonHoc.Services;
 using Education_assistant.Modules.ModuleNganh.Services;
+using Education_assistant.Modules.ModulePhongHoc.Services;
 using Education_assistant.Modules.ModuleSinhVien.Services;
 using Education_assistant.Modules.ModuleTruong.Services;
 using Education_assistant.Repositories.RepositoryMaster;
@@ -29,6 +32,9 @@ public class ServiceMaster : IServiceMaster
     private readonly Lazy<IServiceChiTietLopHocPhan> _chiTietLopHocPhan;
     private readonly Lazy<IServiceSinhVien> _sinhVien;
     private readonly Lazy<IServiceNganh> _nganh;
+    private readonly Lazy<IServiceLopHoc> _lopHoc;
+    private readonly Lazy<IServiceLichBieu> _lichBieu;
+    private readonly Lazy<IServicePhongHoc> _phongHoc;
 
     public ServiceMaster(IRepositoryMaster repositoryMaster, ILoggerService loggerService, IMapper mapper, IPasswordHash password)
     {
@@ -43,6 +49,9 @@ public class ServiceMaster : IServiceMaster
         _chiTietLopHocPhan = new Lazy<IServiceChiTietLopHocPhan>(() => new ServiceChiTietLopHocPhan(repositoryMaster, loggerService, mapper));
         _sinhVien = new Lazy<IServiceSinhVien>(() => new ServiceSinhVien(repositoryMaster, loggerService, mapper));
         _nganh = new Lazy<IServiceNganh>(() => new ServiceNganh(repositoryMaster, loggerService, mapper));
+        _lopHoc = new Lazy<IServiceLopHoc>(() => new ServiceLopHoc(repositoryMaster, loggerService, mapper));
+        _lichBieu = new Lazy<IServiceLichBieu>(() => new ServiceLichBieu(repositoryMaster, loggerService, mapper));
+        _phongHoc = new Lazy<IServicePhongHoc>(() => new ServicePhongHoc(repositoryMaster, loggerService, mapper));
     }
 
     public IServiceGiangVien GiangVien => _giangVien.Value;
@@ -56,4 +65,7 @@ public class ServiceMaster : IServiceMaster
     public IServiceChiTietLopHocPhan ChiTietLopHocPhan => _chiTietLopHocPhan.Value;
     public IServiceSinhVien SinhVien => _sinhVien.Value;
     public IServiceNganh Nganh => _nganh.Value;
+    public IServiceLopHoc LopHoc => _lopHoc.Value;
+    public IServiceLichBieu LichBieu => _lichBieu.Value;
+    public IServicePhongHoc PhongHoc => _phongHoc.Value;
 }

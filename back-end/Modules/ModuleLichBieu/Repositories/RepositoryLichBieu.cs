@@ -23,7 +23,7 @@ public class RepositoryLichBieu : RepositoryBase<LichBieu>, IRepositoryLichBieu
         Delete(lichBieu);
     }
 
-    public async Task<PagedListAsync<LichBieu>> GetAllPaginatedAndSearchOrSortAsync(int page, int limit)
+    public async Task<PagedListAsync<LichBieu>> GetAllLichBieuAsync(int page, int limit)
     {
         return await PagedListAsync<LichBieu>.ToPagedListAsync(_context.LichBieus!, page, limit);
     }

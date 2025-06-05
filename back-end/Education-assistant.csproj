@@ -39,7 +39,6 @@
 
     <ItemGroup>
         <Folder Include="Modules\ModuleHocBa\Services\" />
-        <Folder Include="Modules\ModuleLichBieu\Services\" />
     </ItemGroup>
 
 </Project>
