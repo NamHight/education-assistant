@@ -1,14 +1,22 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "D:\\DoAnWebTotNghiep\\DoAn\\education-assistant\\BE\\",
+  "WorkspaceRootPath": "D:\\BE_TotNghiep\\education-assistant\\back-end\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{9E9B6578-34AF-4D5C-A80D-37D71969670E}|Education-assistant.csproj|d:\\doanwebtotnghiep\\doan\\education-assistant\\be\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{9E9B6578-34AF-4D5C-A80D-37D71969670E}|Education-assistant.csproj|solutionrelative:appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+      "AbsoluteMoniker": "D:0:0:{9E9B6578-34AF-4D5C-A80D-37D71969670E}|Education-assistant.csproj|d:\\be_totnghiep\\education-assistant\\back-end\\modules\\modulephonghoc\\services\\servicephonghoc.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9E9B6578-34AF-4D5C-A80D-37D71969670E}|Education-assistant.csproj|solutionrelative:modules\\modulephonghoc\\services\\servicephonghoc.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{9E9B6578-34AF-4D5C-A80D-37D71969670E}|Education-assistant.csproj|d:\\doanwebtotnghiep\\doan\\education-assistant\\be\\models\\20250514092856_initial.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{9E9B6578-34AF-4D5C-A80D-37D71969670E}|Education-assistant.csproj|solutionrelative:models\\20250514092856_initial.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{9E9B6578-34AF-4D5C-A80D-37D71969670E}|Education-assistant.csproj|d:\\be_totnghiep\\education-assistant\\back-end\\modules\\modulephonghoc\\dtos\\request\\requestphonghocdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9E9B6578-34AF-4D5C-A80D-37D71969670E}|Education-assistant.csproj|solutionrelative:modules\\modulephonghoc\\dtos\\request\\requestphonghocdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9E9B6578-34AF-4D5C-A80D-37D71969670E}|Education-assistant.csproj|d:\\be_totnghiep\\education-assistant\\back-end\\modules\\modulephonghoc\\repositories\\repositoryphonghoc.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9E9B6578-34AF-4D5C-A80D-37D71969670E}|Education-assistant.csproj|solutionrelative:modules\\modulephonghoc\\repositories\\repositoryphonghoc.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9E9B6578-34AF-4D5C-A80D-37D71969670E}|Education-assistant.csproj|d:\\be_totnghiep\\education-assistant\\back-end\\modules\\modulephonghoc\\phonghoccontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9E9B6578-34AF-4D5C-A80D-37D71969670E}|Education-assistant.csproj|solutionrelative:modules\\modulephonghoc\\phonghoccontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -18,33 +26,56 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 2,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "20250514092856_Initial.cs",
-              "DocumentMoniker": "D:\\DoAnWebTotNghiep\\DoAn\\education-assistant\\BE\\Models\\20250514092856_Initial.cs",
-              "RelativeDocumentMoniker": "Models\\20250514092856_Initial.cs",
-              "ToolTip": "D:\\DoAnWebTotNghiep\\DoAn\\education-assistant\\BE\\Models\\20250514092856_Initial.cs",
-              "RelativeToolTip": "Models\\20250514092856_Initial.cs",
-              "ViewState": "AgIAAGcAAAAAAAAAAAAQwAkAAAAFAAAAAAAAAA==",
+              "DocumentIndex": 2,
+              "Title": "RepositoryPhongHoc.cs",
+              "DocumentMoniker": "D:\\BE_TotNghiep\\education-assistant\\back-end\\Modules\\ModulePhongHoc\\Repositories\\RepositoryPhongHoc.cs",
+              "RelativeDocumentMoniker": "Modules\\ModulePhongHoc\\Repositories\\RepositoryPhongHoc.cs",
+              "ToolTip": "D:\\BE_TotNghiep\\education-assistant\\back-end\\Modules\\ModulePhongHoc\\Repositories\\RepositoryPhongHoc.cs",
+              "RelativeToolTip": "Modules\\ModulePhongHoc\\Repositories\\RepositoryPhongHoc.cs",
+              "ViewState": "AgIAABAAAAAAAAAAAAAnwBAAAAAoAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-15T11:54:43.867Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-06-05T10:15:50.977Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "RequestPhongHocDto.cs",
+              "DocumentMoniker": "D:\\BE_TotNghiep\\education-assistant\\back-end\\Modules\\ModulePhongHoc\\DTOs\\Request\\RequestPhongHocDto.cs",
+              "RelativeDocumentMoniker": "Modules\\ModulePhongHoc\\DTOs\\Request\\RequestPhongHocDto.cs",
+              "ToolTip": "D:\\BE_TotNghiep\\education-assistant\\back-end\\Modules\\ModulePhongHoc\\DTOs\\Request\\RequestPhongHocDto.cs",
+              "RelativeToolTip": "Modules\\ModulePhongHoc\\DTOs\\Request\\RequestPhongHocDto.cs",
+              "ViewState": "AgIAACQAAAAAAAAAAAAywBYAAAA2AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-05T10:06:29.141Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "appsettings.json",
-              "DocumentMoniker": "D:\\DoAnWebTotNghiep\\DoAn\\education-assistant\\BE\\appsettings.json",
-              "RelativeDocumentMoniker": "appsettings.json",
-              "ToolTip": "D:\\DoAnWebTotNghiep\\DoAn\\education-assistant\\BE\\appsettings.json",
-              "RelativeToolTip": "appsettings.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2025-05-15T11:38:33.66Z",
+              "Title": "ServicePhongHoc.cs",
+              "DocumentMoniker": "D:\\BE_TotNghiep\\education-assistant\\back-end\\Modules\\ModulePhongHoc\\Services\\ServicePhongHoc.cs",
+              "RelativeDocumentMoniker": "Modules\\ModulePhongHoc\\Services\\ServicePhongHoc.cs",
+              "ToolTip": "D:\\BE_TotNghiep\\education-assistant\\back-end\\Modules\\ModulePhongHoc\\Services\\ServicePhongHoc.cs",
+              "RelativeToolTip": "Modules\\ModulePhongHoc\\Services\\ServicePhongHoc.cs",
+              "ViewState": "AgIAABoAAAAAAAAAAAAAwCEAAAAyAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-05T10:00:22.308Z",
               "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "PhongHocController.cs",
+              "DocumentMoniker": "D:\\BE_TotNghiep\\education-assistant\\back-end\\Modules\\ModulePhongHoc\\PhongHocController.cs",
+              "RelativeDocumentMoniker": "Modules\\ModulePhongHoc\\PhongHocController.cs",
+              "ToolTip": "D:\\BE_TotNghiep\\education-assistant\\back-end\\Modules\\ModulePhongHoc\\PhongHocController.cs",
+              "RelativeToolTip": "Modules\\ModulePhongHoc\\PhongHocController.cs",
+              "ViewState": "AgIAAB8AAAAAAAAAAAAUwCcAAABIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-05T09:48:26.185Z"
             }
           ]
         }

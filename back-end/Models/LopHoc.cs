@@ -18,7 +18,7 @@ public class LopHoc : BaseEntity
     [Column("nam_hoc")]
     [Required(ErrorMessage = "Năm học không được để trống")]
     [MaxLength(10)]
-    public string TenLopHoc { get; set; } = string.Empty;
+    public string NamHoc { get; set; } = string.Empty;
 
     [Column("giang_vien_id")] public Guid? GiangVienId { get; set; }
     [ForeignKey("GiangVienId")] public virtual GiangVien? GiangVien { get; set; }
