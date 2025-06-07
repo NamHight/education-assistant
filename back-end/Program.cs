@@ -8,6 +8,7 @@ using FashionShop_API.Filters;
 using NLog;
 
 var builder = WebApplication.CreateBuilder(args);
+
 Env.Load();
 builder.Configuration.AddEnvironmentVariables();
 

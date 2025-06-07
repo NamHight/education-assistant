@@ -5,9 +5,12 @@ using Education_assistant.Modules.ModuleChuongTrinhDaoTao.Services;
 using Education_assistant.Modules.ModuleGiangVien.Services;
 using Education_assistant.Modules.ModuleHocBa.Services;
 using Education_assistant.Modules.ModuleKhoa.Services;
+using Education_assistant.Modules.ModuleLichBieu.Services;
+using Education_assistant.Modules.ModuleLopHoc.Services;
 using Education_assistant.Modules.ModuleLopHocPhan.Services;
 using Education_assistant.Modules.ModuleMonHoc.Services;
 using Education_assistant.Modules.ModuleNganh.Services;
+using Education_assistant.Modules.ModulePhongHoc.Services;
 using Education_assistant.Modules.ModuleSinhVien.Services;
 using Education_assistant.Modules.ModuleTruong.Services;
 
@@ -27,5 +30,8 @@ public interface IServiceMaster
     IServiceSinhVien SinhVien { get; }
     IServiceNganh Nganh { get; }
     IServiceHocBa HocBa { get; }
+    IServiceLopHoc LopHoc { get; }
+    IServiceLichBieu LichBieu { get; }
+    IServicePhongHoc PhongHoc { get; }
 
 }

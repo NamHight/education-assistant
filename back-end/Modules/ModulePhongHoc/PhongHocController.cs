@@ -1,0 +1,58 @@
+﻿using System.Text.Json;
+using Education_assistant.Modules.ModuleLopHoc.DTOs.Request;
+using Education_assistant.Modules.ModulePhongHoc.DTOs.Request;
+using Education_assistant.Services.BaseDtos;
+using Education_assistant.Services.ServiceMaster;
+using FashionShop_API.Filters;
+using Microsoft.AspNetCore.Mvc;
+
+namespace Education_assistant.Modules.ModulePhongHoc
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class PhongHocController : ControllerBase
+    {
+        private readonly IServiceMaster _serviceMaster;
+
+        public PhongHocController(IServiceMaster serviceMaster)
+        {
+            _serviceMaster = serviceMaster;
+        }
+        [HttpGet]
+        public async Task<ActionResult> GetAllPaginationAndSearchAsync([FromQuery] ParamPageAndSearchBaseDto paramBaseDto)
+        {
+            var result = await _serviceMaster.PhongHoc.GetAllPaginationAndSearchAsync(paramBaseDto);
+            Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(result.page));
+            return Ok(result.data);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult> GetPhongHocByIdAsync(Guid id)
+        {
+            var result = await _serviceMaster.PhongHoc.GetPhongHocByIdAsync(id, false);
+            return Ok(result);
+        }
+
+        [HttpPost("")]
+        [ServiceFilter(typeof(ValidationFilter))]
+        public async Task<ActionResult> AddPhongHocAsync([FromBody] RequestAddPhongHocDto model)
+        {
+            var result = await _serviceMaster.PhongHoc.CreateAsync(model);
+            return Ok(result);
+        }
+
+        [HttpPut("{id}")]
+        [ServiceFilter(typeof(ValidationFilter))]
+        public async Task<ActionResult> UpdatePhongHocAsync(Guid id, [FromBody] RequestUpdatePhongHocDto model)
+        {
+            await _serviceMaster.PhongHoc.UpdateAsync(id, model);
+            return NoContent();
+        }
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeletePhongHocAsync(Guid id)
+        {
+            await _serviceMaster.PhongHoc.DeleteAsync(id);
+            return NoContent();
+        }
+    }
+}

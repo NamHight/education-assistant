@@ -1,3 +1,3 @@
 ﻿namespace Education_assistant.Modules.ModuleAuthenticate.Dtos;
 
-public record TaikhoanDtos();
+public record ResponseGiangVienDtos(Guid id, string email);

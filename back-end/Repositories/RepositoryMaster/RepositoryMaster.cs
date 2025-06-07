@@ -14,6 +14,7 @@ using Education_assistant.Modules.ModuleLopHoc.Repositories;
 using Education_assistant.Modules.ModuleLopHocPhan.Repositories;
 using Education_assistant.Modules.ModuleMonHoc.Repositories;
 using Education_assistant.Modules.ModuleNganh.Repositories;
+using Education_assistant.Modules.ModulePhongHoc.Repositories;
 using Education_assistant.Modules.ModuleSinhVien.Repositories;
 using Education_assistant.Modules.ModuleTruong.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -40,6 +41,7 @@ public class RepositoryMaster : IRepositoryMaster
     private readonly Lazy<IRepositoryTruong> _repositoryTruong;
     private readonly Lazy<IRepositoryBoMon> _repositoryBoMon;
     private readonly Lazy<IRepositoryNganh> _repositoryNganh;
+    private readonly Lazy<IRepositoryPhongHoc> _repositoryPhongHoc;
     private readonly ILoggerService _loggerService;
     private bool _disposed;
     private IDbContextTransaction? _transaction;
@@ -64,6 +66,7 @@ public class RepositoryMaster : IRepositoryMaster
         _repositoryTruong = new Lazy<IRepositoryTruong>(() => new RepositoryTruong(repositoryContext));
         _repositoryBoMon = new Lazy<IRepositoryBoMon>(() => new RepositoryBoMon(repositoryContext));
         _repositoryNganh = new Lazy<IRepositoryNganh>(() => new RepositoryNganh(repositoryContext));
+        _repositoryPhongHoc = new Lazy<IRepositoryPhongHoc>(() => new RepositoryPhongHoc(repositoryContext));
         _loggerService = loggerService;
     }
 
@@ -95,6 +98,7 @@ public class RepositoryMaster : IRepositoryMaster
     public IRepositoryBoMon BoMon => _repositoryBoMon.Value;
 
     public IRepositoryNganh Nganh => _repositoryNganh.Value;
+    public IRepositoryPhongHoc PhongHoc => _repositoryPhongHoc.Value;
 
     public async Task BeginTransactionAsync()
     {
