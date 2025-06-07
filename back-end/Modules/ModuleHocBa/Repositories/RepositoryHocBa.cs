@@ -1,5 +1,7 @@
 using System;
+using System.Linq.Expressions;
 using Education_assistant.Context;
+using Education_assistant.Extensions;
 using Education_assistant.Models;
 using Education_assistant.Repositories;
 using Education_assistant.Repositories.Paginations;
@@ -23,9 +25,16 @@ public class RepositoryHocBa : RepositoryBase<HocBa>, IRepositoryHocBa
         Delete(hocBa);
     }
 
-    public async Task<PagedListAsync<HocBa>> GetAllPaginatedAndSearchOrSortAsync(int page, int limit)
+    public async Task<PagedListAsync<HocBa>> GetAllHocBaAsync(int page, int limit, string search, string sortBy, string sortByOrder)
     {
-        return await PagedListAsync<HocBa>.ToPagedListAsync(_context.HocBas!, page, limit);
+        return await PagedListAsync<HocBa>.ToPagedListAsync(_context.HocBas!
+                                                    .SortByOptions(sortBy, sortByOrder, new Dictionary<string, Expression<Func<HocBa, object>>>
+                                                    {
+                                                        ["createat"] = item => item.CreatedAt,
+                                                        ["updateat"] = item => item.UpdatedAt!,
+                                                        ["lanhoc"] = item => item.LanHoc,
+                                                        ["ketqua"] = item => item.KetQua!,
+                                                    }).AsNoTracking(), page, limit);
     }
 
     public async Task<HocBa?> GetHocBaByIdAsync(Guid id, bool trackChanges)

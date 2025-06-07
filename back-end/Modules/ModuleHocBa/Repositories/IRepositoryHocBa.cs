@@ -6,7 +6,7 @@ namespace Education_assistant.Modules.ModuleHocBa.Repositories;
 
 public interface IRepositoryHocBa
 {
-    Task<PagedListAsync<HocBa>> GetAllPaginatedAndSearchOrSortAsync(int page, int limit);  
+    Task<PagedListAsync<HocBa>> GetAllHocBaAsync(int page, int limit, string search, string sortBy, string sortByOrder);  
     Task<HocBa?> GetHocBaByIdAsync(Guid id, bool trackChanges);
     Task CreateAsync(HocBa hocBa);
     void UpdateHocBa(HocBa hocBa);

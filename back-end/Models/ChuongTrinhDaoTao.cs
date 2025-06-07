@@ -37,8 +37,6 @@ public class ChuongTrinhDaoTao : BaseEntity
 
     [Column("khoa_id")] public Guid? KhoaId { get; set; }
     [ForeignKey("KhoaId")] public virtual Khoa? Khoa { get; set; }
-    public virtual ICollection<HocBa>? DanhSachHocBa { get; set; }
     public virtual ICollection<SinhVienChuongTrinhDaoTao>? DanhSachSinhVienChuongTrinhDaoTao { get; set; }
     public virtual ICollection<ChiTietChuongTrinhDaoTao>? DanhSachChiTietChuongTrinhDaoTao { get; set; }
-
 }   

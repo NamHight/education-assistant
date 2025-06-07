@@ -8,7 +8,7 @@ namespace Education_assistant.Modules.ModuleChiTietChuongTrinhDaoTao.Services;
 
 public interface IServiceChiTietChuongTrinhDaoTao
 {
-    Task<(IEnumerable<ResponseChiTietChuongTrinhDaoTaoDto> data, PageInfo page)> GetAllChiTietChuongTrinhDaoTaoAsync(ParamPaginationBaseDto paramBaseDto);
+    Task<(IEnumerable<ResponseChiTietChuongTrinhDaoTaoDto> data, PageInfo page)> GetAllChiTietChuongTrinhDaoTaoAsync(ParamBaseDto paramBaseDto);
     Task<ResponseChiTietChuongTrinhDaoTaoDto> GetChiTietChuongTrinhDaoTaoByIdAsync(Guid id, bool trackChanges);
     Task<ResponseChiTietChuongTrinhDaoTaoDto> CreateAsync(RequestAddChiTietChuongTrinhDaoTaoDto request);
     Task UpdateAsync(Guid id, RequestUpdateChiTietChuongTrinhDaoTaoDto request);

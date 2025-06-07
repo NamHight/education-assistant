@@ -17,6 +17,8 @@ builder.Configuration
     .AddJsonFile($"appsettings.Development.json", true, true)
     .AddEnvironmentVariables();
 
+builder.Services.AddHttpContextAccessor();
+
 LogManager.LoadConfiguration(string.Concat(Directory.GetCurrentDirectory(), "/nlog.config"));
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

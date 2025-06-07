@@ -9,6 +9,7 @@ public class ResponseChiTietChuongTrinhDaoTaoDto
     public Guid ChuongTrinhDaoTaoId { get; set; }
     public Guid? BoMonId { get; set; }
     public int SoTinChi { get; set; }
+    public int HocKy { get; set; }
     public bool DiemTichLuy { get; set; }
     public int LoaiMonHocEnum { get; set; }
     public DateTime? CreatedAt { get; set; }

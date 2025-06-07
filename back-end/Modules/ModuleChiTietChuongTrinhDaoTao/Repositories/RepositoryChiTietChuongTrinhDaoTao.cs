@@ -1,5 +1,7 @@
 using System;
+using System.Linq.Expressions;
 using Education_assistant.Context;
+using Education_assistant.Extensions;
 using Education_assistant.Models;
 using Education_assistant.Repositories;
 using Education_assistant.Repositories.Paginations;
@@ -23,9 +25,15 @@ public class RepositoryChiTietChuongTrinhDaoTao : RepositoryBase<ChiTietChuongTr
         Delete(chiTietChuongTrinhDaoTao);
     }
 
-    public async Task<PagedListAsync<ChiTietChuongTrinhDaoTao>?> GetAllChiTietChuongTrinhDaoTaoAsync(int page, int limit)
+    public async Task<PagedListAsync<ChiTietChuongTrinhDaoTao>?> GetAllChiTietChuongTrinhDaoTaoAsync(int page, int limit, string search, string sortBy, string sortByOder)
     {
-        return await PagedListAsync<ChiTietChuongTrinhDaoTao>.ToPagedListAsync(_context.ChiTietChuongTrinhDaoTaos!, page, limit);
+        return await PagedListAsync<ChiTietChuongTrinhDaoTao>.ToPagedListAsync(_context.ChiTietChuongTrinhDaoTaos!
+                                .SortByOptions(sortBy, sortByOder, new Dictionary<string, Expression<Func<ChiTietChuongTrinhDaoTao, object>>>
+                                {
+                                    ["createat"] = item => item.CreatedAt,
+                                    ["updateat"] = item => item.UpdatedAt!,
+                                    ["sotinchi"] = item => item.SoTinChi!,
+                                }).AsNoTracking(), page, limit);
     }
 
     public async Task<ChiTietChuongTrinhDaoTao?> GetChiTietChuongTrinhDaoTaoByIdAsync(Guid id, bool trackChanges)

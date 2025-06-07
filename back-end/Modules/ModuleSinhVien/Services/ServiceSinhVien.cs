@@ -9,6 +9,7 @@ using Education_assistant.Modules.ModuleSinhVien.DTOs.Request;
 using Education_assistant.Modules.ModuleSinhVien.DTOs.Response;
 using Education_assistant.Repositories.Paginations;
 using Education_assistant.Repositories.RepositoryMaster;
+using Education_assistant.Services;
 using Education_assistant.Services.BaseDtos;
 
 namespace Education_assistant.Modules.ModuleSinhVien.Services;
@@ -18,16 +19,26 @@ public class ServiceSinhVien : IServiceSinhVien
     private readonly ILoggerService _loggerService;
     private readonly IRepositoryMaster _repositoryMaster;
     private readonly IMapper _mapper;
-    
-    public ServiceSinhVien(IRepositoryMaster repositoryMaster, ILoggerService loggerService, IMapper mapper)
+    private readonly IHttpContextAccessor _httpContextAccessor;
+
+    public ServiceSinhVien(IRepositoryMaster repositoryMaster, ILoggerService loggerService, IMapper mapper, IHttpContextAccessor httpContextAccessor)
     {
         _repositoryMaster = repositoryMaster;
         _loggerService = loggerService;
         _mapper = mapper;
+        _httpContextAccessor = httpContextAccessor;
     }
     public async Task<ResponseSinhVienDto> CreateAsync(RequestAddSinhVienDto request)
     {
         var newSinhVien = _mapper.Map<SinhVien>(request);
+        if (request.File != null && request.File.Length > 0)
+        {
+            var hinhDaiDien = await Service.UpLoadFile(request.File!, "sinhvien");
+            var context = _httpContextAccessor.HttpContext;
+            hinhDaiDien = $"{context!.Request.Scheme}://{context.Request.Host}/uploads/{hinhDaiDien}";
+            newSinhVien.AnhDaiDien = hinhDaiDien;
+        }
+
         await _repositoryMaster.ExecuteInTransactionAsync(async () =>
         {
             await _repositoryMaster.SinhVien.CreateAsync(newSinhVien);
@@ -102,7 +113,7 @@ public class ServiceSinhVien : IServiceSinhVien
 
     public async Task UpdateAsync(Guid id, RequestUpdateSinhVienDto request)
     {
-         if (id != request.Id)
+        if (id != request.Id)
         {
             throw new SinhVienBadRequestException($"Id: {id} và Id: {request.Id} của giảng viên không giống nhau!");
         }
@@ -112,6 +123,13 @@ public class ServiceSinhVien : IServiceSinhVien
             throw new GiangVienNotFoundException(id);
         }
         var sinhVienUpdate = _mapper.Map<SinhVien>(request);
+        if (request.File != null && request.File.Length > 0)
+        {
+            var hinhDaiDien = await Service.UpLoadFile(request.File!, "sinhvien");
+            var context = _httpContextAccessor.HttpContext;
+            hinhDaiDien = $"{context!.Request.Scheme}://{context.Request.Host}/uploads/{hinhDaiDien}";
+            sinhVienUpdate.AnhDaiDien = hinhDaiDien;
+        }
         sinhVienUpdate.UpdatedAt = DateTime.Now;
         await _repositoryMaster.ExecuteInTransactionAsync(async () =>
         {
