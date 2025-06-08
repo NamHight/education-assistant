@@ -26,7 +26,10 @@ public class RepositorySinhVien : RepositoryBase<SinhVien>, IRepositorySinhVien
     }
     public async Task<PagedListAsync<SinhVien>?> GetAllSinhVienAsync(int page, int limit, string search, string sortBy, string sortByOrder)
     {
-        return await PagedListAsync<SinhVien>.ToPagedListAsync(_context.SinhViens!.SearchBy(search, item => item.HoTen)
+        return await PagedListAsync<SinhVien>.ToPagedListAsync(_context.SinhViens!.Where(
+                                                                    item => item.HoTen.Contains(search) ||
+                                                                    item.MSSV.ToString().Contains(search)
+                                                                )
                                                                 .IgnoreQueryFilters()
                                                                 .OrderBy(item => item.DeletedAt != null)
                                                                 .SortByOptions(sortBy, sortByOrder, new Dictionary<string, Expression<Func<SinhVien, object>>>
