@@ -1,5 +1,6 @@
 ﻿using Education_assistant.Context;
 using Education_assistant.Contracts.LoggerServices;
+using Education_assistant.Models;
 using Education_assistant.Modules.ModuleBoMon.Repositories;
 using Education_assistant.Modules.ModuleChiTietChuongTrinhDaoTao.Repositories;
 using Education_assistant.Modules.ModuleChiTietLopHocPhan.Repositories;
@@ -199,6 +200,15 @@ public class RepositoryMaster : IRepositoryMaster
     public async Task BulkUpdateEntityAsync<T>(IList<T> entities) where T : class
     {
         await _repositoryContext.BulkUpdateAsync(entities);
+    }
+    //dùng cho add hàng loạt
+    public async Task BulkAddEntityAsync<T>(IList<T> entities) where T : class
+    {
+        await _repositoryContext.BulkInsertAsync(entities, options =>
+        {
+            options.BatchSize = 1000;
+            options.IncludeGraph = false;
+        });
     }
     public async Task ExecuteInTransactionBulkEntityAsync(Func<Task> operation)
     {

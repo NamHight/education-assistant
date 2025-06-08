@@ -11,6 +11,7 @@ public interface IServiceChiTietLopHocPhan
     Task<(IEnumerable<ResponseChiTietLopHocPhanDto> data, PageInfo page)> GetAllChiTietLopHocPhanAsync(ParamBaseDto paramBaseDto);
     Task<ResponseChiTietLopHocPhanDto> GetChiTietLopHocPhanByIdAsync(Guid id, bool trackChanges);
     Task<ResponseChiTietLopHocPhanDto> CreateAsync(RequestAddChiTietLopHocPhanDto request);
+    Task ImportFileExcelAsync(IFormFile file);
     Task UpdateAsync(Guid id, RequestUpdateChiTietLopHocPhanDto request);
     Task UpdateListChiTietLopHocPhanAsync(List<RequestUpdateChiTietLopHocPhanDto> listRequest);
     Task DeleteAsync(Guid id);

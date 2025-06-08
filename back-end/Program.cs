@@ -1,10 +1,6 @@
 using DotNetEnv;
 using Education_assistant.Contracts.LoggerServices;
 using Education_assistant.Extensions;
-using Education_assistant.helpers;
-using Education_assistant.helpers.implements;
-using Education_assistant.Mappers;
-using FashionShop_API.Filters;
 using NLog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,8 +18,6 @@ LogManager.LoadConfiguration(string.Concat(Directory.GetCurrentDirectory(), "/nl
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddScoped<ValidationFilter>();
-builder.Services.AddScoped<IPasswordHash, PasswordHash>();
 
 builder.Services
     .AddCorsService(builder.Configuration)

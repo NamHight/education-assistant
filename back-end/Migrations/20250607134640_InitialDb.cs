@@ -296,9 +296,9 @@ namespace Education_assistant.Migrations
                     chuong_trinh_dao_tao_id = table.Column<Guid>(type: "char(36)", nullable: true, collation: "ascii_general_ci"),
                     bo_mon_id = table.Column<Guid>(type: "char(36)", nullable: true, collation: "ascii_general_ci"),
                     so_tin_chi = table.Column<int>(type: "int", nullable: false),
+                    hoc_ky = table.Column<int>(type: "int", nullable: false),
                     diem_tich_luy = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     loai_mon_hoc = table.Column<int>(type: "int", nullable: true),
-                    NganhId = table.Column<Guid>(type: "char(36)", nullable: true, collation: "ascii_general_ci"),
                     created_at = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     updated_at = table.Column<DateTime>(type: "datetime(6)", nullable: true),
                     deleted_at = table.Column<DateTime>(type: "datetime(6)", nullable: true)
@@ -320,11 +320,6 @@ namespace Education_assistant.Migrations
                         name: "FK_chi_tiet_chuong_trinh_dao_tao_mon_hoc_mon_hoc_id",
                         column: x => x.mon_hoc_id,
                         principalTable: "mon_hoc",
-                        principalColumn: "id");
-                    table.ForeignKey(
-                        name: "FK_chi_tiet_chuong_trinh_dao_tao_nganh_NganhId",
-                        column: x => x.NganhId,
-                        principalTable: "nganh",
                         principalColumn: "id");
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
@@ -559,14 +554,11 @@ namespace Education_assistant.Migrations
                     diem_tong_ket = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
                     mo_ta = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    tin_chi = table.Column<int>(type: "int", nullable: false),
-                    hoc_ky = table.Column<int>(type: "int", nullable: false),
                     lan_hoc = table.Column<int>(type: "int", nullable: false),
                     ket_qua = table.Column<int>(type: "int", nullable: true),
                     sinh_vien_id = table.Column<Guid>(type: "char(36)", nullable: true, collation: "ascii_general_ci"),
                     lop_hoc_phan_id = table.Column<Guid>(type: "char(36)", nullable: true, collation: "ascii_general_ci"),
-                    mon_hoc_id = table.Column<Guid>(type: "char(36)", nullable: true, collation: "ascii_general_ci"),
-                    chuong_trinh_dao_tao_id = table.Column<Guid>(type: "char(36)", nullable: true, collation: "ascii_general_ci"),
+                    chi_tiet_chuong_trinh_dao_tao_id = table.Column<Guid>(type: "char(36)", nullable: true, collation: "ascii_general_ci"),
                     created_at = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     updated_at = table.Column<DateTime>(type: "datetime(6)", nullable: true),
                     deleted_at = table.Column<DateTime>(type: "datetime(6)", nullable: true)
@@ -575,19 +567,14 @@ namespace Education_assistant.Migrations
                 {
                     table.PrimaryKey("PK_hoc_ba", x => x.id);
                     table.ForeignKey(
-                        name: "FK_hoc_ba_chuong_trinh_dao_tao_chuong_trinh_dao_tao_id",
-                        column: x => x.chuong_trinh_dao_tao_id,
-                        principalTable: "chuong_trinh_dao_tao",
+                        name: "FK_hoc_ba_chi_tiet_chuong_trinh_dao_tao_chi_tiet_chuong_trinh_d~",
+                        column: x => x.chi_tiet_chuong_trinh_dao_tao_id,
+                        principalTable: "chi_tiet_chuong_trinh_dao_tao",
                         principalColumn: "id");
                     table.ForeignKey(
                         name: "FK_hoc_ba_lop_hoc_phan_lop_hoc_phan_id",
                         column: x => x.lop_hoc_phan_id,
                         principalTable: "lop_hoc_phan",
-                        principalColumn: "id");
-                    table.ForeignKey(
-                        name: "FK_hoc_ba_mon_hoc_mon_hoc_id",
-                        column: x => x.mon_hoc_id,
-                        principalTable: "mon_hoc",
                         principalColumn: "id");
                     table.ForeignKey(
                         name: "FK_hoc_ba_sinh_vien_sinh_vien_id",
@@ -645,11 +632,6 @@ namespace Education_assistant.Migrations
                 column: "mon_hoc_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_chi_tiet_chuong_trinh_dao_tao_NganhId",
-                table: "chi_tiet_chuong_trinh_dao_tao",
-                column: "NganhId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_chi_tiet_lop_hoc_phan_giang_vien_id",
                 table: "chi_tiet_lop_hoc_phan",
                 column: "giang_vien_id");
@@ -701,19 +683,14 @@ namespace Education_assistant.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_hoc_ba_chuong_trinh_dao_tao_id",
+                name: "IX_hoc_ba_chi_tiet_chuong_trinh_dao_tao_id",
                 table: "hoc_ba",
-                column: "chuong_trinh_dao_tao_id");
+                column: "chi_tiet_chuong_trinh_dao_tao_id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_hoc_ba_lop_hoc_phan_id",
                 table: "hoc_ba",
                 column: "lop_hoc_phan_id");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_hoc_ba_mon_hoc_id",
-                table: "hoc_ba",
-                column: "mon_hoc_id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_hoc_ba_sinh_vien_id",
@@ -790,9 +767,6 @@ namespace Education_assistant.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "chi_tiet_chuong_trinh_dao_tao");
-
-            migrationBuilder.DropTable(
                 name: "chi_tiet_lop_hoc_phan");
 
             migrationBuilder.DropTable(
@@ -808,16 +782,19 @@ namespace Education_assistant.Migrations
                 name: "sinh_vien_chuong_trinh_dao_tao");
 
             migrationBuilder.DropTable(
+                name: "chi_tiet_chuong_trinh_dao_tao");
+
+            migrationBuilder.DropTable(
                 name: "lop_hoc_phan");
 
             migrationBuilder.DropTable(
                 name: "phong_hoc");
 
             migrationBuilder.DropTable(
-                name: "chuong_trinh_dao_tao");
+                name: "sinh_vien");
 
             migrationBuilder.DropTable(
-                name: "sinh_vien");
+                name: "chuong_trinh_dao_tao");
 
             migrationBuilder.DropTable(
                 name: "mon_hoc");

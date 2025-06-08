@@ -12,9 +12,6 @@ public class RequestAddSinhVienDto
     [MaxLength(255, ErrorMessage = "Căn cước công dân không được quá 255 ký tự")]
     public string CCCD { get; set; } = string.Empty;
 
-    [MaxLength(255, ErrorMessage = "Ảnh đại diện không được quá 255 ký tự")]
-    public string? AnhDaiDien { get; set; } = string.Empty;
-
     [Required(ErrorMessage = "Họ và tên không được để trống")]
     [MaxLength(255, ErrorMessage = "Họ và tên không được quá 255 ký tự")]
     public string HoTen { get; set; } = string.Empty;
@@ -45,6 +42,7 @@ public class RequestAddSinhVienDto
     public DateTime? NgayTotNghiep { get; set; }
     public DateTime NgayNhapHoc { get; set; }
     public Guid? LopHocId { get; set; }
+    public IFormFile? File { get; set; }
 }
 public class RequestUpdateSinhVienDto
 {
@@ -57,9 +55,6 @@ public class RequestUpdateSinhVienDto
     [MaxLength(255, ErrorMessage = "Căn cước công dân không được quá 255 ký tự")]
     public string CCCD { get; set; } = string.Empty;
 
-    [MaxLength(255, ErrorMessage = "Ảnh đại diện không được quá 255 ký tự")]
-    public string? AnhDaiDien { get; set; } = string.Empty;
-
     [Required(ErrorMessage = "Họ và tên không được để trống")]
     [MaxLength(255, ErrorMessage = "Họ và tên không được quá 255 ký tự")]
     public string HoTen { get; set; } = string.Empty;
@@ -90,4 +85,5 @@ public class RequestUpdateSinhVienDto
     public DateTime? NgayTotNghiep { get; set; }
     public DateTime NgayNhapHoc { get; set; }
     public Guid? LopHocId { get; set; }
+    public IFormFile? File { get; set; }
 }

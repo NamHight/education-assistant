@@ -6,6 +6,7 @@ using Education_assistant.Modules.ModuleChiTietChuongTrinhDaoTao.Services;
 using Education_assistant.Modules.ModuleChiTietLopHocPhan.Services;
 using Education_assistant.Modules.ModuleChuongTrinhDaoTao.Services;
 using Education_assistant.Modules.ModuleGiangVien.Services;
+using Education_assistant.Modules.ModuleHocBa.Services;
 using Education_assistant.Modules.ModuleKhoa.Services;
 using Education_assistant.Modules.ModuleLichBieu.Services;
 using Education_assistant.Modules.ModuleLopHoc.Services;
@@ -16,6 +17,7 @@ using Education_assistant.Modules.ModulePhongHoc.Services;
 using Education_assistant.Modules.ModuleSinhVien.Services;
 using Education_assistant.Modules.ModuleTruong.Services;
 using Education_assistant.Repositories.RepositoryMaster;
+using Education_assistant.Services.ServiceFile;
 
 namespace Education_assistant.Services.ServiceMaster;
 
@@ -32,13 +34,14 @@ public class ServiceMaster : IServiceMaster
     private readonly Lazy<IServiceChiTietLopHocPhan> _chiTietLopHocPhan;
     private readonly Lazy<IServiceSinhVien> _sinhVien;
     private readonly Lazy<IServiceNganh> _nganh;
+    private readonly Lazy<IServiceHocBa> _hocBa;
     private readonly Lazy<IServiceLopHoc> _lopHoc;
     private readonly Lazy<IServiceLichBieu> _lichBieu;
     private readonly Lazy<IServicePhongHoc> _phongHoc;
 
-    public ServiceMaster(IRepositoryMaster repositoryMaster, ILoggerService loggerService, IMapper mapper, IPasswordHash password)
+    public ServiceMaster(IRepositoryMaster repositoryMaster, ILoggerService loggerService, IMapper mapper, IPasswordHash password, IHttpContextAccessor httpContextAccessor, IServiceFIle serviceFIle)
     {
-        _giangVien = new Lazy<IServiceGiangVien>(() => new ServiceGiangVien(repositoryMaster, loggerService, mapper, password));
+        _giangVien = new Lazy<IServiceGiangVien>(() => new ServiceGiangVien(repositoryMaster, loggerService, mapper, password, httpContextAccessor, serviceFIle));
         _truong = new Lazy<IServiceTruong>(() => new ServiceTruong(repositoryMaster, loggerService, mapper));
         _khoa = new Lazy<IServiceKhoa>(() => new ServiceKhoa(repositoryMaster, loggerService, mapper));
         _monHoc = new Lazy<IServiceMonHoc>(() => new ServiceMonHoc(repositoryMaster, loggerService, mapper));
@@ -47,8 +50,9 @@ public class ServiceMaster : IServiceMaster
         _boMon = new Lazy<IServiceBoMon>(() => new ServiceBoMon(repositoryMaster, loggerService, mapper));
         _lopHocPhan = new Lazy<IServiceLopHocPhan>(() => new ServiceLopHocPhan(repositoryMaster, loggerService, mapper));
         _chiTietLopHocPhan = new Lazy<IServiceChiTietLopHocPhan>(() => new ServiceChiTietLopHocPhan(repositoryMaster, loggerService, mapper));
-        _sinhVien = new Lazy<IServiceSinhVien>(() => new ServiceSinhVien(repositoryMaster, loggerService, mapper));
+        _sinhVien = new Lazy<IServiceSinhVien>(() => new ServiceSinhVien(repositoryMaster, loggerService, mapper, httpContextAccessor, serviceFIle));
         _nganh = new Lazy<IServiceNganh>(() => new ServiceNganh(repositoryMaster, loggerService, mapper));
+        _hocBa = new Lazy<IServiceHocBa>(() => new ServiceHocBa(repositoryMaster, loggerService, mapper));
         _lopHoc = new Lazy<IServiceLopHoc>(() => new ServiceLopHoc(repositoryMaster, loggerService, mapper));
         _lichBieu = new Lazy<IServiceLichBieu>(() => new ServiceLichBieu(repositoryMaster, loggerService, mapper));
         _phongHoc = new Lazy<IServicePhongHoc>(() => new ServicePhongHoc(repositoryMaster, loggerService, mapper));
@@ -65,6 +69,7 @@ public class ServiceMaster : IServiceMaster
     public IServiceChiTietLopHocPhan ChiTietLopHocPhan => _chiTietLopHocPhan.Value;
     public IServiceSinhVien SinhVien => _sinhVien.Value;
     public IServiceNganh Nganh => _nganh.Value;
+    public IServiceHocBa HocBa => _hocBa.Value;
     public IServiceLopHoc LopHoc => _lopHoc.Value;
     public IServiceLichBieu LichBieu => _lichBieu.Value;
     public IServicePhongHoc PhongHoc => _phongHoc.Value;

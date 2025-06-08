@@ -39,14 +39,14 @@ public class GiangVienController : ControllerBase
     }
     [HttpPost]
     [ServiceFilter(typeof(ValidationFilter))]
-    public async Task<ActionResult> AddGiangVienAsync([FromBody] RequestAddGiangVienDto model)
+    public async Task<ActionResult> AddGiangVienAsync([FromForm] RequestAddGiangVienDto model)
     {
         var result = await _serviceMaster.GiangVien.CreateAsync(model);
         return Ok(result);
     }
     [HttpPut("{id}")]
     [ServiceFilter(typeof(ValidationFilter))]
-    public async Task<ActionResult> UpdateGiangVienAsync(Guid id, [FromBody] RequestUpdateGiangVienDto model)
+    public async Task<ActionResult> UpdateGiangVienAsync(Guid id, [FromForm] RequestUpdateGiangVienDto model)
     {
         await _serviceMaster.GiangVien.UpdateAsync(id, model);
         return NoContent();

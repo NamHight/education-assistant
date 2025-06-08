@@ -33,18 +33,19 @@ public class RequestAddGiangVienDto
     public string? TrinhDo { get; set; }
     [MaxLength(255)]
     public string? ChuyenNganh { get; set; }
-    public string? AnhDaiDien { get; set; }
     public int? TrangThaiGiangVienEnum { get; set; }
     public int? LoaiTaiKhoan { get; set; } = 3;
     public Guid? KhoaId { get; set; }
     public Guid? BoMonId { get; set; }
+
+    public IFormFile? File { get; set; }
 }
 public class RequestUpdateGiangVienDto
 {
-    [Required(ErrorMessage ="Id không được bỏ trống!.")]
+    [Required(ErrorMessage = "Id không được bỏ trống!.")]
     public Guid Id { get; set; }
     [Required(ErrorMessage = "Họ và tên không được bỏ trống!.")]
-    [MaxLength(255)] 
+    [MaxLength(255)]
     public string? HoTen { get; set; }
 
     [Required(ErrorMessage = "Email không được để trống")]
@@ -71,9 +72,9 @@ public class RequestUpdateGiangVienDto
     public string? TrinhDo { get; set; }
     [MaxLength(255)]
     public string? ChuyenNganh { get; set; }
-    public string? AnhDaiDien { get; set; }
     public int? TrangThaiGiangVienEnum { get; set; }
     public Guid? TaiKhoanId { get; set; }
     public Guid? KhoaId { get; set; }
     public Guid? BoMonId { get; set; }
+    public IFormFile? File { get; set; }
 }

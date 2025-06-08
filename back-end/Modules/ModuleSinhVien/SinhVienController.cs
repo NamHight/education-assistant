@@ -48,14 +48,14 @@ namespace Education_assistant.Modules.ModuleSinhVien
     }
     [HttpPost]
     [ServiceFilter(typeof(ValidationFilter))]
-    public async Task<ActionResult> AddSinhVienAsync([FromBody] RequestAddSinhVienDto model)
+    public async Task<ActionResult> AddSinhVienAsync([FromForm] RequestAddSinhVienDto model)
     {
         var result = await _serviceMaster.SinhVien.CreateAsync(model);
         return Ok(result);
     }
     [HttpPut("{id}")]
     [ServiceFilter(typeof(ValidationFilter))]
-    public async Task<ActionResult> UpdateSinhVienAsync(Guid id, [FromBody] RequestUpdateSinhVienDto model)
+    public async Task<ActionResult> UpdateSinhVienAsync(Guid id, [FromForm] RequestUpdateSinhVienDto model)
     {
         await _serviceMaster.SinhVien.UpdateAsync(id, model);
         return NoContent();

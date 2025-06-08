@@ -3,12 +3,12 @@ using Education_assistant.Contracts.LoggerServices;
 using Education_assistant.Exceptions.ThrowError.GiangVienExceptions;
 using Education_assistant.helpers.implements;
 using Education_assistant.Models;
-using Education_assistant.Models.Enums;
 using Education_assistant.Modules.ModuleGiangVien.DTOs.Request;
 using Education_assistant.Modules.ModuleGiangVien.DTOs.Response;
 using Education_assistant.Repositories.Paginations;
 using Education_assistant.Repositories.RepositoryMaster;
 using Education_assistant.Services.BaseDtos;
+using Education_assistant.Services.ServiceFile;
 
 namespace Education_assistant.Modules.ModuleGiangVien.Services;
 
@@ -18,17 +18,28 @@ public sealed class ServiceGiangVien : IServiceGiangVien
     private readonly IRepositoryMaster _repositoryMaster;
     private readonly IMapper _mapper;
     private readonly IPasswordHash _passwordHash;
+    private readonly IServiceFIle _serviceFIle;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public ServiceGiangVien(IRepositoryMaster repositoryMaster, ILoggerService loggerService, IMapper mapper, IPasswordHash passwordHash)
+    public ServiceGiangVien(IRepositoryMaster repositoryMaster, ILoggerService loggerService, IMapper mapper, IPasswordHash passwordHash, IHttpContextAccessor httpContextAccessor, IServiceFIle serviceFIle)
     {
         _repositoryMaster = repositoryMaster;
         _loggerService = loggerService;
         _mapper = mapper;
         _passwordHash = passwordHash;
+        _httpContextAccessor = httpContextAccessor;
+        _serviceFIle = serviceFIle;
     }
     public async Task<ResponseGiangVienDto> CreateAsync(RequestAddGiangVienDto request)
     {
         var newGiangVien = _mapper.Map<GiangVien>(request);
+        if (request.File != null && request.File.Length > 0)
+        {
+            var hinhDaiDien = await _serviceFIle.UpLoadFile(request.File!, "giangvien");
+            var context = _httpContextAccessor.HttpContext;
+            hinhDaiDien = $"{context!.Request.Scheme}://{context.Request.Host}/uploads/{hinhDaiDien}";
+            newGiangVien.AnhDaiDien = hinhDaiDien;
+        }
         await _repositoryMaster.ExecuteInTransactionAsync(async () =>
         {
             var newTaiKhoan = new TaiKhoan
@@ -116,6 +127,13 @@ public sealed class ServiceGiangVien : IServiceGiangVien
             throw new GiangVienNotFoundException(id);
         }
         var giangVienUpdate = _mapper.Map<GiangVien>(request);
+        if (request.File != null && request.File.Length > 0)
+        {
+            var hinhDaiDien = await _serviceFIle.UpLoadFile(request.File!, "giangvien");
+            var context = _httpContextAccessor.HttpContext;
+            hinhDaiDien = $"{context!.Request.Scheme}://{context.Request.Host}/uploads/{hinhDaiDien}";
+            giangVienUpdate.AnhDaiDien = hinhDaiDien;
+        }
         giangVienUpdate.UpdatedAt = DateTime.Now;
         await _repositoryMaster.ExecuteInTransactionAsync(async () =>
         {

@@ -21,7 +21,6 @@ public class MonHoc : BaseEntity
     public string MoTa { get; set; } = string.Empty;
     [Column("khoa_id")] public Guid? KhoaId { get; set; }
     [ForeignKey("KhoaId")] public virtual Khoa? Khoa { get; set; }
-    public virtual ICollection<HocBa>? DanhSachHocBa { get; set; }
     public virtual ICollection<LopHocPhan>? DanhSachLopHocPhan { get; set; }
     public virtual ICollection<ChiTietChuongTrinhDaoTao>? DanhSachChiTietChuongTrinhDaoTao { get; set; }
     public virtual ICollection<ChiTietLopHocPhan>? DanhSachChiTietLopHocPhan { get; set; }

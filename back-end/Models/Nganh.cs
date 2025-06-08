@@ -19,6 +19,5 @@ public class Nganh : BaseEntity
     public string? MoTa { get; set; }
     [Column("khoa_id")] public Guid? KhoaId { get; set; }
     [ForeignKey("KhoaId")] public virtual Khoa? Khoa { get; set; }
-    public virtual ICollection<ChiTietChuongTrinhDaoTao>? DanhSachChiTietChuongTrinhDaoTao { get; set; }
     public virtual ICollection<LopHoc>? DanhSachLopHoc { get; set; }
 }
