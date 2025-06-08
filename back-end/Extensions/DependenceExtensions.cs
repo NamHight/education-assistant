@@ -1,6 +1,10 @@
 ﻿using Education_assistant.Contracts.LoggerServices;
+using Education_assistant.helpers;
+using Education_assistant.helpers.implements;
 using Education_assistant.Repositories.RepositoryMaster;
+using Education_assistant.Services.ServiceFile;
 using Education_assistant.Services.ServiceMaster;
+using FashionShop_API.Filters;
 using FluentValidation;
 
 namespace Education_assistant.Extensions;
@@ -21,9 +25,12 @@ public static class DependenceExtensions
 
         services.AddValidatorsFromAssembly(assembly, includeInternalTypes: true);
         services.AddSingleton<ILoggerService, LoggerService>();
+        services.AddHttpContextAccessor();
+        services.AddScoped<ValidationFilter>();
+        services.AddScoped<IPasswordHash, PasswordHash>();
         services.AddScoped<IRepositoryMaster, RepositoryMaster>();
         services.AddScoped<IServiceMaster, ServiceMaster>();
-
+        services.AddScoped<IServiceFIle, ServiceFile>();
         return services;
     }
 }

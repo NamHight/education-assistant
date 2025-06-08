@@ -9,8 +9,8 @@ using Education_assistant.Modules.ModuleSinhVien.DTOs.Request;
 using Education_assistant.Modules.ModuleSinhVien.DTOs.Response;
 using Education_assistant.Repositories.Paginations;
 using Education_assistant.Repositories.RepositoryMaster;
-using Education_assistant.Services;
 using Education_assistant.Services.BaseDtos;
+using Education_assistant.Services.ServiceFile;
 
 namespace Education_assistant.Modules.ModuleSinhVien.Services;
 
@@ -19,21 +19,23 @@ public class ServiceSinhVien : IServiceSinhVien
     private readonly ILoggerService _loggerService;
     private readonly IRepositoryMaster _repositoryMaster;
     private readonly IMapper _mapper;
+    private readonly IServiceFIle _serviceFIle;
     private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public ServiceSinhVien(IRepositoryMaster repositoryMaster, ILoggerService loggerService, IMapper mapper, IHttpContextAccessor httpContextAccessor)
+    public ServiceSinhVien(IRepositoryMaster repositoryMaster, ILoggerService loggerService, IMapper mapper, IHttpContextAccessor httpContextAccessor, IServiceFIle serviceFIle)
     {
         _repositoryMaster = repositoryMaster;
         _loggerService = loggerService;
         _mapper = mapper;
         _httpContextAccessor = httpContextAccessor;
+        _serviceFIle = serviceFIle;
     }
     public async Task<ResponseSinhVienDto> CreateAsync(RequestAddSinhVienDto request)
     {
         var newSinhVien = _mapper.Map<SinhVien>(request);
         if (request.File != null && request.File.Length > 0)
         {
-            var hinhDaiDien = await Service.UpLoadFile(request.File!, "sinhvien");
+            var hinhDaiDien = await _serviceFIle.UpLoadFile(request.File!, "sinhvien");
             var context = _httpContextAccessor.HttpContext;
             hinhDaiDien = $"{context!.Request.Scheme}://{context.Request.Host}/uploads/{hinhDaiDien}";
             newSinhVien.AnhDaiDien = hinhDaiDien;
@@ -125,7 +127,7 @@ public class ServiceSinhVien : IServiceSinhVien
         var sinhVienUpdate = _mapper.Map<SinhVien>(request);
         if (request.File != null && request.File.Length > 0)
         {
-            var hinhDaiDien = await Service.UpLoadFile(request.File!, "sinhvien");
+            var hinhDaiDien = await _serviceFIle.UpLoadFile(request.File!, "sinhvien");
             var context = _httpContextAccessor.HttpContext;
             hinhDaiDien = $"{context!.Request.Scheme}://{context.Request.Host}/uploads/{hinhDaiDien}";
             sinhVienUpdate.AnhDaiDien = hinhDaiDien;

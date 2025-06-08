@@ -2,5 +2,5 @@
 
 public interface IServiceFIle
 {
-    
+    Task<string> UpLoadFile(IFormFile file, string value);
 }
