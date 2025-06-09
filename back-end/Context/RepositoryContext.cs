@@ -30,6 +30,8 @@ public class RepositoryContext : DbContext
     public DbSet<BoMon>? BoMons { get; set; }
     public DbSet<Nganh>? Nganhs { get; set; }
     public DbSet<PhongHoc>? PhongHocs { get; set; }
+    public DbSet<Tuan>? Tuans { get; set; }
+    
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -54,7 +56,8 @@ public class RepositoryContext : DbContext
         modelBuilder.Entity<BoMon>().HasQueryFilter(e => e.DeletedAt == null);
         modelBuilder.Entity<Nganh>().HasQueryFilter(e => e.DeletedAt == null);
         modelBuilder.Entity<PhongHoc>().HasQueryFilter(e => e.DeletedAt == null);
-        
+        modelBuilder.Entity<Tuan>().HasQueryFilter(e => e.DeletedAt == null);
+
         base.OnModelCreating(modelBuilder);
     }
 }

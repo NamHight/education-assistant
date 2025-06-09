@@ -27,10 +27,6 @@ namespace Education_assistant.Modules.ModuleLopHoc.Services
 
         public async Task<ResponseLopHocDto> CreateAsync(RequestAddLopHocDto request)
         {
-            if (request is null)
-            {
-                throw new MonHocBadRequestException("Thông tin lớp học đầu vào không đủ thông tin!");
-            }
             var newLopHoc = _mapper.Map<LopHoc>(request);
             await _repositoryMaster.ExecuteInTransactionAsync(async () =>
             {
@@ -60,9 +56,9 @@ namespace Education_assistant.Modules.ModuleLopHoc.Services
             _loggerService.LogInfo("Xóa lớp học thành công.");
         }
 
-        public async Task<(IEnumerable<ResponseLopHocDto> data, PageInfo page)> GetAllPaginationAndSearchAsync(ParamBaseDto paramBaseDto)
+        public async Task<(IEnumerable<ResponseLopHocDto> data, PageInfo page)> GetAllLopHocAsync(ParamBaseDto paramBaseDto)
         {
-            var lopHocs = await _repositoryMaster.LopHoc.GetAllPaginatedAndSearchOrSortAsync(paramBaseDto.page, paramBaseDto.limit, paramBaseDto.search);
+            var lopHocs = await _repositoryMaster.LopHoc.GetAllLopHocAsync(paramBaseDto.page, paramBaseDto.limit, paramBaseDto.search, paramBaseDto.sortBy, paramBaseDto.sortByOder);
             var lopHocDto = _mapper.Map<IEnumerable<ResponseLopHocDto>>(lopHocs);
             return (data: lopHocDto, page: lopHocs!.PageInfo);
         }

@@ -12,17 +12,11 @@ public class LichBieu : BaseEntity
     [Column("tiet_ket_thuc")]
     [Required(ErrorMessage = "Tiết bắt đầu không được để trống")]
     public int TietKetThuc { get; set; }
-    [Column("thu_may")]
+    [Column("thu")]
     [Required(ErrorMessage = "Thứ mấy không được để trống")]
-    public int ThuMay { get; set; }
-    [Column("tuan_may")]
-    [Required(ErrorMessage = "Tuần mấy không được để trống")]
-    public int TuanMay { get; set; }
-    [Column("nam_hoc")]
-    [Required(ErrorMessage = "Năm học không được để trống")]
-    public int NamHoc { get; set; }
-    [Column("mon_hoc_id")] public Guid? MonHocId { get; set; }
-    [ForeignKey("MonHocId")] public virtual MonHoc? MonHoc { get; set; }
+    public int Thu { get; set; }
+    [Column("tuan_id")] public Guid? TuanId { get; set; }
+    [ForeignKey("TuanId")] public virtual Tuan? Tuan { get; set; }
     [Column("lop_hoc_phan_id")] public Guid? LopHocPhanId { get; set; }
     [ForeignKey("LopHocPhanId")] public virtual LopHocPhan? LopHocPhan { get; set; }
     [Column("phong_hoc_id")] public Guid? PhongHocId { get; set; }

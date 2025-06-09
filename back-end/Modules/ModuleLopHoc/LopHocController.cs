@@ -21,7 +21,7 @@ namespace Education_assistant.Modules.ModuleLopHoc
         [HttpGet]
         public async Task<ActionResult> GetAllLopHocAsync([FromQuery] ParamBaseDto paramBaseDto)
         {
-            var result = await _serviceMaster.LopHoc.GetAllPaginationAndSearchAsync(paramBaseDto);
+            var result = await _serviceMaster.LopHoc.GetAllLopHocAsync(paramBaseDto);
             Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(result.page));
             return Ok(result.data);
         }
