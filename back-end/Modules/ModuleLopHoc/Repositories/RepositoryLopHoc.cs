@@ -1,5 +1,7 @@
 using System;
+using System.Linq.Expressions;
 using Education_assistant.Context;
+using Education_assistant.Extensions;
 using Education_assistant.Models;
 using Education_assistant.Repositories;
 using Education_assistant.Repositories.Paginations;
@@ -23,14 +25,15 @@ public class RepositoryLopHoc : RepositoryBase<LopHoc>, IRepositoryLopHoc
         Delete(lopHoc);
     }
 
-    public async Task<PagedListAsync<LopHoc>> GetAllPaginatedAndSearchOrSortAsync(int page, int limit, string search)
+    public async Task<PagedListAsync<LopHoc>> GetAllLopHocAsync(int page, int limit, string search, string sortBy, string sortByOrder)
     {
-        if (!string.IsNullOrEmpty(search))
-        {
-            var lopHocs = FindByCondition(item => item.MaLopHoc.Contains(search), false);
-            return await PagedListAsync<LopHoc>.ToPagedListAsync(lopHocs, page, limit);
-        }
-        return await PagedListAsync<LopHoc>.ToPagedListAsync(_context.LopHocs!, page, limit);
+        return await PagedListAsync<LopHoc>.ToPagedListAsync(_context.LopHocs!.SearchBy(search, item => item.MaLopHoc)
+                                                                .SortByOptions(sortBy, sortByOrder, new Dictionary<string, Expression<Func<LopHoc, object>>>
+                                                                {
+                                                                    ["createat"] = item => item.CreatedAt,
+                                                                    ["updateat"] = item => item.UpdatedAt!,
+                                                                    ["siso"] = item => item.SiSo
+                                                                }).AsNoTracking(), page, limit);
     }
 
     public async Task<LopHoc?> GetLopHocByIdAsync(Guid id, bool trackChanges)

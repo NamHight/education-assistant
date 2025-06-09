@@ -9,8 +9,10 @@ public class ChiTietLopHocPhan : BaseEntity
 {
     [Column("diem_chuyen_can")] public decimal? DiemChuyenCan { get; set; }
     [Column("diem_trung_binh")] public decimal? DiemTrungBinh { get; set; }
-    [Column("diem_thi")] public decimal? DiemThi { get; set; }
-    [Column("diem_tong_ket")] public decimal? DiemTongKet { get; set; }
+    [Column("diem_thi_1")] public decimal? DiemThi1 { get; set; }
+    [Column("diem_thi_2")] public decimal? DiemThi2 { get; set; }
+    [Column("diem_tong_ket_1")] public decimal? DiemTongKet1 { get; set; }
+    [Column("diem_tong_ket_2")] public decimal? DiemTongKet2 { get; set; }
     [Column("ngay_luu_diem")] public DateTime? NgayLuuDiem { get; set; }
     [Column("ngay_nop_diem")] public DateTime? NgayNopDiem { get; set; }
 

@@ -24,6 +24,5 @@ public class MonHoc : BaseEntity
     public virtual ICollection<LopHocPhan>? DanhSachLopHocPhan { get; set; }
     public virtual ICollection<ChiTietChuongTrinhDaoTao>? DanhSachChiTietChuongTrinhDaoTao { get; set; }
     public virtual ICollection<ChiTietLopHocPhan>? DanhSachChiTietLopHocPhan { get; set; }
-    public virtual ICollection<LichBieu>? DanhSachLichBieu { get; set; }
 
 }

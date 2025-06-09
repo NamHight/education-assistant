@@ -38,7 +38,6 @@ public class Khoa : BaseEntity
     [JsonIgnore]
     [ForeignKey("TruongId")] public virtual Truong? Truong { get; set; }
 
-    public virtual ICollection<ChuongTrinhDaoTao>? DanhSachChuongTrinhDaoTao { get; set; }
     public virtual ICollection<MonHoc>? DanhSachMonHoc { get; set; }
     public virtual ICollection<GiangVien>? DanhSachGiangVien { get; set; }
     public virtual ICollection<Nganh>? DanhSachNganh { get; set; }

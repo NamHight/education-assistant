@@ -33,10 +33,11 @@ public class ChuongTrinhDaoTao : BaseEntity
     public string ThoiGianDaoTao { get; set; } = string.Empty;
     [Column("hoc_phi")] public decimal HocPhi { get; set; }
     [Column("mo_ta")] public string? MoTa { get; set; }
+    
     [Column("tong_so_tin_chi")] public int TongSoTinChi { get; set; }
-
-    [Column("khoa_id")] public Guid? KhoaId { get; set; }
-    [ForeignKey("KhoaId")] public virtual Khoa? Khoa { get; set; }
+    [Column("khoa")] public string? Khoa { get; set; }
+    [Column("nganh_id")] public Guid? NganhId { get; set; }
+    [ForeignKey("NganhId")] public virtual Nganh? Nganh { get; set; }
     public virtual ICollection<SinhVienChuongTrinhDaoTao>? DanhSachSinhVienChuongTrinhDaoTao { get; set; }
     public virtual ICollection<ChiTietChuongTrinhDaoTao>? DanhSachChiTietChuongTrinhDaoTao { get; set; }
 }   

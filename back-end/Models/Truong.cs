@@ -6,36 +6,14 @@ namespace Education_assistant.Models;
 [Table("truong")]
 public class Truong : BaseEntity
 {
-    [Column("ma_truong")]
-    [Required(ErrorMessage = "Mã trường không được để trống")]
-    [MaxLength(255, ErrorMessage = "Mã trường không được quá 255 ký tự")]
-    public string MaTruong { get; set; } = string.Empty;
+    [Column("key")]
+    [Required(ErrorMessage = "Key không được để trống")]
+    [MaxLength(255, ErrorMessage = "Key không được quá 255 ký tự")]
+    public string Key { get; set; } = string.Empty;
 
-    [Column("ten_truong")]
-    [Required(ErrorMessage = "Tên trường không được để trống")]
-    [MaxLength(255, ErrorMessage = "Tên trường không được quá 255 ký tự")]
-    public string TenTruong { get; set; } = string.Empty;
-
-    [Column("email")]
-    [Required(ErrorMessage = "Email không được để trống")]
-    [MaxLength(255, ErrorMessage = "Email không được quá 255 ký tự")]
-    [EmailAddress(ErrorMessage = "Email không hợp lệ")]
-    public string Email { get; set; } = string.Empty;
-
-    [Column("vi_tri")]
-    [Required(ErrorMessage = "Vị trí không được để trống")]
-    [MaxLength(255, ErrorMessage = "Vị trí không được quá 255 ký tự")]
-    public string ViTri { get; set; } = string.Empty;
-    
-    [Column("so_dien_thoai")]
-    [Required(ErrorMessage = "Số điện thoại không được để trống")]
-    [MaxLength(255, ErrorMessage = "Số điện thoại không được quá 255 ký tự")]
-    public string SoDienThoai { get; set; } = string.Empty;
-
-    [Column("website")]
-    [Required(ErrorMessage = "Website không được để trống")]
-    [MaxLength(255, ErrorMessage = "Website không được quá 255 ký tự")]
-    public string Website { get; set; } = string.Empty;
-
+    [Column("value")]
+    [Required(ErrorMessage = "Value không được để trống")]
+    [MaxLength(255, ErrorMessage = "Value không được quá 255 ký tự")]
+    public string Value { get; set; } = string.Empty;
     public virtual ICollection<Khoa>? DanhSachKhoa {get; set;}
 }
