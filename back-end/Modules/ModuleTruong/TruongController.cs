@@ -19,11 +19,10 @@ namespace Education_assistant.Modules.ModuleTruong
             _serviceMaster = serviceMaster;
         }
         [HttpGet("")]
-        public async Task<ActionResult> GetTruongAsync([FromQuery] ParamPageAndSearchBaseDto paramBaseDto)
+        public async Task<ActionResult> GetTruongAsync()
         {
-            var result = await _serviceMaster.Truong.GetAllPaginationAndSearchAsync(paramBaseDto);
-            Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(result.page));
-            return Ok(result.data);
+            var result = await _serviceMaster.Truong.GetTruongAsync();
+            return Ok(result);
         }
         [HttpGet("{id}")]
         public async Task<ActionResult> GetTruongByIdAsync(Guid id)

@@ -39,7 +39,7 @@ public class ServiceMaster : IServiceMaster
     private readonly Lazy<IServiceLichBieu> _lichBieu;
     private readonly Lazy<IServicePhongHoc> _phongHoc;
 
-    public ServiceMaster(IRepositoryMaster repositoryMaster, ILoggerService loggerService, IMapper mapper, IPasswordHash password, IHttpContextAccessor httpContextAccessor, IServiceFIle serviceFIle)
+    public ServiceMaster(IRepositoryMaster repositoryMaster, ILoggerService loggerService, IMapper mapper, IPasswordHash password, IHttpContextAccessor httpContextAccessor, IServiceFIle serviceFIle, IDiemSoHelper diemSoHelper)
     {
         _giangVien = new Lazy<IServiceGiangVien>(() => new ServiceGiangVien(repositoryMaster, loggerService, mapper, password, httpContextAccessor, serviceFIle));
         _truong = new Lazy<IServiceTruong>(() => new ServiceTruong(repositoryMaster, loggerService, mapper));
@@ -52,11 +52,11 @@ public class ServiceMaster : IServiceMaster
         _chiTietLopHocPhan = new Lazy<IServiceChiTietLopHocPhan>(() => new ServiceChiTietLopHocPhan(repositoryMaster, loggerService, mapper));
         _sinhVien = new Lazy<IServiceSinhVien>(() => new ServiceSinhVien(repositoryMaster, loggerService, mapper, httpContextAccessor, serviceFIle));
         _nganh = new Lazy<IServiceNganh>(() => new ServiceNganh(repositoryMaster, loggerService, mapper));
-        _hocBa = new Lazy<IServiceHocBa>(() => new ServiceHocBa(repositoryMaster, loggerService, mapper));
+        _hocBa = new Lazy<IServiceHocBa>(() => new ServiceHocBa(repositoryMaster, loggerService, mapper, diemSoHelper));
         _lopHoc = new Lazy<IServiceLopHoc>(() => new ServiceLopHoc(repositoryMaster, loggerService, mapper));
         _lichBieu = new Lazy<IServiceLichBieu>(() => new ServiceLichBieu(repositoryMaster, loggerService, mapper));
         _phongHoc = new Lazy<IServicePhongHoc>(() => new ServicePhongHoc(repositoryMaster, loggerService, mapper));
-    }
+}
 
     public IServiceGiangVien GiangVien => _giangVien.Value;
     public IServiceTruong Truong => _truong.Value;

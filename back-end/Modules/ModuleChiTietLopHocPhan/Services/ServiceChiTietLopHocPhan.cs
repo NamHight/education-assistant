@@ -98,7 +98,7 @@ public class ServiceChiTietLopHocPhan : IServiceChiTietLopHocPhan
         {
             throw new ChiTietLopHocPhanBadRequestException($"Id: {id} và Id: {request.Id} của bộ môn không giống nhau!");
         }
-         var diemSoExstting = await _repositoryMaster.ChiTietLopHocPhan.GetChiTietLopHocPhanByIdAsync(id, false);
+        var diemSoExstting = await _repositoryMaster.ChiTietLopHocPhan.GetChiTietLopHocPhanByIdAsync(id, false);
         if (diemSoExstting is null)
         {
             throw new ChiTietLopHocPhanNotFoundException(id);

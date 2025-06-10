@@ -5,6 +5,7 @@ using Education_assistant.Repositories;
 using Education_assistant.Repositories.Paginations;
 using Microsoft.EntityFrameworkCore;
 using Education_assistant.Extensions;
+
 namespace Education_assistant.Modules.ModuleTruong.Repositories;
 
 public class RepositoryTruong : RepositoryBase<Truong>, IRepositoryTruong
@@ -23,10 +24,11 @@ public class RepositoryTruong : RepositoryBase<Truong>, IRepositoryTruong
         Delete(truong);
     }
 
-    public async Task<PagedListAsync<Truong>> GetAllPaginatedAndSearchOrSortAsync(int page, int limit, string search)
+    public async Task<Dictionary<string, string>> GetTruongAsync(bool trackChanges)
     {
-        return await PagedListAsync<Truong>.ToPagedListAsync(_context.Truongs!.SearchBy(search, item => item.TenTruong).Include(item => item.DanhSachKhoa), page, limit);
+        return await FindAll(trackChanges).ToDictionaryAsync(e => e.Key, e => e.Value);
     }
+
 
     public async Task<Truong?> GetTruongByIdAsync(Guid id, bool trackChanges)
     {

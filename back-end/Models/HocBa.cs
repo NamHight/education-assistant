@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Education_assistant.Models.Enums;
+using Microsoft.EntityFrameworkCore;
 
 namespace Education_assistant.Models;
 
@@ -9,6 +10,7 @@ public class HocBa : BaseEntity
 {
     [Column("diem_tong_ket")]
     [Required(ErrorMessage = "Điểm tổng kết không được để trống")]
+    [Precision(2,2)]
     public decimal DiemTongKet { get; set; }
     [Column("mo_ta")] public string? MoTa { get; set; }
     [Column("lan_hoc")] public int LanHoc { get; set; } = 1;

@@ -6,7 +6,7 @@ namespace Education_assistant.Modules.ModuleTruong.Repositories;
 
 public interface IRepositoryTruong
 {
-    Task<PagedListAsync<Truong>> GetAllPaginatedAndSearchOrSortAsync(int page, int limit, string search);  
+    Task<Dictionary<string, string>> GetTruongAsync(bool trackChanges); 
     Task<Truong?> GetTruongByIdAsync(Guid id, bool trackChanges);
     Task CreateAsync(Truong truong);
     void UpdateTruong(Truong truong);

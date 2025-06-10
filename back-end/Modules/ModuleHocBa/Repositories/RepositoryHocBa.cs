@@ -37,6 +37,11 @@ public class RepositoryHocBa : RepositoryBase<HocBa>, IRepositoryHocBa
                                                     }).AsNoTracking(), page, limit);
     }
 
+    public async Task<IEnumerable<HocBa>> GetAllHocBaByIdAsync(List<Guid> ids)
+    {
+        return await _context.HocBas!.Where(item => ids.Contains(item.Id)).ToListAsync();
+    }
+
     public async Task<HocBa?> GetHocBaByIdAsync(Guid id, bool trackChanges)
     {
         return await FindByCondition(item => item.Id == id, trackChanges).FirstOrDefaultAsync();

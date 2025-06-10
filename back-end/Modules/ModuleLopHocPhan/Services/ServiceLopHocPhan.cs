@@ -29,6 +29,10 @@ public class ServiceLopHocPhan : IServiceLopHocPhan
         {
             await _repositoryMaster.LopHocPhan.CreateAsync(newLopHocPhan);
         });
+        await _repositoryMaster.ExecuteInTransactionAsync(async () =>
+        {
+            await _repositoryMaster.LopHocPhan.CreateSinhVienLopHocPhan(request.LopHocId, newLopHocPhan.Id, newLopHocPhan.GiangVienId, request.HocKy);
+        });
         _loggerService.LogInfo("Thêm thông tin lớp học phần thành công.");
         var lopHocPhanDto = _mapper.Map<ResponseLopHocPhanDto>(newLopHocPhan);
         return lopHocPhanDto;

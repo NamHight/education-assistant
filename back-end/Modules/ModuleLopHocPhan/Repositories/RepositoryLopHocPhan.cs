@@ -6,6 +6,7 @@ using Education_assistant.Models;
 using Education_assistant.Repositories;
 using Education_assistant.Repositories.Paginations;
 using Microsoft.EntityFrameworkCore;
+using MySqlConnector;
 
 namespace Education_assistant.Modules.ModuleLopHocPhan.Repositories;
 
@@ -18,6 +19,21 @@ public class RepositoryLopHocPhan : RepositoryBase<LopHocPhan>, IRepositoryLopHo
     public async Task CreateAsync(LopHocPhan lopHocPhan)
     {
         await Create(lopHocPhan);
+    }
+
+    public async Task<int> CreateSinhVienLopHocPhan(Guid maLop, Guid maLhp, Guid maGiangVien, int HocKy)
+    {
+        var parameters = new[]
+        {
+            new MySqlParameter("maLop", maLop),
+            new MySqlParameter("maLhp", maLhp),
+            new MySqlParameter("maGiangVien", maGiangVien),
+            new MySqlParameter("hocKy", HocKy)
+        };
+        var result = await _context.Database.ExecuteSqlRawAsync(
+            @"CALL sp_taoSinhVienChiTietLopHocPhan( ?, ?, ?, ?)",
+            parameters);
+        return result;
     }
 
     public void DeleteLopHocPhan(LopHocPhan lopHocPhan)

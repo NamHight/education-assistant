@@ -1,13 +1,14 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Education_assistant.Models.Enums;
+using Microsoft.EntityFrameworkCore;
 
 namespace Education_assistant.Models;
 [Table("dang_ky_mon_hoc")]
 public class DangKyMonHoc : BaseEntity
 {
     [Column("ngay_dang_ky_hoc")] [Required] public DateTime NgayDangKyHoc { get; set; }
-    [Column("diem")] public decimal? Diem { get; set; }
+    [Column("diem")] [Precision(2,2)] public decimal? Diem { get; set; }
     [Column("ghi_chu")] public string? GhiChu { get; set; }
 
     [Column("trang_thai")]

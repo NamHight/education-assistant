@@ -11,6 +11,8 @@ using Education_assistant.Modules.ModuleChuongTrinhDaoTao.DTOs.Request;
 using Education_assistant.Modules.ModuleChuongTrinhDaoTao.DTOs.Response;
 using Education_assistant.Modules.ModuleGiangVien.DTOs.Request;
 using Education_assistant.Modules.ModuleGiangVien.DTOs.Response;
+using Education_assistant.Modules.ModuleHocBa.DTOs.Request;
+using Education_assistant.Modules.ModuleHocBa.DTOs.Response;
 using Education_assistant.Modules.ModuleKhoa.DTOs.Request;
 using Education_assistant.Modules.ModuleKhoa.DTOs.Response;
 using Education_assistant.Modules.ModuleLichBieu.DTOs.Request;
@@ -87,20 +89,25 @@ public class MapperProfile : Profile
         CreateMap<RequestAddNganhDto, Nganh>();
         CreateMap<RequestUpdateNganhDto, Nganh>();
         CreateMap<Nganh, ResponseNganhDto>();
-        
+
         //map lớp học
         CreateMap<RequestAddLopHocDto, LopHoc>();
         CreateMap<RequestUpdateLopHocDto, LopHoc>();
         CreateMap<LopHoc, ResponseLopHocDto>();
-        
+
         //map lịch biểu
         CreateMap<RequestAddLichBieuDto, LichBieu>();
         CreateMap<RequestUpdateLichBieuDto, LichBieu>();
         CreateMap<LichBieu, ResponseLichBieuDto>();
-        
+
         //map phòng học
         CreateMap<RequestAddPhongHocDto, PhongHoc>();
         CreateMap<RequestUpdatePhongHocDto, PhongHoc>();
         CreateMap<PhongHoc, ResponsePhongHocDto>();
+
+        //map học bạ
+        CreateMap<RequestAddHocbaDto, HocBa>();
+        CreateMap<RequestUpdateHocbaDto, HocBa>();
+        CreateMap<HocBa, ResponseHocBaDto>();
     }
 }

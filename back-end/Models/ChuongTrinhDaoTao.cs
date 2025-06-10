@@ -21,7 +21,7 @@ public class ChuongTrinhDaoTao : BaseEntity
     [Range(1, 2, ErrorMessage = "Loại bằng cấp không hợp lệ")]
     public int? LoaiChuonTrinhDaoTao { get; set; }
 
-    [NotMapped]
+    [NotMapped]            
     public LoaiChuongTrinhDaoTaoEnum? LoaiChuongTrinhDaoTaoEnum
     {
         get => LoaiChuonTrinhDaoTao.HasValue ? (LoaiChuongTrinhDaoTaoEnum)LoaiChuonTrinhDaoTao.Value : null;
@@ -33,7 +33,6 @@ public class ChuongTrinhDaoTao : BaseEntity
     public string ThoiGianDaoTao { get; set; } = string.Empty;
     [Column("hoc_phi")] public decimal HocPhi { get; set; }
     [Column("mo_ta")] public string? MoTa { get; set; }
-    
     [Column("tong_so_tin_chi")] public int TongSoTinChi { get; set; }
     [Column("khoa")] public string? Khoa { get; set; }
     [Column("nganh_id")] public Guid? NganhId { get; set; }

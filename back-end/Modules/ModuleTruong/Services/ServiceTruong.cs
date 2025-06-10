@@ -26,10 +26,6 @@ public class ServiceTruong : IServiceTruong
     }
     public async Task<ResponseTruongDto> CreateAsync(RequestAddTruongDto request)
     {
-        if (request is null)
-        {
-            throw new TruongBadRequestException("Thông tin trường đầu vào không đủ thông tin!");
-        }
         var newTruong = _mapper.Map<Truong>(request);
         await _repositoryMaster.ExecuteInTransactionAsync(async () =>
         {
@@ -59,11 +55,9 @@ public class ServiceTruong : IServiceTruong
         _loggerService.LogInfo("Xóa trường thành công.");
     }
 
-    public async Task<(IEnumerable<ResponseTruongDto> data, PageInfo page)> GetAllPaginationAndSearchAsync(ParamPageAndSearchBaseDto paramBaseDto)
+    public async Task<Dictionary<string, string>> GetTruongAsync()
     {
-        var truong = await _repositoryMaster.Truong.GetAllPaginatedAndSearchOrSortAsync(paramBaseDto.page, paramBaseDto.limit, paramBaseDto.search);
-        var truongDto = _mapper.Map<IEnumerable<ResponseTruongDto>>(truong);
-        return (data: truongDto, page: truong.PageInfo);
+        return await _repositoryMaster.Truong.GetTruongAsync(false);
     }
 
     public async Task<ResponseTruongDto> GetTruongByIdAsync(Guid id, bool trackChanges)

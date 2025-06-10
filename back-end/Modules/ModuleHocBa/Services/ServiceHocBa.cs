@@ -2,7 +2,9 @@ using System;
 using AutoMapper;
 using Education_assistant.Contracts.LoggerServices;
 using Education_assistant.Exceptions.ThrowError.HocBaExceptions;
+using Education_assistant.helpers.implements;
 using Education_assistant.Models;
+using Education_assistant.Models.Enums;
 using Education_assistant.Modules.ModuleHocBa.DTOs.Request;
 using Education_assistant.Modules.ModuleHocBa.DTOs.Response;
 using Education_assistant.Repositories.Paginations;
@@ -16,12 +18,14 @@ public class ServiceHocBa : IServiceHocBa
     private readonly ILoggerService _loggerService;
     private readonly IRepositoryMaster _repositoryMaster;
     private readonly IMapper _mapper;
-    
-    public ServiceHocBa(IRepositoryMaster repositoryMaster, ILoggerService loggerService, IMapper mapper)
+    private readonly IDiemSoHelper _diemSoHelper;
+
+    public ServiceHocBa(IRepositoryMaster repositoryMaster, ILoggerService loggerService, IMapper mapper, IDiemSoHelper diemSoHelper)
     {
         _repositoryMaster = repositoryMaster;
         _loggerService = loggerService;
         _mapper = mapper;
+        _diemSoHelper = diemSoHelper;
     }
     public async Task<ResponseHocBaDto> CreateAsync(RequestAddHocbaDto request)
     {
@@ -84,12 +88,49 @@ public class ServiceHocBa : IServiceHocBa
             throw new HocBaNotFoundException(id);
         }
         var hocBaUpdate = _mapper.Map<HocBa>(request);
+        hocBaUpdate.LanHoc = hocBaUpdate.LanHoc + 1;
+        var diemso = _diemSoHelper.ComparePoint(request.DiemTongKetLopHocPhan, hocBaUpdate.DiemTongKet);
+        hocBaUpdate.DiemTongKet = diemso;
+        hocBaUpdate.KetQuaHocBaEnum = diemso >= 5 ? KetQuaHocBaEnum.DAT : KetQuaHocBaEnum.KHONG_DAT;
         hocBaUpdate.UpdatedAt = DateTime.Now;
+        
         await _repositoryMaster.ExecuteInTransactionAsync(async () =>
         {
             _repositoryMaster.HocBa.UpdateHocBa(hocBaUpdate);
             await Task.CompletedTask;
         });
         _loggerService.LogInfo("Cập nhật học bạ thành công.");
+    }
+
+    public async Task UpdateListHocBaAsync(List<RequestUpdateHocbaDto> listRequest)
+    {
+        var hocBaIds = listRequest.Select(e => e.Id).ToList();
+
+        var exsitingHocBas = await _repositoryMaster.HocBa.GetAllHocBaByIdAsync(hocBaIds);
+
+        var hocBaDict = exsitingHocBas.ToDictionary(e => e.Id);
+
+        var updateHocBas = new List<HocBa>();
+
+        foreach (var request in listRequest)
+        {
+            if (!hocBaDict.TryGetValue(request.Id, out var hocBa)) continue;
+            var hocBaUpdate = _mapper.Map<HocBa>(request);
+
+            hocBaUpdate.LanHoc = hocBaUpdate.LanHoc + 1;
+
+            var diemso = _diemSoHelper.ComparePoint(request.DiemTongKetLopHocPhan, hocBaUpdate.DiemTongKet);
+
+            hocBaUpdate.DiemTongKet = diemso;
+            hocBaUpdate.KetQuaHocBaEnum = diemso >= 5 ? KetQuaHocBaEnum.DAT : KetQuaHocBaEnum.KHONG_DAT;
+            hocBaUpdate.UpdatedAt = DateTime.Now;
+
+            updateHocBas.Add(hocBaUpdate);
+        }
+        await _repositoryMaster.ExecuteInTransactionBulkEntityAsync(async () =>
+        {
+            await _repositoryMaster.BulkUpdateEntityAsync<HocBa>(updateHocBas);
+        });
+        _loggerService.LogInfo("Cập nhật danh sách học bạ thành công.");
     }
 }

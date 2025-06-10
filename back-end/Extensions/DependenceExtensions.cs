@@ -31,6 +31,8 @@ public static class DependenceExtensions
         services.AddScoped<IRepositoryMaster, RepositoryMaster>();
         services.AddScoped<IServiceMaster, ServiceMaster>();
         services.AddScoped<IServiceFIle, ServiceFile>();
+        services.AddScoped<IDiemSoHelper, DiemSoHelper>();
+        
         return services;
     }
 }
