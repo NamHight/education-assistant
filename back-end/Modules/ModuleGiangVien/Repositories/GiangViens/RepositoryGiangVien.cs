@@ -24,21 +24,23 @@ public class RepositoryGiangVien : RepositoryBase<GiangVien>, IRepositoryGiangVi
         Delete(giangVien);
     }
 
-    public async Task<PagedListAsync<GiangVien>?> GetAllGiangVienAsync(int page, int limit, string search, string sortBy, string sortByOrder)
+    public async Task<PagedListAsync<GiangVien>?> GetAllGiangVienAsync(int page, int limit, string search,
+        string sortBy, string sortByOrder)
     {
-        return await PagedListAsync<GiangVien>.ToPagedListAsync(_context.GiangViens!.SearchBy(search, item => item.HoTen!)
-                                .IgnoreQueryFilters()
-                                .OrderBy(item => item.DeletedAt != null)
-                                .SortByOptions(sortBy, sortByOrder, new Dictionary<string, Expression<Func<GiangVien, object>>>
-                                {
-                                    ["createat"] = item => item.CreatedAt,
-                                    ["ngaysinh"] = item => item.NgaySinh!,
-                                    ["ngayvaotruong"] = item => item.NgayVaoTruong!,
-                                    ["updateat"] = item => item.UpdatedAt!,
-                                }).AsNoTracking(), page, limit);
+        return await PagedListAsync<GiangVien>.ToPagedListAsync(_context.GiangViens!
+            .SearchBy(search, item => item.HoTen!)
+            .IgnoreQueryFilters()
+            .OrderBy(item => item.DeletedAt != null)
+            .SortByOptions(sortBy, sortByOrder, new Dictionary<string, Expression<Func<GiangVien, object>>>
+            {
+                ["createat"] = item => item.CreatedAt,
+                ["ngaysinh"] = item => item.NgaySinh!,
+                ["ngayvaotruong"] = item => item.NgayVaoTruong!,
+                ["updateat"] = item => item.UpdatedAt!
+            }).AsNoTracking(), page, limit);
     }
 
-    public async Task<GiangVien?> GetGiangVienByIdAsync(Guid id, bool trackChanges)
+    public async Task<GiangVien?> GetGiangVienByIdAsync(Guid? id, bool trackChanges)
     {
         return await FindByCondition(item => item.Id == id, trackChanges).FirstOrDefaultAsync();
     }
@@ -52,5 +54,4 @@ public class RepositoryGiangVien : RepositoryBase<GiangVien>, IRepositoryGiangVi
     {
         Update(giangVien);
     }
-    
 }

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Education_assistant.Migrations
 {
     [DbContext(typeof(RepositoryContext))]
-    [Migration("20250607134640_InitialDb")]
-    partial class InitialDb
+    [Migration("20250609083527_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -150,13 +150,21 @@ namespace Education_assistant.Migrations
                         .HasColumnType("decimal(65,30)")
                         .HasColumnName("diem_chuyen_can");
 
-                    b.Property<decimal?>("DiemThi")
+                    b.Property<decimal?>("DiemThi1")
                         .HasColumnType("decimal(65,30)")
-                        .HasColumnName("diem_thi");
+                        .HasColumnName("diem_thi_1");
 
-                    b.Property<decimal?>("DiemTongKet")
+                    b.Property<decimal?>("DiemThi2")
                         .HasColumnType("decimal(65,30)")
-                        .HasColumnName("diem_tong_ket");
+                        .HasColumnName("diem_thi_2");
+
+                    b.Property<decimal?>("DiemTongKet1")
+                        .HasColumnType("decimal(65,30)")
+                        .HasColumnName("diem_tong_ket_1");
+
+                    b.Property<decimal?>("DiemTongKet2")
+                        .HasColumnType("decimal(65,30)")
+                        .HasColumnName("diem_tong_ket_2");
 
                     b.Property<decimal?>("DiemTrungBinh")
                         .HasColumnType("decimal(65,30)")
@@ -234,9 +242,9 @@ namespace Education_assistant.Migrations
                         .HasColumnType("decimal(65,30)")
                         .HasColumnName("hoc_phi");
 
-                    b.Property<Guid?>("KhoaId")
-                        .HasColumnType("char(36)")
-                        .HasColumnName("khoa_id");
+                    b.Property<string>("Khoa")
+                        .HasColumnType("longtext")
+                        .HasColumnName("khoa");
 
                     b.Property<int?>("LoaiChuonTrinhDaoTao")
                         .HasColumnType("int")
@@ -251,6 +259,10 @@ namespace Education_assistant.Migrations
                     b.Property<string>("MoTa")
                         .HasColumnType("longtext")
                         .HasColumnName("mo_ta");
+
+                    b.Property<Guid?>("NganhId")
+                        .HasColumnType("char(36)")
+                        .HasColumnName("nganh_id");
 
                     b.Property<string>("TenChuongTrinh")
                         .IsRequired()
@@ -273,7 +285,7 @@ namespace Education_assistant.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("KhoaId");
+                    b.HasIndex("NganhId");
 
                     b.ToTable("chuong_trinh_dao_tao");
                 });
@@ -570,21 +582,13 @@ namespace Education_assistant.Migrations
                         .HasColumnType("char(36)")
                         .HasColumnName("lop_hoc_phan_id");
 
-                    b.Property<Guid?>("MonHocId")
-                        .HasColumnType("char(36)")
-                        .HasColumnName("mon_hoc_id");
-
-                    b.Property<int>("NamHoc")
-                        .HasColumnType("int")
-                        .HasColumnName("nam_hoc");
-
                     b.Property<Guid?>("PhongHocId")
                         .HasColumnType("char(36)")
                         .HasColumnName("phong_hoc_id");
 
-                    b.Property<int>("ThuMay")
+                    b.Property<int>("Thu")
                         .HasColumnType("int")
-                        .HasColumnName("thu_may");
+                        .HasColumnName("thu");
 
                     b.Property<int>("TietBatDau")
                         .HasColumnType("int")
@@ -594,9 +598,9 @@ namespace Education_assistant.Migrations
                         .HasColumnType("int")
                         .HasColumnName("tiet_ket_thuc");
 
-                    b.Property<int>("TuanMay")
-                        .HasColumnType("int")
-                        .HasColumnName("tuan_may");
+                    b.Property<Guid?>("TuanId")
+                        .HasColumnType("char(36)")
+                        .HasColumnName("tuan_id");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime(6)")
@@ -606,9 +610,9 @@ namespace Education_assistant.Migrations
 
                     b.HasIndex("LopHocPhanId");
 
-                    b.HasIndex("MonHocId");
-
                     b.HasIndex("PhongHocId");
+
+                    b.HasIndex("TuanId");
 
                     b.ToTable("lich_bieu");
                 });
@@ -1060,49 +1064,65 @@ namespace Education_assistant.Migrations
                         .HasColumnType("datetime(6)")
                         .HasColumnName("deleted_at");
 
-                    b.Property<string>("Email")
+                    b.Property<string>("Key")
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("varchar(255)")
-                        .HasColumnName("email");
-
-                    b.Property<string>("MaTruong")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("varchar(255)")
-                        .HasColumnName("ma_truong");
-
-                    b.Property<string>("SoDienThoai")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("varchar(255)")
-                        .HasColumnName("so_dien_thoai");
-
-                    b.Property<string>("TenTruong")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("varchar(255)")
-                        .HasColumnName("ten_truong");
+                        .HasColumnName("key");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime(6)")
                         .HasColumnName("updated_at");
 
-                    b.Property<string>("ViTri")
+                    b.Property<string>("Value")
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("varchar(255)")
-                        .HasColumnName("vi_tri");
-
-                    b.Property<string>("Website")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("varchar(255)")
-                        .HasColumnName("website");
+                        .HasColumnName("value");
 
                     b.HasKey("Id");
 
                     b.ToTable("truong");
+                });
+
+            modelBuilder.Entity("Education_assistant.Models.Tuan", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("deleted_at");
+
+                    b.Property<int>("NamHoc")
+                        .HasColumnType("int")
+                        .HasColumnName("nam_hoc");
+
+                    b.Property<DateTime?>("NgayBatDau")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("ngay_bat_dau");
+
+                    b.Property<DateTime?>("NgayKetThuc")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("ngay_ket_thuc");
+
+                    b.Property<int>("SoTuan")
+                        .HasColumnType("int")
+                        .HasColumnName("so_tuan");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("tuan");
                 });
 
             modelBuilder.Entity("Education_assistant.Models.BoMon", b =>
@@ -1164,11 +1184,11 @@ namespace Education_assistant.Migrations
 
             modelBuilder.Entity("Education_assistant.Models.ChuongTrinhDaoTao", b =>
                 {
-                    b.HasOne("Education_assistant.Models.Khoa", "Khoa")
+                    b.HasOne("Education_assistant.Models.Nganh", "Nganh")
                         .WithMany("DanhSachChuongTrinhDaoTao")
-                        .HasForeignKey("KhoaId");
+                        .HasForeignKey("NganhId");
 
-                    b.Navigation("Khoa");
+                    b.Navigation("Nganh");
                 });
 
             modelBuilder.Entity("Education_assistant.Models.DangKyMonHoc", b =>
@@ -1243,19 +1263,19 @@ namespace Education_assistant.Migrations
                         .WithMany()
                         .HasForeignKey("LopHocPhanId");
 
-                    b.HasOne("Education_assistant.Models.MonHoc", "MonHoc")
-                        .WithMany("DanhSachLichBieu")
-                        .HasForeignKey("MonHocId");
-
                     b.HasOne("Education_assistant.Models.PhongHoc", "PhongHoc")
                         .WithMany("DanhSachLichBieu")
                         .HasForeignKey("PhongHocId");
 
+                    b.HasOne("Education_assistant.Models.Tuan", "Tuan")
+                        .WithMany("DanhSachLichBieu")
+                        .HasForeignKey("TuanId");
+
                     b.Navigation("LopHocPhan");
 
-                    b.Navigation("MonHoc");
-
                     b.Navigation("PhongHoc");
+
+                    b.Navigation("Tuan");
                 });
 
             modelBuilder.Entity("Education_assistant.Models.LopHoc", b =>
@@ -1355,8 +1375,6 @@ namespace Education_assistant.Migrations
 
             modelBuilder.Entity("Education_assistant.Models.Khoa", b =>
                 {
-                    b.Navigation("DanhSachChuongTrinhDaoTao");
-
                     b.Navigation("DanhSachGiangVien");
 
                     b.Navigation("DanhSachMonHoc");
@@ -1384,13 +1402,13 @@ namespace Education_assistant.Migrations
 
                     b.Navigation("DanhSachChiTietLopHocPhan");
 
-                    b.Navigation("DanhSachLichBieu");
-
                     b.Navigation("DanhSachLopHocPhan");
                 });
 
             modelBuilder.Entity("Education_assistant.Models.Nganh", b =>
                 {
+                    b.Navigation("DanhSachChuongTrinhDaoTao");
+
                     b.Navigation("DanhSachLopHoc");
                 });
 
@@ -1418,6 +1436,11 @@ namespace Education_assistant.Migrations
             modelBuilder.Entity("Education_assistant.Models.Truong", b =>
                 {
                     b.Navigation("DanhSachKhoa");
+                });
+
+            modelBuilder.Entity("Education_assistant.Models.Tuan", b =>
+                {
+                    b.Navigation("DanhSachLichBieu");
                 });
 #pragma warning restore 612, 618
         }

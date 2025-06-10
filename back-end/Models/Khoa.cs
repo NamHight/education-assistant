@@ -1,7 +1,5 @@
-
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Newtonsoft.Json;
 
 namespace Education_assistant.Models;
 
@@ -32,11 +30,6 @@ public class Khoa : BaseEntity
     [Column("website")]
     [MaxLength(255, ErrorMessage = "Website không được quá 255 ký tự")]
     public string Website { get; set; } = string.Empty;
-
-    [Column("truong_id")] public Guid? TruongId { get; set; }
-
-    [JsonIgnore]
-    [ForeignKey("TruongId")] public virtual Truong? Truong { get; set; }
 
     public virtual ICollection<MonHoc>? DanhSachMonHoc { get; set; }
     public virtual ICollection<GiangVien>? DanhSachGiangVien { get; set; }
