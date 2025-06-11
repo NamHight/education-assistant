@@ -34,7 +34,7 @@ public class ChuongTrinhDaoTao : BaseEntity
     [Column("hoc_phi")] public decimal HocPhi { get; set; }
     [Column("mo_ta")] public string? MoTa { get; set; }
     [Column("tong_so_tin_chi")] public int TongSoTinChi { get; set; }
-    [Column("khoa")] public string? Khoa { get; set; }
+    [Column("khoa")] public int? Khoa { get; set; }
     [Column("nganh_id")] public Guid? NganhId { get; set; }
     [ForeignKey("NganhId")] public virtual Nganh? Nganh { get; set; }
     public virtual ICollection<SinhVienChuongTrinhDaoTao>? DanhSachSinhVienChuongTrinhDaoTao { get; set; }

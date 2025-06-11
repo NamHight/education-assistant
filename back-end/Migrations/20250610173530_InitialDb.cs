@@ -67,17 +67,9 @@ namespace Education_assistant.Migrations
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    ma_truong = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
+                    key = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    ten_truong = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    email = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    vi_tri = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    so_dien_thoai = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    website = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
+                    value = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     created_at = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     updated_at = table.Column<DateTime>(type: "datetime(6)", nullable: true),
@@ -86,6 +78,25 @@ namespace Education_assistant.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_truong", x => x.id);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "tuan",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    so_tuan = table.Column<int>(type: "int", nullable: false),
+                    nam_hoc = table.Column<int>(type: "int", nullable: false),
+                    ngay_bat_dau = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    ngay_ket_thuc = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    created_at = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    updated_at = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    deleted_at = table.Column<DateTime>(type: "datetime(6)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_tuan", x => x.id);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -141,38 +152,6 @@ namespace Education_assistant.Migrations
                     table.PrimaryKey("PK_bo_mon", x => x.id);
                     table.ForeignKey(
                         name: "FK_bo_mon_khoa_khoa_id",
-                        column: x => x.khoa_id,
-                        principalTable: "khoa",
-                        principalColumn: "id");
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateTable(
-                name: "chuong_trinh_dao_tao",
-                columns: table => new
-                {
-                    id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    ma_chuong_trinh = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    ten_chuong_trinh = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    loai_chuong_trinh_dao_tao = table.Column<int>(type: "int", nullable: true),
-                    thoi_gian_dao_tao = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    hoc_phi = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
-                    mo_ta = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    tong_so_tin_chi = table.Column<int>(type: "int", nullable: false),
-                    khoa_id = table.Column<Guid>(type: "char(36)", nullable: true, collation: "ascii_general_ci"),
-                    created_at = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    updated_at = table.Column<DateTime>(type: "datetime(6)", nullable: true),
-                    deleted_at = table.Column<DateTime>(type: "datetime(6)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_chuong_trinh_dao_tao", x => x.id);
-                    table.ForeignKey(
-                        name: "FK_chuong_trinh_dao_tao_khoa_khoa_id",
                         column: x => x.khoa_id,
                         principalTable: "khoa",
                         principalColumn: "id");
@@ -288,38 +267,34 @@ namespace Education_assistant.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "chi_tiet_chuong_trinh_dao_tao",
+                name: "chuong_trinh_dao_tao",
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    mon_hoc_id = table.Column<Guid>(type: "char(36)", nullable: true, collation: "ascii_general_ci"),
-                    chuong_trinh_dao_tao_id = table.Column<Guid>(type: "char(36)", nullable: true, collation: "ascii_general_ci"),
-                    bo_mon_id = table.Column<Guid>(type: "char(36)", nullable: true, collation: "ascii_general_ci"),
-                    so_tin_chi = table.Column<int>(type: "int", nullable: false),
-                    hoc_ky = table.Column<int>(type: "int", nullable: false),
-                    diem_tich_luy = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    loai_mon_hoc = table.Column<int>(type: "int", nullable: true),
+                    ma_chuong_trinh = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    ten_chuong_trinh = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    loai_chuong_trinh_dao_tao = table.Column<int>(type: "int", nullable: true),
+                    thoi_gian_dao_tao = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    hoc_phi = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
+                    mo_ta = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    tong_so_tin_chi = table.Column<int>(type: "int", nullable: false),
+                    khoa = table.Column<int>(type: "int", nullable: true),
+                    nganh_id = table.Column<Guid>(type: "char(36)", nullable: true, collation: "ascii_general_ci"),
                     created_at = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     updated_at = table.Column<DateTime>(type: "datetime(6)", nullable: true),
                     deleted_at = table.Column<DateTime>(type: "datetime(6)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_chi_tiet_chuong_trinh_dao_tao", x => x.id);
+                    table.PrimaryKey("PK_chuong_trinh_dao_tao", x => x.id);
                     table.ForeignKey(
-                        name: "FK_chi_tiet_chuong_trinh_dao_tao_bo_mon_bo_mon_id",
-                        column: x => x.bo_mon_id,
-                        principalTable: "bo_mon",
-                        principalColumn: "id");
-                    table.ForeignKey(
-                        name: "FK_chi_tiet_chuong_trinh_dao_tao_chuong_trinh_dao_tao_chuong_tr~",
-                        column: x => x.chuong_trinh_dao_tao_id,
-                        principalTable: "chuong_trinh_dao_tao",
-                        principalColumn: "id");
-                    table.ForeignKey(
-                        name: "FK_chi_tiet_chuong_trinh_dao_tao_mon_hoc_mon_hoc_id",
-                        column: x => x.mon_hoc_id,
-                        principalTable: "mon_hoc",
+                        name: "FK_chuong_trinh_dao_tao_nganh_nganh_id",
+                        column: x => x.nganh_id,
+                        principalTable: "nganh",
                         principalColumn: "id");
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
@@ -366,7 +341,7 @@ namespace Education_assistant.Migrations
                     si_so = table.Column<int>(type: "int", nullable: false),
                     trang_thai = table.Column<int>(type: "int", nullable: true),
                     mon_hoc_id = table.Column<Guid>(type: "char(36)", nullable: true, collation: "ascii_general_ci"),
-                    giang_vien_id = table.Column<Guid>(type: "char(36)", nullable: true, collation: "ascii_general_ci"),
+                    giang_vien_id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
                     created_at = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     updated_at = table.Column<DateTime>(type: "datetime(6)", nullable: true),
                     deleted_at = table.Column<DateTime>(type: "datetime(6)", nullable: true)
@@ -378,9 +353,47 @@ namespace Education_assistant.Migrations
                         name: "FK_lop_hoc_phan_giang_vien_giang_vien_id",
                         column: x => x.giang_vien_id,
                         principalTable: "giang_vien",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_lop_hoc_phan_mon_hoc_mon_hoc_id",
+                        column: x => x.mon_hoc_id,
+                        principalTable: "mon_hoc",
+                        principalColumn: "id");
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "chi_tiet_chuong_trinh_dao_tao",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    mon_hoc_id = table.Column<Guid>(type: "char(36)", nullable: true, collation: "ascii_general_ci"),
+                    chuong_trinh_dao_tao_id = table.Column<Guid>(type: "char(36)", nullable: true, collation: "ascii_general_ci"),
+                    bo_mon_id = table.Column<Guid>(type: "char(36)", nullable: true, collation: "ascii_general_ci"),
+                    so_tin_chi = table.Column<int>(type: "int", nullable: false),
+                    hoc_ky = table.Column<int>(type: "int", nullable: false),
+                    diem_tich_luy = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    loai_mon_hoc = table.Column<int>(type: "int", nullable: true),
+                    created_at = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    updated_at = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    deleted_at = table.Column<DateTime>(type: "datetime(6)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_chi_tiet_chuong_trinh_dao_tao", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_chi_tiet_chuong_trinh_dao_tao_bo_mon_bo_mon_id",
+                        column: x => x.bo_mon_id,
+                        principalTable: "bo_mon",
+                        principalColumn: "id");
+                    table.ForeignKey(
+                        name: "FK_chi_tiet_chuong_trinh_dao_tao_chuong_trinh_dao_tao_chuong_tr~",
+                        column: x => x.chuong_trinh_dao_tao_id,
+                        principalTable: "chuong_trinh_dao_tao",
+                        principalColumn: "id");
+                    table.ForeignKey(
+                        name: "FK_chi_tiet_chuong_trinh_dao_tao_mon_hoc_mon_hoc_id",
                         column: x => x.mon_hoc_id,
                         principalTable: "mon_hoc",
                         principalColumn: "id");
@@ -434,10 +447,8 @@ namespace Education_assistant.Migrations
                     id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
                     tiet_bat_dau = table.Column<int>(type: "int", nullable: false),
                     tiet_ket_thuc = table.Column<int>(type: "int", nullable: false),
-                    thu_may = table.Column<int>(type: "int", nullable: false),
-                    tuan_may = table.Column<int>(type: "int", nullable: false),
-                    nam_hoc = table.Column<int>(type: "int", nullable: false),
-                    mon_hoc_id = table.Column<Guid>(type: "char(36)", nullable: true, collation: "ascii_general_ci"),
+                    thu = table.Column<int>(type: "int", nullable: false),
+                    tuan_id = table.Column<Guid>(type: "char(36)", nullable: true, collation: "ascii_general_ci"),
                     lop_hoc_phan_id = table.Column<Guid>(type: "char(36)", nullable: true, collation: "ascii_general_ci"),
                     phong_hoc_id = table.Column<Guid>(type: "char(36)", nullable: true, collation: "ascii_general_ci"),
                     created_at = table.Column<DateTime>(type: "datetime(6)", nullable: false),
@@ -453,14 +464,14 @@ namespace Education_assistant.Migrations
                         principalTable: "lop_hoc_phan",
                         principalColumn: "id");
                     table.ForeignKey(
-                        name: "FK_lich_bieu_mon_hoc_mon_hoc_id",
-                        column: x => x.mon_hoc_id,
-                        principalTable: "mon_hoc",
-                        principalColumn: "id");
-                    table.ForeignKey(
                         name: "FK_lich_bieu_phong_hoc_phong_hoc_id",
                         column: x => x.phong_hoc_id,
                         principalTable: "phong_hoc",
+                        principalColumn: "id");
+                    table.ForeignKey(
+                        name: "FK_lich_bieu_tuan_tuan_id",
+                        column: x => x.tuan_id,
+                        principalTable: "tuan",
                         principalColumn: "id");
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
@@ -470,10 +481,12 @@ namespace Education_assistant.Migrations
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    diem_chuyen_can = table.Column<decimal>(type: "decimal(65,30)", nullable: true),
-                    diem_trung_binh = table.Column<decimal>(type: "decimal(65,30)", nullable: true),
-                    diem_thi = table.Column<decimal>(type: "decimal(65,30)", nullable: true),
-                    diem_tong_ket = table.Column<decimal>(type: "decimal(65,30)", nullable: true),
+                    diem_chuyen_can = table.Column<decimal>(type: "decimal(2,2)", precision: 2, scale: 2, nullable: true),
+                    diem_trung_binh = table.Column<decimal>(type: "decimal(2,2)", precision: 2, scale: 2, nullable: true),
+                    diem_thi_1 = table.Column<decimal>(type: "decimal(2,2)", precision: 2, scale: 2, nullable: true),
+                    diem_thi_2 = table.Column<decimal>(type: "decimal(2,2)", precision: 2, scale: 2, nullable: true),
+                    diem_tong_ket_1 = table.Column<decimal>(type: "decimal(2,2)", precision: 2, scale: 2, nullable: true),
+                    diem_tong_ket_2 = table.Column<decimal>(type: "decimal(2,2)", precision: 2, scale: 2, nullable: true),
                     ngay_luu_diem = table.Column<DateTime>(type: "datetime(6)", nullable: true),
                     ngay_nop_diem = table.Column<DateTime>(type: "datetime(6)", nullable: true),
                     hoc_ky = table.Column<int>(type: "int", nullable: false),
@@ -520,7 +533,7 @@ namespace Education_assistant.Migrations
                 {
                     id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
                     ngay_dang_ky_hoc = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    diem = table.Column<decimal>(type: "decimal(65,30)", nullable: true),
+                    diem = table.Column<decimal>(type: "decimal(2,2)", precision: 2, scale: 2, nullable: true),
                     ghi_chu = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     trang_thai = table.Column<int>(type: "int", nullable: true),
@@ -551,7 +564,7 @@ namespace Education_assistant.Migrations
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    diem_tong_ket = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
+                    diem_tong_ket = table.Column<decimal>(type: "decimal(2,2)", precision: 2, scale: 2, nullable: false),
                     mo_ta = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     lan_hoc = table.Column<int>(type: "int", nullable: false),
@@ -652,9 +665,9 @@ namespace Education_assistant.Migrations
                 column: "sinh_vien_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_chuong_trinh_dao_tao_khoa_id",
+                name: "IX_chuong_trinh_dao_tao_nganh_id",
                 table: "chuong_trinh_dao_tao",
-                column: "khoa_id");
+                column: "nganh_id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_dang_ky_mon_hoc_lop_hoc_phan_id",
@@ -708,14 +721,14 @@ namespace Education_assistant.Migrations
                 column: "lop_hoc_phan_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_lich_bieu_mon_hoc_id",
-                table: "lich_bieu",
-                column: "mon_hoc_id");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_lich_bieu_phong_hoc_id",
                 table: "lich_bieu",
                 column: "phong_hoc_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_lich_bieu_tuan_id",
+                table: "lich_bieu",
+                column: "tuan_id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_lop_hoc_giang_vien_id",
@@ -789,6 +802,9 @@ namespace Education_assistant.Migrations
 
             migrationBuilder.DropTable(
                 name: "phong_hoc");
+
+            migrationBuilder.DropTable(
+                name: "tuan");
 
             migrationBuilder.DropTable(
                 name: "sinh_vien");
