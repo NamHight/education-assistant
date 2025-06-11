@@ -34,7 +34,7 @@ public class RepositoryTaiKhoan : RepositoryBase<TaiKhoan>, IRepositoryTaiKhoan
                                                                         ["createat"] = item => item.CreatedAt,
                                                                         ["updateat"] = item => item.UpdatedAt!,
                                                                         ["deleteat"] = item => item.DeletedAt!
-                                                                    })
+                                                                    }).AsNoTracking()
                                                                     , page, limit);
     }
 

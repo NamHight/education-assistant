@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Education_assistant.Models.Enums;
+using Microsoft.EntityFrameworkCore;
 
 namespace Education_assistant.Models;
 
@@ -31,7 +32,7 @@ public class ChuongTrinhDaoTao : BaseEntity
     [Column("thoi_gian_dao_tao")]
     [Required(ErrorMessage = "Thời gian đào tạo không được để trống")]
     public string ThoiGianDaoTao { get; set; } = string.Empty;
-    [Column("hoc_phi")] public decimal HocPhi { get; set; }
+    [Column("hoc_phi")][Precision(18,2)] public decimal HocPhi { get; set; }
     [Column("mo_ta")] public string? MoTa { get; set; }
     [Column("tong_so_tin_chi")] public int TongSoTinChi { get; set; }
     [Column("khoa")] public int? Khoa { get; set; }

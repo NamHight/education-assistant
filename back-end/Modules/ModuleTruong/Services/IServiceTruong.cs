@@ -1,8 +1,5 @@
-using System;
 using Education_assistant.Modules.ModuleTruong.DTOs.Request;
 using Education_assistant.Modules.ModuleTruong.DTOs.Response;
-using Education_assistant.Repositories.Paginations;
-using Education_assistant.Services.BaseDtos;
 
 namespace Education_assistant.Modules.ModuleTruong.Services;
 

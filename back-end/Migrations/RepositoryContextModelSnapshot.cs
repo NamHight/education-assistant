@@ -144,33 +144,33 @@ namespace Education_assistant.Migrations
                         .HasColumnName("deleted_at");
 
                     b.Property<decimal?>("DiemChuyenCan")
-                        .HasPrecision(2, 2)
-                        .HasColumnType("decimal(2,2)")
+                        .HasPrecision(4, 2)
+                        .HasColumnType("decimal(4,2)")
                         .HasColumnName("diem_chuyen_can");
 
                     b.Property<decimal?>("DiemThi1")
-                        .HasPrecision(2, 2)
-                        .HasColumnType("decimal(2,2)")
+                        .HasPrecision(4, 2)
+                        .HasColumnType("decimal(4,2)")
                         .HasColumnName("diem_thi_1");
 
                     b.Property<decimal?>("DiemThi2")
-                        .HasPrecision(2, 2)
-                        .HasColumnType("decimal(2,2)")
+                        .HasPrecision(4, 2)
+                        .HasColumnType("decimal(4,2)")
                         .HasColumnName("diem_thi_2");
 
                     b.Property<decimal?>("DiemTongKet1")
-                        .HasPrecision(2, 2)
-                        .HasColumnType("decimal(2,2)")
+                        .HasPrecision(4, 2)
+                        .HasColumnType("decimal(4,2)")
                         .HasColumnName("diem_tong_ket_1");
 
                     b.Property<decimal?>("DiemTongKet2")
-                        .HasPrecision(2, 2)
-                        .HasColumnType("decimal(2,2)")
+                        .HasPrecision(4, 2)
+                        .HasColumnType("decimal(4,2)")
                         .HasColumnName("diem_tong_ket_2");
 
                     b.Property<decimal?>("DiemTrungBinh")
-                        .HasPrecision(2, 2)
-                        .HasColumnType("decimal(2,2)")
+                        .HasPrecision(4, 2)
+                        .HasColumnType("decimal(4,2)")
                         .HasColumnName("diem_trung_binh");
 
                     b.Property<string>("GhiChu")
@@ -242,7 +242,8 @@ namespace Education_assistant.Migrations
                         .HasColumnName("deleted_at");
 
                     b.Property<decimal>("HocPhi")
-                        .HasColumnType("decimal(65,30)")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)")
                         .HasColumnName("hoc_phi");
 
                     b.Property<int?>("Khoa")
@@ -469,8 +470,8 @@ namespace Education_assistant.Migrations
                         .HasColumnName("deleted_at");
 
                     b.Property<decimal>("DiemTongKet")
-                        .HasPrecision(2, 2)
-                        .HasColumnType("decimal(2,2)")
+                        .HasPrecision(4, 2)
+                        .HasColumnType("decimal(4,2)")
                         .HasColumnName("diem_tong_ket");
 
                     b.Property<int?>("KetQua")
@@ -541,10 +542,6 @@ namespace Education_assistant.Migrations
                         .HasColumnType("varchar(255)")
                         .HasColumnName("ten_khoa");
 
-                    b.Property<Guid?>("TruongId")
-                        .HasColumnType("char(36)")
-                        .HasColumnName("truong_id");
-
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime(6)")
                         .HasColumnName("updated_at");
@@ -562,8 +559,6 @@ namespace Education_assistant.Migrations
                         .HasColumnName("website");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("TruongId");
 
                     b.ToTable("khoa");
                 });
@@ -689,7 +684,7 @@ namespace Education_assistant.Migrations
                         .HasColumnType("datetime(6)")
                         .HasColumnName("deleted_at");
 
-                    b.Property<Guid>("GiangVienId")
+                    b.Property<Guid?>("GiangVienId")
                         .HasColumnType("char(36)")
                         .HasColumnName("giang_vien_id");
 
@@ -699,7 +694,7 @@ namespace Education_assistant.Migrations
                         .HasColumnType("varchar(255)")
                         .HasColumnName("ma_hoc_phan");
 
-                    b.Property<Guid?>("MonHocId")
+                    b.Property<Guid>("MonHocId")
                         .HasColumnType("char(36)")
                         .HasColumnName("mon_hoc_id");
 
@@ -1026,6 +1021,10 @@ namespace Education_assistant.Migrations
                         .HasColumnType("int")
                         .HasColumnName("loai_tai_khoan");
 
+                    b.Property<int?>("LockTime")
+                        .HasColumnType("int")
+                        .HasColumnName("khoa_dang_nhap");
+
                     b.Property<string>("Password")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -1044,6 +1043,10 @@ namespace Education_assistant.Migrations
                     b.Property<bool>("Status")
                         .HasColumnType("tinyint(1)")
                         .HasColumnName("trang_thai");
+
+                    b.Property<int?>("TimeLogin")
+                        .HasColumnType("int")
+                        .HasColumnName("so_lan_dang_nhap");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime(6)")
@@ -1253,15 +1256,6 @@ namespace Education_assistant.Migrations
                     b.Navigation("SinhVien");
                 });
 
-            modelBuilder.Entity("Education_assistant.Models.Khoa", b =>
-                {
-                    b.HasOne("Education_assistant.Models.Truong", "Truong")
-                        .WithMany("DanhSachKhoa")
-                        .HasForeignKey("TruongId");
-
-                    b.Navigation("Truong");
-                });
-
             modelBuilder.Entity("Education_assistant.Models.LichBieu", b =>
                 {
                     b.HasOne("Education_assistant.Models.LopHocPhan", "LopHocPhan")
@@ -1302,13 +1296,13 @@ namespace Education_assistant.Migrations
                 {
                     b.HasOne("Education_assistant.Models.GiangVien", "GiangVien")
                         .WithMany("DanhSachLopHocPhan")
-                        .HasForeignKey("GiangVienId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("GiangVienId");
 
                     b.HasOne("Education_assistant.Models.MonHoc", "MonHoc")
                         .WithMany("DanhSachLopHocPhan")
-                        .HasForeignKey("MonHocId");
+                        .HasForeignKey("MonHocId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("GiangVien");
 
@@ -1438,11 +1432,6 @@ namespace Education_assistant.Migrations
             modelBuilder.Entity("Education_assistant.Models.TaiKhoan", b =>
                 {
                     b.Navigation("GiangVien");
-                });
-
-            modelBuilder.Entity("Education_assistant.Models.Truong", b =>
-                {
-                    b.Navigation("DanhSachKhoa");
                 });
 
             modelBuilder.Entity("Education_assistant.Models.Tuan", b =>

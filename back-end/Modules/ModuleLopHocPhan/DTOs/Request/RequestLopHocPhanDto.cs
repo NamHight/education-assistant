@@ -20,7 +20,7 @@ public class RequestAddLopHocPhanDto
     public Guid GiangVienId { get; set; }
     [Required(ErrorMessage = "Id lớp học không được để trống")]
     public Guid LopHocId { get; set; }
-    [Required(ErrorMessage = "Học kỳ không được để trống")]
+    [Required(ErrorMessage = "Id lớp học không được để trống")]
     public int HocKy { get; set; }
     
 }

@@ -34,7 +34,7 @@ public class RepositoryChuongTrinhDaoTao : RepositoryBase<ChuongTrinhDaoTao>, IR
                                                         ["tongsotinchi"] = item => item.TongSoTinChi,
                                                         ["createat"] = item => item.CreatedAt,
                                                         ["updateat"] = item => item.UpdatedAt!,
-                                                    })
+                                                    }).AsNoTracking()
                                                     , page, limit);
     }
 

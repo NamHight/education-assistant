@@ -15,5 +15,4 @@ public class Truong : BaseEntity
     [Required(ErrorMessage = "Value không được để trống")]
     [MaxLength(255, ErrorMessage = "Value không được quá 255 ký tự")]
     public string Value { get; set; } = string.Empty;
-    public virtual ICollection<Khoa>? DanhSachKhoa {get; set;}
 }

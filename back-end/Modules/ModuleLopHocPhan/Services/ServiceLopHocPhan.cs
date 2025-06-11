@@ -31,12 +31,13 @@ public class ServiceLopHocPhan : IServiceLopHocPhan
         });
         await _repositoryMaster.ExecuteInTransactionAsync(async () =>
         {
-            await _repositoryMaster.LopHocPhan.CreateSinhVienLopHocPhan(request.LopHocId, newLopHocPhan.Id, newLopHocPhan.GiangVienId, request.HocKy);
+            await _repositoryMaster.LopHocPhan.CreateSinhVienLopHocPhan(request.LopHocId, newLopHocPhan.Id, newLopHocPhan.GiangVienId, newLopHocPhan.MonHocId, request.HocKy);
         });
         _loggerService.LogInfo("Thêm thông tin lớp học phần thành công.");
         var lopHocPhanDto = _mapper.Map<ResponseLopHocPhanDto>(newLopHocPhan);
         return lopHocPhanDto;
     }
+
 
     public async Task DeleteAsync(Guid id)
     {

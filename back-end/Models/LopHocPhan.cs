@@ -27,10 +27,10 @@ public class LopHocPhan : BaseEntity
         set => TrangThai = value.HasValue ? (int)value.Value : null;
     }
 
-    [Column("mon_hoc_id")] public Guid? MonHocId { get; set; }
+    [Column("mon_hoc_id")] public Guid MonHocId { get; set; }
     [ForeignKey("MonHocId")] public virtual MonHoc? MonHoc { get; set; }
 
-    [Column("giang_vien_id")] public Guid GiangVienId { get; set; }
+    [Column("giang_vien_id")] public Guid? GiangVienId { get; set; }
     [ForeignKey("GiangVienId")] public virtual GiangVien? GiangVien { get; set; }
 
     public virtual ICollection<DangKyMonHoc>? DanhSachDangKyMonHoc { get; set; }

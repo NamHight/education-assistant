@@ -8,6 +8,7 @@ public class RepositoryContext : DbContext
 {
     public RepositoryContext(DbContextOptions options) : base(options)
     {
+        
     }
 
     public DbSet<TaiKhoan>? TaiKhoans { get; set; }
@@ -32,6 +33,7 @@ public class RepositoryContext : DbContext
     public DbSet<Nganh>? Nganhs { get; set; }
     public DbSet<PhongHoc>? PhongHocs { get; set; }
     public DbSet<Tuan>? Tuans { get; set; }
+
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
