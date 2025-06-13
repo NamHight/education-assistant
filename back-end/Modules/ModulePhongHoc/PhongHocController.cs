@@ -33,7 +33,7 @@ namespace Education_assistant.Modules.ModulePhongHoc
             return Ok(result);
         }
 
-        [HttpPost("")]
+        [HttpPost()]
         [ServiceFilter(typeof(ValidationFilter))]
         public async Task<ActionResult> AddPhongHocAsync([FromBody] RequestAddPhongHocDto model)
         {

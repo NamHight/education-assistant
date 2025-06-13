@@ -97,6 +97,7 @@ public class MapperProfile : Profile
 
         //map lịch biểu
         CreateMap<RequestAddLichBieuDto, LichBieu>();
+        CreateMap<RequestAddLichBieuListTuanDto, LichBieu>();
         CreateMap<RequestUpdateLichBieuDto, LichBieu>();
         CreateMap<LichBieu, ResponseLichBieuDto>();
 

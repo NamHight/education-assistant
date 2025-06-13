@@ -7,8 +7,9 @@ public interface IRepositoryGiangVien
 {
     Task<PagedListAsync<GiangVien>?> GetAllGiangVienAsync(int page, int limit, string search, string sortBy,
         string sortByOrder);
-
+    Task<IEnumerable<GiangVien>?> GetAllGiangVienByKhoa(Guid khoaId); 
     Task<GiangVien?> GetGiangVienByIdAsync(Guid? id, bool trackChanges);
+    Task<GiangVien?> GetGiangVienByEmailAsync(string email);
     Task CreateAsync(GiangVien giangVien);
     void UpdateGiangVien(GiangVien giangVien);
     void DeleteGiangVien(GiangVien giangVien);

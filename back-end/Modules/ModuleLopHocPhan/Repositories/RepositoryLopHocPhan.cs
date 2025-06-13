@@ -2,6 +2,7 @@ using System.Linq.Expressions;
 using Education_assistant.Context;
 using Education_assistant.Extensions;
 using Education_assistant.Models;
+using Education_assistant.Modules.ModuleLopHocPhan.DTOs.Response;
 using Education_assistant.Repositories;
 using Education_assistant.Repositories.Paginations;
 using Microsoft.EntityFrameworkCore;
@@ -54,6 +55,26 @@ public class RepositoryLopHocPhan : RepositoryBase<LopHocPhan>, IRepositoryLopHo
             }), page, limit);
     }
 
+    public async Task<IEnumerable<ResponseLopHocPhanWithMonHocDto>> GetAllLopHocPhanCtdtAsync(int khoa, int loaiChuongTrinh, Guid chuongTrinhId, int hocKy)
+    {
+        return await _context.ChuongTrinhDaoTaos!.Where(ctdt => ctdt.Id == chuongTrinhId && ctdt.Khoa == khoa && ctdt.LoaiChuonTrinhDaoTao == loaiChuongTrinh)
+                                                    .SelectMany(ctdt => ctdt.DanhSachChiTietChuongTrinhDaoTao!
+                                                    .Where(ctctdt => ctctdt.HocKy == hocKy)
+                                                    .SelectMany(ctctdt => ctctdt.MonHoc!.DanhSachLopHocPhan!.Select((lhp => new ResponseLopHocPhanWithMonHocDto
+                                                    {
+                                                        Id = lhp.Id,
+                                                        MaHocPhan = lhp.MaHocPhan,
+                                                        SiSo = lhp.SiSo,
+                                                        TrangThaiLopHocPhanEnum = lhp.TrangThai,
+                                                        TenMonHoc = ctctdt.MonHoc.TenMonHoc,     
+                                                        LoaiMonHocEnum = ctctdt.LoaiMonHoc,
+                                                        MonHocId = lhp.MonHocId,
+                                                        GiangVienId = lhp.GiangVienId,
+                                                        CreatedAt = lhp.CreatedAt,
+                                                        UpdatedAt = lhp.UpdatedAt
+                                                      
+                                                    })))).ToListAsync();                                     
+    }
     public async Task<LopHocPhan?> GetLopHocPhanByIdAsync(Guid id, bool trackChanges)
     {
         return await FindByCondition(item => item.Id == id, trackChanges).FirstOrDefaultAsync();

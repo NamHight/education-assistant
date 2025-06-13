@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using Education_assistant.Modules.ModuleChiTietChuongTrinhDaoTao.DTOs.Request;
+using Education_assistant.Modules.ModuleLichBieu.DTOs.Param;
 using Education_assistant.Modules.ModuleLichBieu.DTOs.Request;
 using Education_assistant.Services.BaseDtos;
 using Education_assistant.Services.ServiceMaster;
@@ -24,6 +25,12 @@ namespace Education_assistant.Modules.ModuleLichBieu
             var result = await _serviceMaster.LichBieu.GetAllLichBieuAsync(paramBaseDto);
             Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(result.page));
             return Ok(result.data);
+        }
+        [HttpGet("giangvien")]
+        public async Task<ActionResult> GetAllLichBieuGiangVienAsync([FromQuery] ParamLichKhoaBieuGiangVienDto paramBaseDto)
+        {
+            var result = await _serviceMaster.LichBieu.GetLichKhoaBieuGiangVienAsync(paramBaseDto);
+            return Ok(result);
         }
         [HttpGet("{id}")]
         public async Task<ActionResult> GetLichBieuByIdAsync(Guid id)

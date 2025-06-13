@@ -87,6 +87,13 @@ public sealed class ServiceGiangVien : IServiceGiangVien
         return (data: giangVienDtos, page: giangViens!.PageInfo);
     }
 
+    public async Task<IEnumerable<ResponseGiangVienDto>?> GetAllGiangVienByKhoa(Guid khoaId)
+    {
+        var giangViens = await _repositoryMaster.GiangVien.GetAllGiangVienByKhoa(khoaId);
+        var giangVienDtos = _mapper.Map<IEnumerable<ResponseGiangVienDto>>(giangViens);
+        return giangVienDtos;
+    }
+
     public async Task<ResponseGiangVienDto> GetGiangVienByIdAsync(Guid id, bool trackChanges)
     {
         var giangVien = await _repositoryMaster.GiangVien.GetGiangVienByIdAsync(id, false);

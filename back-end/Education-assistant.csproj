@@ -14,6 +14,8 @@
         <PackageReference Include="EPPlus" Version="7.7.0" />
         <PackageReference Include="FluentValidation" Version="11.11.0" />
         <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
+        <PackageReference Include="MailKit" Version="4.11.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.10" />
         <PackageReference Include="Microsoft.AspNetCore.JsonPatch" Version="10.0.0-preview.3.25172.1" />
         <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.10" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.10" />
@@ -39,6 +41,8 @@
     </ItemGroup>
 
     <ItemGroup>
+        <Folder Include="Modules\ModuleChiTietChuongTrinhDaoTao\DTOs\Param\" />
+        <Folder Include="Modules\ModuleChuongTrinhDaoTao\DTOs\Param\" />
         <Folder Include="Modules\ModuleHocBa\Services\" />
         <Folder Include="Modules\ModuleLichBieu\Services\" />
         <Folder Include="wwwroot\uploads\" />

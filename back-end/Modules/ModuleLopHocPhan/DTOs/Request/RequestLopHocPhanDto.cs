@@ -27,7 +27,6 @@ public class RequestAddLopHocPhanDto
 public class RequestUpdateLopHocPhanDto
 {
     [Required(ErrorMessage = "Mã học phần không được để trống")]
-    [MaxLength(255, ErrorMessage = "Mã học phần không được quá 255 ký tự")]
     public Guid Id { get; set; }
 
     [Required(ErrorMessage = "Mã học phần không được để trống")]

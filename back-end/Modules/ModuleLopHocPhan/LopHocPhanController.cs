@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Education_assistant.Modules.ModuleLopHocPhan.DTOs.Param;
 using Education_assistant.Modules.ModuleLopHocPhan.DTOs.Request;
 using Education_assistant.Services.BaseDtos;
 using Education_assistant.Services.ServiceMaster;
@@ -25,6 +26,12 @@ namespace Education_assistant.Modules.ModuleLopHocPhan
             Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(result.page));
             return Ok(result.data);
         }
+        [HttpGet("list-phan-cong")]
+        public async Task<ActionResult> GetAllLopHocPhanCtdtAsync([FromQuery] ParamAllCtdtMonHocDto paramBaseDto)
+        {
+            var result = await _serviceMaster.LopHocPhan.GetAllLopHocPhanCtdtAsync(paramBaseDto);
+            return Ok(result);
+        }
         [HttpGet("{id}")]
         public async Task<ActionResult> GetLopHocPhanByIdAsync(Guid id)
         {
@@ -43,6 +50,13 @@ namespace Education_assistant.Modules.ModuleLopHocPhan
         public async Task<ActionResult> UpdateLopHocPhanAsync(Guid id, [FromBody] RequestUpdateLopHocPhanDto model)
         {
             await _serviceMaster.LopHocPhan.UpdateAsync(id, model);
+            return NoContent();
+        }
+        [HttpPut("list-phan-cong")]
+        [ServiceFilter(typeof(ValidationFilter))]
+        public async Task<ActionResult> UpdateListLopHocPhanAsync([FromBody] List<RequestUpdateLopHocPhanDto> listRequest)
+        {
+            await _serviceMaster.LopHocPhan.UpdateListLophocPhanAsync(listRequest);
             return NoContent();
         }
         [HttpDelete("{id}")]

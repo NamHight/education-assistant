@@ -3,6 +3,7 @@ using AutoMapper;
 using Education_assistant.Contracts.LoggerServices;
 using Education_assistant.Exceptions.ThrowError.LopHocPhanExceptions;
 using Education_assistant.Models;
+using Education_assistant.Modules.ModuleLopHocPhan.DTOs.Param;
 using Education_assistant.Modules.ModuleLopHocPhan.DTOs.Request;
 using Education_assistant.Modules.ModuleLopHocPhan.DTOs.Response;
 using Education_assistant.Repositories.Paginations;
@@ -36,6 +37,10 @@ public class ServiceLopHocPhan : IServiceLopHocPhan
         _loggerService.LogInfo("Thêm thông tin lớp học phần thành công.");
         var lopHocPhanDto = _mapper.Map<ResponseLopHocPhanDto>(newLopHocPhan);
         return lopHocPhanDto;
+    }
+    public async Task<IEnumerable<ResponseLopHocPhanWithMonHocDto>> GetAllLopHocPhanCtdtAsync(ParamAllCtdtMonHocDto paramDto)
+    {
+        return await _repositoryMaster.LopHocPhan.GetAllLopHocPhanCtdtAsync(paramDto.Khoa, paramDto.LoaiChuongTrinh, paramDto.ChuongTrinhId, paramDto.hocKy);
     }
 
 
@@ -95,5 +100,15 @@ public class ServiceLopHocPhan : IServiceLopHocPhan
             await Task.CompletedTask;
         });
         _loggerService.LogInfo("Cập nhật lớp học phần thành công.");
+    }
+
+    public async Task UpdateListLophocPhanAsync(List<RequestUpdateLopHocPhanDto> listRequest)
+    {
+        var lopHocPhans = _mapper.Map<List<LopHocPhan>>(listRequest);
+        await _repositoryMaster.ExecuteInTransactionBulkEntityAsync(async () =>
+        {
+            await _repositoryMaster.BulkUpdateEntityAsync<LopHocPhan>(lopHocPhans);
+        });
+        _loggerService.LogInfo("Cập nhật list phân công giảng viên thành công.");
     }
 }
