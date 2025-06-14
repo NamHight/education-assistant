@@ -5,7 +5,7 @@ import { createJSONStorage, persist } from "zustand/middleware";
 import { create } from "zustand";
 import cookieStorage from "@/lib/cookie";
 import localStorage from "@/lib/localStorage";
-import {IUSerCookie} from "@/models/User";
+import {IUSerCookie} from "@/models/GiangVien";
 import {REFRESH_TOKEN, TOKEN_ACCESS, USER} from "@/types/general";
 
 export interface IPartializeState {

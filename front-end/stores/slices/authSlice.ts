@@ -1,5 +1,5 @@
 import {REFRESH_TOKEN, TOKEN_ACCESS} from './../../types/general';
-import { User } from "@/models/User";
+import { User } from "@/models/GiangVien";
 import { createSlice } from '../utility';
 import cookieStorage from '@/lib/cookie';
 import { RootAuthState } from '../authStore';
