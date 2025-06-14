@@ -9,6 +9,7 @@ public interface IRepositoryGiangVien
         string sortByOrder);
 
     Task<GiangVien?> GetGiangVienByIdAsync(Guid? id, bool trackChanges);
+    Task<GiangVien?> GetGiangVienByEmailAsync(string email, bool trackChanges);
     Task CreateAsync(GiangVien giangVien);
     void UpdateGiangVien(GiangVien giangVien);
     void DeleteGiangVien(GiangVien giangVien);

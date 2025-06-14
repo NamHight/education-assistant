@@ -1,4 +1,3 @@
-using System;
 using System.Linq.Expressions;
 using Education_assistant.Context;
 using Education_assistant.Extensions;
@@ -25,17 +24,18 @@ public class RepositoryTaiKhoan : RepositoryBase<TaiKhoan>, IRepositoryTaiKhoan
         Delete(taiKhoan);
     }
 
-    public async Task<PagedListAsync<TaiKhoan>?> GetAllTaiKhoanAsync(int page, int limit, string search, string sortBy, string sortByOder)
+    public async Task<PagedListAsync<TaiKhoan>?> GetAllTaiKhoanAsync(int page, int limit, string search, string sortBy,
+        string sortByOder)
     {
         return await PagedListAsync<TaiKhoan>.ToPagedListAsync(_context.TaiKhoans!
-                                                                    .SearchBy(search, item => item.Email)
-                                                                    .SortByOptions(sortBy, sortByOder, new Dictionary<string, Expression<Func<TaiKhoan, object>>>
-                                                                    {
-                                                                        ["createat"] = item => item.CreatedAt,
-                                                                        ["updateat"] = item => item.UpdatedAt!,
-                                                                        ["deleteat"] = item => item.DeletedAt!
-                                                                    })
-                                                                    , page, limit);
+                .SearchBy(search, item => item.Email)
+                .SortByOptions(sortBy, sortByOder, new Dictionary<string, Expression<Func<TaiKhoan, object>>>
+                {
+                    ["createat"] = item => item.CreatedAt,
+                    ["updateat"] = item => item.UpdatedAt!,
+                    ["deleteat"] = item => item.DeletedAt!
+                })
+            , page, limit);
     }
 
     public async Task<TaiKhoan?> GetTaiKhoanByEmailAsync(string email, bool trackChanges)

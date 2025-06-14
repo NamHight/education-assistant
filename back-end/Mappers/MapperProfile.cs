@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Education_assistant.Models;
-using Education_assistant.Models.Enums;
 using Education_assistant.Modules.ModuleBoMon.DTOs.Request;
 using Education_assistant.Modules.ModuleBoMon.DTOs.Response;
 using Education_assistant.Modules.ModuleChiTietChuongTrinhDaoTao.DTOs.Request;
@@ -29,7 +28,6 @@ using Education_assistant.Modules.ModuleSinhVien.DTOs.Request;
 using Education_assistant.Modules.ModuleSinhVien.DTOs.Response;
 using Education_assistant.Modules.ModuleTruong.DTOs.Request;
 using Education_assistant.Modules.ModuleTruong.DTOs.Response;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
 
 namespace Education_assistant.Mappers;
 
@@ -73,6 +71,8 @@ public class MapperProfile : Profile
         CreateMap<RequestAddGiangVienDto, GiangVien>();
         CreateMap<RequestUpdateGiangVienDto, GiangVien>();
         CreateMap<GiangVien, ResponseGiangVienDto>();
+
+
         //chi tiết lớp học phần
         CreateMap<RequestAddChiTietLopHocPhanDto, ChiTietLopHocPhan>();
         CreateMap<RequestUpdateChiTietLopHocPhanDto, ChiTietLopHocPhan>();
@@ -87,17 +87,17 @@ public class MapperProfile : Profile
         CreateMap<RequestAddNganhDto, Nganh>();
         CreateMap<RequestUpdateNganhDto, Nganh>();
         CreateMap<Nganh, ResponseNganhDto>();
-        
+
         //map lớp học
         CreateMap<RequestAddLopHocDto, LopHoc>();
         CreateMap<RequestUpdateLopHocDto, LopHoc>();
         CreateMap<LopHoc, ResponseLopHocDto>();
-        
+
         //map lịch biểu
         CreateMap<RequestAddLichBieuDto, LichBieu>();
         CreateMap<RequestUpdateLichBieuDto, LichBieu>();
         CreateMap<LichBieu, ResponseLichBieuDto>();
-        
+
         //map phòng học
         CreateMap<RequestAddPhongHocDto, PhongHoc>();
         CreateMap<RequestUpdatePhongHocDto, PhongHoc>();

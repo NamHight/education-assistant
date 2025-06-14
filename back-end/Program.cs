@@ -11,7 +11,7 @@ builder.Configuration.AddEnvironmentVariables();
 builder.Configuration
     .SetBasePath(Directory.GetCurrentDirectory())
     .AddJsonFile("appsettings.json", false, true)
-    .AddJsonFile($"appsettings.Development.json", true, true)
+    .AddJsonFile("appsettings.Development.json", true, true)
     .AddEnvironmentVariables();
 
 LogManager.LoadConfiguration(string.Concat(Directory.GetCurrentDirectory(), "/nlog.config"));
@@ -22,7 +22,7 @@ builder.Services.AddSwaggerGen();
 builder.Services
     .AddCorsService(builder.Configuration)
     .AddIISIntegration()
-    .AddDependence()
+    .AddDependence(builder.Configuration)
     .AddInfrastructure(builder.Configuration)
     .AddPresentation();
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -48,7 +48,7 @@ if (app.Environment.IsDevelopment())
     app.UseCors("DevelopmentPolicy");
 else
     app.UseCors("ProductionPolicy");
-
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 

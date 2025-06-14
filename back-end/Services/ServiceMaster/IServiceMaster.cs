@@ -1,4 +1,5 @@
-﻿using Education_assistant.Modules.ModuleBoMon.Services;
+﻿using Education_assistant.Modules.ModuleAuthenticate.Services;
+using Education_assistant.Modules.ModuleBoMon.Services;
 using Education_assistant.Modules.ModuleChiTietChuongTrinhDaoTao.Services;
 using Education_assistant.Modules.ModuleChiTietLopHocPhan.Services;
 using Education_assistant.Modules.ModuleChuongTrinhDaoTao.Services;
@@ -33,5 +34,5 @@ public interface IServiceMaster
     IServiceLopHoc LopHoc { get; }
     IServiceLichBieu LichBieu { get; }
     IServicePhongHoc PhongHoc { get; }
-
+    IServiceAuthenticate Authenticate { get; }
 }

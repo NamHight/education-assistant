@@ -1,4 +1,5 @@
 ﻿using Education_assistant.Context;
+using Education_assistant.Modules.ModuleAuthenticate.Repositories;
 using Education_assistant.Modules.ModuleBoMon.Repositories;
 using Education_assistant.Modules.ModuleChiTietChuongTrinhDaoTao.Repositories;
 using Education_assistant.Modules.ModuleChiTietLopHocPhan.Repositories;
@@ -36,7 +37,7 @@ public interface IRepositoryMaster : IDisposable
     IRepositoryBoMon BoMon { get; }
     IRepositoryNganh Nganh { get; }
     IRepositoryPhongHoc PhongHoc { get; }
-
+    IRepositoryAuthenticate Authenticate { get; }
     public Task ExecuteInTransactionAsync(Func<Task> operation);
 
     Task BulkUpdateEntityAsync<T>(IList<T> entities) where T : class;
