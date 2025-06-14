@@ -1,7 +1,9 @@
-﻿using Education_assistant.Contracts.LoggerServices;
+﻿using System.Text;
+using Education_assistant.Contracts.LoggerServices;
 using Education_assistant.helpers;
 using Education_assistant.helpers.implements;
 using Education_assistant.Repositories.RepositoryMaster;
+using Education_assistant.Services.ServiceEmails;
 using Education_assistant.Services.ServiceFile;
 using Education_assistant.Services.ServiceMaster;
 using FashionShop_API.Filters;
@@ -32,6 +34,7 @@ public static class DependenceExtensions
         services.AddScoped<IServiceMaster, ServiceMaster>();
         services.AddScoped<IServiceFIle, ServiceFile>();
         services.AddScoped<IDiemSoHelper, DiemSoHelper>();
+        services.AddScoped<IServiceEmail, ServiceEmail>();
         
         return services;
     }

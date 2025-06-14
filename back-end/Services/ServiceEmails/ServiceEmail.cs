@@ -4,16 +4,16 @@ using System.Security.Claims;
 using System.Text;
 using Education_assistant.Contracts.LoggerServices;
 using Education_assistant.Exceptions.ThrowError.GiangVienExceptions;
-using Education_assistant.Modules.ModuleEmail.DTOs.Request;
-using Education_assistant.Modules.ModuleEmail.DTOs.Response;
 using Education_assistant.Repositories.RepositoryMaster;
+using Education_assistant.Services.ServiceEmails.DTOs.Request;
+using Education_assistant.Services.ServiceEmails.DTOs.Response;
 using MailKit.Net.Smtp;
 using MailKit.Security;
 using Microsoft.IdentityModel.Tokens;
 using MimeKit;
 using NuGet.Common;
 
-namespace Education_assistant.Modules.ModuleEmail.Services;
+namespace Education_assistant.Services.ServiceEmails;
 
 public class ServiceEmail : IServiceEmail
 {
@@ -21,7 +21,7 @@ public class ServiceEmail : IServiceEmail
     private readonly IRepositoryMaster _repositoryMaster;
     private readonly ILoggerService _loggerService;
     private readonly IConfiguration _config;
-    public ServiceEmail(IRepositoryMaster repositoryMaster, ILoggerService loggerService, IConfiguration config, IHttpContextAccessor httpContextAccessor)
+    public ServiceEmail(IRepositoryMaster repositoryMaster, ILoggerService loggerService, IConfiguration config)
     {
         _repositoryMaster = repositoryMaster;
         _loggerService = loggerService;
@@ -40,18 +40,18 @@ public class ServiceEmail : IServiceEmail
         return result;
     }
 
-    public async Task SendEmailComfirmAsync(string email, string nameGiangVien, string url)
+    public async Task SendEmailComfirmAsync(RequestEmailTokenDto model, string url, string template)
     {
         var responseEmail = new ResponseEmailDto
         {
-            Recipient = email,
+            Recipient = model.GiangVien.Email,
             Attachments = new List<KeyValuePair<string, string>>
             {
                 new KeyValuePair<string, string>("{{Link}}", url),
-                new KeyValuePair<string, string>("{{Name}}", nameGiangVien)
+                new KeyValuePair<string, string>("{{Name}}", model.GiangVien.HoTen!)
             }
         };
-        await SendMailAsync(responseEmail);
+        await SendEmailAsyncWithTemplate("Cập nhật mật khẩu", responseEmail, template);
     }
 
     private async Task SendEmailAsyncWithTemplate(string title,ResponseEmailDto model,string template)
@@ -127,4 +127,38 @@ public class ServiceEmail : IServiceEmail
         return template;
     }
 
+    public async Task<bool> ValidateTokenPasswordAsync(string token)
+    {
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var secretKey = _config["Jwt:Key"];
+        var issuer = _config["Jwt:Issuer"];
+        var audience = _config["Jwt:Audience"];
+
+        var validationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateIssuerSigningKey = true,
+            ValidateLifetime = true,
+            ValidIssuer = issuer,
+            ValidAudience = audience,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey!))
+        };
+        var claims = await tokenHandler.ValidateTokenAsync(token, validationParameters);
+        var nameIdentifier = claims.Claims[ClaimTypes.NameIdentifier].ToString();
+        if (!string.IsNullOrWhiteSpace(nameIdentifier))
+        {
+            var giangVienId = Guid.Parse(nameIdentifier);
+            var giangVien = await _repositoryMaster.GiangVien.GetGiangVienByIdAsync(giangVienId, false);
+            if (giangVien is null)
+            {
+                _loggerService.LogWarn("Giảng viên với id không tìm thấy!.");
+                return false;
+            }
+            _loggerService.LogInfo("Giảng viên với id xác nhận thành công!");
+            return true;
+
+        }
+        return false;
+    }
 }

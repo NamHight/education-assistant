@@ -26,7 +26,6 @@ public class TruongController : ControllerBase
         var result = await _serviceMaster.Truong.GetTruongByIdAsync(id, false);
         return Ok(result);
     }
-    // [ServiceFilter(typeof(ValidationFilter))]
     [HttpPost("")]
     [ServiceFilter(typeof(ValidationFilter))]
     public async Task<ActionResult> AddTruongAsync([FromBody] RequestAddTruongDto model)

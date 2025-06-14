@@ -1,6 +1,6 @@
 using System;
 
-namespace Education_assistant.Modules.ModuleEmail.DTOs.Response;
+namespace Education_assistant.Services.ServiceEmails.DTOs.Response;
 
 public class ResponseEmailDto
 {
