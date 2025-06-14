@@ -32,7 +32,7 @@ public class RepositoryGiangVien : RepositoryBase<GiangVien>, IRepositoryGiangVi
     public async Task<PagedListAsync<GiangVien>?> GetAllGiangVienAsync(int page, int limit, string search,
         string sortBy, string sortByOrder)
     {
-        return await PagedListAsync<GiangVien>.ToPagedListAsync(_context.GiangViens!
+        return await PagedListAsync<GiangVien>.ToPagedListAsync(_context.GiangViens!.Include(item => item.Khoa).Include(item => item.BoMon)
             .SearchBy(search, item => item.HoTen!)
             .IgnoreQueryFilters()
             .OrderBy(item => item.DeletedAt != null)
