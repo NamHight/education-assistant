@@ -1,4 +1,7 @@
 using System;
+using Education_assistant.Modules.ModuleBoMon.DTOs.Response;
+using Education_assistant.Modules.ModuleKhoa.DTOs.Response;
+using Education_assistant.Modules.ModuleLopHocPhan.DTOs.Response;
 
 namespace Education_assistant.Modules.ModuleGiangVien.DTOs.Response;
 
@@ -20,7 +23,9 @@ public class ResponseGiangVienDto
     public int? TrangThai { get; set; }
     public Guid? TaiKhoanId { get; set; }
     public Guid? KhoaId { get; set; }
+    public ResponseKhoaDto? Khoa { get; set; }
     public Guid? BoMonId { get; set; }
+    public ResponseBoMonDto? BoMon { get; set; }
     public DateTime? CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
     public DateTime? DeletedAt { get; set; }

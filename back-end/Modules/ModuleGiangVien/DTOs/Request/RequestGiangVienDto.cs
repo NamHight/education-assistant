@@ -14,9 +14,9 @@ public class RequestAddGiangVienDto
     public string Email { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "Chức vụ không được để trống")]
-    public int? ChucVuGiangVienEnum { get; set; }
+    public int? ChucVu { get; set; }
     [Required(ErrorMessage = "Giới tính không được để trống")]
-    public int? GioiTinhEnum { get; set; }
+    public int? GioiTinh { get; set; }
 
     [DataType(DataType.Date)]
     public DateTime? NgaySinh { get; set; }
@@ -33,7 +33,7 @@ public class RequestAddGiangVienDto
     public string? TrinhDo { get; set; }
     [MaxLength(255)]
     public string? ChuyenNganh { get; set; }
-    public int? TrangThaiGiangVienEnum { get; set; }
+    public int? TrangThai { get; set; }
     public int? LoaiTaiKhoan { get; set; } = 3;
     public Guid? KhoaId { get; set; }
     public Guid? BoMonId { get; set; }
@@ -53,9 +53,9 @@ public class RequestUpdateGiangVienDto
     public string Email { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "Chức vụ không được để trống")]
-    public int? ChucVuGiangVienEnum { get; set; }
+    public int? ChucVu { get; set; }
     [Required(ErrorMessage = "Giới tính không được để trống")]
-    public int? GioiTinhEnum { get; set; }
+    public int? GioiTinh { get; set; }
 
     [DataType(DataType.Date)]
     public DateTime? NgaySinh { get; set; }
@@ -72,7 +72,7 @@ public class RequestUpdateGiangVienDto
     public string? TrinhDo { get; set; }
     [MaxLength(255)]
     public string? ChuyenNganh { get; set; }
-    public int? TrangThaiGiangVienEnum { get; set; }
+    public int? TrangThai { get; set; }
     public Guid? TaiKhoanId { get; set; }
     public Guid? KhoaId { get; set; }
     public Guid? BoMonId { get; set; }
