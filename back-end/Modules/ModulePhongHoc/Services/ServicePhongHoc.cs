@@ -27,10 +27,6 @@ namespace Education_assistant.Modules.ModulePhongHoc.Services
         }
         public async Task<ResponsePhongHocDto> CreateAsync(RequestAddPhongHocDto request)
         {
-            if (request is null)
-            {
-                throw new PhongHocBadRequestException("Thông tin phòng học đầu vào không đủ thông tin !");
-            }
             var newPhongHoc = _mapper.Map<PhongHoc>(request);
             await _repositoryMaster.ExecuteInTransactionAsync(async () =>
             {

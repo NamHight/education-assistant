@@ -25,7 +25,7 @@ namespace Education_assistant.Modules.ModuleChuongTrinhDaoTao
             Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(result.page));
             return Ok(result.data);
         }
-        [HttpGet("{id}",Name = "GetChuongTrinhDaoTaoId")]
+        [HttpGet("{id}", Name = "GetChuongTrinhDaoTaoId")]
         public async Task<ActionResult> GetChuongTrinhDaoTaoByIdAsync(Guid id)
         {
             var result = await _serviceMaster.ChuongTrinhDaoTao.GetChuongTrinhDaoTaoByIdAsync(id, false);

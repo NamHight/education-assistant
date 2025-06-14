@@ -12,7 +12,8 @@ public class ResponseChuongTrinhDaoTaoDto
     public decimal HocPhi { get; set; }
     public string? MoTa { get; set; }
     public int TongSoTinChi { get; set; }
-    public Guid? KhoaId { get; set; }
+    public int? Khoa { get; set; }
+    public Guid? NganhId { get; set; }
     public DateTime? CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
 }

@@ -13,6 +13,5 @@ namespace Education_assistant.Modules.ModulePhongHoc.DTOs.Response
         public int TrangThaiPhongHoc { get; set; }
         public DateTime? CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
-        public DateTime? DeletedAt { get; set; }
     }
 }

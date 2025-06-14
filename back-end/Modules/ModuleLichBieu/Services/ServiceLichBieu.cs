@@ -4,6 +4,7 @@ using Education_assistant.Exceptions.ThrowError.ChiTietChuongTrinhDaoTaoExceptio
 using Education_assistant.Exceptions.ThrowError.LichBieuExceptions;
 using Education_assistant.Models;
 using Education_assistant.Modules.ModuleChiTietChuongTrinhDaoTao.DTOs.Response;
+using Education_assistant.Modules.ModuleLichBieu.DTOs.Param;
 using Education_assistant.Modules.ModuleLichBieu.DTOs.Request;
 using Education_assistant.Modules.ModuleLichBieu.DTOs.Response;
 using Education_assistant.Repositories.Paginations;
@@ -23,6 +24,24 @@ namespace Education_assistant.Modules.ModuleLichBieu.Services
             _loggerService = loggerService;
             _mapper = mapper;
         }
+
+        public async Task CopyTuanLichBieuAsync(RequestAddLichBieuListTuanDto request)
+        {
+            var listLichBieu = new List<LichBieu>();
+            foreach (var tuanid in request.ListTuanId!)
+            {
+                var lichBieu = _mapper.Map<LichBieu>(request);
+                lichBieu.TuanId = tuanid;
+
+                listLichBieu.Add(lichBieu);
+            }
+            await _repositoryMaster.ExecuteInTransactionBulkEntityAsync(async () =>
+            {
+                await _repositoryMaster.BulkAddEntityAsync<LichBieu>(listLichBieu);
+            });
+            _loggerService.LogInfo("Copy tuần lịch biểu thành công.");
+        }
+
         public async Task<ResponseLichBieuDto> CreateAsync(RequestAddLichBieuDto request)
         {
             var newLichBieu = _mapper.Map<LichBieu>(request);
@@ -73,6 +92,11 @@ namespace Education_assistant.Modules.ModuleLichBieu.Services
             return lichBieuDto;
         }
 
+        public async Task<IEnumerable<ResponseLichKhoaBieuGiangVienDto>> GetLichKhoaBieuGiangVienAsync(ParamLichKhoaBieuGiangVienDto request)
+        {
+            return await _repositoryMaster.LichBieu.GetAllLichBieuByGiangVienAsync(request.NamHoc, request.GiangVienId, request.TuanId); 
+        }
+
         public async Task UpdateAsync(Guid id, RequestUpdateLichBieuDto request)
         {
             if (id != request.Id)
@@ -93,5 +117,7 @@ namespace Education_assistant.Modules.ModuleLichBieu.Services
             });
             _loggerService.LogInfo($"Cập nhật lịch biểu có id = {id} thành công.");
         }
+
+
     }
 }

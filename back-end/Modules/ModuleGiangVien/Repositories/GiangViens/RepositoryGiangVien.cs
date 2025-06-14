@@ -45,6 +45,16 @@ public class RepositoryGiangVien : RepositoryBase<GiangVien>, IRepositoryGiangVi
             }).AsNoTracking(), page, limit);
     }
 
+    public async Task<IEnumerable<GiangVien>?> GetAllGiangVienByKhoa(Guid khoaId)
+    {
+        return await FindByCondition(item => item.KhoaId == khoaId && item.DeletedAt == null, false).IgnoreQueryFilters().ToListAsync();
+    }
+
+    public async Task<GiangVien?> GetGiangVienByEmailAsync(string email)
+    {
+        return await FindByCondition(item => item.Email == email, false).FirstOrDefaultAsync();
+    }
+
     public async Task<GiangVien?> GetGiangVienByIdAsync(Guid? id, bool trackChanges)
     {
         return await FindByCondition(item => item.Id == id, trackChanges).FirstOrDefaultAsync();

@@ -4,6 +4,7 @@ namespace Education_assistant.Modules.ModuleTruong.Repositories;
 
 public interface IRepositoryTruong
 {
+    Task<Dictionary<string, string>> GetTruongAsync(bool trackChanges); 
     Task<Truong?> GetTruongByIdAsync(Guid id, bool trackChanges);
     Task CreateAsync(Truong truong);
     void UpdateTruong(Truong truong);

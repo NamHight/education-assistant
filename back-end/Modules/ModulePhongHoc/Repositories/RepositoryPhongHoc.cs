@@ -14,7 +14,7 @@ namespace Education_assistant.Modules.ModulePhongHoc.Repositories
 
         public async Task CreateAsync(PhongHoc phongHoc)
         {
-            await CreateAsync(phongHoc);
+            await Create(phongHoc);
         }
 
         public void DeletePhongHoc(PhongHoc phongHoc)

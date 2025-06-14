@@ -5,6 +5,7 @@ namespace Education_assistant.Modules.ModuleTruong.Services;
 
 public interface IServiceTruong
 {
+    Task<Dictionary<string, string>> GetTruongAsync();
     Task<ResponseTruongDto> GetTruongByIdAsync(Guid id, bool trackChanges);
     Task<ResponseTruongDto> CreateAsync(RequestAddTruongDto request);
     Task UpdateAsync(Guid id, RequestUpdateTruongDto request);

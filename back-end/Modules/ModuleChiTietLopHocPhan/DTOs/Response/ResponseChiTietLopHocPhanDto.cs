@@ -7,8 +7,10 @@ public class ResponseChiTietLopHocPhanDto
     public Guid? Id { get; set; }
     public decimal? DiemChuyenCan { get; set; }
     public decimal? DiemTrungBinh { get; set; }
-    public decimal? DiemThi { get; set; }
-    public decimal? DiemTongKet { get; set; }
+    public decimal? DiemThi1 { get; set; }
+    public decimal? DiemThi2 { get; set; }
+    public decimal? DiemTongKet1 { get; set; }
+    public decimal? DiemTongKet2 { get; set; }
     public DateTime? NgayLuuDiem { get; set; }
     public DateTime? NgayNopDiem { get; set; }
     public int HocKy { get; set; }

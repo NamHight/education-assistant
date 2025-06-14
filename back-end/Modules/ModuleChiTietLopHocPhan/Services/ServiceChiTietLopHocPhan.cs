@@ -3,6 +3,7 @@ using AutoMapper;
 using Education_assistant.Contracts.LoggerServices;
 using Education_assistant.Exceptions.ThrowError.ChiTietLopHocPhanExceptions;
 using Education_assistant.Models;
+using Education_assistant.Modules.ModuleChiTietLopHocPhan.DTOs.Param;
 using Education_assistant.Modules.ModuleChiTietLopHocPhan.DTOs.Request;
 using Education_assistant.Modules.ModuleChiTietLopHocPhan.DTOs.Response;
 using Education_assistant.Repositories.Paginations;
@@ -58,6 +59,11 @@ public class ServiceChiTietLopHocPhan : IServiceChiTietLopHocPhan
         return (data: diemSoDto, page: diemSos!.PageInfo);
     }
 
+    public async Task<IEnumerable<ResponseDanhSachDiemSoByLopDto>> GetAllDiemSoByLopHocAsync(ParamAllDiemSoByLopHocDto paramDtos)
+    {
+        return await _repositoryMaster.ChiTietLopHocPhan.GetAllDiemSoByLopHocAsync(paramDtos.LopHocPhanId, paramDtos.HocKy, paramDtos.LoaiMonHoc, paramDtos.NamHoc, paramDtos.ChươngTrinhId);
+    }
+
     public async Task<ResponseChiTietLopHocPhanDto> GetChiTietLopHocPhanByIdAsync(Guid id, bool trackChanges)
     {
         var diemSo = await _repositoryMaster.ChiTietLopHocPhan.GetChiTietLopHocPhanByIdAsync(id, false);
@@ -98,7 +104,7 @@ public class ServiceChiTietLopHocPhan : IServiceChiTietLopHocPhan
         {
             throw new ChiTietLopHocPhanBadRequestException($"Id: {id} và Id: {request.Id} của bộ môn không giống nhau!");
         }
-         var diemSoExstting = await _repositoryMaster.ChiTietLopHocPhan.GetChiTietLopHocPhanByIdAsync(id, false);
+        var diemSoExstting = await _repositoryMaster.ChiTietLopHocPhan.GetChiTietLopHocPhanByIdAsync(id, false);
         if (diemSoExstting is null)
         {
             throw new ChiTietLopHocPhanNotFoundException(id);

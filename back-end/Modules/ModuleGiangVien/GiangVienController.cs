@@ -25,6 +25,12 @@ public class GiangVienController : ControllerBase
         Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(result.page));
         return Ok(result.data);
     }
+    [HttpGet("{id}/by-khoa")]
+    public async Task<ActionResult> GetAllGiangVienByAsync(Guid id)
+    {
+        var result = await _serviceMaster.GiangVien.GetAllGiangVienByKhoa(id);
+        return Ok(result);
+    }
     [HttpGet("{id}")]
     public async Task<ActionResult> GetGiangVienByIdAsync(Guid id)
     {

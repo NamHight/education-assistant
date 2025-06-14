@@ -57,7 +57,6 @@ public class ServiceAuthenticate : IServiceAuthenticate
         return (giangVienDto, accessToken, refreshToken);
     }
     
-    public async 
     public void SetTokenCookie(string accessToken, string refreshToken, HttpContext httpContext)
     {
         httpContext.Response.Cookies.Append("access_token", accessToken, new CookieOptions

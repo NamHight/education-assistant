@@ -43,7 +43,7 @@ public class ServiceMaster : IServiceMaster
 
     public ServiceMaster(IRepositoryMaster repositoryMaster, ILoggerService loggerService, IMapper mapper,
         IPasswordHash password, IHttpContextAccessor httpContextAccessor, IServiceFIle serviceFIle,
-        IConfiguration configuration)
+        IConfiguration configuration, IDiemSoHelper diemSoHelper)
     {
         _giangVien = new Lazy<IServiceGiangVien>(() =>
             new ServiceGiangVien(repositoryMaster, loggerService, mapper, password, httpContextAccessor, serviceFIle));
@@ -64,7 +64,7 @@ public class ServiceMaster : IServiceMaster
         _sinhVien = new Lazy<IServiceSinhVien>(() =>
             new ServiceSinhVien(repositoryMaster, loggerService, mapper, httpContextAccessor, serviceFIle));
         _nganh = new Lazy<IServiceNganh>(() => new ServiceNganh(repositoryMaster, loggerService, mapper));
-        _hocBa = new Lazy<IServiceHocBa>(() => new ServiceHocBa(repositoryMaster, loggerService, mapper));
+        _hocBa = new Lazy<IServiceHocBa>(() => new ServiceHocBa(repositoryMaster, loggerService, mapper, diemSoHelper));
         _lopHoc = new Lazy<IServiceLopHoc>(() => new ServiceLopHoc(repositoryMaster, loggerService, mapper));
         _lichBieu = new Lazy<IServiceLichBieu>(() => new ServiceLichBieu(repositoryMaster, loggerService, mapper));
         _phongHoc = new Lazy<IServicePhongHoc>(() => new ServicePhongHoc(repositoryMaster, loggerService, mapper));

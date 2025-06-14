@@ -23,7 +23,6 @@ public class ServiceTruong : IServiceTruong
 
     public async Task<ResponseTruongDto> CreateAsync(RequestAddTruongDto request)
     {
-        if (request is null) throw new TruongBadRequestException("Thông tin trường đầu vào không đủ thông tin!");
         var newTruong = _mapper.Map<Truong>(request);
         await _repositoryMaster.ExecuteInTransactionAsync(async () =>
         {
@@ -48,6 +47,10 @@ public class ServiceTruong : IServiceTruong
     }
 
 
+    public async Task<Dictionary<string, string>> GetTruongAsync()
+    {
+        return await _repositoryMaster.Truong.GetTruongAsync(false);
+    }
     public async Task<ResponseTruongDto> GetTruongByIdAsync(Guid id, bool trackChanges)
     {
         var truong = await _repositoryMaster.Truong.GetTruongByIdAsync(id, false);
