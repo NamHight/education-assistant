@@ -14,6 +14,11 @@ public class RepositoryGiangVien : RepositoryBase<GiangVien>, IRepositoryGiangVi
     {
     }
 
+    public async Task<GiangVien?> GetGiangVienByEmailAsync(string email, bool trackChanges)
+    {
+        return await FindByCondition(gv => gv.Email.Equals(email), trackChanges).FirstOrDefaultAsync();
+    }
+
     public async Task CreateAsync(GiangVien giangVien)
     {
         await Create(giangVien);

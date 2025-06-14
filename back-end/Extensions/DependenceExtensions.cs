@@ -8,6 +8,8 @@ using Education_assistant.Services.ServiceFile;
 using Education_assistant.Services.ServiceMaster;
 using FashionShop_API.Filters;
 using FluentValidation;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Education_assistant.Extensions;
 // - Lớp này đăng ký cách phụ thuộc liên quan đến ứng dụng trên mỗi services
@@ -21,10 +23,35 @@ namespace Education_assistant.Extensions;
 
 public static class DependenceExtensions
 {
-    public static IServiceCollection AddDependence(this IServiceCollection services)
+    public static IServiceCollection AddDependence(this IServiceCollection services, IConfiguration configuration)
     {
+        var jwtSettings = configuration.GetSection("Jwt");
         var assembly = typeof(DependenceExtensions).Assembly;
-
+        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = "EducationAssistant",
+                    ValidAudience = "EducationAssistant",
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["SecretKey"]!))
+                };
+                options.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        var token = context.Request.Cookies["access_token"];
+                        if (!string.IsNullOrEmpty(token) && context.Request.Path.StartsWithSegments("/api"))
+                            context.Token = token;
+                        return Task.CompletedTask;
+                    }
+                };
+            });
+        services.AddAuthentication();
         services.AddValidatorsFromAssembly(assembly, includeInternalTypes: true);
         services.AddSingleton<ILoggerService, LoggerService>();
         services.AddHttpContextAccessor();

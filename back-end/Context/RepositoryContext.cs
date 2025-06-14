@@ -8,7 +8,7 @@ public class RepositoryContext : DbContext
 {
     public RepositoryContext(DbContextOptions options) : base(options)
     {
-        
+
     }
 
     public DbSet<TaiKhoan>? TaiKhoans { get; set; }
@@ -34,8 +34,6 @@ public class RepositoryContext : DbContext
     public DbSet<PhongHoc>? PhongHocs { get; set; }
     public DbSet<Tuan>? Tuans { get; set; }
 
-
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<TaiKhoan>().HasQueryFilter(e => e.DeletedAt == null);
@@ -60,7 +58,6 @@ public class RepositoryContext : DbContext
         modelBuilder.Entity<Nganh>().HasQueryFilter(e => e.DeletedAt == null);
         modelBuilder.Entity<PhongHoc>().HasQueryFilter(e => e.DeletedAt == null);
         modelBuilder.Entity<Tuan>().HasQueryFilter(e => e.DeletedAt == null);
-
         base.OnModelCreating(modelBuilder);
     }
     // protected override void Up(MigrationBuilder migrationBuilder)

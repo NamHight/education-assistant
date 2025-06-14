@@ -30,7 +30,7 @@ public class ServiceEmail : IServiceEmail
 
     public async Task<RequestEmailTokenDto?> HandleSendEmail(string email)
     {
-        var giangVien = await _repositoryMaster.GiangVien.GetGiangVienByEmailAsync(email);
+        var giangVien = await _repositoryMaster.GiangVien.GetGiangVienByEmailAsync(email, false);
         if (giangVien is null)
         {
             throw new GiangVienBadRequestException("Email không được để trống!.");
