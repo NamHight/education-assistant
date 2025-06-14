@@ -4,14 +4,14 @@ import { type Navigation } from '@toolpad/core/AppProvider';
 export const NAVIGATION: Navigation = [
   {
     segment: '/',
-    title: 'Dashboard',
+    title: 'Trang chủ',
     icon: <Work />,
-    pattern: `/:rest*`,
+    pattern: `/:rest*`
   },
   {
-    segment: 'users',
-    title: 'Users',
+    segment: 'giang-vien',
+    title: 'Giảng viên',
     icon: <Work />,
-    pattern: `users/:rest*`,
-  },
-]
+    pattern: `giang-vien/:rest*`
+  }
+];
