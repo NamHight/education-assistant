@@ -45,6 +45,12 @@ namespace Education_assistant.Modules.ModuleHocBa
             await _serviceMaster.HocBa.UpdateAsync(id, model);
             return NoContent();
         }
+        [HttpPut("update-list")]
+        public async Task<ActionResult> UpdateListChiTietLopHocPhanAsync([FromBody] List<RequestUpdateHocbaDto> model)
+        {
+            await _serviceMaster.HocBa.UpdateListHocBaAsync(model);
+            return NoContent();
+        }
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteHocBaAsync(Guid id)
         {

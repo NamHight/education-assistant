@@ -26,7 +26,8 @@ public class TaiKhoan : BaseEntity
     public string? ResetToken { get; set; }
 
     [Column("reset_expires")] public DateTime? ResetTokenExpires { get; set; }
-
+    [Column("so_lan_dang_nhap")] public int? TimeLogin { get; set; }
+    [Column("khoa_dang_nhap")] public int? LockTime { get; set; }
     [Column("trang_thai")][Required] public bool Status { get; set; } = true;
     [Column("loai_tai_khoan")]
     [Range(1, 3, ErrorMessage = "Loại tài khoản không hợp lệ")]

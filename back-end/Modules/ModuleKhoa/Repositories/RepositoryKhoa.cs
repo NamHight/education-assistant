@@ -32,7 +32,7 @@ public class RepositoryKhoa : RepositoryBase<Khoa>, IRepositoryKhoa
                                                                 {
                                                                     ["createat"] = item => item.CreatedAt,
                                                                     ["updateat"] = item => item.UpdatedAt!,
-                                                                })
+                                                                }).AsNoTracking()
                                                                 , page, limit);
     }
 

@@ -20,10 +20,13 @@ public class RequestAddChuongTrinhDaoTaoDto
     [Required(ErrorMessage = "Học phí không được để trống")]
     public decimal HocPhi { get; set; }
     public string? MoTa { get; set; }
+    
     [Required(ErrorMessage = "Tổng số tín chỉ không được để trống")]
     public int TongSoTinChi { get; set; }
-    [Required(ErrorMessage = "Id khoa không được để trống")]
-    public Guid? KhoaId { get; set; }
+    [Required(ErrorMessage = "Khóa không được để trống")]
+    public int? Khoa { get; set; }
+    [Required(ErrorMessage = "Id ngành không được để trống")]
+    public Guid? NganhId { get; set; }
 }
 public class RequestUpdateChuongTrinhDaoTaoDto
 {
@@ -46,6 +49,8 @@ public class RequestUpdateChuongTrinhDaoTaoDto
     public string? MoTa { get; set; }
     [Required(ErrorMessage = "Tổng số tín chỉ không được để trống")]
     public int TongSoTinChi { get; set; }
-    [Required(ErrorMessage = "Id khoa không được để trống")]
-    public Guid? KhoaId { get; set; }
+    [Required(ErrorMessage = "Khóa không được để trống")]
+    public int? Khoa { get; set; }
+    [Required(ErrorMessage = "Id ngành không được để trống")]
+    public Guid? NganhId { get; set; }
 }

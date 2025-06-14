@@ -32,7 +32,7 @@ public class RepositoryGiangVien : RepositoryBase<GiangVien>, IRepositoryGiangVi
     public async Task<PagedListAsync<GiangVien>?> GetAllGiangVienAsync(int page, int limit, string search,
         string sortBy, string sortByOrder)
     {
-        return await PagedListAsync<GiangVien>.ToPagedListAsync(_context.GiangViens!
+        return await PagedListAsync<GiangVien>.ToPagedListAsync(_context.GiangViens!.Include(item => item.Khoa).Include(item => item.BoMon)
             .SearchBy(search, item => item.HoTen!)
             .IgnoreQueryFilters()
             .OrderBy(item => item.DeletedAt != null)
@@ -43,6 +43,16 @@ public class RepositoryGiangVien : RepositoryBase<GiangVien>, IRepositoryGiangVi
                 ["ngayvaotruong"] = item => item.NgayVaoTruong!,
                 ["updateat"] = item => item.UpdatedAt!
             }).AsNoTracking(), page, limit);
+    }
+
+    public async Task<IEnumerable<GiangVien>?> GetAllGiangVienByKhoa(Guid khoaId)
+    {
+        return await FindByCondition(item => item.KhoaId == khoaId && item.DeletedAt == null, false).IgnoreQueryFilters().ToListAsync();
+    }
+
+    public async Task<GiangVien?> GetGiangVienByEmailAsync(string email)
+    {
+        return await FindByCondition(item => item.Email == email, false).FirstOrDefaultAsync();
     }
 
     public async Task<GiangVien?> GetGiangVienByIdAsync(Guid? id, bool trackChanges)

@@ -32,6 +32,7 @@ public class PhongHoc : BaseEntity
 
     [Column("trang_thai")]
     public int? TrangThaiPhongHoc { get; set; }
+    [NotMapped] 
     public TrangThaiPhongHocEnum? TrangThaiPhongHocEnum
     {
         get => TrangThaiPhongHoc.HasValue ? (TrangThaiPhongHocEnum)TrangThaiPhongHoc.Value : null;

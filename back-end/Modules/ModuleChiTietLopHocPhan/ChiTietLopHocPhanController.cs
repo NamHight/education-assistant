@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Education_assistant.Modules.ModuleChiTietLopHocPhan.DTOs.Param;
 using Education_assistant.Modules.ModuleChiTietLopHocPhan.DTOs.Request;
 using Education_assistant.Services.BaseDtos;
 using Education_assistant.Services.ServiceMaster;
@@ -24,6 +25,12 @@ namespace Education_assistant.Modules.ModuleChiTietLopHocPhan
             var result = await _serviceMaster.ChiTietLopHocPhan.GetAllChiTietLopHocPhanAsync(paramBaseDto);
             Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(result.page));
             return Ok(result.data);
+        }
+        [HttpGet("list-diem-so")]
+        public async Task<ActionResult> GetAllDiemSoByLopHocAsync([FromQuery]ParamAllDiemSoByLopHocDto paramBaseDto)
+        {
+            var result = await _serviceMaster.ChiTietLopHocPhan.GetAllDiemSoByLopHocAsync(paramBaseDto);
+            return Ok(result);
         }
         [HttpGet("{id}")]
         public async Task<ActionResult> GetChiTietLopHocPhanByIdAsync(Guid id)

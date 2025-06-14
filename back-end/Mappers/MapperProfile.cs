@@ -10,6 +10,8 @@ using Education_assistant.Modules.ModuleChuongTrinhDaoTao.DTOs.Request;
 using Education_assistant.Modules.ModuleChuongTrinhDaoTao.DTOs.Response;
 using Education_assistant.Modules.ModuleGiangVien.DTOs.Request;
 using Education_assistant.Modules.ModuleGiangVien.DTOs.Response;
+using Education_assistant.Modules.ModuleHocBa.DTOs.Request;
+using Education_assistant.Modules.ModuleHocBa.DTOs.Response;
 using Education_assistant.Modules.ModuleKhoa.DTOs.Request;
 using Education_assistant.Modules.ModuleKhoa.DTOs.Response;
 using Education_assistant.Modules.ModuleLichBieu.DTOs.Request;
@@ -95,6 +97,7 @@ public class MapperProfile : Profile
 
         //map lịch biểu
         CreateMap<RequestAddLichBieuDto, LichBieu>();
+        CreateMap<RequestAddLichBieuListTuanDto, LichBieu>();
         CreateMap<RequestUpdateLichBieuDto, LichBieu>();
         CreateMap<LichBieu, ResponseLichBieuDto>();
 
@@ -102,5 +105,10 @@ public class MapperProfile : Profile
         CreateMap<RequestAddPhongHocDto, PhongHoc>();
         CreateMap<RequestUpdatePhongHocDto, PhongHoc>();
         CreateMap<PhongHoc, ResponsePhongHocDto>();
+
+        //map học bạ
+        CreateMap<RequestAddHocbaDto, HocBa>();
+        CreateMap<RequestUpdateHocbaDto, HocBa>();
+        CreateMap<HocBa, ResponseHocBaDto>();
     }
 }

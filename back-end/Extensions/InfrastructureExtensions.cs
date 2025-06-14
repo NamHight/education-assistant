@@ -30,7 +30,6 @@ public static class InfrastructureExtensions
                     option => { option.EnableRetryOnFailure(5, TimeSpan.FromSeconds(30), null); }
                 );
             }, ServiceLifetime.Scoped);
-
         return services;
     }
 }

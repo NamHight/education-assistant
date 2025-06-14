@@ -10,20 +10,22 @@ namespace Education_assistant.Modules.ModuleTruong;
 public class TruongController : ControllerBase
 {
     private readonly IServiceMaster _serviceMaster;
-
     public TruongController(IServiceMaster serviceMaster)
     {
         _serviceMaster = serviceMaster;
     }
-
+    [HttpGet("")]
+    public async Task<ActionResult> GetTruongAsync()
+    {
+        var result = await _serviceMaster.Truong.GetTruongAsync();
+        return Ok(result);
+    }
     [HttpGet("{id}")]
     public async Task<ActionResult> GetTruongByIdAsync(Guid id)
     {
         var result = await _serviceMaster.Truong.GetTruongByIdAsync(id, false);
         return Ok(result);
     }
-
-    // [ServiceFilter(typeof(ValidationFilter))]
     [HttpPost("")]
     [ServiceFilter(typeof(ValidationFilter))]
     public async Task<ActionResult> AddTruongAsync([FromBody] RequestAddTruongDto model)
@@ -31,7 +33,6 @@ public class TruongController : ControllerBase
         var result = await _serviceMaster.Truong.CreateAsync(model);
         return Ok(result);
     }
-
     [HttpPut("{id}")]
     [ServiceFilter(typeof(ValidationFilter))]
     public async Task<ActionResult> UpdateTruongAsync(Guid id, [FromBody] RequestUpdateTruongDto model)
@@ -39,11 +40,11 @@ public class TruongController : ControllerBase
         await _serviceMaster.Truong.UpdateAsync(id, model);
         return NoContent();
     }
-
     [HttpDelete("{id}")]
     public async Task<ActionResult> DeleteTruongAsync(Guid id)
     {
         await _serviceMaster.Truong.DeleteAsync(id);
         return NoContent();
     }
+
 }
