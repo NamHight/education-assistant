@@ -43,11 +43,6 @@ const handleRefreshToken = async (error: any) => {
             refreshToken: refreshToken
         })
         const {token} = response.data;
-        if(typeof window === 'undefined'){ // SERVER
-            coookie.set(TOKEN_ACCESS, token, { path: '/',sameSite:'lax', secure: process.env.NODE_ENV === 'production',expires: 1 });
-        }else{ // CLIENT
-            cookieStorage.set(TOKEN_ACCESS, token, { path: '/',sameSite:'lax', secure: process.env.NODE_ENV === 'production',expires: 1 });
-        }
         error.response.config.headers.Authorization = `Bearer ${token}`;
         return Promise.resolve();
     } catch (error) {

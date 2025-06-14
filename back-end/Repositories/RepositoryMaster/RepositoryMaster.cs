@@ -1,6 +1,6 @@
 ﻿using Education_assistant.Context;
 using Education_assistant.Contracts.LoggerServices;
-using Education_assistant.Models;
+using Education_assistant.Modules.ModuleAuthenticate.Repositories;
 using Education_assistant.Modules.ModuleBoMon.Repositories;
 using Education_assistant.Modules.ModuleChiTietChuongTrinhDaoTao.Repositories;
 using Education_assistant.Modules.ModuleChiTietLopHocPhan.Repositories;
@@ -25,10 +25,13 @@ namespace Education_assistant.Repositories.RepositoryMaster;
 public class RepositoryMaster : IRepositoryMaster
 {
     private readonly IDbContextFactory<RepositoryContext> _contextFactory;
-    private readonly RepositoryContext _repositoryContext;
+    private readonly ILoggerService _loggerService;
+    private readonly Lazy<IRepositoryAuthenticate> _repositoryAuthenticate;
+    private readonly Lazy<IRepositoryBoMon> _repositoryBoMon;
     private readonly Lazy<IRepositoryChiTietChuongTrinhDaoTao> _repositoryChiTietChuongTrinhDaoTao;
     private readonly Lazy<IRepositoryChiTietLopHocPhan> _repositoryChiTietLopHocPhan;
     private readonly Lazy<IRepositoryChuongTrinhDaoTao> _repositoryChuongTrinhDaoTao;
+    private readonly RepositoryContext _repositoryContext;
     private readonly Lazy<IRepositoryGiangVien> _repositoryGiangVien;
     private readonly Lazy<IRepositoryHocBa> _repositoryHocBa;
     private readonly Lazy<IRepositoryKhoa> _repositoryKhoa;
@@ -36,24 +39,27 @@ public class RepositoryMaster : IRepositoryMaster
     private readonly Lazy<IRepositoryLopHoc> _repositoryLopHoc;
     private readonly Lazy<IRepositoryLopHocPhan> _repositoryLopHocPhan;
     private readonly Lazy<IRepositoryMonHoc> _repositoryMonHoc;
+    private readonly Lazy<IRepositoryNganh> _repositoryNganh;
+    private readonly Lazy<IRepositoryPhongHoc> _repositoryPhongHoc;
     private readonly Lazy<IRepositorySinhVien> _repositorySinhVien;
     private readonly Lazy<IRepositoryTaiKhoan> _repositoryTaiKhoan;
     private readonly Lazy<IRepositoryTruong> _repositoryTruong;
-    private readonly Lazy<IRepositoryBoMon> _repositoryBoMon;
-    private readonly Lazy<IRepositoryNganh> _repositoryNganh;
-    private readonly Lazy<IRepositoryPhongHoc> _repositoryPhongHoc;
-    private readonly ILoggerService _loggerService;
     private bool _disposed;
     private IDbContextTransaction? _transaction;
 
 
-    public RepositoryMaster(RepositoryContext repositoryContext, IDbContextFactory<RepositoryContext> contextFactory, ILoggerService loggerService)
+    public RepositoryMaster(RepositoryContext repositoryContext, IDbContextFactory<RepositoryContext> contextFactory,
+        ILoggerService loggerService)
     {
         _repositoryContext = repositoryContext;
         _contextFactory = contextFactory;
-        _repositoryChiTietChuongTrinhDaoTao = new Lazy<IRepositoryChiTietChuongTrinhDaoTao>(() => new RepositoryChiTietChuongTrinhDaoTao(repositoryContext));
-        _repositoryChiTietLopHocPhan = new Lazy<IRepositoryChiTietLopHocPhan>(() => new RepositoryChiTietLopHocPhan(repositoryContext));
-        _repositoryChuongTrinhDaoTao = new Lazy<IRepositoryChuongTrinhDaoTao>(() => new RepositoryChuongTrinhDaoTao(repositoryContext));
+        _repositoryChiTietChuongTrinhDaoTao =
+            new Lazy<IRepositoryChiTietChuongTrinhDaoTao>(() =>
+                new RepositoryChiTietChuongTrinhDaoTao(repositoryContext));
+        _repositoryChiTietLopHocPhan =
+            new Lazy<IRepositoryChiTietLopHocPhan>(() => new RepositoryChiTietLopHocPhan(repositoryContext));
+        _repositoryChuongTrinhDaoTao =
+            new Lazy<IRepositoryChuongTrinhDaoTao>(() => new RepositoryChuongTrinhDaoTao(repositoryContext));
         _repositoryGiangVien = new Lazy<IRepositoryGiangVien>(() => new RepositoryGiangVien(repositoryContext));
         _repositoryHocBa = new Lazy<IRepositoryHocBa>(() => new RepositoryHocBa(repositoryContext));
         _repositoryKhoa = new Lazy<IRepositoryKhoa>(() => new RepositoryKhoa(repositoryContext));
@@ -67,9 +73,12 @@ public class RepositoryMaster : IRepositoryMaster
         _repositoryBoMon = new Lazy<IRepositoryBoMon>(() => new RepositoryBoMon(repositoryContext));
         _repositoryNganh = new Lazy<IRepositoryNganh>(() => new RepositoryNganh(repositoryContext));
         _repositoryPhongHoc = new Lazy<IRepositoryPhongHoc>(() => new RepositoryPhongHoc(repositoryContext));
+        _repositoryAuthenticate =
+            new Lazy<IRepositoryAuthenticate>(() => new RepositoryAuthenticate(repositoryContext));
         _loggerService = loggerService;
     }
 
+    public IRepositoryAuthenticate Authenticate => _repositoryAuthenticate.Value;
     public IRepositoryGiangVien GiangVien => _repositoryGiangVien.Value;
     public IRepositorySinhVien SinhVien => _repositorySinhVien.Value;
 
@@ -150,30 +159,6 @@ public class RepositoryMaster : IRepositoryMaster
         return await _contextFactory.CreateDbContextAsync();
     }
 
-    protected virtual void Dispose(bool disposing)
-    {
-        if (!_disposed)
-        {
-            if (disposing)
-            {
-                _transaction?.Dispose();
-                _repositoryContext?.Dispose();
-            }
-
-            _disposed = true;
-        }
-    }
-
-    public async ValueTask DisposeAsync()
-    {
-        if (_transaction != null) await _transaction.DisposeAsync();
-
-        if (_repositoryContext != null) await _repositoryContext.DisposeAsync();
-
-        Dispose(false);
-        GC.SuppressFinalize(this);
-    }
-
     //method thực thi các db cùng trong một transaction với retry strategy
     //dùng khi cud bình thường
     public async Task ExecuteInTransactionAsync(Func<Task> operation)
@@ -196,11 +181,13 @@ public class RepositoryMaster : IRepositoryMaster
             }
         });
     }
+
     //dùng cho update hàng loạt
     public async Task BulkUpdateEntityAsync<T>(IList<T> entities) where T : class
     {
         await _repositoryContext.BulkUpdateAsync(entities);
     }
+
     //dùng cho add hàng loạt
     public async Task BulkAddEntityAsync<T>(IList<T> entities) where T : class
     {
@@ -210,6 +197,7 @@ public class RepositoryMaster : IRepositoryMaster
             options.IncludeGraph = false;
         });
     }
+
     public async Task ExecuteInTransactionBulkEntityAsync(Func<Task> operation)
     {
         var strategy = _repositoryContext.Database.CreateExecutionStrategy();
@@ -228,5 +216,29 @@ public class RepositoryMaster : IRepositoryMaster
                 throw new Exception($"Lỗi hệ thống!: {ex.Message}");
             }
         });
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!_disposed)
+        {
+            if (disposing)
+            {
+                _transaction?.Dispose();
+                _repositoryContext?.Dispose();
+            }
+
+            _disposed = true;
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_transaction != null) await _transaction.DisposeAsync();
+
+        if (_repositoryContext != null) await _repositoryContext.DisposeAsync();
+
+        Dispose(false);
+        GC.SuppressFinalize(this);
     }
 }

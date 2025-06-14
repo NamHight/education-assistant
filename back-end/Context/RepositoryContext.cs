@@ -7,8 +7,6 @@ public class RepositoryContext : DbContext
 {
     public RepositoryContext(DbContextOptions options) : base(options)
     {
-        Database.EnsureCreated();
-        EnsureStoredProcedures();
     }
 
     public DbSet<TaiKhoan>? TaiKhoans { get; set; }
@@ -34,33 +32,6 @@ public class RepositoryContext : DbContext
     public DbSet<PhongHoc>? PhongHocs { get; set; }
     public DbSet<Tuan>? Tuans { get; set; }
 
-    private void EnsureStoredProcedures()
-    {
-        var dropProcedure = @"DROP PROCEDURE IF EXISTS sp_taoSinhVienLopHocPhan;";
-        var createProcedure = @"
-        CREATE PROCEDURE sp_taoSinhVienLopHocPhan(
-            IN p_id CHAR(36),
-            IN p_maLop CHAR(36),
-            IN p_maLhp CHAR(36),
-            IN p_maGiangVien CHAR(36),
-            IN p_hocKy INT
-        )
-        BEGIN
-            INSERT INTO chi_tiet_lop_hoc_phan(id, sinh_vien_id, lop_hoc_phan_id, hoc_ky, giang_vien_id, created_at)
-            SELECT p_id, s.id, p_maLhp, p_hocKy, p_maGiangVien, NOW()
-            FROM sinh_vien s
-            WHERE s.lop_hoc_id = p_maLop
-            AND NOT EXISTS (
-                SELECT 1 FROM chi_tiet_lop_hoc_phan ct 
-                WHERE ct.sinh_vien_id = s.id 
-                AND ct.lop_hoc_phan_id = p_maLhp 
-                AND ct.hoc_ky = p_hocKy
-            );
-        END;
-    ";
-        Database.ExecuteSqlRaw(dropProcedure);
-        Database.ExecuteSqlRaw(createProcedure);
-    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -86,7 +57,6 @@ public class RepositoryContext : DbContext
         modelBuilder.Entity<Nganh>().HasQueryFilter(e => e.DeletedAt == null);
         modelBuilder.Entity<PhongHoc>().HasQueryFilter(e => e.DeletedAt == null);
         modelBuilder.Entity<Tuan>().HasQueryFilter(e => e.DeletedAt == null);
-
         base.OnModelCreating(modelBuilder);
     }
 }
