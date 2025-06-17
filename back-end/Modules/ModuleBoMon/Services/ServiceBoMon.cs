@@ -51,7 +51,7 @@ public class ServiceBoMon : IServiceBoMon
 
     public async Task<(IEnumerable<ResponseBoMonDto> data, PageInfo page)> GetAllBoMonAsync(ParamBaseDto paramBaseDto)
     {
-        var boMons = await _repositoryMaster.BoMon.GetAllPaginatedAndSearchOrSortAsync(paramBaseDto.page, paramBaseDto.limit, paramBaseDto.search, paramBaseDto.sortBy, paramBaseDto.sortByOder);
+        var boMons = await _repositoryMaster.BoMon.GetAllPaginatedAndSearchOrSortAsync(paramBaseDto.page, paramBaseDto.limit, paramBaseDto.search, paramBaseDto.sortBy, paramBaseDto.sortByOrder);
         var boMonDto = _mapper.Map<IEnumerable<ResponseBoMonDto>>(boMons);
         return (data: boMonDto, page: boMons!.PageInfo);
     }

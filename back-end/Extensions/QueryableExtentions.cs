@@ -38,7 +38,7 @@ public static class QueryableExtentions
         var lambda = Expression.Lambda<Func<T, bool>>(combined!, parameter);
         return source.Where(lambda);
     }
-    public static IQueryable<T> SortByOptions<T>(this IQueryable<T> source, string? sortBy, string? SortOrder, Dictionary<string, Expression<Func<T, object>>> optiops)
+    public static IQueryable<T> SortByOptions<T>(this IQueryable<T> source, string? sortBy, string? SortByOrder, Dictionary<string, Expression<Func<T, object>>> optiops)
     {
         if (string.IsNullOrWhiteSpace(sortBy)) return source;
         var key = sortBy.ToLower();
@@ -46,8 +46,9 @@ public static class QueryableExtentions
         {
             keySelector = optiops.ContainsKey("createat") ? optiops["createat"] : optiops.First().Value;
         }
-        return string.Equals(SortOrder, "desc", StringComparison.OrdinalIgnoreCase)
-        ? source.OrderByDescending(keySelector) 
+        bool isDescending = string.Equals(SortByOrder, "desc", StringComparison.OrdinalIgnoreCase);
+        return isDescending
+        ? source.OrderByDescending(keySelector)
         : source.OrderBy(keySelector);
     }
 }

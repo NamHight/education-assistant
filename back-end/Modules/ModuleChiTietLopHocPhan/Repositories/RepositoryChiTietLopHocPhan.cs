@@ -1,5 +1,6 @@
 using System;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 using Education_assistant.Context;
 using Education_assistant.Extensions;
 using Education_assistant.Models;
@@ -7,6 +8,7 @@ using Education_assistant.Modules.ModuleChiTietLopHocPhan.DTOs.Response;
 using Education_assistant.Repositories;
 using Education_assistant.Repositories.Paginations;
 using Microsoft.EntityFrameworkCore;
+using MySqlConnector;
 
 namespace Education_assistant.Modules.ModuleChiTietLopHocPhan.Repositories;
 
@@ -26,9 +28,14 @@ public class RepositoryChiTietLopHocPhan : RepositoryBase<ChiTietLopHocPhan>, IR
         Delete(chiTietLopHocPhan);
     }
 
+    public async Task DeleteListChiTietLopHocPhan(List<Guid> ids)
+    {
+        await _context.ChiTietLopHocPhans.Where(c => ids.Contains(c.Id)).ExecuteDeleteAsync();
+    }
+
     public async Task<PagedListAsync<ChiTietLopHocPhan>> GetAllChiTietLopHocPhanAsync(int page, int limit, string search, string sortBy, string sortByOder)
     {
-        return await PagedListAsync<ChiTietLopHocPhan>.ToPagedListAsync(_context.ChiTietLopHocPhans!.AsNoTracking()
+        return await PagedListAsync<ChiTietLopHocPhan>.ToPagedListAsync(_context.ChiTietLopHocPhans!.AsNoTracking().Include(item => item.SinhVien).Include(item => item.MonHoc).Include(item => item.GiangVien).Include(item => item.LopHocPhan)
                                                                 , page, limit);
     }
 
@@ -36,7 +43,7 @@ public class RepositoryChiTietLopHocPhan : RepositoryBase<ChiTietLopHocPhan>, IR
     {
         return await _context.ChiTietLopHocPhans!
                     .AsNoTracking()
-                    .Where(ctLhp => ctLhp.LopHocPhanId == lopHocPhanId && ctLhp.HocKy == hocKy)
+                    .Where(ctLhp => ctLhp.LopHocPhanId == lopHocPhanId && ctLhp.HocKy == hocKy && ctLhp.NgayNopDiem == null)
                     .Join(
                         _context.LopHocPhans!.Where(lhp => lhp.CreatedAt.Year >= namHoc),
                         ctLhp => ctLhp.LopHocPhanId,
@@ -97,5 +104,20 @@ public class RepositoryChiTietLopHocPhan : RepositoryBase<ChiTietLopHocPhan>, IR
     public void UpdateChiTietLopHocPhan(ChiTietLopHocPhan chiTietLopHocPhan)
     {
         Update(chiTietLopHocPhan);
+    }
+
+    public async Task<int> UpdateCtlhpWithPhanCongAsync(Guid maLhp, Guid giangVienId, Guid monHocId)
+    {
+        var parameters = new[]
+        {
+            new MySqlParameter("maLhp", maLhp),
+            new MySqlParameter("maGiangVien", giangVienId),
+            new MySqlParameter("maMonHoc", monHocId),
+        };
+        var result = await _context.Database.ExecuteSqlRawAsync(
+            @"CALL sp_updateChiTietLopHocPhan(?, ?, ?)",
+            parameters
+        );
+        return result;
     }
 }

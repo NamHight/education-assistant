@@ -21,7 +21,7 @@ public class RepositoryLopHocPhan : RepositoryBase<LopHocPhan>, IRepositoryLopHo
         await Create(lopHocPhan);
     }
 
-    public async Task<int> CreateSinhVienLopHocPhan(Guid maLop, Guid maLhp, Guid? maGiangVien, Guid maMonHoc, int HocKy)
+    public async Task<int> CreateSinhVienLopHocPhanHocBa(Guid maLop, Guid maLhp, Guid? maGiangVien, Guid maMonHoc, Guid maCtctdt, int HocKy)
     {
         var parameters = new[]
         {
@@ -29,10 +29,11 @@ public class RepositoryLopHocPhan : RepositoryBase<LopHocPhan>, IRepositoryLopHo
             new MySqlParameter("maLhp", maLhp),
             new MySqlParameter("maGiangVien", maGiangVien),
             new MySqlParameter("maMonHoc", maMonHoc),
+            new MySqlParameter("maChiTietCTDT", maCtctdt),
             new MySqlParameter("hocKy", HocKy)
         };
         var result = await _context.Database.ExecuteSqlRawAsync(
-            @"CALL sp_taoSinhVienChiTietLopHocPhan( ?, ?, ?, ?, ?)",
+            @"CALL sp_taoChiTietLopHocPhanVaHocBa( ?, ?, ?, ?, ?, ?)",
             parameters);
         return result;
     }
@@ -46,12 +47,12 @@ public class RepositoryLopHocPhan : RepositoryBase<LopHocPhan>, IRepositoryLopHo
         string sortBy, string sortByOder)
     {
         return await PagedListAsync<LopHocPhan>.ToPagedListAsync(_context.LopHocPhans!
-            .SearchBy(search, item => item.MaHocPhan)
+            .SearchBy(search, item => item.MaHocPhan).Include(item => item.MonHoc).Include(item => item.GiangVien)
             .SortByOptions(sortBy, sortByOder, new Dictionary<string, Expression<Func<LopHocPhan, object>>>
             {
                 ["siso"] = item => item.SiSo,
-                ["createat"] = item => item.CreatedAt,
-                ["updateat"] = item => item.UpdatedAt!
+                ["createdat"] = item => item.CreatedAt,
+                ["updatedat"] = item => item.UpdatedAt!
             }), page, limit);
     }
 
@@ -65,11 +66,12 @@ public class RepositoryLopHocPhan : RepositoryBase<LopHocPhan>, IRepositoryLopHo
                                                         Id = lhp.Id,
                                                         MaHocPhan = lhp.MaHocPhan,
                                                         SiSo = lhp.SiSo,
-                                                        TrangThaiLopHocPhanEnum = lhp.TrangThai,
+                                                        TrangThai = lhp.TrangThai,
                                                         TenMonHoc = ctctdt.MonHoc.TenMonHoc,     
-                                                        LoaiMonHocEnum = ctctdt.LoaiMonHoc,
+                                                        LoaiMonHoc = ctctdt.LoaiMonHoc,
                                                         MonHocId = lhp.MonHocId,
                                                         GiangVienId = lhp.GiangVienId,
+                                                        HoTen = lhp.GiangVien!.HoTen,
                                                         CreatedAt = lhp.CreatedAt,
                                                         UpdatedAt = lhp.UpdatedAt
                                                       

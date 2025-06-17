@@ -17,4 +17,5 @@ public interface IServiceChiTietLopHocPhan
     Task UpdateAsync(Guid id, RequestUpdateChiTietLopHocPhanDto request);
     Task UpdateListChiTietLopHocPhanAsync(List<RequestUpdateChiTietLopHocPhanDto> listRequest);
     Task DeleteAsync(Guid id);
+    Task DeleteListChiTietLopHocPhanAsync(RequestDeleteChiTietLopHocPhanDto request);
 }

@@ -1,21 +1,23 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using Education_assistant.Modules.ModuleKhoa.DTOs.Response;
 
 namespace Education_assistant.Modules.ModuleNganh.DTOs.Response;
 
 public class ResponseNganhDto
 {
-    [Required(ErrorMessage = "Id không được để trống")]
     public Guid Id { get; set; }
-    [Required(ErrorMessage = "Mã ngành không được để trống")]
-    [MaxLength(255, ErrorMessage = "Mã ngành không được quá 255 ký tự")]
     public string MaNganh { get; set; } = string.Empty;
-    [Required(ErrorMessage = "Tên ngành không được để trống")]
-    [MaxLength(255, ErrorMessage = "Tên ngành không được quá 255 ký tự")]
     public string TenNganh { get; set; } = string.Empty;
     public string? MoTa { get; set; }
-    [Required(ErrorMessage = "Id khoa không được để trống")]
     public Guid? KhoaId { get; set; }
+    public KhoaSimpleDto? Khoa { get; set; }
     public DateTime? CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
+}
+public class NganhSimpleDto
+{
+    public Guid Id { get; set; }
+    public string MaNganh { get; set; } = string.Empty;
+    public string TenNganh { get; set; } = string.Empty;
 }

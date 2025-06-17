@@ -27,7 +27,7 @@ namespace Education_assistant.Modules.ModuleChiTietLopHocPhan
             return Ok(result.data);
         }
         [HttpGet("list-diem-so")]
-        public async Task<ActionResult> GetAllDiemSoByLopHocAsync([FromQuery]ParamAllDiemSoByLopHocDto paramBaseDto)
+        public async Task<ActionResult> GetAllDiemSoByLopHocAsync([FromQuery] ParamAllDiemSoByLopHocDto paramBaseDto)
         {
             var result = await _serviceMaster.ChiTietLopHocPhan.GetAllDiemSoByLopHocAsync(paramBaseDto);
             return Ok(result);
@@ -55,6 +55,10 @@ namespace Education_assistant.Modules.ModuleChiTietLopHocPhan
         [HttpPut("update-list")]
         public async Task<ActionResult> UpdateListChiTietLopHocPhanAsync([FromBody] List<RequestUpdateChiTietLopHocPhanDto> model)
         {
+            if (model == null || !model.Any())
+            {
+                return BadRequest("Danh sách truyền lên bị null hoặc rỗng.");
+            }
             await _serviceMaster.ChiTietLopHocPhan.UpdateListChiTietLopHocPhanAsync(model);
             return NoContent();
         }
@@ -62,6 +66,12 @@ namespace Education_assistant.Modules.ModuleChiTietLopHocPhan
         public async Task<ActionResult> DeleteChiTietLopHocPhanAsync(Guid id)
         {
             await _serviceMaster.ChiTietLopHocPhan.DeleteAsync(id);
+            return NoContent();
+        }
+        [HttpDelete("delete-list")]
+        public async Task<ActionResult> DeleteListChiTietLopHocPhanAsync([FromBody] RequestDeleteChiTietLopHocPhanDto model)
+        {
+            await _serviceMaster.ChiTietLopHocPhan.DeleteListChiTietLopHocPhanAsync(model);
             return NoContent();
         }
     }

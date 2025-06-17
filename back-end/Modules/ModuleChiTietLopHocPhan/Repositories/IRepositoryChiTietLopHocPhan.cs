@@ -12,5 +12,7 @@ public interface IRepositoryChiTietLopHocPhan
     Task<ChiTietLopHocPhan?> GetChiTietLopHocPhanByIdAsync(Guid id, bool trackChanges);
     Task CreateAsync(ChiTietLopHocPhan chiTietLopHocPhan);
     void UpdateChiTietLopHocPhan(ChiTietLopHocPhan chiTietLopHocPhan);
+    Task<int> UpdateCtlhpWithPhanCongAsync(Guid maLhp, Guid giangVienId, Guid monHocId);
     void DeleteChiTietLopHocPhan(ChiTietLopHocPhan chiTietLopHocPhan);
+    Task DeleteListChiTietLopHocPhan(List<Guid> ids);
 }

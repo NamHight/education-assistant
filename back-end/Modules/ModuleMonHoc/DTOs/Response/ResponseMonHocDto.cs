@@ -10,8 +10,14 @@ public class ResponseMonHocDto
     public string TenMonHoc { get; set; } = string.Empty;
     public string MoTa { get; set; } = string.Empty;
     public Guid KhoaId { get; set; }
-    public ResponseKhoaDto Khoa { get; set; } = null!;
+    public KhoaSimpleDto Khoa { get; set; } = null!;
     public DateTime? CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
     public DateTime? DeletedAt { get; set; }
+}
+public class MonHocSimpleDto
+{
+    public Guid Id { get; set; }
+    public string MaMonHoc { get; set; } = string.Empty;
+    public string TenMonHoc { get; set; } = string.Empty;
 }

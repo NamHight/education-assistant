@@ -55,7 +55,7 @@ public class ServiceChiTietChuongTrinhDaoTao : IServiceChiTietChuongTrinhDaoTao
 
     public async Task<(IEnumerable<ResponseChiTietChuongTrinhDaoTaoDto> data, PageInfo page)> GetAllChiTietChuongTrinhDaoTaoAsync(ParamBaseDto paramBaseDto)
     {
-        var ctctDaoTaos = await _repositoryMaster.ChiTietChuongTrinhDaoTao.GetAllChiTietChuongTrinhDaoTaoAsync(paramBaseDto.page, paramBaseDto.limit, paramBaseDto.search, paramBaseDto.sortBy, paramBaseDto.sortByOder);
+        var ctctDaoTaos = await _repositoryMaster.ChiTietChuongTrinhDaoTao.GetAllChiTietChuongTrinhDaoTaoAsync(paramBaseDto.page, paramBaseDto.limit, paramBaseDto.search, paramBaseDto.sortBy, paramBaseDto.sortByOrder);
         var ctctDaoTaoDto = _mapper.Map<IEnumerable<ResponseChiTietChuongTrinhDaoTaoDto>>(ctctDaoTaos);
         return (data: ctctDaoTaoDto, page: ctctDaoTaos!.PageInfo);
     }

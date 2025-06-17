@@ -12,15 +12,16 @@ public class RequestAddLopHocPhanDto
     [Required(ErrorMessage = "Sỉ số không được để trống")]
     public int SiSo { get; set; }
     [Required(ErrorMessage = "Trạng thái không được để trống")]
-    public int TrangThaiLopHocPhanEnum { get; set; }
+    public int TrangThai { get; set; }
 
     [Required(ErrorMessage = "Id Môn học không được để trống")]
     public Guid MonHocId { get; set; }
-    [Required(ErrorMessage = "Id giảng viên không được để trống")]
-    public Guid GiangVienId { get; set; }
+    public Guid? GiangVienId { get; set; }
     [Required(ErrorMessage = "Id lớp học không được để trống")]
     public Guid LopHocId { get; set; }
-    [Required(ErrorMessage = "Id lớp học không được để trống")]
+    [Required(ErrorMessage = "Id Chương trình đào tạo không được để trống")]
+    public Guid ChuongTrinhDaoTaoId { get; set; }
+    [Required(ErrorMessage = "Học kỳ không được để trống")]
     public int HocKy { get; set; }
     
 }
@@ -36,10 +37,10 @@ public class RequestUpdateLopHocPhanDto
     [Required(ErrorMessage = "Sỉ số không được để trống")]
     public int SiSo { get; set; }
     [Required(ErrorMessage = "Trạng thái không được để trống")]
-    public int TrangThaiLopHocPhanEnum { get; set; } 
+    public int TrangThai { get; set; } 
 
     [Required(ErrorMessage = "Id Môn học không được để trống")]
-    public Guid? MonHocId { get; set; }
+    public Guid MonHocId { get; set; }
     [Required(ErrorMessage = "Id giảng viên không được để trống")]
-    public Guid? GiangVienId { get; set; }
+    public Guid GiangVienId { get; set; }
 }

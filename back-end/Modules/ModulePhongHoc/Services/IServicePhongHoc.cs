@@ -10,7 +10,7 @@ namespace Education_assistant.Modules.ModulePhongHoc.Services
 {
     public interface IServicePhongHoc
     {
-        Task<(IEnumerable<ResponsePhongHocDto> data, PageInfo page)> GetAllPaginationAndSearchAsync(ParamPageAndSearchBaseDto paramBaseDto);
+        Task<(IEnumerable<ResponsePhongHocDto> data, PageInfo page)> GetAllPhongHocAsync(ParamBaseDto paramBaseDto);
         Task<ResponsePhongHocDto> GetPhongHocByIdAsync(Guid id, bool trackChanges);
         Task<ResponsePhongHocDto> CreateAsync(RequestAddPhongHocDto request);
         Task UpdateAsync(Guid id, RequestUpdatePhongHocDto request);

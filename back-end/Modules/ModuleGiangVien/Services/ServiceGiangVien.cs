@@ -45,7 +45,7 @@ public sealed class ServiceGiangVien : IServiceGiangVien
             var newTaiKhoan = new TaiKhoan
             {
                 Email = newGiangVien.Email,
-                Password = _passwordHash.Hash(newGiangVien.CCCD),
+                Password = _passwordHash.Hash("Admin@123"),
                 Status = true,
                 LoaiTaiKhoan = request.LoaiTaiKhoan,
             };
@@ -82,7 +82,7 @@ public sealed class ServiceGiangVien : IServiceGiangVien
 
     public async Task<(IEnumerable<ResponseGiangVienDto> data, PageInfo page)> GetAllGiangVienAsync(ParamBaseDto paramBaseDto)
     {
-        var giangViens = await _repositoryMaster.GiangVien.GetAllGiangVienAsync(paramBaseDto.page, paramBaseDto.limit, paramBaseDto.search, paramBaseDto.sortBy, paramBaseDto.sortByOder);
+        var giangViens = await _repositoryMaster.GiangVien.GetAllGiangVienAsync(paramBaseDto.page, paramBaseDto.limit, paramBaseDto.search, paramBaseDto.sortBy, paramBaseDto.sortByOrder);
         var giangVienDtos = _mapper.Map<IEnumerable<ResponseGiangVienDto>>(giangViens);
         return (data: giangVienDtos, page: giangViens!.PageInfo);
     }

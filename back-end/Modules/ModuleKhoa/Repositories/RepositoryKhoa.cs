@@ -30,8 +30,8 @@ public class RepositoryKhoa : RepositoryBase<Khoa>, IRepositoryKhoa
         return await PagedListAsync<Khoa>.ToPagedListAsync(_context.Khoas!.SearchBy(search, item => item.TenKhoa)
                                                                 .SortByOptions(sortBy, sortByOder, new Dictionary<string, Expression<Func<Khoa, object>>>
                                                                 {
-                                                                    ["createat"] = item => item.CreatedAt,
-                                                                    ["updateat"] = item => item.UpdatedAt!,
+                                                                    ["createdat"] = item => item.CreatedAt,
+                                                                    ["updatedat"] = item => item.UpdatedAt!,
                                                                 }).AsNoTracking()
                                                                 , page, limit);
     }
