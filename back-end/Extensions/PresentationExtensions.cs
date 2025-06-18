@@ -1,6 +1,10 @@
 ﻿using Education_assistant.Mappers;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Education_assistant.Models.Enums;
 
 namespace Education_assistant.Extensions;
 
@@ -11,16 +15,66 @@ namespace Education_assistant.Extensions;
 //   + websocket
 public static class PresentationExtensions
 {
-    public static IServiceCollection AddPresentation(this IServiceCollection services)
+    public static IServiceCollection AddPresentation(this IServiceCollection services,IConfiguration configuration)
     {
         var assembly = typeof(PresentationExtensions).Assembly;
+        var jwtSettings = configuration.GetSection("Jwt");
         services.AddControllers()
             .AddApplicationPart(assembly)
             .AddNewtonsoftJson(options =>
             {
                 options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
             });
-
+        services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme; 
+            })
+            .AddJwtBearer("CustomJWT", options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = jwtSettings["Issuer"],
+                    ValidAudience = jwtSettings["Audience"],
+                    ClockSkew= TimeSpan.Zero,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["SecretKey"]!))
+                };
+                options.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        var token = context.Request.Cookies["access_token"];
+                        if (!string.IsNullOrEmpty(token) && context.Request.Path.StartsWithSegments("/api"))
+                            context.Token = token;
+                        return Task.CompletedTask;
+                    }
+                };
+            });
+        services.AddAuthorization(options =>
+        {
+            options.AddPolicy("Admin", policy =>
+            {
+                policy.AddAuthenticationSchemes("CustomJWT");
+                policy.RequireAuthenticatedUser();
+                policy.RequireRole("1");
+            });
+            options.AddPolicy("QLKhoa", policy =>
+            {
+                policy.AddAuthenticationSchemes("CustomJWT");
+                policy.RequireAuthenticatedUser();
+                policy.RequireRole("1","2");
+            });
+            options.AddPolicy("GiangVien", policy =>
+            {
+                policy.AddAuthenticationSchemes("CustomJWT");
+                policy.RequireAuthenticatedUser();
+                policy.RequireRole("1","2","3");
+            });
+        });
         services.AddAutoMapper(typeof(MapperProfile).Assembly);
         services.Configure<ApiBehaviorOptions>(options => { options.SuppressModelStateInvalidFilter = true; });
         return services;

@@ -20,9 +20,9 @@ namespace Education_assistant.Modules.ModuleLichBieu
             _serviceMaster = serviceMaster;
         }
         [HttpGet("")]
-        public async Task<ActionResult> GetAllLichBieuAsync([FromQuery] ParamPaginationBaseDto paramBaseDto)
+        public async Task<ActionResult> GetAllLichBieuAsync([FromQuery] ParamLichBieuDto paramLichBieuDto)
         {
-            var result = await _serviceMaster.LichBieu.GetAllLichBieuAsync(paramBaseDto);
+            var result = await _serviceMaster.LichBieu.GetAllLichBieuAsync(paramLichBieuDto);
             Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(result.page));
             return Ok(result.data);
         }

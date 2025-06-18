@@ -1,11 +1,14 @@
 using System;
+using System.Linq.Expressions;
 using Education_assistant.Context;
+using Education_assistant.Extensions;
 using Education_assistant.Models;
 using Education_assistant.Modules.ModuleLichBieu.DTOs.Response;
 using Education_assistant.Repositories;
 using Education_assistant.Repositories.Paginations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using NetTopologySuite.Index.HPRtree;
 
 namespace Education_assistant.Modules.ModuleLichBieu.Repositories;
 
@@ -20,14 +23,39 @@ public class RepositoryLichBieu : RepositoryBase<LichBieu>, IRepositoryLichBieu
         await Create(lichBieu);
     }
 
-    public void DeleteLichBieu(LichBieu lichBieu)
+    public void DeleteLichBieu(LichBieu lichBieu) 
     {
         Delete(lichBieu);
     }
 
-    public async Task<PagedListAsync<LichBieu>> GetAllLichBieuAsync(int page, int limit)
+    public async Task<PagedListAsync<LichBieu>> GetAllLichBieuAsync(int page, int limit, string? search, string? sortBy, string? sortByOrder, int? namHoc, Guid? giangvienId, Guid? tuanId)
     {
-        return await PagedListAsync<LichBieu>.ToPagedListAsync(_context.LichBieus!.Include(item => item.PhongHoc).Include(item => item.LopHocPhan), page, limit);
+
+        var query = _context.LichBieus!
+                    .AsNoTracking()
+                    .Include(lb => lb.PhongHoc)
+                    .Include(lb => lb.LopHocPhan)!.ThenInclude(lhp => lhp!.GiangVien)
+                    .Include(lb => lb.Tuan)
+                    .AsQueryable();
+        if (tuanId.HasValue) 
+        {
+            query = query.Where(item => item.TuanId == tuanId);
+        }
+        if (giangvienId.HasValue)
+        {
+            query = query.Where(item => item.LopHocPhan!.GiangVienId == giangvienId);
+        }
+        if (namHoc.HasValue)
+        {
+            query = query.Where(item => item.Tuan!.NamHoc == namHoc);
+        }
+        return await PagedListAsync<LichBieu>.ToPagedListAsync(query.SearchBy(search, item => item.Thu.ToString())
+                                            .SortByOptions(sortBy, sortByOrder, new Dictionary<string, Expression<Func<LichBieu, object>>>
+                                            {
+                                                ["createdat"] = item => item.CreatedAt,
+                                                ["updatedat"] = item => item.UpdatedAt!,
+                                            })
+                                            , page, limit);
     }
 
     public async Task<IEnumerable<ResponseLichKhoaBieuGiangVienDto>> GetAllLichBieuByGiangVienAsync(int namHoc, Guid giangVienId, Guid tuanId)

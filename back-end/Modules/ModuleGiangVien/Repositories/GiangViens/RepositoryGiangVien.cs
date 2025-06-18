@@ -69,4 +69,9 @@ public class RepositoryGiangVien : RepositoryBase<GiangVien>, IRepositoryGiangVi
     {
         Update(giangVien);
     }
+
+    public async Task<GiangVien?> GetGiangVienByTaiKhoanIdAsync(Guid taiKhoanId, bool trackChanges)
+    {
+        return await FindByCondition(item => item.TaiKhoanId == taiKhoanId, false).Include(item => item.BoMon).Include(item => item.Khoa).FirstOrDefaultAsync();
+    }
 }

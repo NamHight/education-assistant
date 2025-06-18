@@ -72,7 +72,7 @@ public class ServiceMaster : IServiceMaster
         _phongHoc = new Lazy<IServicePhongHoc>(() => new ServicePhongHoc(repositoryMaster, loggerService, mapper));
         _tuan = new Lazy<IServiceTuan>(() => new ServiceTuan(repositoryMaster, loggerService, mapper));
         _authenticate = new Lazy<IServiceAuthenticate>(() =>
-            new ServiceAuthenticate(loggerService, repositoryMaster, mapper, configuration, password));
+            new ServiceAuthenticate(loggerService, repositoryMaster, mapper, configuration, password, httpContextAccessor));
     }
 
     public IServiceAuthenticate Authenticate => _authenticate.Value;

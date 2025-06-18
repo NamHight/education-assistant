@@ -73,11 +73,12 @@ namespace Education_assistant.Modules.ModuleLichBieu.Services
             _loggerService.LogInfo($"Xóa lịch biểu có id = {id} thành công.");
         }
 
-        public async Task<(IEnumerable<ResponseLichBieuDto> data, PageInfo page)> GetAllLichBieuAsync(ParamPaginationBaseDto paramBaseDto)
+        public async Task<(IEnumerable<ResponseLichBieuDto> data, PageInfo page)> GetAllLichBieuAsync(ParamLichBieuDto paramLichBieuDto)
         {
-            var lichBieus = await _repositoryMaster.LichBieu.GetAllLichBieuAsync(paramBaseDto.page, paramBaseDto.limit);
-            var lichBieuDto = _mapper.Map<IEnumerable<ResponseLichBieuDto>>(lichBieus);
-            return (data: lichBieuDto, page: lichBieus!.PageInfo);
+            //var lichBieus = await _repositoryMaster.LichBieu.GetAllLichBieuAsync(paramLichBieuDto.page, paramLichBieuDto.limit, paramLichBieuDto.search, paramLichBieuDto.sortBy, paramLichBieuDto.sortByOrder, paramLichBieuDto.NamHoc, paramLichBieuDto.GiangVienId, );
+            //var lichBieuDto = _mapper.Map<IEnumerable<ResponseLichBieuDto>>(lichBieus);
+            //return (data: lichBieuDto, page: lichBieus!.PageInfo);
+            return (null, null);
         }
 
         public async Task<ResponseLichBieuDto> GetLichBieuByIdAsync(Guid id, bool trackChanges)
