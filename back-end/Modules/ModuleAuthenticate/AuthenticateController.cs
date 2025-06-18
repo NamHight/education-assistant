@@ -2,6 +2,7 @@
 using Education_assistant.Services.ServiceEmails;
 using Education_assistant.Services.ServiceMaster;
 using FashionShop_API.Filters;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Education_assistant.Modules.ModuleAuthenticate;
@@ -68,5 +69,12 @@ public class AuthenticateController : ControllerBase
     {
         await _serviceMaster.Authenticate.ResetPassword(request);
         return Ok("Thay đổi mật thành công");
+    }
+    [Authorize(Policy = "GiangVien")]
+    [HttpPost("me")]
+    public async Task<IActionResult> GetMeAsync()
+    {
+        var result = await _serviceMaster.Authenticate.GetMeAsync();
+        return Ok(result);
     }
 } 

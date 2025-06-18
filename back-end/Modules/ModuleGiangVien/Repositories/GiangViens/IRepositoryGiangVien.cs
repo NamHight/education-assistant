@@ -10,6 +10,7 @@ public interface IRepositoryGiangVien
     Task<IEnumerable<GiangVien>?> GetAllGiangVienByKhoa(Guid khoaId); 
     Task<GiangVien?> GetGiangVienByIdAsync(Guid? id, bool trackChanges);
     Task<GiangVien?> GetGiangVienByEmailAsync(string email, bool trackChanges);
+    Task<GiangVien?> GetGiangVienByTaiKhoanIdAsync(Guid taiKhoanId, bool trackChanges);
     Task CreateAsync(GiangVien giangVien);
     void UpdateGiangVien(GiangVien giangVien);
     void DeleteGiangVien(GiangVien giangVien);
