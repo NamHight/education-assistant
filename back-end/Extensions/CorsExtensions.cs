@@ -9,14 +9,6 @@ public static class CorsExtensions
         var allowedMethods = corsSettings["AllowMethods"]?.Split(',');
         var allowedHeaders = corsSettings["AllowHeaders"]?.Split(',');
         var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-        Console.WriteLine(
-            "999999999 {0} {1} {2} {3} {4}",
-            string.Join(",", allowedOrigins ?? new string[0]),
-            string.Join(",", allowedMethods ?? new string[0]),
-            string.Join(",", allowedHeaders ?? new string[0]),
-            environment,
-            corsSettings
-        );
         services.AddCors(options =>
         {
             if (environment == "Development")

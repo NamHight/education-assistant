@@ -6,7 +6,8 @@ const authApi = axios.create({
     baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api',
     headers: {
         'Content-Type': 'application/json',
-    }
+    },
+    withCredentials: true 
 })
 const getAccessToken = async () => {
     return cookieStorage.get(TOKEN_ACCESS);
