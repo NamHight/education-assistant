@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using Education_assistant.Modules.ModuleChiTietLopHocPhan.DTOs.Request;
 
 namespace Education_assistant.Modules.ModuleHocBa.DTOs.Request;
 
@@ -10,7 +11,7 @@ public class RequestAddHocbaDto
     public string? MoTa { get; set; }
     public int LanHoc { get; set; } = 0;
     [Required(ErrorMessage = "Kết quả học tập không được để trống")]
-    public int? KetQuaHocBaEnum { get; set; } = 2;
+    public int? KetQua { get; set; } = 2;
     [Required(ErrorMessage = "Id sinh viên không được để trống")]
     public Guid? SinhVienId { get; set; }
     [Required(ErrorMessage = "Id lớp học phần không được để trống")]
@@ -24,11 +25,7 @@ public class RequestUpdateHocbaDto
     public Guid Id { get; set; }
     [Required(ErrorMessage = "Điểm tổng kết không được để trống")]
     public decimal DiemTongKet { get; set; }
-    public string? MoTa { get; set; }
-    [Required(ErrorMessage = "Lần học không được để trống")]
-    public int LanHoc { get; set; }
-    [Required(ErrorMessage = "Kết quả học bạ không được để trống")]
-    public int? KetQuaHocBaEnum { get; set; }
+
     [Required(ErrorMessage = "Id sinh viên không được để trống")]
     public Guid? SinhVienId { get; set; }
     [Required(ErrorMessage = "Id lớp học phần không được để trống")]
@@ -37,4 +34,19 @@ public class RequestUpdateHocbaDto
     public Guid? ChiTietChuongTrinhDaoTaoId { get; set; }
     [Required(ErrorMessage = "Điểm tổng kết lớp học phần không được để trống")]
     public decimal DiemTongKetLopHocPhan { get; set; }
+}
+public class RequestListUpdateHocbaDto
+{
+    public List<RequestNopDiemChiTietLopHocPhanDto>? listDiemSo { get; set; }
+    [Required(ErrorMessage = "Id lớp học phần không được để trống")]
+    public Guid LopHocPhanId { get; set; }
+    [Required(ErrorMessage = "Id chi tiết chương trình đào tạo không được để trống")]
+    public Guid ChuongTrinhDaoTaoId { get; set; }
+    [Required(ErrorMessage = "Id chi tiết chương trình đào tạo không được để trống")]
+    public Guid MonHocId { get; set; }
+}
+public class RequestDeleteHocBaDto
+{
+    [Required(ErrorMessage = "Danh sách id không được bỏ trống")]
+    public List<Guid>? Ids { get; set; }
 }

@@ -12,8 +12,12 @@ public class ResponseKhoaDto
     public string Email { get; set; } = string.Empty;
     public string ViTriPhong { get; set; } = string.Empty;
     public string Website { get; set; } = string.Empty;
-    public Guid TruongId { get; set; }
     public DateTime? CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
 
+}
+public class KhoaSimpleDto
+{
+    public Guid Id { get; set; }
+    public string TenKhoa { get; set; } = string.Empty;
 }

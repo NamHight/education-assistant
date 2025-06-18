@@ -22,7 +22,7 @@ public class RequestAddChiTietChuongTrinhDaoTaoDto
     public bool DiemTichLuy { get; set; }
 
     [Required(ErrorMessage = "Loại môn không được để trống")]
-    public int? LoaiMonHocEnum { get; set; }
+    public int? LoaiMonHoc { get; set; }
 }
 public class RequestUpdateChiTietChuongTrinhDaoTaoDto
 {
@@ -47,5 +47,5 @@ public class RequestUpdateChiTietChuongTrinhDaoTaoDto
     public bool DiemTichLuy { get; set; }
 
     [Required(ErrorMessage = "Loại môn không được để trống")]
-    public int? LoaiMonHocEnum { get; set; }
+    public int? LoaiMonHoc { get; set; }
 }

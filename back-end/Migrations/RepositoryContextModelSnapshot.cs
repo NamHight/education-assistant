@@ -1027,6 +1027,14 @@ namespace Education_assistant.Migrations
                         .HasColumnType("varchar(255)")
                         .HasColumnName("password");
 
+                    b.Property<string>("ResetPassword")
+                        .HasColumnType("longtext")
+                        .HasColumnName("reset-password");
+
+                    b.Property<DateTime?>("ResetPasswordExpires")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("reset-password-expires");
+
                     b.Property<string>("ResetToken")
                         .HasMaxLength(255)
                         .HasColumnType("varchar(255)")

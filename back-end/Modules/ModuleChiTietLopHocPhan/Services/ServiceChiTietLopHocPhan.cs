@@ -52,9 +52,22 @@ public class ServiceChiTietLopHocPhan : IServiceChiTietLopHocPhan
         _loggerService.LogInfo("Xóa chi tiết lớp học phần thành công.");
     }
 
+    public async Task DeleteListChiTietLopHocPhanAsync(RequestDeleteChiTietLopHocPhanDto request)
+    {
+        if (request is null)
+        {
+            throw new ChiTietLopHocPhanBadRequestException("Danh sách id không được bỏ trống.");
+        }
+        await _repositoryMaster.ExecuteInTransactionBulkEntityAsync(async () =>
+        {
+            await _repositoryMaster.BulkDeleteEntityAsync<ChiTietLopHocPhan>(request.Ids!);
+        });
+        _loggerService.LogInfo("Xóa điểm hàng loại thành công thành công.");
+    }
+
     public async Task<(IEnumerable<ResponseChiTietLopHocPhanDto> data, PageInfo page)> GetAllChiTietLopHocPhanAsync(ParamBaseDto paramBaseDto)
     {
-        var diemSos = await _repositoryMaster.ChiTietLopHocPhan.GetAllChiTietLopHocPhanAsync(paramBaseDto.page, paramBaseDto.limit, paramBaseDto.search, paramBaseDto.sortBy, paramBaseDto.sortByOder);
+        var diemSos = await _repositoryMaster.ChiTietLopHocPhan.GetAllChiTietLopHocPhanAsync(paramBaseDto.page, paramBaseDto.limit, paramBaseDto.search, paramBaseDto.sortBy, paramBaseDto.sortByOrder);
         var diemSoDto = _mapper.Map<IEnumerable<ResponseChiTietLopHocPhanDto>>(diemSos);
         return (data: diemSoDto, page: diemSos!.PageInfo);
     }
@@ -122,6 +135,7 @@ public class ServiceChiTietLopHocPhan : IServiceChiTietLopHocPhan
     public async Task UpdateListChiTietLopHocPhanAsync(List<RequestUpdateChiTietLopHocPhanDto> listRequest)
     {
         var diemSos = _mapper.Map<List<ChiTietLopHocPhan>>(listRequest);
+        
         await _repositoryMaster.ExecuteInTransactionBulkEntityAsync(async () =>
         {
             await _repositoryMaster.BulkUpdateEntityAsync<ChiTietLopHocPhan>(diemSos);

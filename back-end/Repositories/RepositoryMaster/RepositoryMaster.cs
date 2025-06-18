@@ -1,5 +1,7 @@
-﻿using Education_assistant.Context;
+﻿using System.Linq.Expressions;
+using Education_assistant.Context;
 using Education_assistant.Contracts.LoggerServices;
+using Education_assistant.Exceptions.ThrowError;
 using Education_assistant.Modules.ModuleAuthenticate.Repositories;
 using Education_assistant.Modules.ModuleBoMon.Repositories;
 using Education_assistant.Modules.ModuleChiTietChuongTrinhDaoTao.Repositories;
@@ -17,8 +19,11 @@ using Education_assistant.Modules.ModuleNganh.Repositories;
 using Education_assistant.Modules.ModulePhongHoc.Repositories;
 using Education_assistant.Modules.ModuleSinhVien.Repositories;
 using Education_assistant.Modules.ModuleTruong.Repositories;
+using Education_assistant.Modules.ModuleTuan.Repositories;
+using EFCore.BulkExtensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
+using NetTopologySuite.Index.HPRtree;
 
 namespace Education_assistant.Repositories.RepositoryMaster;
 
@@ -44,6 +49,8 @@ public class RepositoryMaster : IRepositoryMaster
     private readonly Lazy<IRepositorySinhVien> _repositorySinhVien;
     private readonly Lazy<IRepositoryTaiKhoan> _repositoryTaiKhoan;
     private readonly Lazy<IRepositoryTruong> _repositoryTruong;
+    private readonly Lazy<IRepositoryTuan> _repositoryTuan;
+
     private bool _disposed;
     private IDbContextTransaction? _transaction;
 
@@ -73,6 +80,7 @@ public class RepositoryMaster : IRepositoryMaster
         _repositoryBoMon = new Lazy<IRepositoryBoMon>(() => new RepositoryBoMon(repositoryContext));
         _repositoryNganh = new Lazy<IRepositoryNganh>(() => new RepositoryNganh(repositoryContext));
         _repositoryPhongHoc = new Lazy<IRepositoryPhongHoc>(() => new RepositoryPhongHoc(repositoryContext));
+        _repositoryTuan = new Lazy<IRepositoryTuan>(() => new RepositoryTuan(repositoryContext));
         _repositoryAuthenticate =
             new Lazy<IRepositoryAuthenticate>(() => new RepositoryAuthenticate(repositoryContext));
         _loggerService = loggerService;
@@ -108,6 +116,8 @@ public class RepositoryMaster : IRepositoryMaster
 
     public IRepositoryNganh Nganh => _repositoryNganh.Value;
     public IRepositoryPhongHoc PhongHoc => _repositoryPhongHoc.Value;
+
+    public IRepositoryTuan Tuan => _repositoryTuan.Value;
 
     public async Task BeginTransactionAsync()
     {
@@ -185,19 +195,48 @@ public class RepositoryMaster : IRepositoryMaster
     //dùng cho update hàng loạt
     public async Task BulkUpdateEntityAsync<T>(IList<T> entities) where T : class
     {
-        await _repositoryContext.BulkUpdateAsync(entities);
+        var bulkConfig = new BulkConfig
+        {
+            SetOutputIdentity = true,
+            PreserveInsertOrder = true,
+            UseTempDB = false
+        };
+        await _repositoryContext.BulkUpdateAsync(entities, bulkConfig);
     }
 
     //dùng cho add hàng loạt
     public async Task BulkAddEntityAsync<T>(IList<T> entities) where T : class
     {
-        await _repositoryContext.BulkInsertAsync(entities, options =>
+        var bulkConfig = new BulkConfig
         {
-            options.BatchSize = 1000;
-            options.IncludeGraph = false;
-        });
+            SetOutputIdentity = true,
+            PreserveInsertOrder = true,
+            UseTempDB = false
+        };
+        await _repositoryContext.BulkInsertAsync(entities, bulkConfig);
     }
+    public async Task BulkDeleteEntityAsync<T>(IList<Guid> ids) where T : class
+    {
+        var bulkConfig = new BulkConfig
+        {
+            SetOutputIdentity = false,
+            PreserveInsertOrder = false,
+            UseTempDB = false
+        };
+        var parameter = Expression.Parameter(typeof(T), "x");
+        var property = Expression.Property(parameter, "Id");
+        var method = typeof(List<Guid>).GetMethod(nameof(List<Guid>.Contains), new[] { typeof(Guid) });
+        var contains = Expression.Call(Expression.Constant(ids), method!, property);
 
+        var predicate = Expression.Lambda<Func<T, bool>>(contains, parameter);
+
+        var entities = await _repositoryContext.Set<T>().Where(predicate).ToListAsync();
+        if (entities is null || entities.Count() == 0)
+        {
+            throw new Exception("Dữ liệu truyền vào không tìm thấy.");
+        }
+        await _repositoryContext.BulkDeleteAsync(entities, bulkConfig);
+    }
     public async Task ExecuteInTransactionBulkEntityAsync(Func<Task> operation)
     {
         var strategy = _repositoryContext.Database.CreateExecutionStrategy();
@@ -241,4 +280,6 @@ public class RepositoryMaster : IRepositoryMaster
         Dispose(false);
         GC.SuppressFinalize(this);
     }
+
+
 }

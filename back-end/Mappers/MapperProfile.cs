@@ -30,6 +30,8 @@ using Education_assistant.Modules.ModuleSinhVien.DTOs.Request;
 using Education_assistant.Modules.ModuleSinhVien.DTOs.Response;
 using Education_assistant.Modules.ModuleTruong.DTOs.Request;
 using Education_assistant.Modules.ModuleTruong.DTOs.Response;
+using Education_assistant.Modules.ModuleTuan.DTOs.Request;
+using Education_assistant.Modules.ModuleTuan.DTOs.Response;
 
 namespace Education_assistant.Mappers;
 
@@ -110,5 +112,23 @@ public class MapperProfile : Profile
         CreateMap<RequestAddHocbaDto, HocBa>();
         CreateMap<RequestUpdateHocbaDto, HocBa>();
         CreateMap<HocBa, ResponseHocBaDto>();
+
+        //map tuan
+        CreateMap<RequestAddTuanDto, Tuan>();
+        CreateMap<RequestUpdateTuanDto, Tuan>();
+        CreateMap<Tuan, ResponseTuanDto>();
+        //map simple model
+        CreateMap<BoMon, BoMonSimpleDto>();
+        CreateMap<ChuongTrinhDaoTao, ChuongTrinhDaoTaoSimpleDto>();
+        CreateMap<ChiTietChuongTrinhDaoTao, ChiTietChuongTrinhDaoTaoSimpleDto>();
+        CreateMap<GiangVien, GiangVienSimpleDto>();
+        CreateMap<HocBa, HocBaSimpleDto>();
+        CreateMap<Khoa, KhoaSimpleDto>();
+        CreateMap<LopHoc, LopHocSimpleDto>();
+        CreateMap<LopHocPhan, LopHocPhanSimpleDto>();
+        CreateMap<MonHoc, MonHocSimpleDto>();
+        CreateMap<Nganh, NganhSimpleDto>();
+        CreateMap<PhongHoc, PhongHocSimpleDto>();
+        CreateMap<SinhVien, SinhVienSimpleDto>();
     }
 }

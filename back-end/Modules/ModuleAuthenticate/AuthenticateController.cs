@@ -1,4 +1,5 @@
 ﻿using Education_assistant.Modules.ModuleAuthenticate.Dtos;
+using Education_assistant.Services.ServiceEmails;
 using Education_assistant.Services.ServiceMaster;
 using FashionShop_API.Filters;
 using Microsoft.AspNetCore.Mvc;
@@ -10,10 +11,11 @@ namespace Education_assistant.Modules.ModuleAuthenticate;
 public class AuthenticateController : ControllerBase
 {
     private readonly IServiceMaster _serviceMaster;
-
-    public AuthenticateController(IServiceMaster serviceMaster)
+    private readonly IServiceEmail _serviceEmail;
+    public AuthenticateController(IServiceMaster serviceMaster, IServiceEmail serviceEmail)
     {
         _serviceMaster = serviceMaster;
+        _serviceEmail = serviceEmail;
     }
 
     [HttpPost("login")]
@@ -45,4 +47,26 @@ public class AuthenticateController : ControllerBase
         await _serviceMaster.Authenticate.Logout(email, HttpContext);
         return Ok(new { message = "Logged out successfully." });
     }
-}
+    [HttpPost("forgot-password")]
+    public async Task<IActionResult> ForgotPassword([FromBody] string email)
+    {
+        if (email is null)
+        {
+            return BadRequest("Email không được bỏ trống!");
+        }
+        await _serviceEmail.SendEmailForgotPassword(email);
+        return Ok("Send email successfully");
+    }
+    [HttpGet("forgot-password-confirm")]
+    public async Task<IActionResult> ForgotPasswordConfirm([FromQuery] ParamForgotPasswordDto request)
+    {
+        await _serviceMaster.Authenticate.ForgotPasswordConfirm(request);
+        return Redirect($"http://localhost:3000/reset-password?email={request.Email}&token={request.Token}");
+    }
+    [HttpPost("reset-password")]
+    public async Task<IActionResult> ResetPassword([FromBody] RequestForgotPasswordDto request)
+    {
+        await _serviceMaster.Authenticate.ResetPassword(request);
+        return Ok("Thay đổi mật thành công");
+    }
+} 

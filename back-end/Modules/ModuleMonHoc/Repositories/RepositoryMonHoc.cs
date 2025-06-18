@@ -25,12 +25,12 @@ public class RepositoryMonHoc : RepositoryBase<MonHoc>, IRepositoryMonHoc
 
     public async Task<PagedListAsync<MonHoc>?> GetAllPaginatedAndSearchOrSortAsync(int page, int limit, string search, string sortBy, string sortByOrder)
     {
-        return await PagedListAsync<MonHoc>.ToPagedListAsync(_context.MonHocs!.SearchBy(search, item => item.TenMonHoc)
+        return await PagedListAsync<MonHoc>.ToPagedListAsync(_context.MonHocs!.SearchBy(search, item => item.TenMonHoc).Include(item => item.Khoa)
                                                                                 .SortByOptions(sortBy, sortByOrder, new Dictionary<string, System.Linq.Expressions.Expression<Func<MonHoc, object>>>
                                                                                 {
-                                                                                    ["createat"] = item => item.CreatedAt,
-                                                                                    ["updateat"] = item => item.UpdatedAt!,
-                                                                                    ["deleteat"] = item => item.DeletedAt!
+                                                                                    ["createdat"] = item => item.CreatedAt,
+                                                                                    ["updatedat"] = item => item.UpdatedAt!,
+                                                                                    ["deletedat"] = item => item.DeletedAt!
                                                                                 })
                                                                                 , page, limit);
     }

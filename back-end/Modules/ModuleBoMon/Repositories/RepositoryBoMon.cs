@@ -27,11 +27,11 @@ public class RepositoryBoMon : RepositoryBase<BoMon>, IRepositoryBoMon
 
     public async Task<PagedListAsync<BoMon>?> GetAllPaginatedAndSearchOrSortAsync(int page, int limit, string search, string sortBy, string sortByOrder)
     {
-        return await PagedListAsync<BoMon>.ToPagedListAsync(_context.BoMons!.SearchBy(search, item => item.TenBoMon)
+        return await PagedListAsync<BoMon>.ToPagedListAsync(_context.BoMons!.SearchBy(search, item => item.TenBoMon).Include(item => item.Khoa)
                                 .SortByOptions(sortBy, sortByOrder, new Dictionary<string, Expression<Func<BoMon, object>>>
                                 {
-                                    ["createat"] = item => item.CreatedAt,
-                                    ["updateat"] = item => item.UpdatedAt!,
+                                    ["createdat"] = item => item.CreatedAt,
+                                    ["updatedat"] = item => item.UpdatedAt!,
                                 }).AsNoTracking(), page, limit);
     }
 

@@ -36,6 +36,7 @@ public class ServiceAuthenticate : IServiceAuthenticate
     public async Task<(ResponseGiangVienDto giangVienDto, string accessToken, string refreshToken)> Login(
         RequestLoginDto requestLoginDto)
     {
+        
         var expiresInMinutes = _configuration.GetValue<int>("ExpiresInMinutes:RefreshToken");
         var taiKhoan = await _repositoryMaster.TaiKhoan.GetTaiKhoanByEmailAsync(requestLoginDto.Email, false);
         if (taiKhoan is null) throw new TaiKhoanEmailNotFoundException(requestLoginDto.Email);
@@ -152,7 +153,7 @@ public class ServiceAuthenticate : IServiceAuthenticate
         }
     }
 
-    private string GenerateToken(TaiKhoan taiKhoan)
+    public string GenerateToken(TaiKhoan taiKhoan)
     {
         var secretKey = _configuration.GetSection("Jwt:SecretKey").Value;
         var expiresInMinutes = _configuration.GetValue<int>("ExpiresInMinutes:AccessToken");
@@ -171,5 +172,33 @@ public class ServiceAuthenticate : IServiceAuthenticate
         };
         var token = tokenHandler.CreateToken(tokenDescriptor);
         return tokenHandler.WriteToken(token);
+    }
+
+    public async Task ForgotPasswordConfirm(ParamForgotPasswordDto request)
+    {
+        var taiKhoan = await _repositoryMaster.Authenticate.GetTaiKhoanByEmailAndTokenAsync(request.Email, request.Token, false);
+        if (taiKhoan is null || taiKhoan.ResetPasswordExpires < DateTime.Now)
+        {
+            throw new TaiKhoanBadRequestException("Dữ liệu đầu vào không tìm thấy, thời gian very email đã hết 5 phút, gửi lại");
+        }
+        _loggerService.LogInfo("Confirm mật khẩu quên thành công!");
+    }
+
+    public async Task ResetPassword(RequestForgotPasswordDto request)
+    {
+        var taiKhoan = await _repositoryMaster.Authenticate.GetTaiKhoanByEmailAndTokenAsync(request.Email, request.Token, false);
+        if (taiKhoan is null || taiKhoan.ResetPasswordExpires < DateTime.Now)
+        {
+            throw new TaiKhoanBadRequestException("Dữ liệu đầu vào không tìm thấy, thời gian very email đã hết 5 phút, gửi lại");
+        }
+        taiKhoan.ResetPassword = null;
+        taiKhoan.ResetPasswordExpires = null;
+        taiKhoan.Password = _passwordHash.Hash(request.Password);
+        await _repositoryMaster.ExecuteInTransactionAsync(async () =>
+        {
+            _repositoryMaster.TaiKhoan.UpdateTaiKhoan(taiKhoan);
+            await Task.CompletedTask;
+        });
+        _loggerService.LogInfo("Cập nhật mật khẩu quên thành công!");
     }
 }

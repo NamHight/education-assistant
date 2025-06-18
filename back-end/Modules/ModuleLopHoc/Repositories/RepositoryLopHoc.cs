@@ -27,11 +27,11 @@ public class RepositoryLopHoc : RepositoryBase<LopHoc>, IRepositoryLopHoc
 
     public async Task<PagedListAsync<LopHoc>> GetAllLopHocAsync(int page, int limit, string search, string sortBy, string sortByOrder)
     {
-        return await PagedListAsync<LopHoc>.ToPagedListAsync(_context.LopHocs!.SearchBy(search, item => item.MaLopHoc)
+        return await PagedListAsync<LopHoc>.ToPagedListAsync(_context.LopHocs!.SearchBy(search, item => item.MaLopHoc).Include(item => item.GiangVien).Include(item => item.Nganh)
                                                                 .SortByOptions(sortBy, sortByOrder, new Dictionary<string, Expression<Func<LopHoc, object>>>
                                                                 {
-                                                                    ["createat"] = item => item.CreatedAt,
-                                                                    ["updateat"] = item => item.UpdatedAt!,
+                                                                    ["createdat"] = item => item.CreatedAt,
+                                                                    ["updatedat"] = item => item.UpdatedAt!,
                                                                     ["siso"] = item => item.SiSo
                                                                 }).AsNoTracking(), page, limit);
     }

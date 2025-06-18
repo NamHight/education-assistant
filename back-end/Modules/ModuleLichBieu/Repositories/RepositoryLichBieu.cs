@@ -27,7 +27,7 @@ public class RepositoryLichBieu : RepositoryBase<LichBieu>, IRepositoryLichBieu
 
     public async Task<PagedListAsync<LichBieu>> GetAllLichBieuAsync(int page, int limit)
     {
-        return await PagedListAsync<LichBieu>.ToPagedListAsync(_context.LichBieus!, page, limit);
+        return await PagedListAsync<LichBieu>.ToPagedListAsync(_context.LichBieus!.Include(item => item.PhongHoc).Include(item => item.LopHocPhan), page, limit);
     }
 
     public async Task<IEnumerable<ResponseLichKhoaBieuGiangVienDto>> GetAllLichBieuByGiangVienAsync(int namHoc, Guid giangVienId, Guid tuanId)
@@ -62,15 +62,17 @@ public class RepositoryLichBieu : RepositoryBase<LichBieu>, IRepositoryLichBieu
                 .Select(x => new ResponseLichKhoaBieuGiangVienDto
                 {
                     TenLopHocPhan = x.LopHocPhan.MaHocPhan,
-                    LoaiPhongHocEnum = x.PhongHoc.LoaiPhongHoc,
+                    LoaiPhongHoc = x.PhongHoc.LoaiPhongHoc,
                     SiSo = x.LopHocPhan.SiSo,
                     TenPhong = x.PhongHoc.TenPhong,
                     Thu = x.LichBieu.Thu,
-                    LoaiMonHocEnum = x.ChiTietChuongTrinh.LoaiMonHoc,
+                    LoaiMonHoc = x.ChiTietChuongTrinh.LoaiMonHoc,
                     TietBatDau = x.LichBieu.TietBatDau,
                     TietKetThuc = x.LichBieu.TietKetThuc,
                     GiangVienId = x.LopHocPhan.GiangVienId!.Value,
+                    HoTen = x.LopHocPhan.GiangVien!.HoTen,
                     TuanId = x.LichBieu.TuanId!.Value,
+                    SoTuan = x.LichBieu.Tuan!.SoTuan,
                     PhongId = x.LichBieu.PhongHocId!.Value,
                     LopHocPhanId = x.LopHocPhan.Id
                 }).ToListAsync();    

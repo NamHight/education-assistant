@@ -31,9 +31,9 @@ public class RepositoryTaiKhoan : RepositoryBase<TaiKhoan>, IRepositoryTaiKhoan
                 .SearchBy(search, item => item.Email)
                 .SortByOptions(sortBy, sortByOder, new Dictionary<string, Expression<Func<TaiKhoan, object>>>
                 {
-                    ["createat"] = item => item.CreatedAt,
-                    ["updateat"] = item => item.UpdatedAt!,
-                    ["deleteat"] = item => item.DeletedAt!
+                    ["createdat"] = item => item.CreatedAt,
+                    ["updatedat"] = item => item.UpdatedAt!,
+                    ["deletedat"] = item => item.DeletedAt!
                 })
             , page, limit);
     }

@@ -27,11 +27,11 @@ public class RepositoryHocBa : RepositoryBase<HocBa>, IRepositoryHocBa
 
     public async Task<PagedListAsync<HocBa>> GetAllHocBaAsync(int page, int limit, string search, string sortBy, string sortByOrder)
     {
-        return await PagedListAsync<HocBa>.ToPagedListAsync(_context.HocBas!
+        return await PagedListAsync<HocBa>.ToPagedListAsync(_context.HocBas!.Include(item => item.SinhVien).Include(item => item.LopHocPhan).Include(item => item.ChiTietChuongTrinhDaoTao).ThenInclude(item => item!.ChuongTrinhDaoTao)
                                                     .SortByOptions(sortBy, sortByOrder, new Dictionary<string, Expression<Func<HocBa, object>>>
                                                     {
-                                                        ["createat"] = item => item.CreatedAt,
-                                                        ["updateat"] = item => item.UpdatedAt!,
+                                                        ["createdat"] = item => item.CreatedAt,
+                                                        ["updatedat"] = item => item.UpdatedAt!,
                                                         ["lanhoc"] = item => item.LanHoc,
                                                         ["ketqua"] = item => item.KetQua!,
                                                     }).AsNoTracking(), page, limit);
@@ -40,6 +40,11 @@ public class RepositoryHocBa : RepositoryBase<HocBa>, IRepositoryHocBa
     public async Task<IEnumerable<HocBa>> GetAllHocBaByIdAsync(List<Guid> ids)
     {
         return await _context.HocBas!.Where(item => ids.Contains(item.Id)).ToListAsync();
+    }
+
+    public async Task<IEnumerable<HocBa>> GetAllHocBaByKeysAsync(List<Guid> sinhVienIds, Guid lopHocPhanId, Guid ctctdtId)
+    {
+        return await _context.HocBas!.AsNoTracking().Where(item => sinhVienIds.Contains(item.SinhVienId!.Value) && item.LopHocPhanId == lopHocPhanId && item.ChiTietChuongTrinhDaoTaoId == ctctdtId).ToListAsync();
     }
 
     public async Task<HocBa?> GetHocBaByIdAsync(Guid id, bool trackChanges)

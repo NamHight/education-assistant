@@ -23,10 +23,16 @@ public class ResponseGiangVienDto
     public int? TrangThai { get; set; }
     public Guid? TaiKhoanId { get; set; }
     public Guid? KhoaId { get; set; }
-    public ResponseKhoaDto? Khoa { get; set; }
+    public KhoaSimpleDto? Khoa { get; set; }
     public Guid? BoMonId { get; set; }
-    public ResponseBoMonDto? BoMon { get; set; }
+    public BoMonSimpleDto? BoMon { get; set; }
     public DateTime? CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
     public DateTime? DeletedAt { get; set; }
+}
+
+public class GiangVienSimpleDto
+{
+    public Guid Id { get; set; }
+    public string? HoTen { get; set; }
 }

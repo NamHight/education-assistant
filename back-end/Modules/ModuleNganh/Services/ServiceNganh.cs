@@ -56,7 +56,7 @@ public class ServiceNganh : IServiceNganh
 
     public async Task<(IEnumerable<ResponseNganhDto> data, PageInfo page)> GetAllNganhAsync(ParamBaseDto paramBaseDto)
     {
-        var nganhs = await _repositoryMaster.Nganh.GetAllNganhAsync(paramBaseDto.page, paramBaseDto.limit, paramBaseDto.search, paramBaseDto.sortBy, paramBaseDto.sortByOder);
+        var nganhs = await _repositoryMaster.Nganh.GetAllNganhAsync(paramBaseDto.page, paramBaseDto.limit, paramBaseDto.search, paramBaseDto.sortBy, paramBaseDto.sortByOrder);
         var nganhDtos = _mapper.Map<IEnumerable<ResponseNganhDto>>(nganhs);
         return (data: nganhDtos, page: nganhs!.PageInfo);
     }

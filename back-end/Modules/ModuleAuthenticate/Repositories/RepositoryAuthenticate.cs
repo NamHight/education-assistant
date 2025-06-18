@@ -16,4 +16,9 @@ public class RepositoryAuthenticate : RepositoryBase<TaiKhoan>, IRepositoryAuthe
     {
         return await FindByCondition(tk => tk.Email.Equals(email), trackChanges).FirstAsync();
     }
+
+    public async Task<TaiKhoan?> GetTaiKhoanByEmailAndTokenAsync(string email, string token, bool trackChanges)
+    {
+        return await FindByCondition(item => item.Email == email && item.ResetPassword == token, trackChanges).FirstOrDefaultAsync();
+    }
 }

@@ -38,10 +38,10 @@ public class RepositoryGiangVien : RepositoryBase<GiangVien>, IRepositoryGiangVi
             .OrderBy(item => item.DeletedAt != null)
             .SortByOptions(sortBy, sortByOrder, new Dictionary<string, Expression<Func<GiangVien, object>>>
             {
-                ["createat"] = item => item.CreatedAt,
+                ["createdat"] = item => item.CreatedAt,
                 ["ngaysinh"] = item => item.NgaySinh!,
                 ["ngayvaotruong"] = item => item.NgayVaoTruong!,
-                ["updateat"] = item => item.UpdatedAt!
+                ["updatedat"] = item => item.UpdatedAt!
             }).AsNoTracking(), page, limit);
     }
 

@@ -46,8 +46,12 @@ namespace Education_assistant.Modules.ModuleHocBa
             return NoContent();
         }
         [HttpPut("update-list")]
-        public async Task<ActionResult> UpdateListChiTietLopHocPhanAsync([FromBody] List<RequestUpdateHocbaDto> model)
+        public async Task<ActionResult> UpdateListHocBaAsync([FromBody] RequestListUpdateHocbaDto model)
         {
+            if (model == null)
+            {
+                return BadRequest("Danh sách truyền lên bị null hoặc rỗng.");
+            }
             await _serviceMaster.HocBa.UpdateListHocBaAsync(model);
             return NoContent();
         }
@@ -55,6 +59,12 @@ namespace Education_assistant.Modules.ModuleHocBa
         public async Task<ActionResult> DeleteHocBaAsync(Guid id)
         {
             await _serviceMaster.HocBa.DeleteAsync(id);
+            return NoContent();
+        }
+        [HttpDelete("delete-list")]
+        public async Task<ActionResult> DeleteListHocBaAsync([FromBody] RequestDeleteHocBaDto model)
+        {
+            await _serviceMaster.HocBa.DeleteListHocBaAsync(model);
             return NoContent();
         }
     }

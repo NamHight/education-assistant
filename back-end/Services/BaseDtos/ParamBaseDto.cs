@@ -8,5 +8,5 @@ public class ParamBaseDto
     public int limit { get; set; } = 10;
     public string search { get; set; } = string.Empty;
     public string sortBy { get; set; } = string.Empty;
-    public string sortByOder { get; set; } = string.Empty;
+    public string sortByOrder { get; set; } = string.Empty;
 }

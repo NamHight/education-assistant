@@ -27,11 +27,11 @@ public class RepositoryNganh : RepositoryBase<Nganh>, IRepositoryNganh
 
     public async Task<PagedListAsync<Nganh>?> GetAllNganhAsync(int page, int limit, string search, string sortBy, string sortByOrder)
     {
-        return await PagedListAsync<Nganh>.ToPagedListAsync(_context.Nganhs!.SearchBy(search, item => item.TenNganh)
+        return await PagedListAsync<Nganh>.ToPagedListAsync(_context.Nganhs!.SearchBy(search, item => item.TenNganh).Include(item => item.Khoa)
                                                                 .SortByOptions(sortBy, sortByOrder, new Dictionary<string, Expression<Func<Nganh, object>>>
                                                                 {
-                                                                    ["createat"] = item => item.CreatedAt,
-                                                                    ["updateat"] = item => item.UpdatedAt!,
+                                                                    ["createdat"] = item => item.CreatedAt,
+                                                                    ["updatedat"] = item => item.UpdatedAt!,
                                                                 })
                                                                 , page, limit);
     }

@@ -25,13 +25,13 @@ public class RepositoryChiTietChuongTrinhDaoTao : RepositoryBase<ChiTietChuongTr
         Delete(chiTietChuongTrinhDaoTao);
     }
 
-    public async Task<PagedListAsync<ChiTietChuongTrinhDaoTao>?> GetAllChiTietChuongTrinhDaoTaoAsync(int page, int limit, string search, string sortBy, string sortByOder)
+    public async Task<PagedListAsync<ChiTietChuongTrinhDaoTao>?> GetAllChiTietChuongTrinhDaoTaoAsync(int page, int limit, string search, string sortBy, string sortByOrder)
     {
-        return await PagedListAsync<ChiTietChuongTrinhDaoTao>.ToPagedListAsync(_context.ChiTietChuongTrinhDaoTaos!
-                                .SortByOptions(sortBy, sortByOder, new Dictionary<string, Expression<Func<ChiTietChuongTrinhDaoTao, object>>>
+        return await PagedListAsync<ChiTietChuongTrinhDaoTao>.ToPagedListAsync(_context.ChiTietChuongTrinhDaoTaos!.Include(item => item.MonHoc).Include(item => item.ChuongTrinhDaoTao).Include(item => item.BoMon)
+                                .SortByOptions(sortBy, sortByOrder, new Dictionary<string, Expression<Func<ChiTietChuongTrinhDaoTao, object>>>
                                 {
-                                    ["createat"] = item => item.CreatedAt,
-                                    ["updateat"] = item => item.UpdatedAt!,
+                                    ["createdat"] = item => item.CreatedAt,
+                                    ["updatedat"] = item => item.UpdatedAt!,
                                     ["sotinchi"] = item => item.SoTinChi!,
                                 }).AsNoTracking(), page, limit);
     }
@@ -44,6 +44,11 @@ public class RepositoryChiTietChuongTrinhDaoTao : RepositoryBase<ChiTietChuongTr
     public async Task<ChiTietChuongTrinhDaoTao?> GetChiTietChuongTrinhDaoTaoByIdAsync(Guid id, bool trackChanges)
     {
         return await FindByCondition(item => item.Id == id, trackChanges).FirstOrDefaultAsync();
+    }
+
+    public async Task<ChiTietChuongTrinhDaoTao?> GetCtctdtByCtctAndMonHocAsync(Guid chuongTrinhId, Guid monHocId)
+    {
+        return await FindByCondition(item => item.ChuongTrinhDaoTaoId == chuongTrinhId && item.MonHocId == monHocId, false).FirstOrDefaultAsync();
     }
 
     public void UpdateChiTietChuongTrinhDaoTao(ChiTietChuongTrinhDaoTao chiTietChuongTrinhDaoTao)
