@@ -5,6 +5,7 @@ using Education_assistant.Services;
 using Education_assistant.Services.BaseDtos;
 using Education_assistant.Services.ServiceMaster;
 using FashionShop_API.Filters;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,6 +13,7 @@ namespace Education_assistant.Modules.ModuleBoMon
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Policy = "Admin")]
     public class BoMonController : ControllerBase
     {
         private readonly IServiceMaster _serviceMaster;

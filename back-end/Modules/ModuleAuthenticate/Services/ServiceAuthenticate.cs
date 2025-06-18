@@ -6,6 +6,7 @@ using AutoMapper;
 using Education_assistant.Contracts.LoggerServices;
 using Education_assistant.Exceptions.ThrowError.GiangVienExceptions;
 using Education_assistant.Exceptions.ThrowError.TaiKhoanExceptions;
+using Education_assistant.Extensions;
 using Education_assistant.helpers.implements;
 using Education_assistant.Models;
 using Education_assistant.Modules.ModuleAuthenticate.Dtos;
@@ -22,15 +23,17 @@ public class ServiceAuthenticate : IServiceAuthenticate
     private readonly IMapper _mapper;
     private readonly IPasswordHash _passwordHash;
     private readonly IRepositoryMaster _repositoryMaster;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
     public ServiceAuthenticate(ILoggerService loggerService, IRepositoryMaster repositoryMaster, IMapper mapper,
-        IConfiguration configuration, IPasswordHash passwordHash)
+        IConfiguration configuration, IPasswordHash passwordHash, IHttpContextAccessor httpContextAccessor)
     {
         _repositoryMaster = repositoryMaster;
         _loggerService = loggerService;
         _mapper = mapper;
         _configuration = configuration;
         _passwordHash = passwordHash;
+        _httpContextAccessor = httpContextAccessor;
     }
 
     public async Task<(ResponseGiangVienDto giangVienDto, string accessToken, string refreshToken)> Login(
@@ -90,11 +93,12 @@ public class ServiceAuthenticate : IServiceAuthenticate
         {
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey!)),
-            ValidateIssuer = true,
-            ValidateAudience = true,
+            ValidateIssuer = false,
+            ValidateAudience = false,
             ValidIssuer = issuer,
             ValidAudience = audience,
-            ValidateLifetime = false // Ignore expiration
+            ValidateLifetime = true, // Ignore expiration
+            ClockSkew= TimeSpan.Zero
         };
         var principal = tokenHandler.ValidateToken(accessToken, validationParameters, out var securityToken);
         var email = principal.FindFirst(ClaimTypes.Email)?.Value;
@@ -164,11 +168,13 @@ public class ServiceAuthenticate : IServiceAuthenticate
             Subject = new ClaimsIdentity(new[]
             {
                 new Claim(ClaimTypes.Email, taiKhoan.Email),
-                new Claim(ClaimTypes.NameIdentifier, taiKhoan.Id.ToString())
+                new Claim(ClaimTypes.NameIdentifier, taiKhoan.Id.ToString()),
+                new Claim(ClaimTypes.Role, taiKhoan.LoaiTaiKhoan.ToString()!)
             }),
             Expires = DateTime.UtcNow.AddMinutes(expiresInMinutes),
-            SigningCredentials =
-                new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            Issuer = _configuration["Jwt:Issuer"],
+            Audience = _configuration["Jwt:Audience"],
+            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256),
         };
         var token = tokenHandler.CreateToken(tokenDescriptor);
         return tokenHandler.WriteToken(token);
@@ -200,5 +206,21 @@ public class ServiceAuthenticate : IServiceAuthenticate
             await Task.CompletedTask;
         });
         _loggerService.LogInfo("Cập nhật mật khẩu quên thành công!");
+    }
+
+    public async Task<ResponseGiangVienDto> GetMeAsync()
+    {
+        var taiKhoanId = _httpContextAccessor.HttpContext!.User.GetUserId();
+        if (taiKhoanId == Guid.Empty)
+        {
+            throw new TaiKhoanBadRequestException("Thông tin tài khoản id không đầy đủ");
+        }
+        var giangVien = await _repositoryMaster.GiangVien.GetGiangVienByTaiKhoanIdAsync(taiKhoanId, false);
+        if (giangVien is null)
+        {
+            throw new TaiKhoanNotFoundException(taiKhoanId);
+        }
+        var giangVienDto = _mapper.Map<ResponseGiangVienDto>(giangVien);
+        return giangVienDto; 
     }
 }
