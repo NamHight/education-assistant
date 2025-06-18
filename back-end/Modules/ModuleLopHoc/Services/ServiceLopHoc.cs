@@ -58,7 +58,7 @@ namespace Education_assistant.Modules.ModuleLopHoc.Services
 
         public async Task<(IEnumerable<ResponseLopHocDto> data, PageInfo page)> GetAllLopHocAsync(ParamBaseDto paramBaseDto)
         {
-            var lopHocs = await _repositoryMaster.LopHoc.GetAllLopHocAsync(paramBaseDto.page, paramBaseDto.limit, paramBaseDto.search, paramBaseDto.sortBy, paramBaseDto.sortByOder);
+            var lopHocs = await _repositoryMaster.LopHoc.GetAllLopHocAsync(paramBaseDto.page, paramBaseDto.limit, paramBaseDto.search, paramBaseDto.sortBy, paramBaseDto.sortByOrder);
             var lopHocDto = _mapper.Map<IEnumerable<ResponseLopHocDto>>(lopHocs);
             return (data: lopHocDto, page: lopHocs!.PageInfo);
         }

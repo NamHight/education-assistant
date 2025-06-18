@@ -1,4 +1,5 @@
-﻿using Education_assistant.Modules.ModuleAuthenticate.Dtos;
+﻿using Education_assistant.Models;
+using Education_assistant.Modules.ModuleAuthenticate.Dtos;
 using Education_assistant.Modules.ModuleGiangVien.DTOs.Response;
 
 namespace Education_assistant.Modules.ModuleAuthenticate.Services;
@@ -12,4 +13,7 @@ public interface IServiceAuthenticate
     Task<(string accessToken, string refreshToken)> refresh(string accessToken, string refreshToken);
 
     Task Logout(string email, HttpContext httpContext);
+    Task ForgotPasswordConfirm(ParamForgotPasswordDto request);
+    Task ResetPassword(RequestForgotPasswordDto request);
+    string GenerateToken(TaiKhoan taiKhoan);
 }

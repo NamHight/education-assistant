@@ -17,6 +17,7 @@ using Education_assistant.Modules.ModuleNganh.Services;
 using Education_assistant.Modules.ModulePhongHoc.Services;
 using Education_assistant.Modules.ModuleSinhVien.Services;
 using Education_assistant.Modules.ModuleTruong.Services;
+using Education_assistant.Modules.ModuleTuan.Services;
 using Education_assistant.Repositories.RepositoryMaster;
 using Education_assistant.Services.ServiceFile;
 
@@ -40,6 +41,7 @@ public class ServiceMaster : IServiceMaster
     private readonly Lazy<IServicePhongHoc> _phongHoc;
     private readonly Lazy<IServiceSinhVien> _sinhVien;
     private readonly Lazy<IServiceTruong> _truong;
+    private readonly Lazy<IServiceTuan> _tuan;
 
     public ServiceMaster(IRepositoryMaster repositoryMaster, ILoggerService loggerService, IMapper mapper,
         IPasswordHash password, IHttpContextAccessor httpContextAccessor, IServiceFIle serviceFIle,
@@ -68,6 +70,7 @@ public class ServiceMaster : IServiceMaster
         _lopHoc = new Lazy<IServiceLopHoc>(() => new ServiceLopHoc(repositoryMaster, loggerService, mapper));
         _lichBieu = new Lazy<IServiceLichBieu>(() => new ServiceLichBieu(repositoryMaster, loggerService, mapper));
         _phongHoc = new Lazy<IServicePhongHoc>(() => new ServicePhongHoc(repositoryMaster, loggerService, mapper));
+        _tuan = new Lazy<IServiceTuan>(() => new ServiceTuan(repositoryMaster, loggerService, mapper));
         _authenticate = new Lazy<IServiceAuthenticate>(() =>
             new ServiceAuthenticate(loggerService, repositoryMaster, mapper, configuration, password));
     }
@@ -88,4 +91,6 @@ public class ServiceMaster : IServiceMaster
     public IServiceLopHoc LopHoc => _lopHoc.Value;
     public IServiceLichBieu LichBieu => _lichBieu.Value;
     public IServicePhongHoc PhongHoc => _phongHoc.Value;
+
+    public IServiceTuan Tuan => _tuan.Value;
 }

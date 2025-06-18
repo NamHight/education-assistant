@@ -1,5 +1,6 @@
 using AutoMapper;
 using Education_assistant.Contracts.LoggerServices;
+using Education_assistant.Exceptions.ThrowError.ChiTietChuongTrinhDaoTaoExceptions;
 using Education_assistant.Exceptions.ThrowError.LopHocPhanExceptions;
 using Education_assistant.Models;
 using Education_assistant.Modules.ModuleLopHocPhan.DTOs.Param;
@@ -26,6 +27,11 @@ public class ServiceLopHocPhan : IServiceLopHocPhan
 
     public async Task<ResponseLopHocPhanDto> CreateAsync(RequestAddLopHocPhanDto request)
     {
+        var ctctdt = await _repositoryMaster.ChiTietChuongTrinhDaoTao.GetCtctdtByCtctAndMonHocAsync(request.ChuongTrinhDaoTaoId, request.MonHocId);
+        if (ctctdt is null)
+        {
+            throw new ChiTietChuongTrinhDaoTaoBadRequestException("Môn học chưa được thêm chương trình đào tạo");
+        }
         var newLopHocPhan = _mapper.Map<LopHocPhan>(request);
         await _repositoryMaster.ExecuteInTransactionAsync(async () =>
         {
@@ -33,7 +39,7 @@ public class ServiceLopHocPhan : IServiceLopHocPhan
         });
         await _repositoryMaster.ExecuteInTransactionAsync(async () =>
         {
-            await _repositoryMaster.LopHocPhan.CreateSinhVienLopHocPhan(request.LopHocId, newLopHocPhan.Id, newLopHocPhan.GiangVienId, newLopHocPhan.MonHocId, request.HocKy);
+            await _repositoryMaster.LopHocPhan.CreateSinhVienLopHocPhanHocBa(request.LopHocId, newLopHocPhan.Id, newLopHocPhan.GiangVienId, newLopHocPhan.MonHocId, ctctdt!.Id, request.HocKy);
         });
         _loggerService.LogInfo("Thêm thông tin lớp học phần thành công.");
         var lopHocPhanDto = _mapper.Map<ResponseLopHocPhanDto>(newLopHocPhan);
@@ -59,16 +65,12 @@ public class ServiceLopHocPhan : IServiceLopHocPhan
         _loggerService.LogInfo("Xóa lớp học phần thành công.");
     }
 
-    public async Task<int> CreateSinhVienLopHocPhan(Guid id, Guid maLop, Guid maLhp, Guid maGiangVien, int HocKy)
-    {
-        throw new NotImplementedException();
-    }
 
     public async Task<(IEnumerable<ResponseLopHocPhanDto> data, PageInfo page)> GetAllLopHocPhanAsync(
         ParamBaseDto paramBaseDto)
     {
         var lopHocPhans = await _repositoryMaster.LopHocPhan.GetAllLopHocPhanAsync(paramBaseDto.page,
-            paramBaseDto.limit, paramBaseDto.search, paramBaseDto.sortBy, paramBaseDto.sortByOder);
+            paramBaseDto.limit, paramBaseDto.search, paramBaseDto.sortBy, paramBaseDto.sortByOrder);
         var lopHocPhanDtos = _mapper.Map<IEnumerable<ResponseLopHocPhanDto>>(lopHocPhans);
         return (data: lopHocPhanDtos, page: lopHocPhans!.PageInfo);
     }
@@ -103,6 +105,10 @@ public class ServiceLopHocPhan : IServiceLopHocPhan
         await _repositoryMaster.ExecuteInTransactionBulkEntityAsync(async () =>
         {
             await _repositoryMaster.BulkUpdateEntityAsync<LopHocPhan>(lopHocPhans);
+            foreach (var request in listRequest) {
+                await _repositoryMaster.ChiTietLopHocPhan.UpdateCtlhpWithPhanCongAsync(request.Id, request.GiangVienId, request.MonHocId);
+            }
+                
         });
         _loggerService.LogInfo("Cập nhật list phân công giảng viên thành công.");
     }

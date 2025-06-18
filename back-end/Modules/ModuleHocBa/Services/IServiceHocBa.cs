@@ -12,6 +12,8 @@ public interface IServiceHocBa
     Task<ResponseHocBaDto> GetHocBaByIdAsync(Guid id, bool trackChanges);
     Task<ResponseHocBaDto> CreateAsync(RequestAddHocbaDto request);
     Task UpdateAsync(Guid id, RequestUpdateHocbaDto request);
-    Task UpdateListHocBaAsync(List<RequestUpdateHocbaDto> listRequest);
+    // Task UpdateListHocBaAsync(List<RequestUpdateHocbaDto> listRequest);
+    Task UpdateListHocBaAsync(RequestListUpdateHocbaDto request);
     Task DeleteAsync(Guid id);
+    Task DeleteListHocBaAsync(RequestDeleteHocBaDto request);   
 }

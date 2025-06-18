@@ -72,14 +72,19 @@ public class ServiceSinhVien : IServiceSinhVien
 
     public async Task<(IEnumerable<ResponseSinhVienDto> data, PageInfo page)> GetAllSinhVienAsync(ParamBaseDto paramBaseDto)
     {
-        var sinhViens = await _repositoryMaster.SinhVien.GetAllSinhVienAsync(paramBaseDto.page, paramBaseDto.limit, paramBaseDto.search, paramBaseDto.sortBy, paramBaseDto.sortByOder);
+        var sinhViens = await _repositoryMaster.SinhVien.GetAllSinhVienAsync(paramBaseDto.page, paramBaseDto.limit, paramBaseDto.search, paramBaseDto.sortBy, paramBaseDto.sortByOrder);
         var sinhVienDtos = _mapper.Map<IEnumerable<ResponseSinhVienDto>>(sinhViens);
         return (data: sinhVienDtos, page: sinhViens!.PageInfo);
     }
 
     public async Task<(IEnumerable<ResponseSinhVienDto> data, PageInfo page)> GetAllSinhVienByLopIdAsync(ParamSinhVienByLopDto paramBaseDto)
     {
-        var sinhViens = await _repositoryMaster.SinhVien.GetAllSinhVienByIdLopAsync(paramBaseDto.lopId, paramBaseDto.page, paramBaseDto.limit, paramBaseDto.search, paramBaseDto.sortBy, paramBaseDto.sortByOder);
+        string lopHocId = string.Empty;
+        if (paramBaseDto.lopId != Guid.Empty)
+        {
+            lopHocId = paramBaseDto.lopId.ToString();
+        }
+        var sinhViens = await _repositoryMaster.SinhVien.GetAllSinhVienByIdLopAsync(lopHocId, paramBaseDto.page, paramBaseDto.limit, paramBaseDto.search, paramBaseDto.sortBy, paramBaseDto.sortByOder);
         var sinhVienDtos = _mapper.Map<IEnumerable<ResponseSinhVienDto>>(sinhViens);
         return (data: sinhVienDtos, page: sinhViens!.PageInfo);
     }

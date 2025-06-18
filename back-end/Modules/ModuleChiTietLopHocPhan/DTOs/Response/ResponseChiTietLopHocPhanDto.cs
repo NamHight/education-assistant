@@ -1,4 +1,8 @@
 using System;
+using Education_assistant.Modules.ModuleGiangVien.DTOs.Response;
+using Education_assistant.Modules.ModuleLopHocPhan.DTOs.Response;
+using Education_assistant.Modules.ModuleMonHoc.DTOs.Response;
+using Education_assistant.Modules.ModuleSinhVien.DTOs.Response;
 
 namespace Education_assistant.Modules.ModuleChiTietLopHocPhan.DTOs.Response;
 
@@ -17,9 +21,13 @@ public class ResponseChiTietLopHocPhanDto
     public string? GhiChu { get; set; }
     public int? TrangThaiChiTietLopHocPhanEnum { get; set; }
     public Guid? SinhVienId { get; set; }
+    public SinhVienSimpleDto? SinhVien { get; set; }
     public Guid? MonHocId { get; set; }
+    public MonHocSimpleDto? MonHoc { get; set; }
     public Guid? GiangVienId { get; set; }
+    public GiangVienSimpleDto? GiangVien { get; set; }
     public Guid? LopHocPhanId { get; set; }
+    public LopHocPhanSimpleDto? LopHocPhan { get; set; }
     public DateTime? CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
 }

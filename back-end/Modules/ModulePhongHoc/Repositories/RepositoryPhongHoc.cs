@@ -1,4 +1,6 @@
-﻿using Education_assistant.Context;
+﻿using System.Linq.Expressions;
+using Education_assistant.Context;
+using Education_assistant.Extensions;
 using Education_assistant.Models;
 using Education_assistant.Repositories;
 using Education_assistant.Repositories.Paginations;
@@ -8,6 +10,8 @@ namespace Education_assistant.Modules.ModulePhongHoc.Repositories
 {
     public class RepositoryPhongHoc : RepositoryBase<PhongHoc>, IRepositoryPhongHoc
     {
+        private string? sortByOder;
+
         public RepositoryPhongHoc(RepositoryContext context) : base(context)
         {
         }
@@ -22,16 +26,15 @@ namespace Education_assistant.Modules.ModulePhongHoc.Repositories
             Delete(phongHoc);
         }
 
-
-        //Tìm theo tên phòng hoặc toà nhà
-        public async Task<PagedListAsync<PhongHoc>> GetAllPaginatedAndSearchOrSortAsync(int page, int limit, string search)
+        public async Task<PagedListAsync<PhongHoc>> GetAllPhongHocAsync(int page, int limit, string search, string sortBy, string sortByOrder)
         {
-            if (!string.IsNullOrEmpty(search))
-            {
-                var phongHocs = FindByCondition(item => item.TenPhong.Contains(search) || item.ToaNha.Contains(search), false);
-                return await PagedListAsync<PhongHoc>.ToPagedListAsync(phongHocs, page, limit);
-            }
-            return await PagedListAsync<PhongHoc>.ToPagedListAsync(_context.PhongHocs!, page, limit);
+            return await PagedListAsync<PhongHoc>.ToPagedListAsync(_context.PhongHocs!.SearchBy(search, item => item.TenPhong)
+                                                                .SortByOptions(sortBy, sortByOder, new Dictionary<string, Expression<Func<PhongHoc, object>>>
+                                                                {
+                                                                    ["createdat"] = item => item.CreatedAt,
+                                                                    ["updatedat"] = item => item.UpdatedAt!,
+                                                                }).AsNoTracking()
+                                                                , page, limit);
         }
 
         public async Task<PhongHoc?> GetPhongHocByIdAsync(Guid id, bool trackChanges)

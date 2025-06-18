@@ -1,4 +1,5 @@
 using Education_assistant.Modules.ModuleTruong.DTOs.Request;
+using Education_assistant.Repositories.RepositoryMaster;
 using Education_assistant.Services.ServiceMaster;
 using FashionShop_API.Filters;
 using Microsoft.AspNetCore.Mvc;
@@ -10,7 +11,7 @@ namespace Education_assistant.Modules.ModuleTruong;
 public class TruongController : ControllerBase
 {
     private readonly IServiceMaster _serviceMaster;
-    public TruongController(IServiceMaster serviceMaster)
+    public TruongController(IServiceMaster serviceMaster, IRepositoryMaster repositoryMaster)
     {
         _serviceMaster = serviceMaster;
     }

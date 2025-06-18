@@ -10,7 +10,7 @@ public interface IRepositoryLopHocPhan
         string sortByOder);
     Task<IEnumerable<ResponseLopHocPhanWithMonHocDto>> GetAllLopHocPhanCtdtAsync(int khoa, int loaiChuongTrinh, Guid chuongTrinhId, int hocKy);
     Task<LopHocPhan?> GetLopHocPhanByIdAsync(Guid id, bool trackChanges);
-    Task<int> CreateSinhVienLopHocPhan(Guid maLop, Guid maLhp, Guid? maGiangVien, Guid maMonHoc, int HocKy);
+    Task<int> CreateSinhVienLopHocPhanHocBa(Guid maLop, Guid maLhp, Guid? maGiangVien, Guid maMonHoc, Guid maCtctdt, int HocKy);
     Task CreateAsync(LopHocPhan lopHocPhan);
     void UpdateLopHocPhan(LopHocPhan lopHocPhan);
     void DeleteLopHocPhan(LopHocPhan lopHocPhan);

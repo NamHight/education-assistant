@@ -19,9 +19,9 @@ namespace Education_assistant.Modules.ModulePhongHoc
             _serviceMaster = serviceMaster;
         }
         [HttpGet]
-        public async Task<ActionResult> GetAllPaginationAndSearchAsync([FromQuery] ParamPageAndSearchBaseDto paramBaseDto)
+        public async Task<ActionResult> GetAllPhongHocAsync([FromQuery] ParamBaseDto paramBaseDto)
         {
-            var result = await _serviceMaster.PhongHoc.GetAllPaginationAndSearchAsync(paramBaseDto);
+            var result = await _serviceMaster.PhongHoc.GetAllPhongHocAsync(paramBaseDto);
             Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(result.page));
             return Ok(result.data);
         }

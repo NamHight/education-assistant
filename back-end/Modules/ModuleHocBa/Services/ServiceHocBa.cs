@@ -1,6 +1,8 @@
 using System;
 using AutoMapper;
 using Education_assistant.Contracts.LoggerServices;
+using Education_assistant.Exceptions.ThrowError.ChiTietChuongTrinhDaoTaoExceptions;
+using Education_assistant.Exceptions.ThrowError.ChiTietLopHocPhanExceptions;
 using Education_assistant.Exceptions.ThrowError.HocBaExceptions;
 using Education_assistant.helpers.implements;
 using Education_assistant.Models;
@@ -58,9 +60,22 @@ public class ServiceHocBa : IServiceHocBa
         _loggerService.LogInfo("Xóa học bạ thành công.");
     }
 
+    public async Task DeleteListHocBaAsync(RequestDeleteHocBaDto request)
+    {
+        if (request is null)
+        {
+            throw new HocBaBadRequestException("Danh sách id học bạ không được để trống!.");
+        }
+        await _repositoryMaster.ExecuteInTransactionBulkEntityAsync(async () =>
+        {
+            await _repositoryMaster.BulkDeleteEntityAsync<HocBa>(request.Ids!);
+        });
+        _loggerService.LogInfo("Xóa điểm học bạ hàng loại thành công thành công.");
+    }
+
     public async Task<(IEnumerable<ResponseHocBaDto> data, PageInfo page)> GetAllHocBaAsync(ParamBaseDto paramBaseDto)
     {
-        var hocBas = await _repositoryMaster.HocBa.GetAllHocBaAsync(paramBaseDto.page, paramBaseDto.limit, paramBaseDto.search, paramBaseDto.sortBy, paramBaseDto.sortByOder);
+        var hocBas = await _repositoryMaster.HocBa.GetAllHocBaAsync(paramBaseDto.page, paramBaseDto.limit, paramBaseDto.search, paramBaseDto.sortBy, paramBaseDto.sortByOrder);
         var hocBaDtos = _mapper.Map<IEnumerable<ResponseHocBaDto>>(hocBas);
         return (data: hocBaDtos, page: hocBas!.PageInfo);
     }
@@ -102,35 +117,84 @@ public class ServiceHocBa : IServiceHocBa
         _loggerService.LogInfo("Cập nhật học bạ thành công.");
     }
 
-    public async Task UpdateListHocBaAsync(List<RequestUpdateHocbaDto> listRequest)
+    public async Task UpdateListHocBaAsync(RequestListUpdateHocbaDto request)
     {
-        var hocBaIds = listRequest.Select(e => e.Id).ToList();
-
-        var exsitingHocBas = await _repositoryMaster.HocBa.GetAllHocBaByIdAsync(hocBaIds);
-
-        var hocBaDict = exsitingHocBas.ToDictionary(e => e.Id);
-
+        if (request.listDiemSo == null)
+        {
+            throw new ChiTietLopHocPhanBadRequestException("Danh sách điểm số không được bỏ trống!.");
+        }
+        var ctctdt = await _repositoryMaster.ChiTietChuongTrinhDaoTao.GetCtctdtByCtctAndMonHocAsync(request.ChuongTrinhDaoTaoId, request.MonHocId);
+        if (ctctdt is null)
+        {
+            throw new ChiTietChuongTrinhDaoTaoBadRequestException("Môn học chưa được thêm chương trình đào tạo");
+        }
+        var hocBaKeys = request.listDiemSo
+            .Where(d => d.SinhVienId.HasValue)
+            .Select(d => new { SinhVienId = d.SinhVienId!.Value })
+            .ToList();
+        var exsitingHocBas = await _repositoryMaster.HocBa.GetAllHocBaByKeysAsync(hocBaKeys.Select(item => item.SinhVienId).ToList(), request.LopHocPhanId, ctctdt.Id);
+        var hocBaDict = exsitingHocBas.ToDictionary(e => (e.SinhVienId, e.LopHocPhanId, e.ChiTietChuongTrinhDaoTaoId), e => e);
         var updateHocBas = new List<HocBa>();
 
-        foreach (var request in listRequest)
+        foreach (var diemSo in request.listDiemSo)
         {
-            if (!hocBaDict.TryGetValue(request.Id, out var hocBa)) continue;
-            var hocBaUpdate = _mapper.Map<HocBa>(request);
-
-            hocBaUpdate.LanHoc = hocBaUpdate.LanHoc + 1;
-
-            var diemso = _diemSoHelper.ComparePoint(request.DiemTongKetLopHocPhan, hocBaUpdate.DiemTongKet);
-
-            hocBaUpdate.DiemTongKet = diemso;
-            hocBaUpdate.KetQuaHocBaEnum = diemso >= 5 ? KetQuaHocBaEnum.DAT : KetQuaHocBaEnum.KHONG_DAT;
-            hocBaUpdate.UpdatedAt = DateTime.Now;
-
-            updateHocBas.Add(hocBaUpdate);
+            var diemTongKetLopHocPhan = _diemSoHelper.ComparePoint(diemSo.DiemTongKet1, diemSo.DiemTongKet2);
+            var key = (diemSo.SinhVienId, request.LopHocPhanId, ctctdt.Id);
+            if (!hocBaDict.TryGetValue(key, out var exsitingHocBa))
+            {
+                _loggerService.LogInfo($"Bỏ qua bảng ghi cho sinh viên id: {diemSo.SinhVienId}");
+                continue;
+            }
+            var diemSoTong = _diemSoHelper.ComparePoint(diemTongKetLopHocPhan, exsitingHocBa.DiemTongKet);
+            var hocBa = new HocBa
+            {
+                Id = exsitingHocBa.Id,
+                DiemTongKet = diemSoTong,
+                MoTa = exsitingHocBa.MoTa,
+                LanHoc = exsitingHocBa.LanHoc + 1,
+                KetQua = diemSoTong >= 5 ? (int)KetQuaHocBaEnum.DAT : (int)KetQuaHocBaEnum.KHONG_DAT,
+                SinhVienId = diemSo.SinhVienId,
+                LopHocPhanId = request.LopHocPhanId,
+                ChiTietChuongTrinhDaoTaoId = ctctdt.Id,
+                UpdatedAt = DateTime.Now,
+            };
+            updateHocBas.Add(hocBa);
         }
         await _repositoryMaster.ExecuteInTransactionBulkEntityAsync(async () =>
         {
             await _repositoryMaster.BulkUpdateEntityAsync<HocBa>(updateHocBas);
         });
-        _loggerService.LogInfo("Cập nhật danh sách học bạ thành công.");
     }
+
+    // public async Task UpdateListHocBaAsync(List<RequestUpdateHocbaDto> listRequest)
+    // {
+    //     var hocBaIds = listRequest.Select(e => e.Id).ToList();
+
+    //     var exsitingHocBas = await _repositoryMaster.HocBa.GetAllHocBaByIdAsync(hocBaIds);
+
+    //     var hocBaDict = exsitingHocBas.ToDictionary(e => e.Id);
+
+    //     var updateHocBas = new List<HocBa>();
+
+    //     foreach (var request in listRequest)
+    //     {
+    //         if (!hocBaDict.TryGetValue(request.Id, out var hocBa)) continue;
+    //         var hocBaUpdate = _mapper.Map<HocBa>(request);
+
+    //         hocBaUpdate.LanHoc = hocBaUpdate.LanHoc + 1;
+
+    //         var diemso = _diemSoHelper.ComparePoint(request.DiemTongKetLopHocPhan, hocBaUpdate.DiemTongKet);
+
+    //         hocBaUpdate.DiemTongKet = diemso;
+    //         hocBaUpdate.KetQuaHocBaEnum = diemso >= 5 ? KetQuaHocBaEnum.DAT : KetQuaHocBaEnum.KHONG_DAT;
+    //         hocBaUpdate.UpdatedAt = DateTime.Now;
+
+    //         updateHocBas.Add(hocBaUpdate);
+    //     }
+    //     await _repositoryMaster.ExecuteInTransactionBulkEntityAsync(async () =>
+    //     {
+    //         await _repositoryMaster.BulkUpdateEntityAsync<HocBa>(updateHocBas);
+    //     });
+    //     _loggerService.LogInfo("Cập nhật danh sách học bạ thành công.");
+    // }
 }

@@ -56,9 +56,9 @@ namespace Education_assistant.Modules.ModulePhongHoc.Services
             _loggerService.LogInfo($"Xóa phòng học có id = {id} thành công.");
         }
 
-        public async Task<(IEnumerable<ResponsePhongHocDto> data, PageInfo page)> GetAllPaginationAndSearchAsync(ParamPageAndSearchBaseDto paramBaseDto)
+        public async Task<(IEnumerable<ResponsePhongHocDto> data, PageInfo page)> GetAllPhongHocAsync(ParamBaseDto paramBaseDto)
         {
-            var phongHocs = await _repositoryMaster.PhongHoc.GetAllPaginatedAndSearchOrSortAsync(paramBaseDto.page, paramBaseDto.limit, paramBaseDto.search);
+            var phongHocs = await _repositoryMaster.PhongHoc.GetAllPhongHocAsync(paramBaseDto.page, paramBaseDto.limit, paramBaseDto.search, paramBaseDto.sortBy, paramBaseDto.sortByOrder);
             var phongHocDto = _mapper.Map<IEnumerable<ResponsePhongHocDto>>(phongHocs);
             return (data: phongHocDto, page: phongHocs!.PageInfo);
         }

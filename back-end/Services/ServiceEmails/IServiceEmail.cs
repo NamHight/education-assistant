@@ -6,7 +6,5 @@ namespace Education_assistant.Services.ServiceEmails;
 
 public interface IServiceEmail
 {
-    Task SendEmailComfirmAsync(RequestEmailTokenDto model, string url, string template);
-    Task<RequestEmailTokenDto?> HandleSendEmail(string email);
-    Task<bool> ValidateTokenPasswordAsync(string token);
+    Task SendEmailForgotPassword(string email);
 }

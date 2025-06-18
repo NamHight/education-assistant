@@ -28,13 +28,13 @@ public class RepositoryChuongTrinhDaoTao : RepositoryBase<ChuongTrinhDaoTao>, IR
 
     public async Task<PagedListAsync<ChuongTrinhDaoTao>?> GetAllPaginatedAndSearchOrSortAsync(int page, int limit, string search, string sortBy, string sortByOrder)
     {
-        return await PagedListAsync<ChuongTrinhDaoTao>.ToPagedListAsync(_context.ChuongTrinhDaoTaos!.SearchBy(search, item => item.TenChuongTrinh)
+        return await PagedListAsync<ChuongTrinhDaoTao>.ToPagedListAsync(_context.ChuongTrinhDaoTaos!.SearchBy(search, item => item.TenChuongTrinh).Include(item => item.Nganh)
                                                     .SortByOptions(sortBy, sortByOrder, new Dictionary<string, Expression<Func<ChuongTrinhDaoTao, object>>>
                                                     {
                                                         ["hocphi"] = item => item.HocPhi,
                                                         ["tongsotinchi"] = item => item.TongSoTinChi,
-                                                        ["createat"] = item => item.CreatedAt,
-                                                        ["updateat"] = item => item.UpdatedAt!,
+                                                        ["createdat"] = item => item.CreatedAt,
+                                                        ["updatedat"] = item => item.UpdatedAt!,
                                                     }).AsNoTracking()
                                                     , page, limit);
     }
