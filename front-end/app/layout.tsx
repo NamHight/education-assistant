@@ -11,16 +11,10 @@ import { NAVIGATION } from '@/app/navigation';
 import { Branding } from '@toolpad/core';
 import theme from '@/theme';
 import Provider from '@/components/providers/Provider';
-
-const geistSans = Geist({
-  variable: '--font-geist-sans',
-  subsets: ['latin']
-});
-
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
-  subsets: ['latin']
-});
+import '@fontsource/roboto/300.css';
+import '@fontsource/roboto/400.css';
+import '@fontsource/roboto/500.css';
+import '@fontsource/roboto/700.css';
 
 export const metadata: Metadata = {
   title: 'CKC Hỗ trợ đào tạo',
@@ -67,7 +61,7 @@ export default async function RootLayout({
   const storeHydrater = await storeHydration();
   return (
     <html lang='en' data-toolpad-color-scheme='light'>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+      <body className={`antialiased`} style={{ fontFamily: 'Roboto, Arial, sans-serif' }}>
         <AppRouterCacheProvider options={{ enableCssLayer: true, speedy: true }}>
           <Suspense fallback={<LinearProgress />}>
             <NextAppProvider theme={theme} navigation={NAVIGATION} branding={BRANDING}>

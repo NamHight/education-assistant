@@ -1,12 +1,14 @@
-using DotNetEnv;
 using Education_assistant.Contracts.LoggerServices;
 using Education_assistant.Extensions;
 using NLog;
 
 var builder = WebApplication.CreateBuilder(args);
 
-Env.Load();
-builder.Configuration.AddEnvironmentVariables();
+builder.Configuration
+    .SetBasePath(Directory.GetCurrentDirectory())
+    .AddJsonFile("appsettings.json", false, true)
+    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", true, true)
+    .AddEnvironmentVariables();
 
 builder.Configuration
     .SetBasePath(Directory.GetCurrentDirectory())
