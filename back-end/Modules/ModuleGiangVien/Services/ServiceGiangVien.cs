@@ -3,6 +3,7 @@ using Education_assistant.Contracts.LoggerServices;
 using Education_assistant.Exceptions.ThrowError.GiangVienExceptions;
 using Education_assistant.helpers.implements;
 using Education_assistant.Models;
+using Education_assistant.Modules.ModuleGiangVien.Dtos.Param;
 using Education_assistant.Modules.ModuleGiangVien.DTOs.Request;
 using Education_assistant.Modules.ModuleGiangVien.DTOs.Response;
 using Education_assistant.Repositories.Paginations;
@@ -80,9 +81,9 @@ public sealed class ServiceGiangVien : IServiceGiangVien
         _loggerService.LogInfo("Xóa giảng viên thành công.");
     }
 
-    public async Task<(IEnumerable<ResponseGiangVienDto> data, PageInfo page)> GetAllGiangVienAsync(ParamBaseDto paramBaseDto)
+    public async Task<(IEnumerable<ResponseGiangVienDto> data, PageInfo page)> GetAllGiangVienAsync(ParamGiangVienDto paramGiangVienDto)
     {
-        var giangViens = await _repositoryMaster.GiangVien.GetAllGiangVienAsync(paramBaseDto.page, paramBaseDto.limit, paramBaseDto.search, paramBaseDto.sortBy, paramBaseDto.sortByOrder);
+        var giangViens = await _repositoryMaster.GiangVien.GetAllGiangVienAsync(paramGiangVienDto.page, paramGiangVienDto.limit, paramGiangVienDto.search, paramGiangVienDto.sortBy, paramGiangVienDto.sortByOrder, paramGiangVienDto.KhoaId, paramGiangVienDto.BoMonId);
         var giangVienDtos = _mapper.Map<IEnumerable<ResponseGiangVienDto>>(giangViens);
         return (data: giangVienDtos, page: giangViens!.PageInfo);
     }

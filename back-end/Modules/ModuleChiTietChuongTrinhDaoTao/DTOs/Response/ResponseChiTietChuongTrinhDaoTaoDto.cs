@@ -17,7 +17,7 @@ public class ResponseChiTietChuongTrinhDaoTaoDto
     public int SoTinChi { get; set; }
     public int HocKy { get; set; }
     public bool DiemTichLuy { get; set; }
-    public int LoaiMonHocEnum { get; set; }
+    public int LoaiMonHoc { get; set; }
     public DateTime? CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
 }
@@ -26,4 +26,8 @@ public class ChiTietChuongTrinhDaoTaoSimpleDto
 {
     public Guid Id { get; set; }
     public ChuongTrinhDaoTaoSimpleDto? ChuongTrinhDaoTao { get; set; }
+    public int SoTinChi { get; set; }
+    public int HocKy { get; set; }
+    public bool DiemTichLuy { get; set; }
+    public int LoaiMonHoc { get; set; }
 }

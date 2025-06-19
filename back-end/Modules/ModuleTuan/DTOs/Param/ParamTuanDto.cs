@@ -1,16 +1,15 @@
 using System;
 
-namespace Education_assistant.Modules.ModuleLichBieu.DTOs.Param;
+namespace Education_assistant.Modules.ModuleTuan.DTOs.Param;
 
-public class ParamLichBieuDto
+public class ParamTuanDto
 {
     public int Page { get; set; } = 1;
     public int Limit { get; set; } = 10;
     public string Search { get; set; } = string.Empty;
     public string SortBy { get; set; } = string.Empty;
     public string SortByOrder { get; set; } = string.Empty;
-    public int? NamHoc { get; set; }
-    public Guid? GiangVienId { get; set; }
-    public Guid? TuanId { get; set; }
-    public Guid? BoMonId { get; set; }
+    public int NamHoc { get; set; }
+    public int VaoTuan { get; set; }
+    public int DenTuan { get; set; }
 }

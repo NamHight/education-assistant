@@ -2,6 +2,7 @@
 using Education_assistant.Contracts.LoggerServices;
 using Education_assistant.Exceptions.ThrowError.ChiTietChuongTrinhDaoTaoExceptions;
 using Education_assistant.Exceptions.ThrowError.LichBieuExceptions;
+using Education_assistant.Exceptions.ThrowError.TuanExceptions;
 using Education_assistant.Models;
 using Education_assistant.Modules.ModuleChiTietChuongTrinhDaoTao.DTOs.Response;
 using Education_assistant.Modules.ModuleLichBieu.DTOs.Param;
@@ -27,13 +28,29 @@ namespace Education_assistant.Modules.ModuleLichBieu.Services
 
         public async Task CopyTuanLichBieuAsync(RequestAddLichBieuListTuanDto request)
         {
+            if (request.LichBieus is null || request.LichBieus.Count() == 0)
+            {
+                throw new LichBieuBadRequestException("Danh sách lịch biểu không bỏ trống!.");
+            }
+            if (request.ListTuanId is null || request.ListTuanId.Count() == 0)
+            {
+                throw new TuanBadRequestException("Danh sách tuần không được bỏ trống!.");
+            }
             var listLichBieu = new List<LichBieu>();
             foreach (var tuanid in request.ListTuanId!)
             {
-                var lichBieu = _mapper.Map<LichBieu>(request);
-                lichBieu.TuanId = tuanid;
-
-                listLichBieu.Add(lichBieu);
+                foreach (var lichBieuDto in request.LichBieus!)
+                {
+                    var lichBieu = _mapper.Map<LichBieu>(request);
+                    lichBieu.Id = Guid.NewGuid();
+                    lichBieu.TietBatDau = lichBieuDto.TietBatDau;
+                    lichBieu.TietKetThuc = lichBieuDto.TietKetThuc;
+                    lichBieu.Thu = lichBieuDto.Thu;
+                    lichBieu.TuanId = tuanid;
+                    lichBieu.LopHocPhanId = lichBieuDto.LopHocPhanId;
+                    lichBieu.PhongHocId = lichBieuDto.PhongHocId;
+                    listLichBieu.Add(lichBieu);
+                }
             }
             await _repositoryMaster.ExecuteInTransactionBulkEntityAsync(async () =>
             {
@@ -75,10 +92,9 @@ namespace Education_assistant.Modules.ModuleLichBieu.Services
 
         public async Task<(IEnumerable<ResponseLichBieuDto> data, PageInfo page)> GetAllLichBieuAsync(ParamLichBieuDto paramLichBieuDto)
         {
-            //var lichBieus = await _repositoryMaster.LichBieu.GetAllLichBieuAsync(paramLichBieuDto.page, paramLichBieuDto.limit, paramLichBieuDto.search, paramLichBieuDto.sortBy, paramLichBieuDto.sortByOrder, paramLichBieuDto.NamHoc, paramLichBieuDto.GiangVienId, );
-            //var lichBieuDto = _mapper.Map<IEnumerable<ResponseLichBieuDto>>(lichBieus);
-            //return (data: lichBieuDto, page: lichBieus!.PageInfo);
-            return (null, null);
+            var lichBieus = await _repositoryMaster.LichBieu.GetAllLichBieuAsync(paramLichBieuDto.Page, paramLichBieuDto.Limit, paramLichBieuDto.Search, paramLichBieuDto.SortBy, paramLichBieuDto.Search, paramLichBieuDto.NamHoc, paramLichBieuDto.GiangVienId, paramLichBieuDto.TuanId, paramLichBieuDto.BoMonId);
+            var lichBieuDto = _mapper.Map<IEnumerable<ResponseLichBieuDto>>(lichBieus);
+            return (data: lichBieuDto, page: lichBieus!.PageInfo);
         }
 
         public async Task<ResponseLichBieuDto> GetLichBieuByIdAsync(Guid id, bool trackChanges)
@@ -91,11 +107,6 @@ namespace Education_assistant.Modules.ModuleLichBieu.Services
             var lichBieuDto = _mapper.Map<ResponseLichBieuDto>(lichBieu);
             _loggerService.LogInfo($"Lấy thành công lịch biểu của id = {lichBieu.Id}");
             return lichBieuDto;
-        }
-
-        public async Task<IEnumerable<ResponseLichKhoaBieuGiangVienDto>> GetLichKhoaBieuGiangVienAsync(ParamLichKhoaBieuGiangVienDto request)
-        {
-            return await _repositoryMaster.LichBieu.GetAllLichBieuByGiangVienAsync(request.NamHoc, request.GiangVienId, request.TuanId); 
         }
 
         public async Task UpdateAsync(Guid id, RequestUpdateLichBieuDto request)

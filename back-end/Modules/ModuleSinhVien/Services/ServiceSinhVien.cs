@@ -70,24 +70,14 @@ public class ServiceSinhVien : IServiceSinhVien
         _loggerService.LogInfo("Xóa sinh viên thành công.");
     }
 
-    public async Task<(IEnumerable<ResponseSinhVienDto> data, PageInfo page)> GetAllSinhVienAsync(ParamBaseDto paramBaseDto)
+    public async Task<(IEnumerable<ResponseSinhVienDto> data, PageInfo page)> GetAllSinhVienAsync(ParamSinhVienDto paramSinhVienDto)
     {
-        var sinhViens = await _repositoryMaster.SinhVien.GetAllSinhVienAsync(paramBaseDto.page, paramBaseDto.limit, paramBaseDto.search, paramBaseDto.sortBy, paramBaseDto.sortByOrder);
+        var sinhViens = await _repositoryMaster.SinhVien.GetAllSinhVienAsync(paramSinhVienDto.Page, paramSinhVienDto.Limit, paramSinhVienDto.Search, paramSinhVienDto.SortBy, paramSinhVienDto.SortByOrder, paramSinhVienDto.LopId);
         var sinhVienDtos = _mapper.Map<IEnumerable<ResponseSinhVienDto>>(sinhViens);
         return (data: sinhVienDtos, page: sinhViens!.PageInfo);
     }
 
-    public async Task<(IEnumerable<ResponseSinhVienDto> data, PageInfo page)> GetAllSinhVienByLopIdAsync(ParamSinhVienByLopDto paramBaseDto)
-    {
-        string lopHocId = string.Empty;
-        if (paramBaseDto.lopId != Guid.Empty)
-        {
-            lopHocId = paramBaseDto.lopId.ToString();
-        }
-        var sinhViens = await _repositoryMaster.SinhVien.GetAllSinhVienByIdLopAsync(lopHocId, paramBaseDto.page, paramBaseDto.limit, paramBaseDto.search, paramBaseDto.sortBy, paramBaseDto.sortByOder);
-        var sinhVienDtos = _mapper.Map<IEnumerable<ResponseSinhVienDto>>(sinhViens);
-        return (data: sinhVienDtos, page: sinhViens!.PageInfo);
-    }
+
 
     public async Task<ResponseSinhVienDto> GetSinhVienByIdAsync(Guid id, bool trackChanges)
     {

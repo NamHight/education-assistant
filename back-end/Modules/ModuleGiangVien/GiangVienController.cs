@@ -1,8 +1,10 @@
 ﻿using System.Text.Json;
+using Education_assistant.Modules.ModuleGiangVien.Dtos.Param;
 using Education_assistant.Modules.ModuleGiangVien.DTOs.Request;
 using Education_assistant.Services.BaseDtos;
 using Education_assistant.Services.ServiceMaster;
 using FashionShop_API.Filters;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,6 +12,7 @@ namespace Education_assistant.Modules.ModuleGiangVien;
 
 [Route("api/giangviens")]
 [ApiController]
+[Authorize(Policy = "GiangVien")]
 public class GiangVienController : ControllerBase
 {
     private readonly IServiceMaster _serviceMaster;
@@ -20,7 +23,7 @@ public class GiangVienController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult> GetAllGiangVienAsync([FromQuery] ParamBaseDto paramBaseDto)
+    public async Task<ActionResult> GetAllGiangVienAsync([FromQuery] ParamGiangVienDto paramBaseDto)
     {
         var result = await _serviceMaster.GiangVien.GetAllGiangVienAsync(paramBaseDto);
         Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(result.page));

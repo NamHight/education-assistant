@@ -1,4 +1,5 @@
 using System;
+using Education_assistant.Modules.ModuleChiTietChuongTrinhDaoTao.DTOs.Response;
 using Education_assistant.Modules.ModuleKhoa.DTOs.Response;
 
 namespace Education_assistant.Modules.ModuleMonHoc.DTOs.Response;
@@ -20,4 +21,5 @@ public class MonHocSimpleDto
     public Guid Id { get; set; }
     public string MaMonHoc { get; set; } = string.Empty;
     public string TenMonHoc { get; set; } = string.Empty;
+    public List<ChiTietChuongTrinhDaoTaoSimpleDto>? DanhSachChiTietChuongTrinhDaoTao { get; set; }
 }

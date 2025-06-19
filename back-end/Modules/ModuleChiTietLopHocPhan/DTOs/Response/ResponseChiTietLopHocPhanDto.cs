@@ -32,3 +32,19 @@ public class ResponseChiTietLopHocPhanDto
     public DateTime? UpdatedAt { get; set; }
 }
 
+public class ResponseExportFileDiemSoDto
+{ 
+    public int STT { get; set; }
+    public int MaSinhVien { get; set; }
+    public string HoTenSinhVien { get; set; } = string.Empty;
+    public string TenMonHoc { get; set; } = string.Empty;
+    public string HoTenGiangVien { get; set; } = string.Empty;
+    public decimal? DiemChuyenCan { get; set; }
+    public decimal? DiemTrungBinh { get; set; }
+    public decimal? DiemThi1 { get; set; }
+    public decimal? DiemThi2 { get; set; }
+    public decimal? DiemTongKet1 { get; set; }
+    public decimal? DiemTongKet2 { get; set; }
+    public int HocKy { get; set; }
+    public string GhiChu { get; set; } = string.Empty;
+}

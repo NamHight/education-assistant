@@ -3,6 +3,7 @@ using AutoMapper;
 using Education_assistant.Contracts.LoggerServices;
 using Education_assistant.Exceptions.ThrowError.TuanExceptions;
 using Education_assistant.Models;
+using Education_assistant.Modules.ModuleTuan.DTOs.Param;
 using Education_assistant.Modules.ModuleTuan.DTOs.Request;
 using Education_assistant.Modules.ModuleTuan.DTOs.Response;
 using Education_assistant.Repositories.Paginations;
@@ -55,9 +56,9 @@ public class ServiceTuan : IServiceTuan
         _loggerService.LogInfo("Xóa tuần thành công.");
     }
 
-    public async Task<(IEnumerable<ResponseTuanDto> data, PageInfo page)> GetAllTuanAsync(ParamBaseDto paramBaseDto)
+    public async Task<(IEnumerable<ResponseTuanDto> data, PageInfo page)> GetAllTuanAsync(ParamTuanDto paramTuanDto)
     {
-        var tuans = await _repositoryMaster.Tuan.GetAllTuanAsync(paramBaseDto.page, paramBaseDto.limit, paramBaseDto.search, paramBaseDto.sortBy, paramBaseDto.sortByOrder);
+        var tuans = await _repositoryMaster.Tuan.GetAllTuanAsync(paramTuanDto.Page, paramTuanDto.Limit, paramTuanDto.Search, paramTuanDto.SortBy, paramTuanDto.SortByOrder, paramTuanDto.NamHoc);
         var tuanDtos = _mapper.Map<IEnumerable<ResponseTuanDto>>(tuans);
         return (data: tuanDtos, page: tuans!.PageInfo);
     }
@@ -70,6 +71,19 @@ public class ServiceTuan : IServiceTuan
             throw new TuanNotFoundException(id);
         }
         var tuanDto = _mapper.Map<ResponseTuanDto>(tuan);
+        return tuanDto;
+    }
+
+    public async Task<IEnumerable<ResponseTuanDto>> GetTuanComboBoxAsync(ParamTuanCopyDto paramTuanDto)
+    {
+        var tuan = await _repositoryMaster.Tuan.GetTuanByIdAsync(paramTuanDto.TuanBatDauId, false);
+        var tuanBatDau = 0;
+        if (tuan is not null)
+        {
+            tuanBatDau = tuan.SoTuan;
+        }
+        var tuans = await _repositoryMaster.Tuan.GetTuanComboBoxAsync(paramTuanDto.NamHoc, tuanBatDau, paramTuanDto.GiangVienId);
+        var tuanDto = _mapper.Map<IEnumerable<ResponseTuanDto>>(tuans);
         return tuanDto;
     }
 

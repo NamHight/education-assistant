@@ -9,8 +9,8 @@ namespace Education_assistant.Modules.ModuleSinhVien.Services;
 
 public interface IServiceSinhVien
 {
-    Task<(IEnumerable<ResponseSinhVienDto> data, PageInfo page)> GetAllSinhVienAsync(ParamBaseDto paramBaseDto);
-    Task<(IEnumerable<ResponseSinhVienDto> data, PageInfo page)> GetAllSinhVienByLopIdAsync(ParamSinhVienByLopDto paramBaseDto);
+    Task<(IEnumerable<ResponseSinhVienDto> data, PageInfo page)> GetAllSinhVienAsync(ParamSinhVienDto paramSinhVienDto);
+    // Task<(IEnumerable<ResponseSinhVienDto> data, PageInfo page)> GetAllSinhVienByLopIdAsync(ParamSinhVienByLopDto paramBaseDto);
     Task<ResponseSinhVienDto> GetSinhVienByIdAsync(Guid id, bool trackChanges);
     Task<ResponseSinhVienDto> CreateAsync(RequestAddSinhVienDto request);
     Task<ResponseSinhVienDto> ReStoreSinhVienAsync(Guid id);

@@ -6,9 +6,7 @@ namespace Education_assistant.Modules.ModuleLopHocPhan.Repositories;
 
 public interface IRepositoryLopHocPhan
 {
-    Task<PagedListAsync<LopHocPhan>?> GetAllLopHocPhanAsync(int page, int limit, string search, string sortBy,
-        string sortByOder);
-    Task<IEnumerable<ResponseLopHocPhanWithMonHocDto>> GetAllLopHocPhanCtdtAsync(int khoa, int loaiChuongTrinh, Guid chuongTrinhId, int hocKy);
+    Task<PagedListAsync<LopHocPhan>?> GetAllLopHocPhanAsync(int page, int limit, string? search, string? sortBy, string? sortByOder, int? khoa, int? loaiChuongTrinh, Guid? chuongTrinhId, int? hocKy);
     Task<LopHocPhan?> GetLopHocPhanByIdAsync(Guid id, bool trackChanges);
     Task<int> CreateSinhVienLopHocPhanHocBa(Guid maLop, Guid maLhp, Guid? maGiangVien, Guid maMonHoc, Guid maCtctdt, int HocKy);
     Task CreateAsync(LopHocPhan lopHocPhan);

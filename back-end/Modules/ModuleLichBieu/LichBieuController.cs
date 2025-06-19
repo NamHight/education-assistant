@@ -5,12 +5,14 @@ using Education_assistant.Modules.ModuleLichBieu.DTOs.Request;
 using Education_assistant.Services.BaseDtos;
 using Education_assistant.Services.ServiceMaster;
 using FashionShop_API.Filters;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Education_assistant.Modules.ModuleLichBieu
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Policy = "GiangVien")]
     public class LichBieuController : ControllerBase
     {
         private readonly IServiceMaster _serviceMaster;
@@ -26,12 +28,6 @@ namespace Education_assistant.Modules.ModuleLichBieu
             Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(result.page));
             return Ok(result.data);
         }
-        [HttpGet("giangvien")]
-        public async Task<ActionResult> GetAllLichBieuGiangVienAsync([FromQuery] ParamLichKhoaBieuGiangVienDto paramBaseDto)
-        {
-            var result = await _serviceMaster.LichBieu.GetLichKhoaBieuGiangVienAsync(paramBaseDto);
-            return Ok(result);
-        }
         [HttpGet("{id}")]
         public async Task<ActionResult> GetLichBieuByIdAsync(Guid id)
         {
@@ -46,7 +42,7 @@ namespace Education_assistant.Modules.ModuleLichBieu
             var result = await _serviceMaster.LichBieu.CreateAsync(model);
             return Ok(result);
         }
-        [HttpPost("copy-tuan")]
+        [HttpPost("copy")]
         [ServiceFilter(typeof(ValidationFilter))]
         public async Task<ActionResult> AddListLichBieuWithTuanAsync([FromBody] RequestAddLichBieuListTuanDto model)
         {
