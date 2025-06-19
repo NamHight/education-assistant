@@ -42,6 +42,7 @@ public class ServiceMaster : IServiceMaster
     private readonly Lazy<IServiceSinhVien> _sinhVien;
     private readonly Lazy<IServiceTruong> _truong;
     private readonly Lazy<IServiceTuan> _tuan;
+    private readonly Lazy<IServiceTaiKhoan> _taiKhoan;
 
     public ServiceMaster(IRepositoryMaster repositoryMaster, ILoggerService loggerService, IMapper mapper,
         IPasswordHash password, IHttpContextAccessor httpContextAccessor, IServiceFIle serviceFIle,
@@ -72,7 +73,8 @@ public class ServiceMaster : IServiceMaster
         _phongHoc = new Lazy<IServicePhongHoc>(() => new ServicePhongHoc(repositoryMaster, loggerService, mapper));
         _tuan = new Lazy<IServiceTuan>(() => new ServiceTuan(repositoryMaster, loggerService, mapper));
         _authenticate = new Lazy<IServiceAuthenticate>(() =>
-            new ServiceAuthenticate(loggerService, repositoryMaster, mapper, configuration, password, httpContextAccessor));
+            new ServiceAuthenticate(loggerService, repositoryMaster, mapper, configuration, password));
+        _taiKhoan = new Lazy<IServiceTaiKhoan>(() => new ServiceTaiKhoan(repositoryMaster, loggerService, mapper, password));
     }
 
     public IServiceAuthenticate Authenticate => _authenticate.Value;
@@ -93,4 +95,5 @@ public class ServiceMaster : IServiceMaster
     public IServicePhongHoc PhongHoc => _phongHoc.Value;
 
     public IServiceTuan Tuan => _tuan.Value;
+    public IServiceTaiKhoan TaiKhoan => _taiKhoan.Value;
 }

@@ -9,7 +9,7 @@ namespace Education_assistant.Modules.ModuleGiangVien.Services;
 public interface IServiceGiangVien
 {
     Task<(IEnumerable<ResponseGiangVienDto> data, PageInfo page)> GetAllGiangVienAsync(ParamBaseDto paramBaseDto);
-    Task<IEnumerable<ResponseGiangVienDto>?> GetAllGiangVienByKhoa(Guid khoaId); 
+    Task<IEnumerable<ResponseGiangVienDto>?> GetAllGiangVienByKhoa(Guid khoaId);
     Task<ResponseGiangVienDto> GetGiangVienByIdAsync(Guid id, bool trackChanges);
     Task<ResponseGiangVienDto> ReStoreGiangVienAsync(Guid id);
     Task<ResponseGiangVienDto> CreateAsync(RequestAddGiangVienDto request);
