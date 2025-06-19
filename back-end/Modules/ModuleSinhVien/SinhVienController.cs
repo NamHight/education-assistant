@@ -4,6 +4,7 @@ using Education_assistant.Modules.ModuleSinhVien.DTOs.Request;
 using Education_assistant.Services.BaseDtos;
 using Education_assistant.Services.ServiceMaster;
 using FashionShop_API.Filters;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,6 +12,7 @@ namespace Education_assistant.Modules.ModuleSinhVien
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Policy = "GiangVien")]
     public class SinhVienController : ControllerBase
     {
         private readonly IServiceMaster _serviceMaster;

@@ -149,6 +149,6 @@ public sealed class ServiceGiangVien : IServiceGiangVien
             await Task.CompletedTask;
         });
         _loggerService.LogInfo("Cập nhật giảng viên thành công.");
-    
+
     }
 }

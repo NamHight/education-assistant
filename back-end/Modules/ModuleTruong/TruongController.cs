@@ -2,12 +2,14 @@ using Education_assistant.Modules.ModuleTruong.DTOs.Request;
 using Education_assistant.Repositories.RepositoryMaster;
 using Education_assistant.Services.ServiceMaster;
 using FashionShop_API.Filters;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Education_assistant.Modules.ModuleTruong;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize(Policy = "GiangVien")]
 public class TruongController : ControllerBase
 {
     private readonly IServiceMaster _serviceMaster;

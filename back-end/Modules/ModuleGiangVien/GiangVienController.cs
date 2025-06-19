@@ -4,12 +4,15 @@ using Education_assistant.Modules.ModuleGiangVien.DTOs.Request;
 using Education_assistant.Services.BaseDtos;
 using Education_assistant.Services.ServiceMaster;
 using FashionShop_API.Filters;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Education_assistant.Modules.ModuleGiangVien;
 
 [Route("api/giangviens")]
 [ApiController]
+[Authorize(Policy = "GiangVien")]
 public class GiangVienController : ControllerBase
 {
     private readonly IServiceMaster _serviceMaster;
@@ -63,5 +66,13 @@ public class GiangVienController : ControllerBase
     {
         await _serviceMaster.GiangVien.DeleteAsync(id);
         return NoContent();
+    }
+
+    [HttpPut("change_password")]
+    [ServiceFilter(typeof(ValidationFilter))]
+    public async Task<ActionResult> ChangePassword([FromForm] RequestChangePasswordDto model)
+    {
+        await _serviceMaster.TaiKhoan.ChangePassword(model);
+        return Ok("Cập nhật mật khẩu thành công");
     }
 }

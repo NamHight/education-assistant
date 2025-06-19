@@ -3,6 +3,7 @@ using Education_assistant.Modules.ModuleMonHoc.DTOs.Request;
 using Education_assistant.Services.BaseDtos;
 using Education_assistant.Services.ServiceMaster;
 using FashionShop_API.Filters;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NLog.Filters;
@@ -11,6 +12,7 @@ namespace Education_assistant.Modules.ModuleMonHoc
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Policy = "GiangVien")]
     public class MonHocController : ControllerBase
     {
         private readonly IServiceMaster _serviceMaster;

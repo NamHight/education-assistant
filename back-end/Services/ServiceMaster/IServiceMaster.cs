@@ -37,4 +37,5 @@ public interface IServiceMaster
     IServicePhongHoc PhongHoc { get; }
     IServiceAuthenticate Authenticate { get; }
     IServiceTuan Tuan { get; }
+    IServiceTaiKhoan TaiKhoan { get; }
 }
