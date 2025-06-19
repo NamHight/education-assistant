@@ -36,16 +36,7 @@ namespace Education_assistant.Modules.ModuleLichBieu.DTOs.Request
     }
     public class RequestAddLichBieuListTuanDto
     {
-        [Required(ErrorMessage = "Tiết bắt đầu không được để trống")]
-        public int TietBatDau { get; set; }
-
-        [Required(ErrorMessage = "Tiết kết thúc không được để trống")]
-        public int TietKetThuc { get; set; }
-
-        [Required(ErrorMessage = "Thứ không được để trống")]
-        public int Thu { get; set; }
+        public List<RequestUpdateLichBieuDto>? LichBieus { get; set; }
         public List<Guid>? ListTuanId { get; set; }
-        public Guid LopHocPhanId { get; set; }
-        public Guid PhongHocId { get; set; }
     }
 }

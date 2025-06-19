@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Education_assistant.Modules.ModuleTuan.DTOs.Param;
 using Education_assistant.Modules.ModuleTuan.DTOs.Request;
 using Education_assistant.Services.BaseDtos;
 using Education_assistant.Services.ServiceMaster;
@@ -19,12 +20,18 @@ namespace Education_assistant.Modules.ModuleTuan
             _serviceMaster = serviceMaster;
         }
         [HttpGet()]
-        public async Task<ActionResult> GetAllTuanAsync([FromQuery] ParamBaseDto paramBaseDto)
+        public async Task<ActionResult> GetAllTuanAsync([FromQuery] ParamTuanDto paramTuanDto)
         {
-            var result = await _serviceMaster.Tuan.GetAllTuanAsync(paramBaseDto);
+            var result = await _serviceMaster.Tuan.GetAllTuanAsync(paramTuanDto);
             Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(result.page));
             return Ok(result.data);
         }
+        [HttpGet("combobox-copy")]
+        public async Task<ActionResult> GetTuanComboBoxAsync([FromQuery] ParamTuanCopyDto paramTuanDto)
+        {
+            var result = await _serviceMaster.Tuan.GetTuanComboBoxAsync(paramTuanDto);
+            return Ok(result);
+        } 
         [HttpGet("{id}")]
         public async Task<ActionResult> GetTuanByIdAsync(Guid id)
         {

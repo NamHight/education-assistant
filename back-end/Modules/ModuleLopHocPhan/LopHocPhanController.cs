@@ -20,17 +20,11 @@ namespace Education_assistant.Modules.ModuleLopHocPhan
             _serviceMaster = serviceMaster;
         }
         [HttpGet]
-        public async Task<ActionResult> GetAllLopHocPhanAsync([FromQuery] ParamBaseDto paramBaseDto)
+        public async Task<ActionResult> GetAllLopHocPhanAsync([FromQuery] ParamLopHocPhanDto paramLopHocPhanDto)
         {
-            var result = await _serviceMaster.LopHocPhan.GetAllLopHocPhanAsync(paramBaseDto);
+            var result = await _serviceMaster.LopHocPhan.GetAllLopHocPhanAsync(paramLopHocPhanDto);
             Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(result.page));
             return Ok(result.data);
-        }
-        [HttpGet("list-phan-cong")]
-        public async Task<ActionResult> GetAllLopHocPhanCtdtAsync([FromQuery] ParamAllCtdtMonHocDto paramBaseDto)
-        {
-            var result = await _serviceMaster.LopHocPhan.GetAllLopHocPhanCtdtAsync(paramBaseDto);
-            return Ok(result);
         }
         [HttpGet("{id}")]
         public async Task<ActionResult> GetLopHocPhanByIdAsync(Guid id)

@@ -28,13 +28,14 @@ public class RepositoryLichBieu : RepositoryBase<LichBieu>, IRepositoryLichBieu
         Delete(lichBieu);
     }
 
-    public async Task<PagedListAsync<LichBieu>> GetAllLichBieuAsync(int page, int limit, string? search, string? sortBy, string? sortByOrder, int? namHoc, Guid? giangvienId, Guid? tuanId)
+    public async Task<PagedListAsync<LichBieu>> GetAllLichBieuAsync(int page, int limit, string? search, string? sortBy, string? sortByOrder, int? namHoc, Guid? giangvienId, Guid? tuanId, Guid? boMonId)
     {
 
         var query = _context.LichBieus!
                     .AsNoTracking()
                     .Include(lb => lb.PhongHoc)
                     .Include(lb => lb.LopHocPhan)!.ThenInclude(lhp => lhp!.GiangVien)
+                    .Include(lb => lb.LopHocPhan)!.ThenInclude(lhb => lhb!.MonHoc).ThenInclude(m => m!.DanhSachChiTietChuongTrinhDaoTao)
                     .Include(lb => lb.Tuan)
                     .AsQueryable();
         if (tuanId.HasValue) 
@@ -42,13 +43,23 @@ public class RepositoryLichBieu : RepositoryBase<LichBieu>, IRepositoryLichBieu
             query = query.Where(item => item.TuanId == tuanId);
         }
         if (giangvienId.HasValue)
+        { 
+            query = query.Where(item => item.LopHocPhan != null &&
+                                        item.LopHocPhan!.GiangVienId == giangvienId);
+        }
+        if (boMonId.HasValue)
         {
-            query = query.Where(item => item.LopHocPhan!.GiangVienId == giangvienId);
+            query = query.Where(item => item.LopHocPhan != null &&
+                                        item.LopHocPhan.MonHoc != null &&
+                                        item.LopHocPhan.MonHoc.DanhSachChiTietChuongTrinhDaoTao != null &&
+                                        item.LopHocPhan.MonHoc.DanhSachChiTietChuongTrinhDaoTao.Any(ct => ct.BoMonId == boMonId));
         }
         if (namHoc.HasValue)
         {
-            query = query.Where(item => item.Tuan!.NamHoc == namHoc);
+            query = query.Where(item => item.Tuan != null &&
+                                        item.Tuan.NamHoc == namHoc);
         }
+
         return await PagedListAsync<LichBieu>.ToPagedListAsync(query.SearchBy(search, item => item.Thu.ToString())
                                             .SortByOptions(sortBy, sortByOrder, new Dictionary<string, Expression<Func<LichBieu, object>>>
                                             {
@@ -57,55 +68,6 @@ public class RepositoryLichBieu : RepositoryBase<LichBieu>, IRepositoryLichBieu
                                             })
                                             , page, limit);
     }
-
-    public async Task<IEnumerable<ResponseLichKhoaBieuGiangVienDto>> GetAllLichBieuByGiangVienAsync(int namHoc, Guid giangVienId, Guid tuanId)
-    {
-        return await _context.LichBieus!
-                .AsNoTracking()
-                .Where(lb => lb.TuanId == tuanId)
-                .Join(
-                    _context.Tuans!.Where(t => t.NamHoc == namHoc),
-                    lb => lb.TuanId,
-                    t => t.Id,
-                    (lb, t) => new { LichBieu = lb, Tuan = t }
-                )
-                .Join(
-                    _context.LopHocPhans!.Where(lhp => lhp.GiangVienId == giangVienId),
-                    x => x.LichBieu.LopHocPhanId,
-                    lhp => lhp.Id,
-                    (x, lhp) => new { x.LichBieu, x.Tuan, LopHocPhan = lhp }
-                )
-                .Join(
-                    _context.PhongHocs!,
-                    x => x.LichBieu.PhongHocId,
-                    ph => ph.Id,
-                    (x, ph) => new { x.LichBieu, x.Tuan, x.LopHocPhan, PhongHoc = ph }
-                )
-                .Join(
-                    _context.ChiTietChuongTrinhDaoTaos!,
-                    x => x.LopHocPhan.MonHocId,
-                    ctctdt => ctctdt.MonHocId,
-                    (x , ctctdt) => new {x.LichBieu, x.Tuan, x.LopHocPhan, x.PhongHoc, ChiTietChuongTrinh = ctctdt}
-                )
-                .Select(x => new ResponseLichKhoaBieuGiangVienDto
-                {
-                    TenLopHocPhan = x.LopHocPhan.MaHocPhan,
-                    LoaiPhongHoc = x.PhongHoc.LoaiPhongHoc,
-                    SiSo = x.LopHocPhan.SiSo,
-                    TenPhong = x.PhongHoc.TenPhong,
-                    Thu = x.LichBieu.Thu,
-                    LoaiMonHoc = x.ChiTietChuongTrinh.LoaiMonHoc,
-                    TietBatDau = x.LichBieu.TietBatDau,
-                    TietKetThuc = x.LichBieu.TietKetThuc,
-                    GiangVienId = x.LopHocPhan.GiangVienId!.Value,
-                    HoTen = x.LopHocPhan.GiangVien!.HoTen,
-                    TuanId = x.LichBieu.TuanId!.Value,
-                    SoTuan = x.LichBieu.Tuan!.SoTuan,
-                    PhongId = x.LichBieu.PhongHocId!.Value,
-                    LopHocPhanId = x.LopHocPhan.Id
-                }).ToListAsync();    
-    }
-
     public async Task<LichBieu?> GetLichBieuByIdAsync(Guid id, bool trackChanges)
     {
         return await FindByCondition(item => item.Id == id, trackChanges).FirstOrDefaultAsync();

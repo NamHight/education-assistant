@@ -45,11 +45,6 @@ public class ServiceLopHocPhan : IServiceLopHocPhan
         var lopHocPhanDto = _mapper.Map<ResponseLopHocPhanDto>(newLopHocPhan);
         return lopHocPhanDto;
     }
-    public async Task<IEnumerable<ResponseLopHocPhanWithMonHocDto>> GetAllLopHocPhanCtdtAsync(ParamAllCtdtMonHocDto paramDto)
-    {
-        return await _repositoryMaster.LopHocPhan.GetAllLopHocPhanCtdtAsync(paramDto.Khoa, paramDto.LoaiChuongTrinh, paramDto.ChuongTrinhId, paramDto.hocKy);
-    }
-
 
     public async Task DeleteAsync(Guid id)
     {
@@ -66,11 +61,9 @@ public class ServiceLopHocPhan : IServiceLopHocPhan
     }
 
 
-    public async Task<(IEnumerable<ResponseLopHocPhanDto> data, PageInfo page)> GetAllLopHocPhanAsync(
-        ParamBaseDto paramBaseDto)
+    public async Task<(IEnumerable<ResponseLopHocPhanDto> data, PageInfo page)> GetAllLopHocPhanAsync(ParamLopHocPhanDto paramLopHocPhanDto)
     {
-        var lopHocPhans = await _repositoryMaster.LopHocPhan.GetAllLopHocPhanAsync(paramBaseDto.page,
-            paramBaseDto.limit, paramBaseDto.search, paramBaseDto.sortBy, paramBaseDto.sortByOrder);
+        var lopHocPhans = await _repositoryMaster.LopHocPhan.GetAllLopHocPhanAsync(paramLopHocPhanDto.Page, paramLopHocPhanDto.Limit, paramLopHocPhanDto.Search, paramLopHocPhanDto.SortBy, paramLopHocPhanDto.SortByOrder, paramLopHocPhanDto.Khoa, paramLopHocPhanDto.LoaiChuongTrinh, paramLopHocPhanDto.ChuongTrinhId, paramLopHocPhanDto.HocKy);
         var lopHocPhanDtos = _mapper.Map<IEnumerable<ResponseLopHocPhanDto>>(lopHocPhans);
         return (data: lopHocPhanDtos, page: lopHocPhans!.PageInfo);
     }
