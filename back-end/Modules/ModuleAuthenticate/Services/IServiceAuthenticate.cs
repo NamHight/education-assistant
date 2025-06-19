@@ -16,4 +16,5 @@ public interface IServiceAuthenticate
     Task ForgotPasswordConfirm(ParamForgotPasswordDto request);
     Task ResetPassword(RequestForgotPasswordDto request);
     string GenerateToken(TaiKhoan taiKhoan);
+    Task<ResponseGiangVienDto> GetMeAsync();
 }

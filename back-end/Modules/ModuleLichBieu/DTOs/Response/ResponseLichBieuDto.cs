@@ -13,9 +13,7 @@ namespace Education_assistant.Modules.ModuleLichBieu.DTOs.Response
         public Guid Id { get; set; }
         public int TietBatDau { get; set; }
         public int TietKetThuc { get; set; }
-        public int ThuMay { get; set; }
-        public int TuanMay { get; set; }
-        public int NamHoc { get; set; }
+        public int Thu { get; set; }
         public Guid TuanId { get; set; }
         public ResponseTuanDto? Tuan { get; set; }
         public Guid LopHocPhanId { get; set; }
@@ -24,6 +22,5 @@ namespace Education_assistant.Modules.ModuleLichBieu.DTOs.Response
         public PhongHocSimpleDto? PhongHoc { get; set; }
         public DateTime? CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
-        public DateTime? DeletedAt { get; set; }
     }
 }

@@ -8,7 +8,7 @@ namespace Education_assistant.Modules.ModuleLichBieu.Repositories;
 
 public interface IRepositoryLichBieu
 {
-    Task<PagedListAsync<LichBieu>> GetAllLichBieuAsync(int page, int limit);
+    Task<PagedListAsync<LichBieu>> GetAllLichBieuAsync(int page, int limit, string? search, string? sortBy, string? sortByOrder, int? namHoc, Guid? giangvienId, Guid? tuanId);
     Task<IEnumerable<ResponseLichKhoaBieuGiangVienDto>> GetAllLichBieuByGiangVienAsync(int namHoc, Guid giangVienId, Guid tuanId);
     Task<LichBieu?> GetLichBieuByIdAsync(Guid id, bool trackChanges);
     Task CreateAsync(LichBieu lichBieu);

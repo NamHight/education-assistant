@@ -27,31 +27,7 @@ public static class DependenceExtensions
     {
         var jwtSettings = configuration.GetSection("Jwt");
         var assembly = typeof(DependenceExtensions).Assembly;
-        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddJwtBearer(options =>
-            {
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidateLifetime = true,
-                    ValidateIssuerSigningKey = true,
-                    ValidIssuer = "EducationAssistant",
-                    ValidAudience = "EducationAssistant",
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["SecretKey"]!))
-                };
-                options.Events = new JwtBearerEvents
-                {
-                    OnMessageReceived = context =>
-                    {
-                        var token = context.Request.Cookies["access_token"];
-                        if (!string.IsNullOrEmpty(token) && context.Request.Path.StartsWithSegments("/api"))
-                            context.Token = token;
-                        return Task.CompletedTask;
-                    }
-                };
-            });
-        services.AddAuthentication();
+        
         services.AddValidatorsFromAssembly(assembly, includeInternalTypes: true);
         services.AddSingleton<ILoggerService, LoggerService>();
         services.AddHttpContextAccessor();

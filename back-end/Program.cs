@@ -24,7 +24,7 @@ builder.Services
     .AddIISIntegration()
     .AddDependence(builder.Configuration)
     .AddInfrastructure(builder.Configuration)
-    .AddPresentation();
+    .AddPresentation(builder.Configuration);
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 var app = builder.Build();
 var logger = app.Services.GetRequiredService<ILoggerService>();
