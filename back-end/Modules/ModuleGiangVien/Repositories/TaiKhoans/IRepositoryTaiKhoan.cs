@@ -10,6 +10,7 @@ public interface IRepositoryTaiKhoan
 
     Task<TaiKhoan?> GetTaiKhoanByIdAsync(Guid id, bool trackChanges);
     Task<TaiKhoan?> GetTaiKhoanByEmailAsync(string email, bool trackChanges);
+    Task<TaiKhoan?> GetTaiKhoanByRefreshTokenAsync(string refreshToken, bool trackChanges);
     Task CreateAsync(TaiKhoan taiKhoan);
     void UpdateTaiKhoan(TaiKhoan taiKhoan);
     void DeleteTaiKhoan(TaiKhoan taiKhoan);

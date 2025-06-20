@@ -19,11 +19,11 @@ namespace Education_assistant.Modules.ModuleAuthenticate.Services;
 public class ServiceAuthenticate : IServiceAuthenticate
 {
     private readonly IConfiguration _configuration;
+    private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly ILoggerService _loggerService;
     private readonly IMapper _mapper;
     private readonly IPasswordHash _passwordHash;
     private readonly IRepositoryMaster _repositoryMaster;
-    private readonly IHttpContextAccessor _httpContextAccessor;
 
     public ServiceAuthenticate(ILoggerService loggerService, IRepositoryMaster repositoryMaster, IMapper mapper,
         IConfiguration configuration, IPasswordHash passwordHash, IHttpContextAccessor httpContextAccessor)
@@ -45,6 +45,7 @@ public class ServiceAuthenticate : IServiceAuthenticate
         if (!_passwordHash.Verify(requestLoginDto.Password, taiKhoan.Password))
             throw new TaiKhoanBadRequestException("Mật khẩu không đúng!");
         var refreshToken = GenerateRefreshToken();
+        Console.WriteLine($"8888888888888 refreshToken {refreshToken}");
         var accessToken = GenerateToken(taiKhoan);
         await _repositoryMaster.ExecuteInTransactionAsync(async () =>
         {
@@ -52,6 +53,7 @@ public class ServiceAuthenticate : IServiceAuthenticate
             taiKhoan.ResetTokenExpires = DateTime.UtcNow.AddMinutes(expiresInMinutes);
             taiKhoan.LastLoginDate = DateTime.UtcNow;
             _repositoryMaster.TaiKhoan.UpdateTaiKhoan(taiKhoan);
+            await Task.CompletedTask;
         });
         var giangVien = await _repositoryMaster.GiangVien.GetGiangVienByEmailAsync(taiKhoan.Email, false);
         if (giangVien is null) throw new GiangVienEmailNotFoundException(taiKhoan.Email);
@@ -82,39 +84,28 @@ public class ServiceAuthenticate : IServiceAuthenticate
         });
     }
 
-    public async Task<(string accessToken, string refreshToken)> refresh(string accessToken, string refreshToken)
+    public async Task<(string accessToken, string refreshToken)> refresh(string refreshToken)
     {
-        var tokenHandler = new JwtSecurityTokenHandler();
-        var secretKey = _configuration.GetSection("Jwt:SecretKey").Value;
-        var issuer = _configuration.GetSection("Jwt:Issuer").Value;
-        var audience = _configuration.GetSection("Jwt:Audience").Value;
-        var validationParameters = new TokenValidationParameters
-        {
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey!)),
-            ValidateIssuer = false,
-            ValidateAudience = false,
-            ValidIssuer = issuer,
-            ValidAudience = audience,
-            ValidateLifetime = true, // Ignore expiration
-            ClockSkew= TimeSpan.Zero
-        };
-        var principal = tokenHandler.ValidateToken(accessToken, validationParameters, out var securityToken);
-        var email = principal.FindFirst(ClaimTypes.Email)?.Value;
-        var taiKhoan = await _repositoryMaster.TaiKhoan.GetTaiKhoanByEmailAsync(email, false);
+        var taiKhoan = await _repositoryMaster.TaiKhoan.GetTaiKhoanByRefreshTokenAsync(refreshToken, false);
         if (taiKhoan is null || taiKhoan.ResetToken != refreshToken ||
             taiKhoan.ResetTokenExpires < DateTime.UtcNow)
             throw new TaiKhoanBadRequestException("Refresh token không hợp lệ hoặc đã hết hạn.");
-        var newRefreshToken = GenerateRefreshToken();
         var newAccessToken = GenerateToken(taiKhoan);
-        await _repositoryMaster.ExecuteInTransactionAsync(async () =>
+        var returnRefreshToken = refreshToken;
+        var timeUntilExpiry = taiKhoan.ResetTokenExpires - DateTime.UtcNow;
+        if (timeUntilExpiry?.TotalDays < 7)
         {
-            taiKhoan.ResetToken = newRefreshToken;
-            taiKhoan.ResetTokenExpires =
-                DateTime.UtcNow.AddMinutes(_configuration.GetValue<int>("ExpiresInMinutes:RefreshToken"));
-            _repositoryMaster.TaiKhoan.UpdateTaiKhoan(taiKhoan);
-        });
-        return (newAccessToken, newRefreshToken);
+            var newRefreshToken = GenerateRefreshToken();
+            await _repositoryMaster.ExecuteInTransactionAsync(async () =>
+            {
+                taiKhoan.ResetToken = newRefreshToken;
+                taiKhoan.ResetTokenExpires = DateTime.UtcNow.AddDays(30);
+                _repositoryMaster.TaiKhoan.UpdateTaiKhoan(taiKhoan);
+            });
+            returnRefreshToken = newRefreshToken;
+        }
+
+        return (newAccessToken, returnRefreshToken);
     }
 
     public async Task Logout(string email, HttpContext httpContext)
@@ -146,16 +137,6 @@ public class ServiceAuthenticate : IServiceAuthenticate
         });
     }
 
-    private string GenerateRefreshToken()
-    {
-        var randomNumber = new byte[32];
-        using (var rng = RandomNumberGenerator.Create())
-        {
-            rng.GetBytes(randomNumber);
-            return Convert.ToBase64String(randomNumber);
-        }
-    }
-
     public string GenerateToken(TaiKhoan taiKhoan)
     {
         var secretKey = _configuration.GetSection("Jwt:SecretKey").Value;
@@ -173,7 +154,7 @@ public class ServiceAuthenticate : IServiceAuthenticate
             Expires = DateTime.UtcNow.AddMinutes(expiresInMinutes),
             Issuer = _configuration["Jwt:Issuer"],
             Audience = _configuration["Jwt:Audience"],
-            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256),
+            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256)
         };
         var token = tokenHandler.CreateToken(tokenDescriptor);
         return tokenHandler.WriteToken(token);
@@ -181,21 +162,21 @@ public class ServiceAuthenticate : IServiceAuthenticate
 
     public async Task ForgotPasswordConfirm(ParamForgotPasswordDto request)
     {
-        var taiKhoan = await _repositoryMaster.Authenticate.GetTaiKhoanByEmailAndTokenAsync(request.Email, request.Token, false);
+        var taiKhoan =
+            await _repositoryMaster.Authenticate.GetTaiKhoanByEmailAndTokenAsync(request.Email, request.Token, false);
         if (taiKhoan is null || taiKhoan.ResetPasswordExpires < DateTime.Now)
-        {
-            throw new TaiKhoanBadRequestException("Dữ liệu đầu vào không tìm thấy, thời gian very email đã hết 5 phút, gửi lại");
-        }
+            throw new TaiKhoanBadRequestException(
+                "Dữ liệu đầu vào không tìm thấy, thời gian very email đã hết 5 phút, gửi lại");
         _loggerService.LogInfo("Confirm mật khẩu quên thành công!");
     }
 
     public async Task ResetPassword(RequestForgotPasswordDto request)
     {
-        var taiKhoan = await _repositoryMaster.Authenticate.GetTaiKhoanByEmailAndTokenAsync(request.Email, request.Token, false);
+        var taiKhoan =
+            await _repositoryMaster.Authenticate.GetTaiKhoanByEmailAndTokenAsync(request.Email, request.Token, false);
         if (taiKhoan is null || taiKhoan.ResetPasswordExpires < DateTime.Now)
-        {
-            throw new TaiKhoanBadRequestException("Dữ liệu đầu vào không tìm thấy, thời gian very email đã hết 5 phút, gửi lại");
-        }
+            throw new TaiKhoanBadRequestException(
+                "Dữ liệu đầu vào không tìm thấy, thời gian very email đã hết 5 phút, gửi lại");
         taiKhoan.ResetPassword = null;
         taiKhoan.ResetPasswordExpires = null;
         taiKhoan.Password = _passwordHash.Hash(request.Password);
@@ -210,16 +191,20 @@ public class ServiceAuthenticate : IServiceAuthenticate
     public async Task<ResponseGiangVienDto> GetMeAsync()
     {
         var taiKhoanId = _httpContextAccessor.HttpContext!.User.GetUserId();
-        if (taiKhoanId == Guid.Empty)
-        {
-            throw new TaiKhoanBadRequestException("Thông tin tài khoản id không đầy đủ");
-        }
+        if (taiKhoanId == Guid.Empty) throw new TaiKhoanBadRequestException("Thông tin tài khoản id không đầy đủ");
         var giangVien = await _repositoryMaster.GiangVien.GetGiangVienByTaiKhoanIdAsync(taiKhoanId, false);
-        if (giangVien is null)
-        {
-            throw new TaiKhoanNotFoundException(taiKhoanId);
-        }
+        if (giangVien is null) throw new TaiKhoanNotFoundException(taiKhoanId);
         var giangVienDto = _mapper.Map<ResponseGiangVienDto>(giangVien);
-        return giangVienDto; 
+        return giangVienDto;
+    }
+
+    private string GenerateRefreshToken()
+    {
+        var randomNumber = new byte[32];
+        using (var rng = RandomNumberGenerator.Create())
+        {
+            rng.GetBytes(randomNumber);
+            return Convert.ToBase64String(randomNumber);
+        }
     }
 }

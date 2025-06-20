@@ -122,6 +122,7 @@ public class MapperProfile : Profile
         CreateMap<ChuongTrinhDaoTao, ChuongTrinhDaoTaoSimpleDto>();
         CreateMap<ChiTietChuongTrinhDaoTao, ChiTietChuongTrinhDaoTaoSimpleDto>();
         CreateMap<GiangVien, GiangVienSimpleDto>();
+        CreateMap<TaiKhoan, TaiKhoanSimpleDto>();
         CreateMap<HocBa, HocBaSimpleDto>();
         CreateMap<Khoa, KhoaSimpleDto>();
         CreateMap<LopHoc, LopHocSimpleDto>();

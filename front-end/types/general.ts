@@ -15,19 +15,38 @@ export const API = {
         LOGOUT: "/Authenticate/logout",
         REGISTER: "/Authenticate/register",
         REFRESH_TOKEN: "/Authenticate/refresh-token",
-        USER: "/Authenticate/user",
+        USER: "/Authenticate/me",
     },
     GIANG_VIEN: {
-        GET_ALL: "/giangviens"
+        GET_ALL: "/giangviens",
+        GET_ONE: "/giangviens/:id",
+    },  
+    KHOA: {
+        GET_ALL: "/khoa"
+    },
+    BOMON: {
+        GET_ALL: "/BoMon",
+        GET_BY_ID: "/BoMon/:id"
     },
     
 }
 
 export const APP_ROUTE = {
+    DANG_NHAP: "/dang-nhap",
     DASHBOARD: "/",
     GIANG_VIEN: {
         ROOT: "/giang-vien",
-        ADD: "/giang-vien/create",
-        EDIT: (id: string) => `/giang-vien/edit/${id}`,
+        ADD: "/giang-vien/them-moi",
+        EDIT: (id: string) => `/giang-vien/thay-doi/${id}`,
     }
 }
+
+export const breadcrumbTranslations: { [key: string]: string } = {
+    'giang-vien': 'Giảng viên',
+    'them-moi': 'Thêm mới',
+    'chinh-sua': 'Chỉnh sửa',
+    'chi-tiet': 'Chi tiết',
+    'sinh-vien': 'Sinh viên',
+    'lop-hoc': 'Lớp học',
+    // Thêm các bản dịch khác của bạn ở đây
+  };

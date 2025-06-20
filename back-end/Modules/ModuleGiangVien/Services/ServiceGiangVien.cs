@@ -14,14 +14,15 @@ namespace Education_assistant.Modules.ModuleGiangVien.Services;
 
 public sealed class ServiceGiangVien : IServiceGiangVien
 {
+    private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly ILoggerService _loggerService;
-    private readonly IRepositoryMaster _repositoryMaster;
     private readonly IMapper _mapper;
     private readonly IPasswordHash _passwordHash;
+    private readonly IRepositoryMaster _repositoryMaster;
     private readonly IServiceFIle _serviceFIle;
-    private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public ServiceGiangVien(IRepositoryMaster repositoryMaster, ILoggerService loggerService, IMapper mapper, IPasswordHash passwordHash, IHttpContextAccessor httpContextAccessor, IServiceFIle serviceFIle)
+    public ServiceGiangVien(IRepositoryMaster repositoryMaster, ILoggerService loggerService, IMapper mapper,
+        IPasswordHash passwordHash, IHttpContextAccessor httpContextAccessor, IServiceFIle serviceFIle)
     {
         _repositoryMaster = repositoryMaster;
         _loggerService = loggerService;
@@ -30,6 +31,7 @@ public sealed class ServiceGiangVien : IServiceGiangVien
         _httpContextAccessor = httpContextAccessor;
         _serviceFIle = serviceFIle;
     }
+
     public async Task<ResponseGiangVienDto> CreateAsync(RequestAddGiangVienDto request)
     {
         var newGiangVien = _mapper.Map<GiangVien>(request);
@@ -40,14 +42,15 @@ public sealed class ServiceGiangVien : IServiceGiangVien
             hinhDaiDien = $"{context!.Request.Scheme}://{context.Request.Host}/uploads/{hinhDaiDien}";
             newGiangVien.AnhDaiDien = hinhDaiDien;
         }
+
         await _repositoryMaster.ExecuteInTransactionAsync(async () =>
         {
             var newTaiKhoan = new TaiKhoan
             {
                 Email = newGiangVien.Email,
-                Password = _passwordHash.Hash("Admin@123"),
+                Password = _passwordHash.Hash(newGiangVien.CCCD),
                 Status = true,
-                LoaiTaiKhoan = request.LoaiTaiKhoan,
+                LoaiTaiKhoan = request.LoaiTaiKhoan
             };
             await _repositoryMaster.TaiKhoan.CreateAsync(newTaiKhoan);
 
@@ -62,15 +65,9 @@ public sealed class ServiceGiangVien : IServiceGiangVien
 
     public async Task DeleteAsync(Guid id)
     {
-        if (id == Guid.Empty)
-        {
-            throw new GiangVienBadRequestException($"Khoa với {id} không được bỏ trống!");
-        }
+        if (id == Guid.Empty) throw new GiangVienBadRequestException($"Khoa với {id} không được bỏ trống!");
         var giangVien = await _repositoryMaster.GiangVien.GetGiangVienByIdAsync(id, false);
-        if (giangVien is null)
-        {
-            throw new GiangVienNotFoundException(id);
-        }
+        if (giangVien is null) throw new GiangVienNotFoundException(id);
         giangVien.DeletedAt = DateTime.Now;
         await _repositoryMaster.ExecuteInTransactionAsync(async () =>
         {
@@ -80,9 +77,11 @@ public sealed class ServiceGiangVien : IServiceGiangVien
         _loggerService.LogInfo("Xóa giảng viên thành công.");
     }
 
-    public async Task<(IEnumerable<ResponseGiangVienDto> data, PageInfo page)> GetAllGiangVienAsync(ParamBaseDto paramBaseDto)
+    public async Task<(IEnumerable<ResponseGiangVienDto> data, PageInfo page)> GetAllGiangVienAsync(
+        ParamBaseDto paramBaseDto)
     {
-        var giangViens = await _repositoryMaster.GiangVien.GetAllGiangVienAsync(paramBaseDto.page, paramBaseDto.limit, paramBaseDto.search, paramBaseDto.sortBy, paramBaseDto.sortByOrder);
+        var giangViens = await _repositoryMaster.GiangVien.GetAllGiangVienAsync(paramBaseDto.page, paramBaseDto.limit,
+            paramBaseDto.search, paramBaseDto.sortBy, paramBaseDto.sortByOrder);
         var giangVienDtos = _mapper.Map<IEnumerable<ResponseGiangVienDto>>(giangViens);
         return (data: giangVienDtos, page: giangViens!.PageInfo);
     }
@@ -97,10 +96,7 @@ public sealed class ServiceGiangVien : IServiceGiangVien
     public async Task<ResponseGiangVienDto> GetGiangVienByIdAsync(Guid id, bool trackChanges)
     {
         var giangVien = await _repositoryMaster.GiangVien.GetGiangVienByIdAsync(id, false);
-        if (giangVien is null)
-        {
-            throw new GiangVienNotFoundException(id);
-        }
+        if (giangVien is null) throw new GiangVienNotFoundException(id);
         var giangVienDto = _mapper.Map<ResponseGiangVienDto>(giangVien);
         return giangVienDto;
     }
@@ -108,10 +104,7 @@ public sealed class ServiceGiangVien : IServiceGiangVien
     public async Task<ResponseGiangVienDto> ReStoreGiangVienAsync(Guid id)
     {
         var giangVien = await _repositoryMaster.GiangVien.GetGiangVienDeleteAsync(id, false);
-        if (giangVien is null)
-        {
-            throw new GiangVienNotFoundException(id);
-        }
+        if (giangVien is null) throw new GiangVienNotFoundException(id);
         giangVien.DeletedAt = null;
         await _repositoryMaster.ExecuteInTransactionAsync(async () =>
         {
@@ -125,14 +118,9 @@ public sealed class ServiceGiangVien : IServiceGiangVien
     public async Task UpdateAsync(Guid id, RequestUpdateGiangVienDto request)
     {
         if (id != request.Id)
-        {
             throw new GiangVienBadRequestException($"Id: {id} và Id: {request.Id} của giảng viên không giống nhau!");
-        }
         var giangVien = await _repositoryMaster.GiangVien.GetGiangVienByIdAsync(id, false);
-        if (giangVien is null)
-        {
-            throw new GiangVienNotFoundException(id);
-        }
+        if (giangVien is null) throw new GiangVienNotFoundException(id);
         var giangVienUpdate = _mapper.Map<GiangVien>(request);
         if (request.File != null && request.File.Length > 0)
         {
@@ -141,6 +129,7 @@ public sealed class ServiceGiangVien : IServiceGiangVien
             hinhDaiDien = $"{context!.Request.Scheme}://{context.Request.Host}/uploads/{hinhDaiDien}";
             giangVienUpdate.AnhDaiDien = hinhDaiDien;
         }
+
         giangVienUpdate.UpdatedAt = DateTime.Now;
         await _repositoryMaster.ExecuteInTransactionAsync(async () =>
         {
@@ -148,6 +137,5 @@ public sealed class ServiceGiangVien : IServiceGiangVien
             await Task.CompletedTask;
         });
         _loggerService.LogInfo("Cập nhật giảng viên thành công.");
-    
     }
 }

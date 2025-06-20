@@ -11,8 +11,9 @@ namespace Education_assistant.Modules.ModuleAuthenticate;
 [ApiController]
 public class AuthenticateController : ControllerBase
 {
-    private readonly IServiceMaster _serviceMaster;
     private readonly IServiceEmail _serviceEmail;
+    private readonly IServiceMaster _serviceMaster;
+
     public AuthenticateController(IServiceMaster serviceMaster, IServiceEmail serviceEmail)
     {
         _serviceMaster = serviceMaster;
@@ -21,7 +22,7 @@ public class AuthenticateController : ControllerBase
 
     [HttpPost("login")]
     [ServiceFilter(typeof(ValidationFilter))]
-    public async Task<IActionResult> Login([FromBody] RequestLoginDto loginDto)
+    public async Task<IActionResult> Login([FromForm] RequestLoginDto loginDto)
     {
         var result = await _serviceMaster.Authenticate.Login(loginDto);
         _serviceMaster.Authenticate.SetTokenCookie(result.accessToken, result.refreshToken, HttpContext);
@@ -29,13 +30,13 @@ public class AuthenticateController : ControllerBase
     }
 
     [HttpPost("refresh-token")]
-    public async Task<IActionResult> RefreshToken()
+    public async Task<IActionResult> RefreshToken([FromBody] RequestRefreshTokenDto requestRefreshTokenDto)
     {
-        var accessToken = HttpContext.Request.Cookies["access_token"];
-        var refreshToken = HttpContext.Request.Cookies["refresh_token"];
-        if (string.IsNullOrEmpty(accessToken) || string.IsNullOrEmpty(refreshToken))
+        Console.WriteLine($"9999999999 refreshToken {requestRefreshTokenDto.refreshToken}");
+        if (string.IsNullOrEmpty(requestRefreshTokenDto.refreshToken))
             return Unauthorized(new { message = "Invalid tokens." });
-        var result = await _serviceMaster.Authenticate.refresh(accessToken, refreshToken);
+        var result = await _serviceMaster.Authenticate.refresh(requestRefreshTokenDto.refreshToken);
+        Console.WriteLine($"9999999999 accessToken {result.accessToken}");
         _serviceMaster.Authenticate.SetTokenCookie(result.accessToken, result.refreshToken, HttpContext);
         return Ok(new ResponseRefreshToken(result.accessToken, result.refreshToken));
     }
@@ -48,33 +49,34 @@ public class AuthenticateController : ControllerBase
         await _serviceMaster.Authenticate.Logout(email, HttpContext);
         return Ok(new { message = "Logged out successfully." });
     }
+
     [HttpPost("forgot-password")]
     public async Task<IActionResult> ForgotPassword([FromBody] string email)
     {
-        if (email is null)
-        {
-            return BadRequest("Email không được bỏ trống!");
-        }
+        if (email is null) return BadRequest("Email không được bỏ trống!");
         await _serviceEmail.SendEmailForgotPassword(email);
         return Ok("Send email successfully");
     }
+
     [HttpGet("forgot-password-confirm")]
     public async Task<IActionResult> ForgotPasswordConfirm([FromQuery] ParamForgotPasswordDto request)
     {
         await _serviceMaster.Authenticate.ForgotPasswordConfirm(request);
         return Redirect($"http://localhost:3000/reset-password?email={request.Email}&token={request.Token}");
     }
+
     [HttpPost("reset-password")]
     public async Task<IActionResult> ResetPassword([FromBody] RequestForgotPasswordDto request)
     {
         await _serviceMaster.Authenticate.ResetPassword(request);
         return Ok("Thay đổi mật thành công");
     }
+
     [Authorize(Policy = "GiangVien")]
-    [HttpPost("me")]
+    [HttpGet("me")]
     public async Task<IActionResult> GetMeAsync()
     {
         var result = await _serviceMaster.Authenticate.GetMeAsync();
         return Ok(result);
     }
-} 
+}

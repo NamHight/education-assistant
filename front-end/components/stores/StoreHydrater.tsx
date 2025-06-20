@@ -1,14 +1,16 @@
 'use client';
+import authApi from '@/lib/authAxios';
 import { GiangVien } from '@/models/GiangVien';
+import { AuthenticateService } from '@/services/AuthenticateService';
 import { useAuthStore } from '@/stores/authStore';
 import { useAppStore } from '@/stores/store';
+import { API } from '@/types/general';
+import { usePrefetchQuery, useQuery, useQueryClient } from '@tanstack/react-query';
 import React, { useEffect } from 'react';
 
 interface StoreHydraterProps {
   auth: {
     user: GiangVien | null;
-    token: string | null;
-    refreshToken?: string | null;
   };
   setting: {
     theme: 'light' | 'dark';
@@ -16,20 +18,28 @@ interface StoreHydraterProps {
 }
 
 const StoreHydrater = ({ auth, setting }: StoreHydraterProps) => {
-  // useEffect(() => {
-  //   if (auth) {
-  //     useAuthStore.setState({
-  //       user: auth.user,
-  //       token: auth.token,
-  //       refreshToken: auth.refreshToken
-  //     });
-  //   }
-  //   if (setting) {
-  //     useAppStore.setState({
-  //       theme: setting.theme
-  //     });
-  //   }
-  // }, [auth, setting]);
+  const data = usePrefetchQuery({
+    queryKey: ['user'],
+    queryFn: async () => {
+      const response = await AuthenticateService.getMe();
+      return response;
+    },
+    initialData: auth,
+    gcTime: Infinity,
+    staleTime: Infinity
+  });
+  useEffect(() => {
+    if (auth) {
+      useAuthStore.setState({
+        user: auth.user
+      });
+    }
+    if (setting) {
+      useAppStore.setState({
+        theme: setting.theme
+      });
+    }
+  }, [auth, setting]);
   return null;
 };
 

@@ -14,6 +14,11 @@ public class RepositoryTaiKhoan : RepositoryBase<TaiKhoan>, IRepositoryTaiKhoan
     {
     }
 
+    public async Task<TaiKhoan?> GetTaiKhoanByRefreshTokenAsync(string refreshToken, bool trackChanges)
+    {
+        return await FindByCondition(tk => tk.ResetToken.Equals(refreshToken), trackChanges).FirstOrDefaultAsync();
+    }
+
     public async Task CreateAsync(TaiKhoan taiKhoan)
     {
         await Create(taiKhoan);
@@ -40,12 +45,13 @@ public class RepositoryTaiKhoan : RepositoryBase<TaiKhoan>, IRepositoryTaiKhoan
 
     public async Task<TaiKhoan?> GetTaiKhoanByEmailAsync(string email, bool trackChanges)
     {
-        return await FindByCondition(item => item.Email == email, trackChanges).FirstOrDefaultAsync();
+        return await FindByCondition(item => item.Email.Equals(email), trackChanges)
+            .FirstOrDefaultAsync();
     }
 
     public async Task<TaiKhoan?> GetTaiKhoanByIdAsync(Guid id, bool trackChanges)
     {
-        return await FindByCondition(item => item.Id == id, trackChanges).FirstOrDefaultAsync();
+        return await FindByCondition(item => item.Id.Equals(id), trackChanges).FirstOrDefaultAsync();
     }
 
     public void UpdateTaiKhoan(TaiKhoan taiKhoan)

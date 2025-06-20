@@ -1,7 +1,6 @@
 ﻿using System.Linq.Expressions;
 using Education_assistant.Context;
 using Education_assistant.Contracts.LoggerServices;
-using Education_assistant.Exceptions.ThrowError;
 using Education_assistant.Modules.ModuleAuthenticate.Repositories;
 using Education_assistant.Modules.ModuleBoMon.Repositories;
 using Education_assistant.Modules.ModuleChiTietChuongTrinhDaoTao.Repositories;
@@ -23,7 +22,6 @@ using Education_assistant.Modules.ModuleTuan.Repositories;
 using EFCore.BulkExtensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
-using NetTopologySuite.Index.HPRtree;
 
 namespace Education_assistant.Repositories.RepositoryMaster;
 
@@ -186,6 +184,7 @@ public class RepositoryMaster : IRepositoryMaster
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
+                Console.WriteLine($"Error transaction: {ex.Message}");
                 _loggerService.LogError($"Error transaction: {ex.Message}");
                 throw new Exception($"Lỗi hệ thống!: {ex.Message}");
             }
@@ -215,6 +214,7 @@ public class RepositoryMaster : IRepositoryMaster
         };
         await _repositoryContext.BulkInsertAsync(entities, bulkConfig);
     }
+
     public async Task BulkDeleteEntityAsync<T>(IList<Guid> ids) where T : class
     {
         var bulkConfig = new BulkConfig
@@ -231,12 +231,10 @@ public class RepositoryMaster : IRepositoryMaster
         var predicate = Expression.Lambda<Func<T, bool>>(contains, parameter);
 
         var entities = await _repositoryContext.Set<T>().Where(predicate).ToListAsync();
-        if (entities is null || entities.Count() == 0)
-        {
-            throw new Exception("Dữ liệu truyền vào không tìm thấy.");
-        }
+        if (entities is null || entities.Count() == 0) throw new Exception("Dữ liệu truyền vào không tìm thấy.");
         await _repositoryContext.BulkDeleteAsync(entities, bulkConfig);
     }
+
     public async Task ExecuteInTransactionBulkEntityAsync(Func<Task> operation)
     {
         var strategy = _repositoryContext.Database.CreateExecutionStrategy();
@@ -280,6 +278,4 @@ public class RepositoryMaster : IRepositoryMaster
         Dispose(false);
         GC.SuppressFinalize(this);
     }
-
-
 }
