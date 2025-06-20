@@ -11,7 +11,6 @@ namespace Education_assistant.Modules.ModuleLichBieu.Services
     public interface IServiceLichBieu
     {
         Task<(IEnumerable<ResponseLichBieuDto> data, PageInfo page)> GetAllLichBieuAsync(ParamLichBieuDto paramLichBieuDto);
-        Task<IEnumerable<ResponseLichKhoaBieuGiangVienDto>> GetLichKhoaBieuGiangVienAsync(ParamLichKhoaBieuGiangVienDto request);
         Task<ResponseLichBieuDto> GetLichBieuByIdAsync(Guid id, bool trackChanges);
         Task<ResponseLichBieuDto> CreateAsync(RequestAddLichBieuDto request);
         Task UpdateAsync(Guid id, RequestUpdateLichBieuDto request);

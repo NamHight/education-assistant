@@ -9,8 +9,7 @@ namespace Education_assistant.Modules.ModuleLopHocPhan.Services;
 
 public interface IServiceLopHocPhan
 {
-    Task<(IEnumerable<ResponseLopHocPhanDto> data, PageInfo page)> GetAllLopHocPhanAsync(ParamBaseDto paramBaseDto);
-    Task<IEnumerable<ResponseLopHocPhanWithMonHocDto>> GetAllLopHocPhanCtdtAsync(ParamAllCtdtMonHocDto paramDto);
+    Task<(IEnumerable<ResponseLopHocPhanDto> data, PageInfo page)> GetAllLopHocPhanAsync(ParamLopHocPhanDto paramLopHocPhanDto);
     Task<ResponseLopHocPhanDto> GetLopHocPhanByIdAsync(Guid id, bool trackChanges);
     Task<ResponseLopHocPhanDto> CreateAsync(RequestAddLopHocPhanDto request);
     Task UpdateAsync(Guid id, RequestUpdateLopHocPhanDto request);

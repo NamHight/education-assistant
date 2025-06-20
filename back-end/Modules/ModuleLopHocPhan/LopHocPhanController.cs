@@ -4,6 +4,7 @@ using Education_assistant.Modules.ModuleLopHocPhan.DTOs.Request;
 using Education_assistant.Services.BaseDtos;
 using Education_assistant.Services.ServiceMaster;
 using FashionShop_API.Filters;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,6 +12,7 @@ namespace Education_assistant.Modules.ModuleLopHocPhan
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Policy = "GiangVien")]
     public class LopHocPhanController : ControllerBase
     {
         private readonly IServiceMaster _serviceMaster;
@@ -20,17 +22,11 @@ namespace Education_assistant.Modules.ModuleLopHocPhan
             _serviceMaster = serviceMaster;
         }
         [HttpGet]
-        public async Task<ActionResult> GetAllLopHocPhanAsync([FromQuery] ParamBaseDto paramBaseDto)
+        public async Task<ActionResult> GetAllLopHocPhanAsync([FromQuery] ParamLopHocPhanDto paramLopHocPhanDto)
         {
-            var result = await _serviceMaster.LopHocPhan.GetAllLopHocPhanAsync(paramBaseDto);
+            var result = await _serviceMaster.LopHocPhan.GetAllLopHocPhanAsync(paramLopHocPhanDto);
             Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(result.page));
             return Ok(result.data);
-        }
-        [HttpGet("list-phan-cong")]
-        public async Task<ActionResult> GetAllLopHocPhanCtdtAsync([FromQuery] ParamAllCtdtMonHocDto paramBaseDto)
-        {
-            var result = await _serviceMaster.LopHocPhan.GetAllLopHocPhanCtdtAsync(paramBaseDto);
-            return Ok(result);
         }
         [HttpGet("{id}")]
         public async Task<ActionResult> GetLopHocPhanByIdAsync(Guid id)

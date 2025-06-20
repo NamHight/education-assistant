@@ -6,7 +6,8 @@ namespace Education_assistant.Modules.ModuleTuan.Repositories;
 
 public interface IRepositoryTuan
 {
-    Task<PagedListAsync<Tuan>> GetAllTuanAsync(int page, int limit, string search, string sortBy, string sortByOrder);
+    Task<PagedListAsync<Tuan>> GetAllTuanAsync(int page, int limit, string? search, string? sortBy, string? sortByOrder, int? namHoc);
+    Task<IEnumerable<Tuan>> GetTuanComboBoxAsync(int namHoc, int? tuanBatDau, Guid giangVienId);
     Task<Tuan?> GetTuanByIdAsync(Guid id, bool trackChanges);
     Task CreateAsync(Tuan tuan);
     void UpdateTuan(Tuan tuan);

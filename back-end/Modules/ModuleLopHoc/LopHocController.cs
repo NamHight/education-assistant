@@ -4,12 +4,14 @@ using Education_assistant.Modules.ModuleMonHoc.DTOs.Request;
 using Education_assistant.Services.BaseDtos;
 using Education_assistant.Services.ServiceMaster;
 using FashionShop_API.Filters;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Education_assistant.Modules.ModuleLopHoc
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Policy = "GiangVien")]
     public class LopHocController : ControllerBase
     {
         private readonly IServiceMaster _serviceMaster;

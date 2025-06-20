@@ -7,9 +7,10 @@ namespace Education_assistant.Modules.ModuleChiTietLopHocPhan.Repositories;
 
 public interface IRepositoryChiTietLopHocPhan
 {
-    Task<PagedListAsync<ChiTietLopHocPhan>> GetAllChiTietLopHocPhanAsync(int page, int limit, string search, string sortBy, string sortByOder);
-    Task<IEnumerable<ResponseDanhSachDiemSoByLopDto>> GetAllDiemSoByLopHocAsync(Guid lopHocPhanId, int hocKy, int loaiMonHoc, int namHoc, Guid chuongTrinhId);
+    Task<PagedListAsync<ChiTietLopHocPhan>> GetAllChiTietLopHocPhanAsync(int page, int limit, string search, string sortBy, string sortByOder, Guid? lopHocPhanId, int? hocKy, int? loaiMonHoc, int? namHoc, Guid? chuongTrinhId);
     Task<ChiTietLopHocPhan?> GetChiTietLopHocPhanByIdAsync(Guid id, bool trackChanges);
+    Task<ChiTietLopHocPhan?> GetByMaSinhVienAndLopHocPhanIdAsync(int maSinhVien, Guid lopHocPhanId);
+    Task<List<ResponseExportFileDiemSoDto>> GetAllDiemSoExportFileAsync(Guid lopHocPhanId);
     Task CreateAsync(ChiTietLopHocPhan chiTietLopHocPhan);
     void UpdateChiTietLopHocPhan(ChiTietLopHocPhan chiTietLopHocPhan);
     Task<int> UpdateCtlhpWithPhanCongAsync(Guid maLhp, Guid giangVienId, Guid monHocId);

@@ -13,7 +13,7 @@ namespace Education_assistant.Modules.ModuleBoMon
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Policy = "Admin")]
+    [Authorize(Policy = "GiangVien")]
     public class BoMonController : ControllerBase
     {
         private readonly IServiceMaster _serviceMaster;

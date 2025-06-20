@@ -29,10 +29,22 @@ public class RepositoryGiangVien : RepositoryBase<GiangVien>, IRepositoryGiangVi
         Delete(giangVien);
     }
 
-    public async Task<PagedListAsync<GiangVien>?> GetAllGiangVienAsync(int page, int limit, string search,
-        string sortBy, string sortByOrder)
+    public async Task<PagedListAsync<GiangVien>?> GetAllGiangVienAsync(int page, int limit, string? search, string? sortBy, string? sortByOrder, Guid? khoaId, Guid? boMonId)
     {
-        return await PagedListAsync<GiangVien>.ToPagedListAsync(_context.GiangViens!.Include(item => item.Khoa).Include(item => item.BoMon)
+        var query = _context.GiangViens!
+                    .AsNoTracking()
+                    .Include(gv => gv.Khoa)
+                    .Include(gv => gv.BoMon)
+                    .AsQueryable();
+        if (khoaId.HasValue && khoaId != Guid.Empty)
+        {
+            query = query.Where(item => item.KhoaId == khoaId);
+        }
+        if (boMonId.HasValue && boMonId != Guid.Empty)
+        {
+            query = query.Where(item => item.BoMonId == boMonId);
+        }
+        return await PagedListAsync<GiangVien>.ToPagedListAsync(query
             .SearchBy(search, item => item.HoTen!)
             .IgnoreQueryFilters()
             .OrderBy(item => item.DeletedAt != null)
