@@ -1,17 +1,17 @@
 import {REFRESH_TOKEN, TOKEN_ACCESS} from './../../types/general';
-import { User } from "@/models/GiangVien";
 import { createSlice } from '../utility';
 import cookieStorage from '@/lib/cookie';
 import { RootAuthState } from '../authStore';
+import { GiangVien } from '@/models/GiangVien';
 
 export interface IAuthState {
-  user: User | null;
+  user: GiangVien | null;
   token: string | null;
   refreshToken: string | null;
   actions?: {
-      login: (user:User, token: string,refreshToken: string) => void;
+      login: (user:GiangVien, token: string,refreshToken: string) => void;
       logout: () => void;
-      updateUser: (user:Partial<User>) => void;
+      updateUser: (user:Partial<GiangVien>) => void;
   }
 }
 
@@ -21,7 +21,7 @@ user: null,
 token: null,
 refreshToken: null,
 actions: {
-  login: (user: User,token: string,refreshToken: string) => set((state:IAuthState) => {
+  login: (user: GiangVien, token: string,refreshToken: string) => set((state:IAuthState) => {
   state.user = user;
   state.token = token;
   state.refreshToken = refreshToken;

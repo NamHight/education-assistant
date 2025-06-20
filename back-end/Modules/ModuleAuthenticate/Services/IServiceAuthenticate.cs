@@ -10,7 +10,7 @@ public interface IServiceAuthenticate
         RequestLoginDto requestLoginDto);
 
     void SetTokenCookie(string accessToken, string refreshToken, HttpContext httpContext);
-    Task<(string accessToken, string refreshToken)> refresh(string accessToken, string refreshToken);
+    Task<(string accessToken, string refreshToken)> refresh(string refreshToken);
 
     Task Logout(string email, HttpContext httpContext);
     Task ForgotPasswordConfirm(ParamForgotPasswordDto request);

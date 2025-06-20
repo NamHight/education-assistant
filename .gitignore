@@ -112,3 +112,4 @@ next-env.d.ts
 front-end/.next/package.json
 front-end/package-lock.json
 front-end/
+back-end/Education-assistant.csproj

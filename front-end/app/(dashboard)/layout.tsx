@@ -1,5 +1,6 @@
 import React from 'react';
 import { DashboardLayout, PageContainer } from '@toolpad/core';
+import LayoutContainer from '@/components/layouts/LayoutContainer';
 
 interface LayoutProps {
   children?: React.ReactNode;
@@ -15,7 +16,7 @@ const Layout = ({ children }: LayoutProps) => {
         }
       }}
     >
-      <PageContainer>{children}</PageContainer>
+      <LayoutContainer>{children}</LayoutContainer>
     </DashboardLayout>
   );
 };

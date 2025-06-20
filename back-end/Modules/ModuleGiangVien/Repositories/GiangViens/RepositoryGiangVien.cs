@@ -69,7 +69,7 @@ public class RepositoryGiangVien : RepositoryBase<GiangVien>, IRepositoryGiangVi
 
     public async Task<GiangVien?> GetGiangVienByIdAsync(Guid? id, bool trackChanges)
     {
-        return await FindByCondition(item => item.Id == id, trackChanges).FirstOrDefaultAsync();
+        return await FindByCondition(item => item.Id == id, trackChanges).Include(gv => gv.TaiKhoan).FirstOrDefaultAsync();
     }
 
     public async Task<GiangVien?> GetGiangVienDeleteAsync(Guid id, bool trackChanges)

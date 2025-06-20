@@ -31,6 +31,7 @@ public sealed class ServiceGiangVien : IServiceGiangVien
         _httpContextAccessor = httpContextAccessor;
         _serviceFIle = serviceFIle;
     }
+
     public async Task<ResponseGiangVienDto> CreateAsync(RequestAddGiangVienDto request)
     {
         var newGiangVien = _mapper.Map<GiangVien>(request);
@@ -41,14 +42,15 @@ public sealed class ServiceGiangVien : IServiceGiangVien
             hinhDaiDien = $"{context!.Request.Scheme}://{context.Request.Host}/uploads/{hinhDaiDien}";
             newGiangVien.AnhDaiDien = hinhDaiDien;
         }
+
         await _repositoryMaster.ExecuteInTransactionAsync(async () =>
         {
             var newTaiKhoan = new TaiKhoan
             {
                 Email = newGiangVien.Email,
-                Password = _passwordHash.Hash("Admin@123"),
+                Password = _passwordHash.Hash(newGiangVien.CCCD),
                 Status = true,
-                LoaiTaiKhoan = request.LoaiTaiKhoan,
+                LoaiTaiKhoan = request.LoaiTaiKhoan
             };
             await _repositoryMaster.TaiKhoan.CreateAsync(newTaiKhoan);
 
@@ -63,15 +65,9 @@ public sealed class ServiceGiangVien : IServiceGiangVien
 
     public async Task DeleteAsync(Guid id)
     {
-        if (id == Guid.Empty)
-        {
-            throw new GiangVienBadRequestException($"Khoa với {id} không được bỏ trống!");
-        }
+        if (id == Guid.Empty) throw new GiangVienBadRequestException($"Khoa với {id} không được bỏ trống!");
         var giangVien = await _repositoryMaster.GiangVien.GetGiangVienByIdAsync(id, false);
-        if (giangVien is null)
-        {
-            throw new GiangVienNotFoundException(id);
-        }
+        if (giangVien is null) throw new GiangVienNotFoundException(id);
         giangVien.DeletedAt = DateTime.Now;
         await _repositoryMaster.ExecuteInTransactionAsync(async () =>
         {
@@ -98,10 +94,7 @@ public sealed class ServiceGiangVien : IServiceGiangVien
     public async Task<ResponseGiangVienDto> GetGiangVienByIdAsync(Guid id, bool trackChanges)
     {
         var giangVien = await _repositoryMaster.GiangVien.GetGiangVienByIdAsync(id, false);
-        if (giangVien is null)
-        {
-            throw new GiangVienNotFoundException(id);
-        }
+        if (giangVien is null) throw new GiangVienNotFoundException(id);
         var giangVienDto = _mapper.Map<ResponseGiangVienDto>(giangVien);
         return giangVienDto;
     }
@@ -109,10 +102,7 @@ public sealed class ServiceGiangVien : IServiceGiangVien
     public async Task<ResponseGiangVienDto> ReStoreGiangVienAsync(Guid id)
     {
         var giangVien = await _repositoryMaster.GiangVien.GetGiangVienDeleteAsync(id, false);
-        if (giangVien is null)
-        {
-            throw new GiangVienNotFoundException(id);
-        }
+        if (giangVien is null) throw new GiangVienNotFoundException(id);
         giangVien.DeletedAt = null;
         await _repositoryMaster.ExecuteInTransactionAsync(async () =>
         {
@@ -126,14 +116,9 @@ public sealed class ServiceGiangVien : IServiceGiangVien
     public async Task UpdateAsync(Guid id, RequestUpdateGiangVienDto request)
     {
         if (id != request.Id)
-        {
             throw new GiangVienBadRequestException($"Id: {id} và Id: {request.Id} của giảng viên không giống nhau!");
-        }
         var giangVien = await _repositoryMaster.GiangVien.GetGiangVienByIdAsync(id, false);
-        if (giangVien is null)
-        {
-            throw new GiangVienNotFoundException(id);
-        }
+        if (giangVien is null) throw new GiangVienNotFoundException(id);
         var giangVienUpdate = _mapper.Map<GiangVien>(request);
         if (request.File != null && request.File.Length > 0)
         {
@@ -142,6 +127,7 @@ public sealed class ServiceGiangVien : IServiceGiangVien
             hinhDaiDien = $"{context!.Request.Scheme}://{context.Request.Host}/uploads/{hinhDaiDien}";
             giangVienUpdate.AnhDaiDien = hinhDaiDien;
         }
+
         giangVienUpdate.UpdatedAt = DateTime.Now;
         await _repositoryMaster.ExecuteInTransactionAsync(async () =>
         {

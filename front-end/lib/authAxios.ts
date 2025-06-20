@@ -1,29 +1,16 @@
 import axios from 'axios';
-import { cookies } from 'next/headers';
 import cookieStorage from './cookie';
 import { API, REFRESH_TOKEN, TOKEN_ACCESS } from '@/types/general';
 import axiosAuthRefresh from 'axios-auth-refresh'
 const authApi = axios.create({
-    baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api',
-    headers: {
-        'Content-Type': 'application/json',
-    }
+    baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api',
+    withCredentials: true 
 })
 const getAccessToken = async () => {
-    const cookie = await cookies();
-    if(typeof window === 'undefined') {
-        return await cookie.get(TOKEN_ACCESS)?.value || null;
-    }else{
-        return cookieStorage.get(TOKEN_ACCESS);
-    }
+    return cookieStorage.get(TOKEN_ACCESS);
 }
 const getRefreshToken = async () => {
-    const cookie = await cookies();
-    if(typeof window === 'undefined') {
-        return await cookie.get(REFRESH_TOKEN)?.value || null;
-    }else{
-        return cookieStorage.get(REFRESH_TOKEN);
-    }
+    return cookieStorage.get(REFRESH_TOKEN);
 }
 authApi.interceptors.request.use(async (config) => {
     const token = await getAccessToken();
@@ -32,33 +19,30 @@ authApi.interceptors.request.use(async (config) => {
     }
     return config;
 })
-const handleRefreshToken = async (error: any) => {
+const refreshAuthLogic = async (failedRequest: any) => {
     const refreshToken = await getRefreshToken();
-    const coookie = await cookies();
-    if(!refreshToken){
-        return Promise.reject(new Error("Không có làm mới token"));
+    if (!refreshToken) {
+        window.location.href = '/dang-nhap';
+        return Promise.reject(failedRequest);
     }
     try {
-        const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}${API.AUTH.REFRESH_TOKEN}`, {
-            refreshToken: refreshToken
-        })
-        const {token} = response.data;
-        error.response.config.headers.Authorization = `Bearer ${token}`;
+        const response = await axios.post(
+            `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api'}/auth/refresh/`,
+            { refresh: refreshToken },
+            { withCredentials: true }
+        );
+        console.log("Token refreshed successfully:", response?.data);
+        const newAccessToken = response.data.token;
+        cookieStorage.set(TOKEN_ACCESS, newAccessToken);
+        failedRequest.response.config.headers['Authorization'] = 'Bearer ' + newAccessToken;
         return Promise.resolve();
     } catch (error) {
-        if(typeof window === 'undefined') {
-            coookie.delete(TOKEN_ACCESS);
-            coookie.delete(REFRESH_TOKEN);
-        }else{
-            cookieStorage.remove(TOKEN_ACCESS);
-            cookieStorage.remove(REFRESH_TOKEN);
-        }
+        cookieStorage.remove(TOKEN_ACCESS);
+        cookieStorage.remove(REFRESH_TOKEN);
+        window.location.href = '/dang-nhap';
+        return Promise.reject(error);
     }
-}
+};
 
-axiosAuthRefresh(authApi, handleRefreshToken,{
-    statusCodes: [401, 403],
-    skipWhileRefreshing: true
-});
-
+axiosAuthRefresh(authApi, refreshAuthLogic);
 export default authApi;

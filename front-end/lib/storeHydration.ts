@@ -1,32 +1,35 @@
-import { User } from "@/models/GiangVien"
+import { GiangVien } from "@/models/GiangVien"
+import authApiServer from "./authAxiosServer";
+import { API } from "@/types/general";
 
 export interface IStoreHydration {
     auth: {
-        user: User| null;
-        token: string | null;
-        refreshToken?: string | null;
+        user: GiangVien | null;
     },
     setting: {
         theme: 'light' | 'dark';
     }
 }
 export const storeHydration = async (): Promise<IStoreHydration> => {
-    const userServer = {
-        id: 'server-id',
-        name: 'Server User',
-        email: 'hahaha@gmail.com',
-        avatar: 'https://example.com/avatar.jpg',
-        role: 'admin'
-    }
+   try {
+    const response: GiangVien = await authApiServer.get(`${API.AUTH.USER}`);
+    const userServer = (response as any)?.data; 
     return {
         auth: {
             user: userServer,
-            token: 'server-token',
-            refreshToken: 'server-refresh-token'
         },
         setting:{
             theme: 'light'
         }
     }
-
+   } catch (error) {
+    return {
+        auth: {
+            user: null,
+        },
+        setting:{
+            theme: 'light'
+        }
+    }
+   }
 }
