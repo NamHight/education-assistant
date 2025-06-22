@@ -20,14 +20,31 @@ export const API = {
     GIANG_VIEN: {
         GET_ALL: "/giangviens",
         GET_ONE: "/giangviens/:id",
+        RESTORE: "/giangviens/:id/restore",
     },  
     KHOA: {
         GET_ALL: "/khoa"
     },
-    BOMON: {
+    BO_MON: {
         GET_ALL: "/BoMon",
         GET_BY_ID: "/BoMon/:id"
     },
+    LOP_HOC_PHAN:{
+        GET_ALL: "/LopHocPhan",
+        GET_BY_ID: "/LopHocPhan/:id",
+    },
+    MON_HOC: {
+        GET_ALL: "/MonHoc",
+        GET_BY_ID: "/MonHoc/:id",
+    },
+    LOP_HOC: {
+        GET_ALL: "/LopHoc",
+        GET_BY_ID: "/LopHoc/:id",
+    },
+    CHUONG_TRINH_DAO_TAO:{
+        GET_ALL: "/ChuongTrinhDaoTao",
+        GET_BY_ID: "/ChuongTrinhDaoTao/:id",
+    }
     
 }
 
@@ -38,7 +55,12 @@ export const APP_ROUTE = {
         ROOT: "/giang-vien",
         ADD: "/giang-vien/them-moi",
         EDIT: (id: string) => `/giang-vien/thay-doi/${id}`,
-    }
+    },
+    LOP_HOC_PHAN: {
+        ROOT: "/lop-hoc-phan",
+        ADD: "/lop-hoc-phan/them-moi",
+        EDIT: (id: string) => `/lop-hoc-phan/thay-doi/${id}`,
+    },
 }
 
 export const breadcrumbTranslations: { [key: string]: string } = {

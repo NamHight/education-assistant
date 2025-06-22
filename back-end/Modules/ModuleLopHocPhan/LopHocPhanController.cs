@@ -36,14 +36,14 @@ namespace Education_assistant.Modules.ModuleLopHocPhan
         }
         [HttpPost]
         [ServiceFilter(typeof(ValidationFilter))]
-        public async Task<ActionResult> AddLopHocPhanAsync([FromBody] RequestAddLopHocPhanDto model)
+        public async Task<ActionResult> AddLopHocPhanAsync([FromForm] RequestAddLopHocPhanDto model)
         {
             var result = await _serviceMaster.LopHocPhan.CreateAsync(model);
             return Ok(result);
         }
         [HttpPut("{id}")]
         [ServiceFilter(typeof(ValidationFilter))]
-        public async Task<ActionResult> UpdateLopHocPhanAsync(Guid id, [FromBody] RequestUpdateLopHocPhanDto model)
+        public async Task<ActionResult> UpdateLopHocPhanAsync(Guid id, [FromForm] RequestUpdateLopHocPhanDto model)
         {
             await _serviceMaster.LopHocPhan.UpdateAsync(id, model);
             return NoContent();

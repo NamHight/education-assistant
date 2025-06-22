@@ -21,6 +21,7 @@ public class ResponseGiangVienDto
     public int? TrangThai { get; set; }
     public KhoaSimpleDto? Khoa { get; set; }
     public Guid? BoMonId { get; set; }
+    public Guid? KhoaId { get; set; }
     public BoMonSimpleDto? BoMon { get; set; }
     public TaiKhoanSimpleDto? TaiKhoan { get; set; }
     public DateTime? CreatedAt { get; set; }

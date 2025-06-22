@@ -1,16 +1,14 @@
-using System;
-
 namespace Education_assistant.Modules.ModuleLopHocPhan.DTOs.Param;
 
 public class ParamLopHocPhanDto
 {
-    public int Page { get; set; } = 1;
-    public int Limit { get; set; } = 10;
-    public string Search { get; set; } = string.Empty;
-    public string SortBy { get; set; } = string.Empty;
-    public string SortByOrder { get; set; } = string.Empty;
-    public int Khoa { get; set; }
-    public int LoaiChuongTrinh { get; set; }
-    public Guid ChuongTrinhId { get; set; }
-    public int HocKy { get; set; }
+    public int page { get; set; } = 1;
+    public int limit { get; set; } = 10;
+    public string search { get; set; } = string.Empty;
+    public string sortBy { get; set; } = string.Empty;
+    public string sortByOrder { get; set; } = string.Empty;
+    public int khoa { get; set; }
+    public int loaiChuongTrinh { get; set; }
+    public Guid chuongTrinhId { get; set; }
+    public int hocKy { get; set; }
 }

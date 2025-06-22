@@ -75,13 +75,12 @@ public class RepositoryLopHocPhan : RepositoryBase<LopHocPhan>, IRepositoryLopHo
             {
                 ["siso"] = item => item.SiSo,
                 ["createdat"] = item => item.CreatedAt,
-                ["updatedat"] = item => item.UpdatedAt!
             }), page, limit);
     }
 
     public async Task<LopHocPhan?> GetLopHocPhanByIdAsync(Guid id, bool trackChanges)
     {
-        return await FindByCondition(item => item.Id == id, trackChanges).FirstOrDefaultAsync();
+        return await FindByCondition(item => item.Id == id, trackChanges).Include(lhp => lhp.MonHoc).Include(lhp => lhp.GiangVien).FirstOrDefaultAsync();
     }
 
     public void UpdateLopHocPhan(LopHocPhan lopHocPhan)

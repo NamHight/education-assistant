@@ -1,5 +1,3 @@
-using System;
-
 namespace Education_assistant.Modules.ModuleGiangVien.Dtos.Param;
 
 public class ParamGiangVienDto
@@ -11,4 +9,6 @@ public class ParamGiangVienDto
     public string sortByOrder { get; set; } = string.Empty;
     public Guid? KhoaId { get; set; }
     public Guid? BoMonId { get; set; }
+
+    public bool? active { get; set; }
 }

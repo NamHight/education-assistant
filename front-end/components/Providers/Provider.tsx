@@ -36,7 +36,15 @@ const Provider = ({ children }: ProviderProps) => {
   return (
     <QueryClientProvider client={queryClient}>
       <LocalizationProvider dateAdapter={AdapterMoment} adapterLocale='vi'>
-        <NotificationsProvider>{children}</NotificationsProvider>
+        <NotificationsProvider
+          slotProps={{
+            snackbar: {
+              anchorOrigin: { vertical: 'top', horizontal: 'right' }
+            }
+          }}
+        >
+          {children}
+        </NotificationsProvider>
       </LocalizationProvider>
       <ReactQueryDevtools />
     </QueryClientProvider>

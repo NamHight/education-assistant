@@ -1,6 +1,6 @@
 import type {NextRequest} from "next/server";
 import {NextResponse} from "next/server";
-import { APP_ROUTE, TOKEN_ACCESS } from "./types/general";
+import { APP_ROUTE, REFRESH_TOKEN, TOKEN_ACCESS } from "./types/general";
 import { cookies } from "next/headers";
 
 const routeBlock = [
@@ -15,11 +15,11 @@ const routeHaveToken = [
 export async function middleware(req: NextRequest) {
   const { pathname, searchParams } = req.nextUrl;
   const cookie = await cookies();
-  const token = cookie.get(TOKEN_ACCESS)?.value;
-  // if (routeBlock.includes(pathname) && !token) {
+  const refresh_token = cookie.get(REFRESH_TOKEN)?.value;
+  // if (routeBlock.includes(pathname) && !refresh_token) {
   //   return NextResponse.redirect(new URL(APP_ROUTE.DANG_NHAP, req.url));
   // }
-  // if(routeHaveToken.includes(pathname) && token){
+  // if(routeHaveToken.includes(pathname) && refresh_token){
   //   return NextResponse.redirect(new URL(APP_ROUTE.DASHBOARD, req.url));
   // }
   return NextResponse.next();

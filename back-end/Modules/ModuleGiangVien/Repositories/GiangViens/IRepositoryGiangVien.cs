@@ -5,7 +5,7 @@ namespace Education_assistant.Modules.ModuleGiangVien.Repositories.GiangViens;
 
 public interface IRepositoryGiangVien
 {
-    Task<PagedListAsync<GiangVien>?> GetAllGiangVienAsync(int page, int limit, string? search, string? sortBy, string? sortByOrder, Guid? khoaId, Guid? boMonId);
+    Task<PagedListAsync<GiangVien>?> GetAllGiangVienAsync(int page, int limit, string? search, string? sortBy, string? sortByOrder, Guid? khoaId, Guid? boMonId,bool? active);
     Task<IEnumerable<GiangVien>?> GetAllGiangVienByKhoa(Guid khoaId); 
     Task<GiangVien?> GetGiangVienByIdAsync(Guid? id, bool trackChanges);
     Task<GiangVien?> GetGiangVienByEmailAsync(string email, bool trackChanges);
