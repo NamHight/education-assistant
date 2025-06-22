@@ -37,21 +37,21 @@ namespace Education_assistant.Modules.ModuleLichBieu
 
         [HttpPost]
         [ServiceFilter(typeof(ValidationFilter))]
-        public async Task<ActionResult> AddLichBieuAsync([FromBody] RequestAddLichBieuDto model)
+        public async Task<ActionResult> AddLichBieuAsync([FromForm] RequestAddLichBieuDto model)
         {
             var result = await _serviceMaster.LichBieu.CreateAsync(model);
             return Ok(result);
         }
         [HttpPost("copy")]
         [ServiceFilter(typeof(ValidationFilter))]
-        public async Task<ActionResult> AddListLichBieuWithTuanAsync([FromBody] RequestAddLichBieuListTuanDto model)
+        public async Task<ActionResult> AddListLichBieuWithTuanAsync([FromForm] RequestAddLichBieuListTuanDto model)
         {
             await _serviceMaster.LichBieu.CopyTuanLichBieuAsync(model);
             return Ok("Sao chép tuần thành công.");
         }
         [HttpPut("{id}")]
         [ServiceFilter(typeof(ValidationFilter))]
-        public async Task<ActionResult> UpdateLichBieuAsync(Guid id, [FromBody] RequestUpdateLichBieuDto model)
+        public async Task<ActionResult> UpdateLichBieuAsync(Guid id, [FromForm] RequestUpdateLichBieuDto model)
         {
             await _serviceMaster.LichBieu.UpdateAsync(id, model);
             return NoContent();

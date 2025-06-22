@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Education_assistant.Modules.ModuleNganh.DTOs.Param;
 using Education_assistant.Modules.ModuleNganh.DTOs.Request;
 using Education_assistant.Services.BaseDtos;
 using Education_assistant.Services.ServiceMaster;
@@ -21,9 +22,9 @@ namespace Education_assistant.Modules.ModuleNganh
             _serviceMaster = serviceMaster;
         }
         [HttpGet]
-        public async Task<ActionResult> GetAllNganhAsync([FromQuery] ParamBaseDto paramBaseDto)
+        public async Task<ActionResult> GetAllNganhAsync([FromQuery] ParamNganhDto paramNganhDto)
         {
-            var result = await _serviceMaster.Nganh.GetAllNganhAsync(paramBaseDto);
+            var result = await _serviceMaster.Nganh.GetAllNganhAsync(paramNganhDto);
             Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(result.page));
             return Ok(result.data);
         }
@@ -35,14 +36,14 @@ namespace Education_assistant.Modules.ModuleNganh
         }
         [HttpPost("")]
         [ServiceFilter(typeof(ValidationFilter))]
-        public async Task<ActionResult> AddNganhAsync([FromBody] RequestAddNganhDto model)
+        public async Task<ActionResult> AddNganhAsync([FromForm] RequestAddNganhDto model)
         {
             var result = await _serviceMaster.Nganh.CreateAsync(model);
             return Ok(result);
         }
         [HttpPut("{id}")]
         [ServiceFilter(typeof(ValidationFilter))]
-        public async Task<ActionResult> UpdateNganhAsync(Guid id, [FromBody] RequestUpdateNganhDto model)
+        public async Task<ActionResult> UpdateNganhAsync(Guid id, [FromForm] RequestUpdateNganhDto model)
         {
             await _serviceMaster.Nganh.UpdateAsync(id, model);
             return NoContent();

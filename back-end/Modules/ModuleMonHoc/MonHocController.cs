@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Education_assistant.Modules.ModuleMonHoc.DTOs.Param;
 using Education_assistant.Modules.ModuleMonHoc.DTOs.Request;
 using Education_assistant.Services.BaseDtos;
 using Education_assistant.Services.ServiceMaster;
@@ -22,9 +23,9 @@ namespace Education_assistant.Modules.ModuleMonHoc
             _serviceMaster = serviceMaster;
         }
         [HttpGet]
-        public async Task<ActionResult> GetAllMonHocAsync([FromQuery] ParamBaseDto paramBaseDto)
+        public async Task<ActionResult> GetAllMonHocAsync([FromQuery] ParamMonHocDto paramMonHocDto)
         {
-            var result = await _serviceMaster.MonHoc.GetAllPaginationAndSearchAsync(paramBaseDto);
+            var result = await _serviceMaster.MonHoc.GetAllPaginationAndSearchAsync(paramMonHocDto);
             Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(result.page));
             return Ok(result.data);
         }
@@ -36,14 +37,14 @@ namespace Education_assistant.Modules.ModuleMonHoc
         }
         [HttpPost("")]
         [ServiceFilter(typeof(ValidationFilter))]
-        public async Task<ActionResult> AddMonHocAsync([FromBody] RequestAddMonHocDto model)
+        public async Task<ActionResult> AddMonHocAsync([FromForm] RequestAddMonHocDto model)
         {
             var result = await _serviceMaster.MonHoc.CreateAsync(model);
             return Ok(result);
         }
         [HttpPut("{id}")]
         [ServiceFilter(typeof(ValidationFilter))]
-        public async Task<ActionResult> UpdateMonHocAsync(Guid id, [FromBody] RequestUpdateMonHocDto model)
+        public async Task<ActionResult> UpdateMonHocAsync(Guid id, [FromForm] RequestUpdateMonHocDto model)
         {
             await _serviceMaster.MonHoc.UpdateAsync(id, model);
             return NoContent();

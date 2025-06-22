@@ -44,14 +44,17 @@ public class RepositoryLopHocPhan : RepositoryBase<LopHocPhan>, IRepositoryLopHo
         Delete(lopHocPhan);
     }
 
-    public async Task<PagedListAsync<LopHocPhan>?> GetAllLopHocPhanAsync(int page, int limit, string? search, string? sortBy, string? sortByOder, int? khoa, int? loaiChuongTrinh, Guid? chuongTrinhId, int? hocKy)
+    public async Task<PagedListAsync<LopHocPhan>?> GetAllLopHocPhanAsync(int page, int limit, string? search, string? sortBy, string? sortByOder, int? khoa, int? loaiChuongTrinh, Guid? chuongTrinhId, int? hocKy, int? trangThai)
     {
         var query = _context.LopHocPhans!
                     .AsNoTracking()
                     .Include(lhp => lhp.GiangVien)
                     .Include(lhp => lhp.MonHoc)
                     .AsQueryable();
-        System.Console.WriteLine($"Test dữ liệu :khoa {khoa} loaiChuongTrinh: {loaiChuongTrinh} chuongTrinhId : {chuongTrinhId} hocKy : {hocKy}");
+        if (trangThai.HasValue && trangThai != 0)
+        {
+            query = query.Where(item => item.TrangThai == trangThai);
+        }
         if (khoa.HasValue && khoa != 0)
         {
             query = query.Where(lhp => lhp.MonHoc!.DanhSachChiTietChuongTrinhDaoTao!

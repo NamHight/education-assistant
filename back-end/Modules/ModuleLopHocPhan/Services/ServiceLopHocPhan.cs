@@ -8,6 +8,8 @@ using Education_assistant.Modules.ModuleLopHocPhan.DTOs.Request;
 using Education_assistant.Modules.ModuleLopHocPhan.DTOs.Response;
 using Education_assistant.Repositories.Paginations;
 using Education_assistant.Repositories.RepositoryMaster;
+using Education_assistant.Services.BaseDtos;
+using Microsoft.EntityFrameworkCore;
 
 namespace Education_assistant.Modules.ModuleLopHocPhan.Services;
 
@@ -26,48 +28,75 @@ public class ServiceLopHocPhan : IServiceLopHocPhan
 
     public async Task<ResponseLopHocPhanDto> CreateAsync(RequestAddLopHocPhanDto request)
     {
-        var ctctdt =
-            await _repositoryMaster.ChiTietChuongTrinhDaoTao.GetCtctdtByCtctAndMonHocAsync(request.ChuongTrinhDaoTaoId,
-                request.MonHocId);
-        if (ctctdt is null)
-            throw new ChiTietChuongTrinhDaoTaoBadRequestException("Môn học chưa được thêm chương trình đào tạo");
-        var newLopHocPhan = _mapper.Map<LopHocPhan>(request);
-        await _repositoryMaster.ExecuteInTransactionAsync(async () =>
+        try
         {
-            await _repositoryMaster.LopHocPhan.CreateAsync(newLopHocPhan);
-        });
-        await _repositoryMaster.ExecuteInTransactionAsync(async () =>
+            var ctctdt = await _repositoryMaster.ChiTietChuongTrinhDaoTao.GetCtctdtByCtctAndMonHocAsync(request.ChuongTrinhDaoTaoId, request.MonHocId);
+            if (ctctdt is null)
+            {
+                throw new ChiTietChuongTrinhDaoTaoBadRequestException("Môn học chưa được thêm chương trình đào tạo");
+            }
+            var newLopHocPhan = _mapper.Map<LopHocPhan>(request);
+            await _repositoryMaster.ExecuteInTransactionAsync(async () =>
+            {
+                await _repositoryMaster.LopHocPhan.CreateAsync(newLopHocPhan);
+            });
+            await _repositoryMaster.ExecuteInTransactionAsync(async () =>
+            {
+                await _repositoryMaster.LopHocPhan.CreateSinhVienLopHocPhanHocBa(request.LopHocId, newLopHocPhan.Id, newLopHocPhan.GiangVienId, newLopHocPhan.MonHocId, ctctdt!.Id, request.HocKy);
+            });
+            _loggerService.LogInfo("Thêm thông tin lớp học phần thành công.");
+            var lopHocPhanDto = _mapper.Map<ResponseLopHocPhanDto>(newLopHocPhan);
+            return lopHocPhanDto;
+        }catch (DbUpdateException ex)
         {
-            await _repositoryMaster.LopHocPhan.CreateSinhVienLopHocPhanHocBa(request.LopHocId, newLopHocPhan.Id,
-                newLopHocPhan.GiangVienId, newLopHocPhan.MonHocId, ctctdt!.Id, request.HocKy);
-        });
-        _loggerService.LogInfo("Thêm thông tin lớp học phần thành công.");
-        var lopHocPhanDto = _mapper.Map<ResponseLopHocPhanDto>(newLopHocPhan);
-        return lopHocPhanDto;
+            throw new Exception($"Lỗi hệ thống!: {ex.Message}");   
+        }
     }
 
     public async Task DeleteAsync(Guid id)
     {
-        if (id == Guid.Empty)
-            throw new LopHocPhanBadRequestException($"Lớp học phần với id: {id} không được bỏ trống!");
-        var lopHocPhan = await _repositoryMaster.LopHocPhan.GetLopHocPhanByIdAsync(id, false);
-        if (lopHocPhan is null) throw new LopHocPhanNotFoundException(id);
-        await _repositoryMaster.ExecuteInTransactionAsync(async () =>
+        try
         {
-            _repositoryMaster.LopHocPhan.DeleteLopHocPhan(lopHocPhan);
-            await Task.CompletedTask;
-        });
-        _loggerService.LogInfo("Xóa lớp học phần thành công.");
+            if (id == Guid.Empty)
+            {
+                throw new LopHocPhanBadRequestException($"Lớp học phần với id: {id} không được bỏ trống!");
+            }
+            var lopHocPhan = await _repositoryMaster.LopHocPhan.GetLopHocPhanByIdAsync(id, false);
+            if (lopHocPhan is null) throw new LopHocPhanNotFoundException(id);
+            await _repositoryMaster.ExecuteInTransactionAsync(async () =>
+            {
+                _repositoryMaster.LopHocPhan.DeleteLopHocPhan(lopHocPhan);
+                await Task.CompletedTask;
+            });
+            _loggerService.LogInfo("Xóa lớp học phần thành công.");
+        }
+        catch (DbUpdateException ex)
+        {
+            var inner = ex.InnerException?.Message?.ToLower();
+            if (ex.InnerException != null && (inner!.Contains("foreign key") ||
+                        inner.Contains("reference constraint") ||
+                        inner.Contains("violates foreign key constraint") ||
+                        inner.Contains("cannot delete or update a parent row")))
+            {
+                throw new LopHocPhanBadRequestException("Không thể xóa lớp học phần vì có ràng buộc khóa ngoại!.");
+            }
+            throw new Exception($"Lỗi hệ thống!: {ex.Message}");
+        }
     }
 
 
-    public async Task<(IEnumerable<ResponseLopHocPhanDto> data, PageInfo page)> GetAllLopHocPhanAsync(
-        ParamLopHocPhanDto paramLopHocPhanDto)
+    public async Task<(IEnumerable<ResponseLopHocPhanDto> data, PageInfo page)> GetAllLopHocPhanAsync(ParamLopHocPhanDto paramLopHocPhanDto)
     {
         var lopHocPhans = await _repositoryMaster.LopHocPhan.GetAllLopHocPhanAsync(paramLopHocPhanDto.page,
-            paramLopHocPhanDto.limit, paramLopHocPhanDto.search, paramLopHocPhanDto.sortBy,
-            paramLopHocPhanDto.sortByOrder, paramLopHocPhanDto.khoa, paramLopHocPhanDto.loaiChuongTrinh,
-            paramLopHocPhanDto.chuongTrinhId, paramLopHocPhanDto.hocKy);
+                                                                                paramLopHocPhanDto.limit,
+                                                                                paramLopHocPhanDto.search,
+                                                                                paramLopHocPhanDto.sortBy,
+                                                                                paramLopHocPhanDto.sortByOrder,
+                                                                                paramLopHocPhanDto.khoa,
+                                                                                paramLopHocPhanDto.loaiChuongTrinh,
+                                                                                paramLopHocPhanDto.chuongTrinhId,
+                                                                                paramLopHocPhanDto.hocKy,
+                                                                                paramLopHocPhanDto.trangThai);
         var lopHocPhanDtos = _mapper.Map<IEnumerable<ResponseLopHocPhanDto>>(lopHocPhans);
         return (data: lopHocPhanDtos, page: lopHocPhans!.PageInfo);
     }
@@ -82,18 +111,24 @@ public class ServiceLopHocPhan : IServiceLopHocPhan
 
     public async Task UpdateAsync(Guid id, RequestUpdateLopHocPhanDto request)
     {
-        if (id != request.Id)
-            throw new LopHocPhanBadRequestException($"Id: {id} và Lớp học phần id: {request.Id} không giống nhau!");
-        var lopHocPhan = await _repositoryMaster.LopHocPhan.GetLopHocPhanByIdAsync(id, false);
-        if (lopHocPhan is null) throw new LopHocPhanNotFoundException(id);
-        var lopHocPhanUpdate = _mapper.Map<LopHocPhan>(request);
-        lopHocPhanUpdate.UpdatedAt = DateTime.Now;
-        await _repositoryMaster.ExecuteInTransactionAsync(async () =>
+        try
         {
-            _repositoryMaster.LopHocPhan.UpdateLopHocPhan(lopHocPhanUpdate);
-            await Task.CompletedTask;
-        });
-        _loggerService.LogInfo("Cập nhật lớp học phần thành công.");
+            if (id != request.Id)
+            throw new LopHocPhanBadRequestException($"Id: {id} và Lớp học phần id: {request.Id} không giống nhau!");
+            var lopHocPhan = await _repositoryMaster.LopHocPhan.GetLopHocPhanByIdAsync(id, false);
+            if (lopHocPhan is null) throw new LopHocPhanNotFoundException(id);
+            var lopHocPhanUpdate = _mapper.Map<LopHocPhan>(request);
+            lopHocPhanUpdate.UpdatedAt = DateTime.Now;
+            await _repositoryMaster.ExecuteInTransactionAsync(async () =>
+            {
+                _repositoryMaster.LopHocPhan.UpdateLopHocPhan(lopHocPhanUpdate);
+                await Task.CompletedTask;
+            });
+            _loggerService.LogInfo("Cập nhật lớp học phần thành công.");
+        }catch (DbUpdateException ex)
+        {
+            throw new Exception($"Lỗi hệ thống!: {ex.Message}");   
+        }
     }
 
     public async Task UpdateListLophocPhanAsync(List<RequestUpdateLopHocPhanDto> listRequest)

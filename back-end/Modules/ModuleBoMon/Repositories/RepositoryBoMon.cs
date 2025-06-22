@@ -37,7 +37,7 @@ public class RepositoryBoMon : RepositoryBase<BoMon>, IRepositoryBoMon
 
     public async Task<BoMon?> GetBoMonByIdAsync(Guid id, bool trackChanges)
     {
-        return await FindByCondition(item => item.Id == id, trackChanges).FirstOrDefaultAsync();
+        return await FindByCondition(item => item.Id == id, trackChanges).Include(item => item.Khoa).FirstOrDefaultAsync();
     }
 
     public void UpdateBoMon(BoMon boMon)

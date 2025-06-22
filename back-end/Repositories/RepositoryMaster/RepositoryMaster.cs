@@ -186,7 +186,7 @@ public class RepositoryMaster : IRepositoryMaster
                 await transaction.RollbackAsync();
                 Console.WriteLine($"Error transaction: {ex.Message}");
                 _loggerService.LogError($"Error transaction: {ex.Message}");
-                throw new Exception($"Lỗi hệ thống!: {ex.Message}");
+                throw;
             }
         });
     }

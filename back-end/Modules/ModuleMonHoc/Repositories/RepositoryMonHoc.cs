@@ -37,7 +37,7 @@ public class RepositoryMonHoc : RepositoryBase<MonHoc>, IRepositoryMonHoc
 
     public async Task<MonHoc?> GetMonHocByIdAsync(Guid id, bool trackChanges)
     {
-        return await FindByCondition(item => item.Id == id, trackChanges).FirstOrDefaultAsync();
+        return await FindByCondition(item => item.Id == id, trackChanges).Include(item => item.Khoa).FirstOrDefaultAsync();
     }
 
     public void UpdateMonHoc(MonHoc monHoc)

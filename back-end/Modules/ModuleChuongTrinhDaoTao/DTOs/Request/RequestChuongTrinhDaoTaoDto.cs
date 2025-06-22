@@ -14,7 +14,7 @@ public class RequestAddChuongTrinhDaoTaoDto
     public string TenChuongTrinh { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "Loai chương trình không được để trống")]
-    public int LoaiChuongTrinhDaoTaoEnum { get; set; }
+    public int LoaiChuonTrinhDaoTao { get; set; }
     [Required(ErrorMessage = "Thời gian đào tạo không được để trống")]
     public string ThoiGianDaoTao { get; set; } = string.Empty;
     [Required(ErrorMessage = "Học phí không được để trống")]
@@ -41,7 +41,7 @@ public class RequestUpdateChuongTrinhDaoTaoDto
     public string TenChuongTrinh { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "Loai chương trình không được để trống")]
-    public int LoaiChuongTrinhDaoTaoEnum { get; set; }
+    public int LoaiChuonTrinhDaoTao { get; set; }
     [Required(ErrorMessage = "Thời gian đào tạo không được để trống")]
     public string ThoiGianDaoTao { get; set; } = string.Empty;
     [Required(ErrorMessage = "Học phí không được để trống")]

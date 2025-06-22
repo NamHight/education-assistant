@@ -5,6 +5,7 @@ using Education_assistant.Models;
 using Education_assistant.Modules.ModuleTruong.DTOs.Request;
 using Education_assistant.Modules.ModuleTruong.DTOs.Response;
 using Education_assistant.Repositories.RepositoryMaster;
+using Microsoft.EntityFrameworkCore;
 
 namespace Education_assistant.Modules.ModuleTruong.Services;
 
@@ -23,14 +24,20 @@ public class ServiceTruong : IServiceTruong
 
     public async Task<ResponseTruongDto> CreateAsync(RequestAddTruongDto request)
     {
-        var newTruong = _mapper.Map<Truong>(request);
-        await _repositoryMaster.ExecuteInTransactionAsync(async () =>
+        try
         {
-            await _repositoryMaster.Truong.CreateAsync(newTruong);
-        });
-        _loggerService.LogInfo("Thêm thông tin trường thành công.");
-        var taiKhoanDto = _mapper.Map<ResponseTruongDto>(newTruong);
-        return taiKhoanDto;
+            var newTruong = _mapper.Map<Truong>(request);
+            await _repositoryMaster.ExecuteInTransactionAsync(async () =>
+            {
+                await _repositoryMaster.Truong.CreateAsync(newTruong);
+            });
+            _loggerService.LogInfo("Thêm thông tin trường thành công.");
+            var taiKhoanDto = _mapper.Map<ResponseTruongDto>(newTruong);
+            return taiKhoanDto;
+        }catch (DbUpdateException ex)
+        {
+            throw new Exception($"Lỗi hệ thống!: {ex.Message}");   
+        }
     }
 
     public async Task DeleteAsync(Guid id)
@@ -61,16 +68,22 @@ public class ServiceTruong : IServiceTruong
 
     public async Task UpdateAsync(Guid id, RequestUpdateTruongDto request)
     {
-        if (id != request.Id) throw new TruongBadRequestException("Id và Id của trường không giống nhau!");
-        if (request is null) throw new TruongBadRequestException("Thông tin trường không đầy đủ!");
-        var truong = await _repositoryMaster.Truong.GetTruongByIdAsync(id, false);
-        if (truong is null) throw new TruongNotFoundException(id);
-        var truongUpdate = _mapper.Map<Truong>(request);
-        await _repositoryMaster.ExecuteInTransactionAsync(async () =>
+        try
         {
-            _repositoryMaster.Truong.UpdateTruong(truongUpdate);
-            await Task.CompletedTask;
-        });
-        _loggerService.LogInfo("Cập nhật trường thành công.");
+            if (id != request.Id) throw new TruongBadRequestException("Id và Id của trường không giống nhau!");
+            if (request is null) throw new TruongBadRequestException("Thông tin trường không đầy đủ!");
+            var truong = await _repositoryMaster.Truong.GetTruongByIdAsync(id, false);
+            if (truong is null) throw new TruongNotFoundException(id);
+            var truongUpdate = _mapper.Map<Truong>(request);
+            await _repositoryMaster.ExecuteInTransactionAsync(async () =>
+            {
+                _repositoryMaster.Truong.UpdateTruong(truongUpdate);
+                await Task.CompletedTask;
+            });
+            _loggerService.LogInfo("Cập nhật trường thành công.");
+        }catch (DbUpdateException ex)
+        {
+            throw new Exception($"Lỗi hệ thống!: {ex.Message}");   
+        }
     }
 }

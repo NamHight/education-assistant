@@ -4,12 +4,14 @@ using Education_assistant.Exceptions.ThrowError.LopHocExceptions;
 using Education_assistant.Exceptions.ThrowError.LopHocPhanExceptions;
 using Education_assistant.Exceptions.ThrowError.MonHocExceptions;
 using Education_assistant.Models;
+using Education_assistant.Modules.ModuleLopHoc.DTOs.Param;
 using Education_assistant.Modules.ModuleLopHoc.DTOs.Request;
 using Education_assistant.Modules.ModuleLopHoc.DTOs.Response;
 using Education_assistant.Modules.ModuleMonHoc.DTOs.Response;
 using Education_assistant.Repositories.Paginations;
 using Education_assistant.Repositories.RepositoryMaster;
 using Education_assistant.Services.BaseDtos;
+using Microsoft.EntityFrameworkCore;
 
 namespace Education_assistant.Modules.ModuleLopHoc.Services
 {
@@ -27,38 +29,59 @@ namespace Education_assistant.Modules.ModuleLopHoc.Services
 
         public async Task<ResponseLopHocDto> CreateAsync(RequestAddLopHocDto request)
         {
-            var newLopHoc = _mapper.Map<LopHoc>(request);
-            await _repositoryMaster.ExecuteInTransactionAsync(async () =>
+            try
             {
-                await _repositoryMaster.LopHoc.CreateAsync(newLopHoc);
-            });
-            _loggerService.LogInfo("Thêm thông tin lớp học thành công.");
-            var lopHocDto = _mapper.Map<ResponseLopHocDto>(newLopHoc);
-            return lopHocDto;
+                var newLopHoc = _mapper.Map<LopHoc>(request);
+                await _repositoryMaster.ExecuteInTransactionAsync(async () =>
+                {
+                    await _repositoryMaster.LopHoc.CreateAsync(newLopHoc);
+                });
+                _loggerService.LogInfo("Thêm thông tin lớp học thành công.");
+                var lopHocDto = _mapper.Map<ResponseLopHocDto>(newLopHoc);
+                return lopHocDto;
+            }catch (DbUpdateException ex)
+            {
+                throw new Exception($"Lỗi hệ thống!: {ex.Message}");   
+            }
         }
 
         public async Task DeleteAsync(Guid id)
-        {
-            if (id == Guid.Empty)
+        { 
+            try
             {
-                throw new MonHocBadRequestException($"Lớp học với {id} không được bỏ trống!");
+                if (id == Guid.Empty)
+                {
+                    throw new MonHocBadRequestException($"Lớp học với {id} không được bỏ trống!");
+                }
+                var lopHoc = await _repositoryMaster.LopHoc.GetLopHocByIdAsync(id, false);
+                if (lopHoc is null)
+                {
+                    throw new LopHocNotFoundException(id);
+                }
+                await _repositoryMaster.ExecuteInTransactionAsync(async () =>
+                {
+                    _repositoryMaster.LopHoc.DeleteLopHoc(lopHoc);
+                    await Task.CompletedTask;
+                });
+                _loggerService.LogInfo("Xóa lớp học thành công.");
             }
-            var lopHoc = await _repositoryMaster.LopHoc.GetLopHocByIdAsync(id, false);
-            if (lopHoc is null)
+            catch (DbUpdateException ex)
             {
-                throw new LopHocNotFoundException(id);
+                var inner = ex.InnerException?.Message?.ToLower();
+                if (ex.InnerException != null && (inner!.Contains("foreign key") ||
+                            inner.Contains("reference constraint") ||
+                            inner.Contains("violates foreign key constraint") ||
+                            inner.Contains("cannot delete or update a parent row")))
+                {
+                    throw new LopHocBadRequestException("Không thể xóa lớp học vì có ràng buộc khóa ngoại!.");
+                }
+                throw new Exception($"Lỗi hệ thống!: {ex.Message}");
             }
-            await _repositoryMaster.ExecuteInTransactionAsync(async () =>
-            {
-                _repositoryMaster.LopHoc.DeleteLopHoc(lopHoc);
-                await Task.CompletedTask;
-            });
-            _loggerService.LogInfo("Xóa lớp học thành công.");
         }
 
-        public async Task<(IEnumerable<ResponseLopHocDto> data, PageInfo page)> GetAllLopHocAsync(ParamBaseDto paramBaseDto)
+        public async Task<(IEnumerable<ResponseLopHocDto> data, PageInfo page)> GetAllLopHocAsync(ParamLopHocDto paramLopHocDto)
         {
-            var lopHocs = await _repositoryMaster.LopHoc.GetAllLopHocAsync(paramBaseDto.page, paramBaseDto.limit, paramBaseDto.search, paramBaseDto.sortBy, paramBaseDto.sortByOrder);
+            var lopHocs = await _repositoryMaster.LopHoc.GetAllLopHocAsync(paramLopHocDto.page, paramLopHocDto.limit, paramLopHocDto.search, paramLopHocDto.sortBy, paramLopHocDto.sortByOrder);
             var lopHocDto = _mapper.Map<IEnumerable<ResponseLopHocDto>>(lopHocs);
             return (data: lopHocDto, page: lopHocs!.PageInfo);
         }
@@ -77,23 +100,29 @@ namespace Education_assistant.Modules.ModuleLopHoc.Services
 
         public async Task UpdateAsync(Guid id, RequestUpdateLopHocDto request)
         {
-            if (id != request.Id)
+            try
             {
-                throw new LopHocBadRequestException($"Id request và Id lớp học khác nhau!");
+                if (id != request.Id)
+                {
+                    throw new LopHocBadRequestException($"Id request và Id lớp học khác nhau!");
+                }
+                var lopHoc = await _repositoryMaster.LopHoc.GetLopHocByIdAsync(id, false);
+                if (lopHoc is null)
+                {
+                    throw new LopHocNotFoundException(id);
+                }
+                var lopHocUpdate = _mapper.Map<LopHoc>(request);
+                lopHocUpdate.UpdatedAt = DateTime.Now;
+                await _repositoryMaster.ExecuteInTransactionAsync(async () =>
+                {
+                    _repositoryMaster.LopHoc.UpdateLopHoc(lopHocUpdate);
+                    await Task.CompletedTask;
+                });
+                _loggerService.LogInfo("Cập nhật lớp học thành công.");
+            }catch (DbUpdateException ex)
+            {
+                throw new Exception($"Lỗi hệ thống!: {ex.Message}");   
             }
-            var lopHoc = await _repositoryMaster.LopHoc.GetLopHocByIdAsync(id, false);
-            if (lopHoc is null)
-            {
-                throw new LopHocNotFoundException(id);
-            }
-            var lopHocUpdate = _mapper.Map<LopHoc>(request);
-            lopHocUpdate.UpdatedAt = DateTime.Now;
-            await _repositoryMaster.ExecuteInTransactionAsync(async () =>
-            {
-                _repositoryMaster.LopHoc.UpdateLopHoc(lopHocUpdate);
-                await Task.CompletedTask;
-            });
-            _loggerService.LogInfo("Cập nhật lớp học thành công.");
         }
     }
 }

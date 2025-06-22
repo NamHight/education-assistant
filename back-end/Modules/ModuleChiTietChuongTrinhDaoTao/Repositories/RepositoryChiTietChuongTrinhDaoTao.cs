@@ -27,13 +27,24 @@ public class RepositoryChiTietChuongTrinhDaoTao : RepositoryBase<ChiTietChuongTr
 
     public async Task<PagedListAsync<ChiTietChuongTrinhDaoTao>?> GetAllChiTietChuongTrinhDaoTaoAsync(int page, int limit, string search, string sortBy, string sortByOrder)
     {
-        return await PagedListAsync<ChiTietChuongTrinhDaoTao>.ToPagedListAsync(_context.ChiTietChuongTrinhDaoTaos!.Include(item => item.MonHoc).Include(item => item.ChuongTrinhDaoTao).Include(item => item.BoMon)
+        var query = _context.ChiTietChuongTrinhDaoTaos!
+                                .AsNoTracking()
+                                .Include(item => item.MonHoc)
+                                .Include(item => item.ChuongTrinhDaoTao)
+                                .Include(item => item.BoMon)
+                                .AsQueryable();
+        if (!string.IsNullOrWhiteSpace(search)) {
+            query = query.SearchBy(search, item => item.ChuongTrinhDaoTao!.TenChuongTrinh);
+        }
+        return await PagedListAsync<ChiTietChuongTrinhDaoTao>.ToPagedListAsync(query
                                 .SortByOptions(sortBy, sortByOrder, new Dictionary<string, Expression<Func<ChiTietChuongTrinhDaoTao, object>>>
                                 {
                                     ["createdat"] = item => item.CreatedAt,
                                     ["updatedat"] = item => item.UpdatedAt!,
                                     ["sotinchi"] = item => item.SoTinChi!,
-                                }).AsNoTracking(), page, limit);
+                                    ["hocky"] = item => item.HocKy,
+                                    ["loaimonhoc"] = item => item.LoaiMonHoc!,
+                                 }).AsNoTracking(), page, limit);
     }
 
     public async Task<IEnumerable<ChiTietChuongTrinhDaoTao>?> GetAllCtctdtByCtdtIdAsync(Guid id, int hocKy)
@@ -43,7 +54,10 @@ public class RepositoryChiTietChuongTrinhDaoTao : RepositoryBase<ChiTietChuongTr
 
     public async Task<ChiTietChuongTrinhDaoTao?> GetChiTietChuongTrinhDaoTaoByIdAsync(Guid id, bool trackChanges)
     {
-        return await FindByCondition(item => item.Id == id, trackChanges).FirstOrDefaultAsync();
+        return await FindByCondition(item => item.Id == id, trackChanges)
+                                .Include(item => item.MonHoc)
+                                .Include(item => item.ChuongTrinhDaoTao)
+                                .Include(item => item.BoMon).FirstOrDefaultAsync();
     }
 
     public async Task<ChiTietChuongTrinhDaoTao?> GetCtctdtByCtctAndMonHocAsync(Guid chuongTrinhId, Guid monHocId)

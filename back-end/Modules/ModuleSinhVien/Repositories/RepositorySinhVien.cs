@@ -35,7 +35,18 @@ public class RepositorySinhVien : RepositoryBase<SinhVien>, IRepositorySinhVien
         {
             query = query.Where(lh => lh.LopHocId == lopId);
         }
-        return await PagedListAsync<SinhVien>.ToPagedListAsync(query.SearchBy(search, item => item.HoTen).SearchBy(search, item => item.MSSV.ToString())
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            if (int.TryParse(search, out var mssv))
+            {
+                query = query.SearchBy(mssv.ToString(), item => item.MSSV.ToString());
+            }
+            else
+            {
+                query = query.SearchBy(search, item => item.HoTen);
+            }
+        }
+        return await PagedListAsync<SinhVien>.ToPagedListAsync(query
                                                                 .IgnoreQueryFilters()
                                                                 .OrderBy(item => item.DeletedAt != null)
                                                                 .SortByOptions(sortBy, sortByOrder, new Dictionary<string, Expression<Func<SinhVien, object>>>
@@ -49,7 +60,7 @@ public class RepositorySinhVien : RepositoryBase<SinhVien>, IRepositorySinhVien
 
     public async Task<SinhVien?> GetSinhVienByIdAsync(Guid id, bool trackChanges)
     {
-        return await FindByCondition(item => item.Id == id, trackChanges).FirstOrDefaultAsync();
+        return await FindByCondition(item => item.Id == id, trackChanges).Include(item => item.LopHoc).FirstOrDefaultAsync();
     }
 
     public async Task<SinhVien?> GetSinhVienDeleteAsync(Guid id, bool trackChanges)

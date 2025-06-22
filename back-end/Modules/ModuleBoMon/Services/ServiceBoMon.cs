@@ -3,11 +3,13 @@ using AutoMapper;
 using Education_assistant.Contracts.LoggerServices;
 using Education_assistant.Exceptions.ThrowError.BoMonExceptions;
 using Education_assistant.Models;
+using Education_assistant.Modules.ModuleBoMon.DTOs.Param;
 using Education_assistant.Modules.ModuleBoMon.DTOs.Request;
 using Education_assistant.Modules.ModuleBoMon.DTOs.Response;
 using Education_assistant.Repositories.Paginations;
 using Education_assistant.Repositories.RepositoryMaster;
 using Education_assistant.Services.BaseDtos;
+using Microsoft.EntityFrameworkCore;
 
 namespace Education_assistant.Modules.ModuleBoMon.Services;
 
@@ -24,34 +26,56 @@ public class ServiceBoMon : IServiceBoMon
     }
     public async Task<ResponseBoMonDto> CreateAsync(RequestAddBoMonDto request)
     {
-        var newBoMon = _mapper.Map<BoMon>(request);
-        await _repositoryMaster.ExecuteInTransactionAsync(async () =>
+        try
         {
-            await _repositoryMaster.BoMon.CreateAsync(newBoMon);
-        });
-        _loggerService.LogInfo("Thêm thông tin bộ môn thành công.");
-        var monHocDto = _mapper.Map<ResponseBoMonDto>(newBoMon);
-        return monHocDto;
+            var newBoMon = _mapper.Map<BoMon>(request);
+            await _repositoryMaster.ExecuteInTransactionAsync(async () =>
+            {
+                await _repositoryMaster.BoMon.CreateAsync(newBoMon);
+            });
+            _loggerService.LogInfo("Thêm thông tin bộ môn thành công.");
+            var monHocDto = _mapper.Map<ResponseBoMonDto>(newBoMon);
+            return monHocDto;
+        }
+        catch (DbUpdateException ex)
+        {
+            throw new Exception($"Lỗi hệ thống!: {ex.Message}");   
+        }
     }
 
     public async Task DeleteAsync(Guid id)
     {
-        var boMon = await _repositoryMaster.BoMon.GetBoMonByIdAsync(id, false);
-        if (boMon is null)
+        try
         {
-            throw new BoMonNotFoundException(id);
+             var boMon = await _repositoryMaster.BoMon.GetBoMonByIdAsync(id, false);
+            if (boMon is null)
+            {
+                throw new BoMonNotFoundException(id);
+            }
+            await _repositoryMaster.ExecuteInTransactionAsync(async () =>
+            {
+                _repositoryMaster.BoMon.DeleteBoMon(boMon);
+                await Task.CompletedTask;
+            });
+            _loggerService.LogInfo("Xóa bộ môn thành công.");
         }
-        await _repositoryMaster.ExecuteInTransactionAsync(async () =>
+        catch (DbUpdateException ex)
         {
-            _repositoryMaster.BoMon.DeleteBoMon(boMon);
-            await Task.CompletedTask;
-        });
-        _loggerService.LogInfo("Xóa bộ môn thành công.");
+            var inner = ex.InnerException?.Message?.ToLower();
+            if (ex.InnerException != null && (inner!.Contains("foreign key") ||
+                        inner.Contains("reference constraint") ||
+                        inner.Contains("violates foreign key constraint") ||
+                        inner.Contains("cannot delete or update a parent row")))
+            {
+                throw new BoMonBadRequestException("Không thể xóa bộ môn vì có ràng buộc khóa ngoại!.");         
+            }
+            throw new Exception($"Lỗi hệ thống!: {ex.Message}");   
+        }
     }
 
-    public async Task<(IEnumerable<ResponseBoMonDto> data, PageInfo page)> GetAllBoMonAsync(ParamBaseDto paramBaseDto)
+    public async Task<(IEnumerable<ResponseBoMonDto> data, PageInfo page)> GetAllBoMonAsync(ParamBoMonDto paramBoMonDto)
     {
-        var boMons = await _repositoryMaster.BoMon.GetAllPaginatedAndSearchOrSortAsync(paramBaseDto.page, paramBaseDto.limit, paramBaseDto.search, paramBaseDto.sortBy, paramBaseDto.sortByOrder);
+        var boMons = await _repositoryMaster.BoMon.GetAllPaginatedAndSearchOrSortAsync(paramBoMonDto.page, paramBoMonDto.limit, paramBoMonDto.search, paramBoMonDto.sortBy, paramBoMonDto.sortByOrder);
         var boMonDto = _mapper.Map<IEnumerable<ResponseBoMonDto>>(boMons);
         return (data: boMonDto, page: boMons!.PageInfo);
     }

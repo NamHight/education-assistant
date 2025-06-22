@@ -24,17 +24,35 @@ public class RepositoryHocBa : RepositoryBase<HocBa>, IRepositoryHocBa
     {
         Delete(hocBa);
     }
-
+//.SearchBy(search, item => item.SinhVien!.HoTen)
     public async Task<PagedListAsync<HocBa>> GetAllHocBaAsync(int page, int limit, string search, string sortBy, string sortByOrder)
     {
-        return await PagedListAsync<HocBa>.ToPagedListAsync(_context.HocBas!.Include(item => item.SinhVien).Include(item => item.LopHocPhan).Include(item => item.ChiTietChuongTrinhDaoTao).ThenInclude(item => item!.ChuongTrinhDaoTao)
+        var query = _context.HocBas!
+                    .AsNoTracking()
+                    .Include(item => item.SinhVien)
+                    .Include(item => item.LopHocPhan)
+                    .Include(item => item.ChiTietChuongTrinhDaoTao)
+                    .ThenInclude(item => item!.ChuongTrinhDaoTao)
+                    .AsQueryable();
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            if (int.TryParse(search, out var mssv))
+            {
+                query = query.SearchBy(mssv.ToString(), item => item.SinhVien!.MSSV.ToString());
+            }
+            else
+            {
+                query = query.SearchBy(search, item => item.SinhVien!.HoTen);
+            }
+        }            
+        return await PagedListAsync<HocBa>.ToPagedListAsync(query
                                                     .SortByOptions(sortBy, sortByOrder, new Dictionary<string, Expression<Func<HocBa, object>>>
-                                                    {
-                                                        ["createdat"] = item => item.CreatedAt,
-                                                        ["updatedat"] = item => item.UpdatedAt!,
-                                                        ["lanhoc"] = item => item.LanHoc,
-                                                        ["ketqua"] = item => item.KetQua!,
-                                                    }).AsNoTracking(), page, limit);
+                                                     {
+                                                         ["createdat"] = item => item.CreatedAt,
+                                                         ["updatedat"] = item => item.UpdatedAt!,
+                                                         ["lanhoc"] = item => item.LanHoc,
+                                                         ["ketqua"] = item => item.KetQua!,
+                                                     }), page, limit);
     }
 
     public async Task<IEnumerable<HocBa>> GetAllHocBaByIdAsync(List<Guid> ids)
@@ -49,7 +67,7 @@ public class RepositoryHocBa : RepositoryBase<HocBa>, IRepositoryHocBa
 
     public async Task<HocBa?> GetHocBaByIdAsync(Guid id, bool trackChanges)
     {
-        return await FindByCondition(item => item.Id == id, trackChanges).FirstOrDefaultAsync();
+        return await FindByCondition(item => item.Id == id, trackChanges).Include(item => item.SinhVien).Include(item => item.LopHocPhan).Include(item => item.ChiTietChuongTrinhDaoTao).ThenInclude(item => item!.ChuongTrinhDaoTao).FirstOrDefaultAsync();
     }
 
     public void UpdateHocBa(HocBa hocBa)
