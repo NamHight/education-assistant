@@ -38,23 +38,23 @@ public class RepositoryLichBieu : RepositoryBase<LichBieu>, IRepositoryLichBieu
                     .Include(lb => lb.LopHocPhan)!.ThenInclude(lhb => lhb!.MonHoc).ThenInclude(m => m!.DanhSachChiTietChuongTrinhDaoTao)
                     .Include(lb => lb.Tuan)
                     .AsQueryable();
-        if (tuanId.HasValue) 
+        if (tuanId.HasValue && tuanId != Guid.Empty) 
         {
             query = query.Where(item => item.TuanId == tuanId);
         }
-        if (giangvienId.HasValue)
+        if (giangvienId.HasValue && giangvienId != Guid.Empty)
         { 
             query = query.Where(item => item.LopHocPhan != null &&
                                         item.LopHocPhan!.GiangVienId == giangvienId);
         }
-        if (boMonId.HasValue)
+        if (boMonId.HasValue && boMonId != Guid.Empty)
         {
             query = query.Where(item => item.LopHocPhan != null &&
                                         item.LopHocPhan.MonHoc != null &&
                                         item.LopHocPhan.MonHoc.DanhSachChiTietChuongTrinhDaoTao != null &&
                                         item.LopHocPhan.MonHoc.DanhSachChiTietChuongTrinhDaoTao.Any(ct => ct.BoMonId == boMonId));
         }
-        if (namHoc.HasValue)
+        if (namHoc.HasValue && namHoc != 0)
         {
             query = query.Where(item => item.Tuan != null &&
                                         item.Tuan.NamHoc == namHoc);
@@ -70,7 +70,7 @@ public class RepositoryLichBieu : RepositoryBase<LichBieu>, IRepositoryLichBieu
     }
     public async Task<LichBieu?> GetLichBieuByIdAsync(Guid id, bool trackChanges)
     {
-        return await FindByCondition(item => item.Id == id, trackChanges).FirstOrDefaultAsync();
+        return await FindByCondition(item => item.Id == id, trackChanges).Include(item => item.Tuan).Include(item => item.LopHocPhan).Include(item => item.PhongHoc).FirstOrDefaultAsync();
     }
     public void UpdateLichBieu(LichBieu lichBieu)
     {

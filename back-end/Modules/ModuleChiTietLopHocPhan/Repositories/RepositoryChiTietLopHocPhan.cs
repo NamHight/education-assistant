@@ -42,6 +42,17 @@ public class RepositoryChiTietLopHocPhan : RepositoryBase<ChiTietLopHocPhan>, IR
                             .Include(item => item.SinhVien)
                             .Include(item => item.LopHocPhan)
                             .AsQueryable();
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            if (int.TryParse(search, out var mssv))
+            {
+                query = query.SearchBy(mssv.ToString(), item => item.SinhVien!.MSSV.ToString());
+            }
+            else
+            {
+                query = query.SearchBy(search, item => item.SinhVien!.HoTen);
+            }
+        }   
         if (lopHocPhanId.HasValue && lopHocPhanId != Guid.Empty)
         {
             query = query.Where(item => item.LopHocPhanId == lopHocPhanId);
@@ -103,7 +114,11 @@ public class RepositoryChiTietLopHocPhan : RepositoryBase<ChiTietLopHocPhan>, IR
 
     public async Task<ChiTietLopHocPhan?> GetChiTietLopHocPhanByIdAsync(Guid id, bool trackChanges)
     {
-        return await FindByCondition(item => item.Id == id, trackChanges).FirstOrDefaultAsync();
+        return await FindByCondition(item => item.Id == id, trackChanges)
+                            .Include(item => item.MonHoc)
+                            .Include(item => item.GiangVien)
+                            .Include(item => item.SinhVien)
+                            .Include(item => item.LopHocPhan).FirstOrDefaultAsync();
     }
 
     public void UpdateChiTietLopHocPhan(ChiTietLopHocPhan chiTietLopHocPhan)

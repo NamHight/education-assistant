@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Education_assistant.Modules.ModuleChiTietChuongTrinhDaoTao.DTOs.Param;
 using Education_assistant.Modules.ModuleChiTietChuongTrinhDaoTao.DTOs.Request;
 using Education_assistant.Services.BaseDtos;
 using Education_assistant.Services.ServiceMaster;
@@ -21,9 +22,9 @@ namespace Education_assistant.Modules.ModuleChiTietChuongTrinhDaoTao
             _serviceMaster = serviceMaster;
         }
         [HttpGet("")]
-        public async Task<ActionResult> GetAllChiTietChuongTrinhDaoTaoAsync([FromQuery] ParamBaseDto paramBaseDto)
+        public async Task<ActionResult> GetAllChiTietChuongTrinhDaoTaoAsync([FromQuery] ParamChiTietChuongTrinhDaoTaoDto paramChiTietChuongTrinhDaoTaoDto)
         {
-            var result = await _serviceMaster.ChiTietChuongTrinhDaoTao.GetAllChiTietChuongTrinhDaoTaoAsync(paramBaseDto);
+            var result = await _serviceMaster.ChiTietChuongTrinhDaoTao.GetAllChiTietChuongTrinhDaoTaoAsync(paramChiTietChuongTrinhDaoTaoDto);
             Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(result.page));
             return Ok(result.data);
         }
@@ -35,14 +36,14 @@ namespace Education_assistant.Modules.ModuleChiTietChuongTrinhDaoTao
         }
         [HttpPost]
         [ServiceFilter(typeof(ValidationFilter))]
-        public async Task<ActionResult> AddChiTietChuongTrinhDaoTaoAsync([FromBody] RequestAddChiTietChuongTrinhDaoTaoDto model)
+        public async Task<ActionResult> AddChiTietChuongTrinhDaoTaoAsync([FromForm] RequestAddChiTietChuongTrinhDaoTaoDto model)
         {
             var result = await _serviceMaster.ChiTietChuongTrinhDaoTao.CreateAsync(model);
             return Ok(result);
         }
         [HttpPut("{id}")]
         [ServiceFilter(typeof(ValidationFilter))]
-        public async Task<ActionResult> UpdateChiTietChuongTrinhDaoTaoAsync(Guid id, [FromBody] RequestUpdateChiTietChuongTrinhDaoTaoDto model)
+        public async Task<ActionResult> UpdateChiTietChuongTrinhDaoTaoAsync(Guid id, [FromForm] RequestUpdateChiTietChuongTrinhDaoTaoDto model)
         {
             await _serviceMaster.ChiTietChuongTrinhDaoTao.UpdateAsync(id, model);
             return NoContent();

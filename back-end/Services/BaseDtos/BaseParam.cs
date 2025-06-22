@@ -2,7 +2,7 @@ using System;
 
 namespace Education_assistant.Services.BaseDtos;
 
-public class ParamBaseDto
+public abstract class BaseParam
 {
     public int page { get; set; } = 1;
     public int limit { get; set; } = 10;

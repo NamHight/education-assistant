@@ -31,8 +31,7 @@ public static class QueryableExtentions
         {
             var keywordConstant = Expression.Constant(keyword);
             var containsExpr = Expression.Call(loweredProperty, containsMethod!, keywordConstant);
-
-            combined = combined == null ? containsExpr : Expression.AndAlso(combined, containsExpr);
+            combined = combined == null ? containsExpr : Expression.OrElse(combined, containsExpr);
         }
 
         var lambda = Expression.Lambda<Func<T, bool>>(combined!, parameter);

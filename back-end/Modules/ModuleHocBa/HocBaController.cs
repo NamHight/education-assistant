@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Education_assistant.Modules.ModuleHocBa.DTOs.Param;
 using Education_assistant.Modules.ModuleHocBa.DTOs.Request;
 using Education_assistant.Services.BaseDtos;
 using Education_assistant.Services.ServiceMaster;
@@ -21,9 +22,9 @@ namespace Education_assistant.Modules.ModuleHocBa
             _serviceMaster = serviceMaster;
         }
         [HttpGet("")]
-        public async Task<ActionResult> GetAllHocBaAsync([FromQuery] ParamBaseDto paramBaseDto)
+        public async Task<ActionResult> GetAllHocBaAsync([FromQuery] ParamHocBaDto paramHocBaDto)
         {
-            var result = await _serviceMaster.HocBa.GetAllHocBaAsync(paramBaseDto);
+            var result = await _serviceMaster.HocBa.GetAllHocBaAsync(paramHocBaDto);
             Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(result.page));
             return Ok(result.data);
         }
@@ -35,20 +36,20 @@ namespace Education_assistant.Modules.ModuleHocBa
         }
         [HttpPost("")]
         [ServiceFilter(typeof(ValidationFilter))]
-        public async Task<ActionResult> AddHocBaAsync([FromBody] RequestAddHocbaDto model)
+        public async Task<ActionResult> AddHocBaAsync([FromForm] RequestAddHocbaDto model)
         {
             var result = await _serviceMaster.HocBa.CreateAsync(model);
             return Ok(result);
         }
         [HttpPut("{id}")]
         [ServiceFilter(typeof(ValidationFilter))]
-        public async Task<ActionResult> UpdateHocBaAsync(Guid id, [FromBody] RequestUpdateHocbaDto model)
+        public async Task<ActionResult> UpdateHocBaAsync(Guid id, [FromForm] RequestUpdateHocbaDto model)
         {
             await _serviceMaster.HocBa.UpdateAsync(id, model);
             return NoContent();
         }
         [HttpPut("update-list")]
-        public async Task<ActionResult> UpdateListHocBaAsync([FromBody] RequestListUpdateHocbaDto model)
+        public async Task<ActionResult> UpdateListHocBaAsync([FromForm] RequestListUpdateHocbaDto model)
         {
             if (model == null)
             {
@@ -64,7 +65,7 @@ namespace Education_assistant.Modules.ModuleHocBa
             return NoContent();
         }
         [HttpDelete("delete-list")]
-        public async Task<ActionResult> DeleteListHocBaAsync([FromBody] RequestDeleteHocBaDto model)
+        public async Task<ActionResult> DeleteListHocBaAsync([FromForm] RequestDeleteHocBaDto model)
         {
             await _serviceMaster.HocBa.DeleteListHocBaAsync(model);
             return NoContent();

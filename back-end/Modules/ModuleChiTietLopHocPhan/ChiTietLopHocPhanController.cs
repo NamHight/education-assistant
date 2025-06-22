@@ -36,20 +36,20 @@ namespace Education_assistant.Modules.ModuleChiTietLopHocPhan
         }
         [HttpPost]
         [ServiceFilter(typeof(ValidationFilter))]
-        public async Task<ActionResult> AddChiTietLopHocPhanAsync([FromBody] RequestAddChiTietLopHocPhanDto model)
+        public async Task<ActionResult> AddChiTietLopHocPhanAsync([FromForm] RequestAddChiTietLopHocPhanDto model)
         {
             var result = await _serviceMaster.ChiTietLopHocPhan.CreateAsync(model);
             return Ok(result);
         }
         [HttpPut("{id}")]
         [ServiceFilter(typeof(ValidationFilter))]
-        public async Task<ActionResult> UpdateChiTietLopHocPhanAsync(Guid id, [FromBody] RequestUpdateChiTietLopHocPhanDto model)
+        public async Task<ActionResult> UpdateChiTietLopHocPhanAsync(Guid id, [FromForm] RequestUpdateChiTietLopHocPhanDto model)
         {
             await _serviceMaster.ChiTietLopHocPhan.UpdateAsync(id, model);
             return NoContent();
         }
         [HttpPut("update-list")]
-        public async Task<ActionResult> UpdateListChiTietLopHocPhanAsync([FromBody] List<RequestUpdateChiTietLopHocPhanDto> model)
+        public async Task<ActionResult> UpdateListChiTietLopHocPhanAsync([FromForm] List<RequestUpdateChiTietLopHocPhanDto> model)
         {
             if (model == null || !model.Any())
             {
@@ -65,7 +65,7 @@ namespace Education_assistant.Modules.ModuleChiTietLopHocPhan
             return NoContent();
         }
         [HttpDelete("delete-list")]
-        public async Task<ActionResult> DeleteListChiTietLopHocPhanAsync([FromBody] RequestDeleteChiTietLopHocPhanDto model)
+        public async Task<ActionResult> DeleteListChiTietLopHocPhanAsync([FromForm] RequestDeleteChiTietLopHocPhanDto model)
         {
             await _serviceMaster.ChiTietLopHocPhan.DeleteListChiTietLopHocPhanAsync(model);
             return NoContent();

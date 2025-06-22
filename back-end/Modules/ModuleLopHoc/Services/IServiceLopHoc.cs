@@ -1,4 +1,5 @@
-﻿using Education_assistant.Modules.ModuleLopHoc.DTOs.Request;
+﻿using Education_assistant.Modules.ModuleLopHoc.DTOs.Param;
+using Education_assistant.Modules.ModuleLopHoc.DTOs.Request;
 using Education_assistant.Modules.ModuleLopHoc.DTOs.Response;
 using Education_assistant.Modules.ModuleMonHoc.DTOs.Request;
 using Education_assistant.Modules.ModuleMonHoc.DTOs.Response;
@@ -9,7 +10,7 @@ namespace Education_assistant.Modules.ModuleLopHoc.Services
 {
     public interface IServiceLopHoc
     {
-        Task<(IEnumerable<ResponseLopHocDto> data, PageInfo page)> GetAllLopHocAsync(ParamBaseDto paramBaseDto);
+        Task<(IEnumerable<ResponseLopHocDto> data, PageInfo page)> GetAllLopHocAsync(ParamLopHocDto paramLopHocDto);
         Task<ResponseLopHocDto> GetLopHocByIdAsync(Guid id, bool trackChanges);
         Task<ResponseLopHocDto> CreateAsync(RequestAddLopHocDto request);
         Task UpdateAsync(Guid id, RequestUpdateLopHocDto request);

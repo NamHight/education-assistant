@@ -11,6 +11,7 @@ using Education_assistant.Modules.ModuleLichBieu.DTOs.Response;
 using Education_assistant.Repositories.Paginations;
 using Education_assistant.Repositories.RepositoryMaster;
 using Education_assistant.Services.BaseDtos;
+using Microsoft.EntityFrameworkCore;
 
 namespace Education_assistant.Modules.ModuleLichBieu.Services
 {
@@ -61,38 +62,51 @@ namespace Education_assistant.Modules.ModuleLichBieu.Services
 
         public async Task<ResponseLichBieuDto> CreateAsync(RequestAddLichBieuDto request)
         {
-            var newLichBieu = _mapper.Map<LichBieu>(request);
-            await _repositoryMaster.ExecuteInTransactionAsync(async () =>
+            try
             {
-                await _repositoryMaster.LichBieu.CreateAsync(newLichBieu);
-            });
-            _loggerService.LogInfo("Thêm thông tin lịch biểu thành công");
-            var lichBieu = _mapper.Map<ResponseLichBieuDto>(newLichBieu);
-            return lichBieu;
+                var newLichBieu = _mapper.Map<LichBieu>(request);
+                await _repositoryMaster.ExecuteInTransactionAsync(async () =>
+                {
+                    await _repositoryMaster.LichBieu.CreateAsync(newLichBieu);
+                });
+                _loggerService.LogInfo("Thêm thông tin lịch biểu thành công");
+                var lichBieu = _mapper.Map<ResponseLichBieuDto>(newLichBieu);
+                return lichBieu;
+            }catch (DbUpdateException ex)
+            {
+                throw new Exception($"Lỗi hệ thống!: {ex.Message}");   
+            }
         }
 
         public async Task DeleteAsync(Guid id)
         {
-            if (id == Guid.Empty)
+            try
             {
-                throw new LichBieuBadRequestException($"Lịch biểu với {id} không được bỏ trống!");
+                if (id == Guid.Empty)
+                {
+                    throw new LichBieuBadRequestException($"Lịch biểu với {id} không được bỏ trống!");
+                }
+                var lichBieu = await _repositoryMaster.LichBieu.GetLichBieuByIdAsync(id, false);
+                if (lichBieu is null)
+                {
+                    throw new LichBieuNotFoundException(id);
+                }
+                await _repositoryMaster.ExecuteInTransactionAsync(async () =>
+                {
+                    _repositoryMaster.LichBieu.DeleteLichBieu(lichBieu);
+                    await Task.CompletedTask;
+                });
+                _loggerService.LogInfo($"Xóa lịch biểu có id = {id} thành công.");
             }
-            var lichBieu = await _repositoryMaster.LichBieu.GetLichBieuByIdAsync(id, false);
-            if (lichBieu is null)
+            catch (DbUpdateException ex)
             {
-                throw new LichBieuNotFoundException(id);
+                throw new Exception($"Lỗi hệ thống!: {ex.Message}");
             }
-            await _repositoryMaster.ExecuteInTransactionAsync(async () =>
-            {
-                _repositoryMaster.LichBieu.DeleteLichBieu(lichBieu);
-                await Task.CompletedTask;
-            });
-            _loggerService.LogInfo($"Xóa lịch biểu có id = {id} thành công.");
         }
 
         public async Task<(IEnumerable<ResponseLichBieuDto> data, PageInfo page)> GetAllLichBieuAsync(ParamLichBieuDto paramLichBieuDto)
         {
-            var lichBieus = await _repositoryMaster.LichBieu.GetAllLichBieuAsync(paramLichBieuDto.Page, paramLichBieuDto.Limit, paramLichBieuDto.Search, paramLichBieuDto.SortBy, paramLichBieuDto.Search, paramLichBieuDto.NamHoc, paramLichBieuDto.GiangVienId, paramLichBieuDto.TuanId, paramLichBieuDto.BoMonId);
+            var lichBieus = await _repositoryMaster.LichBieu.GetAllLichBieuAsync(paramLichBieuDto.page, paramLichBieuDto.limit, paramLichBieuDto.search, paramLichBieuDto.sortBy, paramLichBieuDto.sortByOrder, paramLichBieuDto.namHoc, paramLichBieuDto.giangVienId, paramLichBieuDto.tuanId, paramLichBieuDto.boMonId);
             var lichBieuDto = _mapper.Map<IEnumerable<ResponseLichBieuDto>>(lichBieus);
             return (data: lichBieuDto, page: lichBieus!.PageInfo);
         }
@@ -111,23 +125,29 @@ namespace Education_assistant.Modules.ModuleLichBieu.Services
 
         public async Task UpdateAsync(Guid id, RequestUpdateLichBieuDto request)
         {
-            if (id != request.Id)
+            try
             {
-                throw new LichBieuBadRequestException($"Id request và Id lịch biểu không giống nhau!");
+                if (id != request.Id)
+                {
+                    throw new LichBieuBadRequestException($"Id request và Id lịch biểu không giống nhau!");
+                }
+                var lichBieu = await _repositoryMaster.LichBieu.GetLichBieuByIdAsync(id, false);
+                if (lichBieu is null)
+                {
+                    throw new LichBieuNotFoundException(id);
+                }
+                var lichBieuUpdate = _mapper.Map<LichBieu>(request);
+                lichBieuUpdate.UpdatedAt = DateTime.Now;
+                await _repositoryMaster.ExecuteInTransactionAsync(async () =>
+                {
+                    _repositoryMaster.LichBieu.UpdateLichBieu(lichBieuUpdate);
+                    await Task.CompletedTask;
+                });
+                _loggerService.LogInfo($"Cập nhật lịch biểu có id = {id} thành công.");
+            }catch (DbUpdateException ex)
+            {
+                throw new Exception($"Lỗi hệ thống!: {ex.Message}");   
             }
-            var lichBieu = await _repositoryMaster.LichBieu.GetLichBieuByIdAsync(id, false);
-            if (lichBieu is null)
-            {
-                throw new LichBieuNotFoundException(id);
-            }
-            var lichBieuUpdate = _mapper.Map<LichBieu>(request);
-            lichBieuUpdate.UpdatedAt = DateTime.Now;
-            await _repositoryMaster.ExecuteInTransactionAsync(async () =>
-            {
-                _repositoryMaster.LichBieu.UpdateLichBieu(lichBieuUpdate);
-                await Task.CompletedTask;
-            });
-            _loggerService.LogInfo($"Cập nhật lịch biểu có id = {id} thành công.");
         }
 
 

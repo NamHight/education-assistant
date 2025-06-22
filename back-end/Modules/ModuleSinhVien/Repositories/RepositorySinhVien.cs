@@ -60,7 +60,7 @@ public class RepositorySinhVien : RepositoryBase<SinhVien>, IRepositorySinhVien
 
     public async Task<SinhVien?> GetSinhVienByIdAsync(Guid id, bool trackChanges)
     {
-        return await FindByCondition(item => item.Id == id, trackChanges).FirstOrDefaultAsync();
+        return await FindByCondition(item => item.Id == id, trackChanges).Include(item => item.LopHoc).FirstOrDefaultAsync();
     }
 
     public async Task<SinhVien?> GetSinhVienDeleteAsync(Guid id, bool trackChanges)

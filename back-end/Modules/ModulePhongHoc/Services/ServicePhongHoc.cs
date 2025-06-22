@@ -6,11 +6,13 @@ using Education_assistant.Exceptions.ThrowError.MonHocExceptions;
 using Education_assistant.Exceptions.ThrowError.PhongHocExceptions;
 using Education_assistant.Models;
 using Education_assistant.Modules.ModuleLopHoc.DTOs.Response;
+using Education_assistant.Modules.ModulePhongHoc.DTOs.Param;
 using Education_assistant.Modules.ModulePhongHoc.DTOs.Request;
 using Education_assistant.Modules.ModulePhongHoc.DTOs.Response;
 using Education_assistant.Repositories.Paginations;
 using Education_assistant.Repositories.RepositoryMaster;
 using Education_assistant.Services.BaseDtos;
+using Microsoft.EntityFrameworkCore;
 
 namespace Education_assistant.Modules.ModulePhongHoc.Services
 {
@@ -27,14 +29,20 @@ namespace Education_assistant.Modules.ModulePhongHoc.Services
         }
         public async Task<ResponsePhongHocDto> CreateAsync(RequestAddPhongHocDto request)
         {
-            var newPhongHoc = _mapper.Map<PhongHoc>(request);
-            await _repositoryMaster.ExecuteInTransactionAsync(async () =>
+            try
             {
-                await _repositoryMaster.PhongHoc.CreateAsync(newPhongHoc);
-            });
-            _loggerService.LogInfo("Thêm thông tin phòng học thành công.");
-            var phongHocDto = _mapper.Map<ResponsePhongHocDto>(newPhongHoc);
-            return phongHocDto;
+                var newPhongHoc = _mapper.Map<PhongHoc>(request);
+                await _repositoryMaster.ExecuteInTransactionAsync(async () =>
+                {
+                    await _repositoryMaster.PhongHoc.CreateAsync(newPhongHoc);
+                });
+                _loggerService.LogInfo("Thêm thông tin phòng học thành công.");
+                var phongHocDto = _mapper.Map<ResponsePhongHocDto>(newPhongHoc);
+                return phongHocDto;
+            }catch (DbUpdateException ex)
+            {
+                throw new Exception($"Lỗi hệ thống!: {ex.Message}");   
+            }
         }
 
         public async Task DeleteAsync(Guid id)
@@ -54,11 +62,27 @@ namespace Education_assistant.Modules.ModulePhongHoc.Services
                 await Task.CompletedTask;
             });
             _loggerService.LogInfo($"Xóa phòng học có id = {id} thành công.");
+            try
+            {
+                
+            }
+            catch (DbUpdateException ex)
+            {
+                var inner = ex.InnerException?.Message?.ToLower();
+                if (ex.InnerException != null && (inner!.Contains("foreign key") ||
+                            inner.Contains("reference constraint") ||
+                            inner.Contains("violates foreign key constraint") ||
+                            inner.Contains("cannot delete or update a parent row")))
+                {
+                    throw new PhongHocBadRequestException("Không thể xóa phòng học vì có ràng buộc khóa ngoại!.");
+                }
+                throw new Exception($"Lỗi hệ thống!: {ex.Message}");
+            }
         }
 
-        public async Task<(IEnumerable<ResponsePhongHocDto> data, PageInfo page)> GetAllPhongHocAsync(ParamBaseDto paramBaseDto)
+        public async Task<(IEnumerable<ResponsePhongHocDto> data, PageInfo page)> GetAllPhongHocAsync(ParamPhongHocDto paramPhongHocDto)
         {
-            var phongHocs = await _repositoryMaster.PhongHoc.GetAllPhongHocAsync(paramBaseDto.page, paramBaseDto.limit, paramBaseDto.search, paramBaseDto.sortBy, paramBaseDto.sortByOrder);
+            var phongHocs = await _repositoryMaster.PhongHoc.GetAllPhongHocAsync(paramPhongHocDto.page, paramPhongHocDto.limit, paramPhongHocDto.search, paramPhongHocDto.sortBy, paramPhongHocDto.sortByOrder, paramPhongHocDto.trangThai);
             var phongHocDto = _mapper.Map<IEnumerable<ResponsePhongHocDto>>(phongHocs);
             return (data: phongHocDto, page: phongHocs!.PageInfo);
         }
@@ -77,23 +101,29 @@ namespace Education_assistant.Modules.ModulePhongHoc.Services
 
         public async Task UpdateAsync(Guid id, RequestUpdatePhongHocDto request)
         {
-            if (id != request.Id)
+            try
             {
-                throw new PhongHocBadRequestException($"Id request và Id phòng học khác nhau!");
+                if (id != request.Id)
+                {
+                    throw new PhongHocBadRequestException($"Id request và Id phòng học khác nhau!");
+                }
+                var phongHoc = await _repositoryMaster.PhongHoc.GetPhongHocByIdAsync(id, false);
+                if (phongHoc is null)
+                {
+                    throw new PhongHocNotFoundException(id);
+                }
+                var phongHocUpdate = _mapper.Map<PhongHoc>(request);
+                phongHocUpdate.UpdatedAt = DateTime.Now;
+                await _repositoryMaster.ExecuteInTransactionAsync(async () =>
+                {
+                    _repositoryMaster.PhongHoc.UpdatePhongHoc(phongHocUpdate);
+                    await Task.CompletedTask;
+                });
+                _loggerService.LogInfo($"Cập nhật phòng học có id = {id} thành công.");
+            }catch (DbUpdateException ex)
+            {
+                throw new Exception($"Lỗi hệ thống!: {ex.Message}");   
             }
-            var phongHoc = await _repositoryMaster.PhongHoc.GetPhongHocByIdAsync(id, false);
-            if (phongHoc is null)
-            {
-                throw new PhongHocNotFoundException(id);
-            }
-            var phongHocUpdate = _mapper.Map<PhongHoc>(request);
-            phongHocUpdate.UpdatedAt = DateTime.Now;
-            await _repositoryMaster.ExecuteInTransactionAsync(async () =>
-            {
-                _repositoryMaster.PhongHoc.UpdatePhongHoc(phongHocUpdate);
-                await Task.CompletedTask;
-            });
-            _loggerService.LogInfo($"Cập nhật phòng học có id = {id} thành công.");
         }
     }
 }

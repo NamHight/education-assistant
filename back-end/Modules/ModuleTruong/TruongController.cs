@@ -31,14 +31,14 @@ public class TruongController : ControllerBase
     }
     [HttpPost("")]
     [ServiceFilter(typeof(ValidationFilter))]
-    public async Task<ActionResult> AddTruongAsync([FromBody] RequestAddTruongDto model)
+    public async Task<ActionResult> AddTruongAsync([FromForm] RequestAddTruongDto model)
     {
         var result = await _serviceMaster.Truong.CreateAsync(model);
         return Ok(result);
     }
     [HttpPut("{id}")]
     [ServiceFilter(typeof(ValidationFilter))]
-    public async Task<ActionResult> UpdateTruongAsync(Guid id, [FromBody] RequestUpdateTruongDto model)
+    public async Task<ActionResult> UpdateTruongAsync(Guid id, [FromForm] RequestUpdateTruongDto model)
     {
         await _serviceMaster.Truong.UpdateAsync(id, model);
         return NoContent();
