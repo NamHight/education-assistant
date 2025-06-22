@@ -1,4 +1,3 @@
-using System;
 using System.Linq.Expressions;
 using Education_assistant.Context;
 using Education_assistant.Extensions;
@@ -25,15 +24,17 @@ public class RepositoryKhoa : RepositoryBase<Khoa>, IRepositoryKhoa
         Delete(khoa);
     }
 
-    public async Task<PagedListAsync<Khoa>?> GetAllPaginatedAndSearchOrSortAsync(int page, int limit, string search, string sortBy, string sortByOder)
+    public async Task<PagedListAsync<Khoa>?> GetAllPaginatedAndSearchOrSortAsync(int page, int limit, string search,
+        string sortBy, string sortByOder)
     {
+        Console.WriteLine($"Search 999999999999999999999: {search}, SortBy: {sortBy}, SortByOrder: {sortByOder}");
         return await PagedListAsync<Khoa>.ToPagedListAsync(_context.Khoas!.SearchBy(search, item => item.TenKhoa)
-                                                                .SortByOptions(sortBy, sortByOder, new Dictionary<string, Expression<Func<Khoa, object>>>
-                                                                {
-                                                                    ["createdat"] = item => item.CreatedAt,
-                                                                    ["updatedat"] = item => item.UpdatedAt!,
-                                                                }).AsNoTracking()
-                                                                , page, limit);
+                .SortByOptions(sortBy, sortByOder, new Dictionary<string, Expression<Func<Khoa, object>>>
+                {
+                    ["createdat"] = item => item.CreatedAt,
+                    ["updatedat"] = item => item.UpdatedAt!
+                }).AsNoTracking()
+            , page, limit);
     }
 
     public async Task<Khoa?> GetKhoaByIdAsync(Guid id, bool trackChanges)

@@ -17,13 +17,23 @@ export const API = {
         REFRESH_TOKEN: "/Authenticate/refresh-token",
         USER: "/Authenticate/me",
     },
+    NGANH:{
+        GET_ALL: "/Nganh",
+        GET_BY_ID: "/Nganh/:id",
+    },
+    SINH_VIEN:{
+        GET_ALL: "/SinhVien",
+        GET_BY_ID: "/SinhVien/:id",
+        RESTORE: "/SinhVien/:id/restore",
+    },
     GIANG_VIEN: {
         GET_ALL: "/giangviens",
         GET_ONE: "/giangviens/:id",
         RESTORE: "/giangviens/:id/restore",
     },  
     KHOA: {
-        GET_ALL: "/khoa"
+        GET_ALL: "/khoa",
+        GET_BY_ID: "/Khoa/:id"
     },
     BO_MON: {
         GET_ALL: "/BoMon",
@@ -61,6 +71,31 @@ export const APP_ROUTE = {
         ADD: "/lop-hoc-phan/them-moi",
         EDIT: (id: string) => `/lop-hoc-phan/thay-doi/${id}`,
     },
+    SINH_VIEN:{
+        ROOT: "/sinh-vien",
+        ADD: "/sinh-vien/them-moi",
+        EDIT: (id: string) => `/sinh-vien/thay-doi/${id}`,
+    },
+    KHOA:{
+        ROOT: "/khoa",
+        ADD: "/khoa/them-moi",
+        EDIT: (id: string) => `/khoa/thay-doi/${id}`,
+    },
+    MON_HOC:{
+        ROOT: "/mon-hoc",
+        ADD: "/mon-hoc/them-moi",
+        EDIT: (id: string) => `/mon-hoc/thay-doi/${id}`,
+    },
+    NGANH:{
+        ROOT: "/nganh",
+        ADD: "/nganh/them-moi",
+        EDIT: (id: string) => `/nganh/thay-doi/${id}`,
+    },
+    BO_MON:{
+        ROOT: "/bo-mon",
+        ADD: "/bo-mon/them-moi",
+        EDIT: (id: string) => `/bo-mon/thay-doi/${id}`,
+    }
 }
 
 export const breadcrumbTranslations: { [key: string]: string } = {
