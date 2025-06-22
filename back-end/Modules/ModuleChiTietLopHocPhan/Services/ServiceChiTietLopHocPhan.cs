@@ -11,6 +11,7 @@ using Education_assistant.Modules.ModuleChiTietLopHocPhan.DTOs.Response;
 using Education_assistant.Repositories.Paginations;
 using Education_assistant.Repositories.RepositoryMaster;
 using Education_assistant.Services.BaseDtos;
+using Microsoft.EntityFrameworkCore;
 
 namespace Education_assistant.Modules.ModuleChiTietLopHocPhan.Services;
 
@@ -28,29 +29,45 @@ public class ServiceChiTietLopHocPhan : IServiceChiTietLopHocPhan
 
     public async Task<ResponseChiTietLopHocPhanDto> CreateAsync(RequestAddChiTietLopHocPhanDto request)
     {
-        var newDiemSo = _mapper.Map<ChiTietLopHocPhan>(request);
-        await _repositoryMaster.ExecuteInTransactionAsync(async () =>
+
+        try
         {
-            await _repositoryMaster.ChiTietLopHocPhan.CreateAsync(newDiemSo);
-        });
-        _loggerService.LogInfo("Thêm thông tin chi tiết lớp học phần thành công.");
-        var diemSoDto = _mapper.Map<ResponseChiTietLopHocPhanDto>(newDiemSo);
-        return diemSoDto;
+            var newDiemSo = _mapper.Map<ChiTietLopHocPhan>(request);
+            await _repositoryMaster.ExecuteInTransactionAsync(async () =>
+            {
+                await _repositoryMaster.ChiTietLopHocPhan.CreateAsync(newDiemSo);
+            });
+            _loggerService.LogInfo("Thêm thông tin chi tiết lớp học phần thành công.");
+            var diemSoDto = _mapper.Map<ResponseChiTietLopHocPhanDto>(newDiemSo);
+            return diemSoDto;      
+        }
+        catch (DbUpdateException ex)
+        {
+            throw new Exception($"Lỗi hệ thống!: {ex.Message}");
+        }
     }
 
     public async Task DeleteAsync(Guid id)
     {
-        var diemSo = await _repositoryMaster.ChiTietLopHocPhan.GetChiTietLopHocPhanByIdAsync(id, false);
-        if (diemSo is null)
+
+        try
         {
-            throw new ChiTietLopHocPhanNotFoundException(id);
+            var diemSo = await _repositoryMaster.ChiTietLopHocPhan.GetChiTietLopHocPhanByIdAsync(id, false);
+            if (diemSo is null)
+            {
+                throw new ChiTietLopHocPhanNotFoundException(id);
+            }
+            await _repositoryMaster.ExecuteInTransactionAsync(async () =>
+            {
+                _repositoryMaster.ChiTietLopHocPhan.DeleteChiTietLopHocPhan(diemSo);
+                await Task.CompletedTask;
+            });
+            _loggerService.LogInfo("Xóa chi tiết lớp học phần thành công.");
         }
-        await _repositoryMaster.ExecuteInTransactionAsync(async () =>
+        catch (DbUpdateException ex)
         {
-            _repositoryMaster.ChiTietLopHocPhan.DeleteChiTietLopHocPhan(diemSo);
-            await Task.CompletedTask;
-        });
-        _loggerService.LogInfo("Xóa chi tiết lớp học phần thành công.");
+            throw new Exception($"Lỗi hệ thống!: {ex.Message}");
+        }
     }
 
     public async Task DeleteListChiTietLopHocPhanAsync(RequestDeleteChiTietLopHocPhanDto request)
@@ -128,16 +145,16 @@ public class ServiceChiTietLopHocPhan : IServiceChiTietLopHocPhan
 
     public async Task<(IEnumerable<ResponseChiTietLopHocPhanDto> data, PageInfo page)> GetAllChiTietLopHocPhanAsync(ParamChiTietLopHocPhanDto paramChiTietLopHocPhanDto)
     {
-        var diemSos = await _repositoryMaster.ChiTietLopHocPhan.GetAllChiTietLopHocPhanAsync(paramChiTietLopHocPhanDto.Page,
-                                                                        paramChiTietLopHocPhanDto.Limit,
-                                                                        paramChiTietLopHocPhanDto.Search,
-                                                                        paramChiTietLopHocPhanDto.SortBy,
-                                                                        paramChiTietLopHocPhanDto.SortByOrder,
-                                                                        paramChiTietLopHocPhanDto.LopHocPhanId,
-                                                                        paramChiTietLopHocPhanDto.HocKy,
-                                                                        paramChiTietLopHocPhanDto.LoaiMonHoc,
-                                                                        paramChiTietLopHocPhanDto.NamHoc,
-                                                                        paramChiTietLopHocPhanDto.ChuongTrinhId);
+        var diemSos = await _repositoryMaster.ChiTietLopHocPhan.GetAllChiTietLopHocPhanAsync(paramChiTietLopHocPhanDto.page,
+                                                                        paramChiTietLopHocPhanDto.limit,
+                                                                        paramChiTietLopHocPhanDto.search,
+                                                                        paramChiTietLopHocPhanDto.sortBy,
+                                                                        paramChiTietLopHocPhanDto.sortByOrder,
+                                                                        paramChiTietLopHocPhanDto.lopHocPhanId,
+                                                                        paramChiTietLopHocPhanDto.hocKy,
+                                                                        paramChiTietLopHocPhanDto.loaiMonHoc,
+                                                                        paramChiTietLopHocPhanDto.namHoc,
+                                                                        paramChiTietLopHocPhanDto.chuongTrinhId);
         var diemSoDto = _mapper.Map<IEnumerable<ResponseChiTietLopHocPhanDto>>(diemSos);
         return (data: diemSoDto, page: diemSos!.PageInfo);
     }
@@ -202,7 +219,7 @@ public class ServiceChiTietLopHocPhan : IServiceChiTietLopHocPhan
                 existingRecord.DiemThi2 = item.DiemThi2;
                 existingRecord.DiemTongKet1 = item.DiemTongKet1;
                 existingRecord.DiemTongKet2 = item.DiemTongKet2;
-                existingRecord.HocKy = item.HocKy.Value;
+                existingRecord.HocKy = item.HocKy!.Value;
                 existingRecord.GhiChu = item.GhiChu;
                 existingRecord.UpdatedAt = DateTime.Now;
                 listChiTiets.Add(existingRecord);
@@ -223,23 +240,29 @@ public class ServiceChiTietLopHocPhan : IServiceChiTietLopHocPhan
 
     public async Task UpdateAsync(Guid id, RequestUpdateChiTietLopHocPhanDto request)
     {
-        if (id != request.Id)
+        try
         {
-            throw new ChiTietLopHocPhanBadRequestException($"Id: {id} và Id: {request.Id} của bộ môn không giống nhau!");
+            if (id != request.Id)
+            {
+                throw new ChiTietLopHocPhanBadRequestException($"Id: {id} và Id: {request.Id} của bộ môn không giống nhau!");
+            }
+            var diemSoExstting = await _repositoryMaster.ChiTietLopHocPhan.GetChiTietLopHocPhanByIdAsync(id, false);
+            if (diemSoExstting is null)
+            {
+                throw new ChiTietLopHocPhanNotFoundException(id);
+            }
+            var diemSoUpdate = _mapper.Map<ChiTietLopHocPhan>(request);
+            diemSoUpdate.UpdatedAt = DateTime.Now;
+            await _repositoryMaster.ExecuteInTransactionAsync(async () =>
+            {
+                _repositoryMaster.ChiTietLopHocPhan.UpdateChiTietLopHocPhan(diemSoUpdate);
+                await Task.CompletedTask;
+            });
+            _loggerService.LogInfo("Cập nhật chi tiết lớp học phần thành công.");
+        }catch (DbUpdateException ex)
+        {
+            throw new Exception($"Lỗi hệ thống!: {ex.Message}");   
         }
-        var diemSoExstting = await _repositoryMaster.ChiTietLopHocPhan.GetChiTietLopHocPhanByIdAsync(id, false);
-        if (diemSoExstting is null)
-        {
-            throw new ChiTietLopHocPhanNotFoundException(id);
-        }
-        var diemSoUpdate = _mapper.Map<ChiTietLopHocPhan>(request);
-        diemSoUpdate.UpdatedAt = DateTime.Now;
-        await _repositoryMaster.ExecuteInTransactionAsync(async () =>
-        {
-            _repositoryMaster.ChiTietLopHocPhan.UpdateChiTietLopHocPhan(diemSoUpdate);
-            await Task.CompletedTask;
-        });
-        _loggerService.LogInfo("Cập nhật chi tiết lớp học phần thành công.");
     }
 
     public async Task UpdateListChiTietLopHocPhanAsync(List<RequestUpdateChiTietLopHocPhanDto> listRequest)

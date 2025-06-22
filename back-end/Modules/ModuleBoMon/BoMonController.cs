@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Education_assistant.Modules.ModuleBoMon.DTOs.Param;
 using Education_assistant.Modules.ModuleBoMon.DTOs.Request;
 using Education_assistant.Modules.ModuleMonHoc.DTOs.Request;
 using Education_assistant.Services;
@@ -23,9 +24,9 @@ namespace Education_assistant.Modules.ModuleBoMon
             _serviceMaster = serviceMaster;
         }
         [HttpGet("")]
-        public async Task<ActionResult> GetAllBoMonAsync([FromQuery] ParamBaseDto paramBaseDto)
+        public async Task<ActionResult> GetAllBoMonAsync([FromQuery] ParamBoMonDto paramBoMonDto)
         {
-            var result = await _serviceMaster.BoMon.GetAllBoMonAsync(paramBaseDto);
+            var result = await _serviceMaster.BoMon.GetAllBoMonAsync(paramBoMonDto);
             Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(result.page));
             return Ok(result.data);
         }
@@ -37,14 +38,14 @@ namespace Education_assistant.Modules.ModuleBoMon
         }
         [HttpPost]
         [ServiceFilter(typeof(ValidationFilter))]
-        public async Task<ActionResult> AddBoMonAsync([FromBody] RequestAddBoMonDto model)
+        public async Task<ActionResult> AddBoMonAsync([FromForm] RequestAddBoMonDto model)
         {
             var result = await _serviceMaster.BoMon.CreateAsync(model);
             return Ok(result);
         }
         [HttpPut("{id}")]
         [ServiceFilter(typeof(ValidationFilter))]
-        public async Task<ActionResult> UpdateBoMonAsync(Guid id, [FromBody] RequestUpdateBoMonDto model)
+        public async Task<ActionResult> UpdateBoMonAsync(Guid id, [FromForm] RequestUpdateBoMonDto model)
         {
             await _serviceMaster.BoMon.UpdateAsync(id, model);
             return NoContent();

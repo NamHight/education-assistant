@@ -42,14 +42,14 @@ namespace Education_assistant.Modules.ModuleTuan
         }
         [HttpPost("")]
         [ServiceFilter(typeof(ValidationFilter))]
-        public async Task<ActionResult> AddTuanAsync([FromBody] RequestAddTuanDto model)
+        public async Task<ActionResult> AddTuanAsync([FromForm] RequestAddTuanDto model)
         {
             var result = await _serviceMaster.Tuan.CreateAsync(model);
             return Ok(result);
         }
         [HttpPut("{id}")]
         [ServiceFilter(typeof(ValidationFilter))]
-        public async Task<ActionResult> UpdateTuanAsync(Guid id, [FromBody] RequestUpdateTuanDto model)
+        public async Task<ActionResult> UpdateTuanAsync(Guid id, [FromForm] RequestUpdateTuanDto model)
         {
             await _serviceMaster.Tuan.UpdateAsync(id, model);
             return NoContent();

@@ -38,7 +38,7 @@ public class RepositoryLopHoc : RepositoryBase<LopHoc>, IRepositoryLopHoc
 
     public async Task<LopHoc?> GetLopHocByIdAsync(Guid id, bool trackChanges)
     {
-        return await FindByCondition(item => item.Id == id, trackChanges).FirstOrDefaultAsync();
+        return await FindByCondition(item => item.Id == id, trackChanges).Include(item => item.GiangVien).Include(item => item.Nganh).FirstOrDefaultAsync();
     }
 
     public void UpdateLopHoc(LopHoc lopHoc)

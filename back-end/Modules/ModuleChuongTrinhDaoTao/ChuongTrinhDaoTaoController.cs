@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Education_assistant.Modules.ModuleChuongTrinhDaoTao.DTOs.Param;
 using Education_assistant.Modules.ModuleChuongTrinhDaoTao.DTOs.Request;
 using Education_assistant.Services.BaseDtos;
 using Education_assistant.Services.ServiceMaster;
@@ -21,9 +22,9 @@ namespace Education_assistant.Modules.ModuleChuongTrinhDaoTao
             _serviceMaster = serviceMaster;
         }
         [HttpGet("")]
-        public async Task<ActionResult> GetAllChuongTrinhDaoTaoAsync([FromQuery] ParamBaseDto paramBaseDto)
+        public async Task<ActionResult> GetAllChuongTrinhDaoTaoAsync([FromQuery] ParamChuongTrinhDaoTaoDto paramChuongTrinhDaoTaoDto)
         {
-            var result = await _serviceMaster.ChuongTrinhDaoTao.GetAllChuongTrinhDaoTaoAsync(paramBaseDto);
+            var result = await _serviceMaster.ChuongTrinhDaoTao.GetAllChuongTrinhDaoTaoAsync(paramChuongTrinhDaoTaoDto);
             Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(result.page));
             return Ok(result.data);
         }
@@ -35,14 +36,14 @@ namespace Education_assistant.Modules.ModuleChuongTrinhDaoTao
         }
         [HttpPost]
         [ServiceFilter(typeof(ValidationFilter))]
-        public async Task<ActionResult> AddChuongTrinhDaoTaoAsync([FromBody] RequestAddChuongTrinhDaoTaoDto model)
+        public async Task<ActionResult> AddChuongTrinhDaoTaoAsync([FromForm] RequestAddChuongTrinhDaoTaoDto model)
         {
             var result = await _serviceMaster.ChuongTrinhDaoTao.CreateAsync(model);
             return CreatedAtRoute("GetChuongTrinhDaoTaoId", new { id = result.Id }, result);
         }
         [HttpPut("{id}")]
         [ServiceFilter(typeof(ValidationFilter))]
-        public async Task<ActionResult> UpdateChuongTrinhDaoTaosAsync(Guid id, [FromBody] RequestUpdateChuongTrinhDaoTaoDto model)
+        public async Task<ActionResult> UpdateChuongTrinhDaoTaosAsync(Guid id, [FromForm] RequestUpdateChuongTrinhDaoTaoDto model)
         {
             await _serviceMaster.ChuongTrinhDaoTao.UpdateAsync(id, model);
             return NoContent();

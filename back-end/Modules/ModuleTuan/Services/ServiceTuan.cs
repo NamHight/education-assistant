@@ -9,6 +9,7 @@ using Education_assistant.Modules.ModuleTuan.DTOs.Response;
 using Education_assistant.Repositories.Paginations;
 using Education_assistant.Repositories.RepositoryMaster;
 using Education_assistant.Services.BaseDtos;
+using Microsoft.EntityFrameworkCore;
 
 namespace Education_assistant.Modules.ModuleTuan.Services;
 
@@ -26,39 +27,59 @@ public class ServiceTuan : IServiceTuan
     }
     public async Task<ResponseTuanDto> CreateAsync(RequestAddTuanDto request)
     {
-        var newTuan = _mapper.Map<Tuan>(request);
-        newTuan.NgayKetThuc = newTuan.NgayBatDau!.Value.AddDays(6);
-        await _repositoryMaster.ExecuteInTransactionAsync(async () =>
+        try
         {
-            await _repositoryMaster.Tuan.CreateAsync(newTuan);
-        });
-        _loggerService.LogInfo("Thêm thông tin tuần thành công.");
-        var tuanDto = _mapper.Map<ResponseTuanDto>(newTuan);
-        return tuanDto;
+            var newTuan = _mapper.Map<Tuan>(request);
+            newTuan.NgayKetThuc = newTuan.NgayBatDau!.Value.AddDays(6);
+            await _repositoryMaster.ExecuteInTransactionAsync(async () =>
+            {
+                await _repositoryMaster.Tuan.CreateAsync(newTuan);
+            });
+            _loggerService.LogInfo("Thêm thông tin tuần thành công.");
+            var tuanDto = _mapper.Map<ResponseTuanDto>(newTuan);
+            return tuanDto;
+        }catch (DbUpdateException ex)
+        {
+            throw new Exception($"Lỗi hệ thống!: {ex.Message}");   
+        }
     }
 
     public async Task DeleteAsync(Guid id)
     {
-        if (id == Guid.Empty)
+        try
         {
-            throw new TuanBadRequestException($"Khoa với {id} không được bỏ trống!");
+            if (id == Guid.Empty)
+            {
+                throw new TuanBadRequestException($"Khoa với {id} không được bỏ trống!");
+            }
+            var tuan = await _repositoryMaster.Tuan.GetTuanByIdAsync(id, false);
+            if (tuan is null)
+            {
+                throw new TuanNotFoundException(id);
+            }
+            await _repositoryMaster.ExecuteInTransactionAsync(async () =>
+            {
+                _repositoryMaster.Tuan.DeleteTuan(tuan);
+                await Task.CompletedTask;
+            });
+            _loggerService.LogInfo("Xóa tuần thành công.");
+        }catch (DbUpdateException ex)
+        {
+            var inner = ex.InnerException?.Message?.ToLower();
+            if (ex.InnerException != null && (inner!.Contains("foreign key") ||
+                        inner.Contains("reference constraint") ||
+                        inner.Contains("violates foreign key constraint") ||
+                        inner.Contains("cannot delete or update a parent row")))
+            {
+                throw new TuanBadRequestException("Không thể xóa tuần vì có ràng buộc khóa ngoại!.");         
+            }
+            throw new Exception($"Lỗi hệ thống!: {ex.Message}");   
         }
-        var tuan = await _repositoryMaster.Tuan.GetTuanByIdAsync(id, false);
-        if (tuan is null)
-        {
-            throw new TuanNotFoundException(id);
-        }
-        await _repositoryMaster.ExecuteInTransactionAsync(async () =>
-        {
-            _repositoryMaster.Tuan.DeleteTuan(tuan);
-            await Task.CompletedTask;
-        });
-        _loggerService.LogInfo("Xóa tuần thành công.");
     }
 
     public async Task<(IEnumerable<ResponseTuanDto> data, PageInfo page)> GetAllTuanAsync(ParamTuanDto paramTuanDto)
     {
-        var tuans = await _repositoryMaster.Tuan.GetAllTuanAsync(paramTuanDto.Page, paramTuanDto.Limit, paramTuanDto.Search, paramTuanDto.SortBy, paramTuanDto.SortByOrder, paramTuanDto.NamHoc);
+        var tuans = await _repositoryMaster.Tuan.GetAllTuanAsync(paramTuanDto.page, paramTuanDto.limit, paramTuanDto.search, paramTuanDto.sortBy, paramTuanDto.sortByOrder, paramTuanDto.namHoc);
         var tuanDtos = _mapper.Map<IEnumerable<ResponseTuanDto>>(tuans);
         return (data: tuanDtos, page: tuans!.PageInfo);
     }
@@ -89,22 +110,28 @@ public class ServiceTuan : IServiceTuan
 
     public async Task UpdateAsync(Guid id, RequestUpdateTuanDto request)
     {
-        if (id != request.Id)
+        try
         {
-            throw new TuanBadRequestException($"Id: {id} và Id: {request.Id} của khoa không giống nhau!");
+            if (id != request.Id)
+            {
+                throw new TuanBadRequestException($"Id: {id} và Id: {request.Id} của khoa không giống nhau!");
+            }
+            var tuan = await _repositoryMaster.Tuan.GetTuanByIdAsync(id, false);
+            if (tuan is null)
+            {
+                throw new TuanNotFoundException(id);
+            }
+            var tuanUpdate = _mapper.Map<Tuan>(request);
+            tuanUpdate.UpdatedAt = DateTime.Now;
+            await _repositoryMaster.ExecuteInTransactionAsync(async () =>
+            {
+                _repositoryMaster.Tuan.UpdateTuan(tuanUpdate);
+                await Task.CompletedTask;
+            });
+            _loggerService.LogInfo("Cập nhật tuần thành công.");
+        }catch (DbUpdateException ex)
+        {
+            throw new Exception($"Lỗi hệ thống!: {ex.Message}");   
         }
-        var tuan = await _repositoryMaster.Tuan.GetTuanByIdAsync(id, false);
-        if (tuan is null)
-        {
-            throw new TuanNotFoundException(id);
-        }
-        var tuanUpdate = _mapper.Map<Tuan>(request);
-        tuanUpdate.UpdatedAt = DateTime.Now;
-        await _repositoryMaster.ExecuteInTransactionAsync(async () =>
-        {
-            _repositoryMaster.Tuan.UpdateTuan(tuanUpdate);
-            await Task.CompletedTask;
-        });
-        _loggerService.LogInfo("Cập nhật tuần thành công.");
     }
 }

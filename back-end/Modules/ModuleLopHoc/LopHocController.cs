@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using Education_assistant.Modules.ModuleLopHoc.DTOs.Param;
 using Education_assistant.Modules.ModuleLopHoc.DTOs.Request;
 using Education_assistant.Modules.ModuleMonHoc.DTOs.Request;
 using Education_assistant.Services.BaseDtos;
@@ -21,9 +22,9 @@ namespace Education_assistant.Modules.ModuleLopHoc
             _serviceMaster = serviceMaster;
         }
         [HttpGet]
-        public async Task<ActionResult> GetAllLopHocAsync([FromQuery] ParamBaseDto paramBaseDto)
+        public async Task<ActionResult> GetAllLopHocAsync([FromQuery] ParamLopHocDto paramLopHocDto)
         {
-            var result = await _serviceMaster.LopHoc.GetAllLopHocAsync(paramBaseDto);
+            var result = await _serviceMaster.LopHoc.GetAllLopHocAsync(paramLopHocDto);
             Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(result.page));
             return Ok(result.data);
         }
@@ -37,7 +38,7 @@ namespace Education_assistant.Modules.ModuleLopHoc
 
         [HttpPost("")]
         [ServiceFilter(typeof(ValidationFilter))]
-        public async Task<ActionResult> AddLopHocAsync([FromBody] RequestAddLopHocDto model)
+        public async Task<ActionResult> AddLopHocAsync([FromForm] RequestAddLopHocDto model)
         {
             var result = await _serviceMaster.LopHoc.CreateAsync(model);
             return Ok(result);
@@ -45,7 +46,7 @@ namespace Education_assistant.Modules.ModuleLopHoc
 
         [HttpPut("{id}")]
         [ServiceFilter(typeof(ValidationFilter))]
-        public async Task<ActionResult> UpdateLopHocAsync(Guid id, [FromBody] RequestUpdateLopHocDto model)
+        public async Task<ActionResult> UpdateLopHocAsync(Guid id, [FromForm] RequestUpdateLopHocDto model)
         {
             await _serviceMaster.LopHoc.UpdateAsync(id, model);
             return NoContent();

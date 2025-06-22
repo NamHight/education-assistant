@@ -41,7 +41,7 @@ public class RepositoryChuongTrinhDaoTao : RepositoryBase<ChuongTrinhDaoTao>, IR
 
     public async Task<ChuongTrinhDaoTao?> GetChuongTrinhDaoTaoByIdAsync(Guid id, bool trackChanges)
     {
-       return await FindByCondition(item => item.Id == id, trackChanges).FirstOrDefaultAsync();
+       return await FindByCondition(item => item.Id == id, trackChanges).Include(item => item.Nganh).FirstOrDefaultAsync();
     }
 
     public async Task<ChuongTrinhDaoTao?> GetChuongTrinhDaoTaoByMaAsync(string maChuongTrinh, bool trackChanges)

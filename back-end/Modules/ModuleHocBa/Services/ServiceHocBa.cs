@@ -7,11 +7,13 @@ using Education_assistant.Exceptions.ThrowError.HocBaExceptions;
 using Education_assistant.helpers.implements;
 using Education_assistant.Models;
 using Education_assistant.Models.Enums;
+using Education_assistant.Modules.ModuleHocBa.DTOs.Param;
 using Education_assistant.Modules.ModuleHocBa.DTOs.Request;
 using Education_assistant.Modules.ModuleHocBa.DTOs.Response;
 using Education_assistant.Repositories.Paginations;
 using Education_assistant.Repositories.RepositoryMaster;
 using Education_assistant.Services.BaseDtos;
+using Microsoft.EntityFrameworkCore;
 
 namespace Education_assistant.Modules.ModuleHocBa.Services;
 
@@ -31,33 +33,46 @@ public class ServiceHocBa : IServiceHocBa
     }
     public async Task<ResponseHocBaDto> CreateAsync(RequestAddHocbaDto request)
     {
-        var newHocBa = _mapper.Map<HocBa>(request);
-        await _repositoryMaster.ExecuteInTransactionAsync(async () =>
+        try
         {
-            await _repositoryMaster.HocBa.CreateAsync(newHocBa);
-        });
-        _loggerService.LogInfo("Thêm thông tin học bạ thành công.");
-        var hocBaDto = _mapper.Map<ResponseHocBaDto>(newHocBa);
-        return hocBaDto;
+            var newHocBa = _mapper.Map<HocBa>(request);
+            await _repositoryMaster.ExecuteInTransactionAsync(async () =>
+            {
+                await _repositoryMaster.HocBa.CreateAsync(newHocBa);
+            });
+            _loggerService.LogInfo("Thêm thông tin học bạ thành công.");
+            var hocBaDto = _mapper.Map<ResponseHocBaDto>(newHocBa);
+            return hocBaDto;
+        }catch (DbUpdateException ex)
+        {
+            throw new Exception($"Lỗi hệ thống!: {ex.Message}");   
+        }
     }
 
     public async Task DeleteAsync(Guid id)
     {
-        if (id == Guid.Empty)
+        try
         {
-            throw new HocBaBadRequestException($"Khoa với {id} không được bỏ trống!");
+            if (id == Guid.Empty)
+            {
+                throw new HocBaBadRequestException($"Khoa với {id} không được bỏ trống!");
+            }
+            var hocBa = await _repositoryMaster.HocBa.GetHocBaByIdAsync(id, false);
+            if (hocBa is null)
+            {
+                throw new HocBaNotFoundException(id);
+            }
+            await _repositoryMaster.ExecuteInTransactionAsync(async () =>
+            {
+                _repositoryMaster.HocBa.DeleteHocBa(hocBa);
+                await Task.CompletedTask;
+            });
+            _loggerService.LogInfo("Xóa học bạ thành công.");
         }
-        var hocBa = await _repositoryMaster.HocBa.GetHocBaByIdAsync(id, false);
-        if (hocBa is null)
+        catch (DbUpdateException ex)
         {
-            throw new HocBaNotFoundException(id);
+            throw new Exception($"Lỗi hệ thống!: {ex.Message}");
         }
-        await _repositoryMaster.ExecuteInTransactionAsync(async () =>
-        {
-            _repositoryMaster.HocBa.DeleteHocBa(hocBa);
-            await Task.CompletedTask;
-        });
-        _loggerService.LogInfo("Xóa học bạ thành công.");
     }
 
     public async Task DeleteListHocBaAsync(RequestDeleteHocBaDto request)
@@ -73,9 +88,9 @@ public class ServiceHocBa : IServiceHocBa
         _loggerService.LogInfo("Xóa điểm học bạ hàng loại thành công thành công.");
     }
 
-    public async Task<(IEnumerable<ResponseHocBaDto> data, PageInfo page)> GetAllHocBaAsync(ParamBaseDto paramBaseDto)
+    public async Task<(IEnumerable<ResponseHocBaDto> data, PageInfo page)> GetAllHocBaAsync(ParamHocBaDto paramHocBaDto)
     {
-        var hocBas = await _repositoryMaster.HocBa.GetAllHocBaAsync(paramBaseDto.page, paramBaseDto.limit, paramBaseDto.search, paramBaseDto.sortBy, paramBaseDto.sortByOrder);
+        var hocBas = await _repositoryMaster.HocBa.GetAllHocBaAsync(paramHocBaDto.page, paramHocBaDto.limit, paramHocBaDto.search, paramHocBaDto.sortBy, paramHocBaDto.sortByOrder);
         var hocBaDtos = _mapper.Map<IEnumerable<ResponseHocBaDto>>(hocBas);
         return (data: hocBaDtos, page: hocBas!.PageInfo);
     }
@@ -93,28 +108,34 @@ public class ServiceHocBa : IServiceHocBa
 
     public async Task UpdateAsync(Guid id, RequestUpdateHocbaDto request)
     {
-        if (id != request.Id)
+        try
         {
-            throw new HocBaBadRequestException($"Id: {id} và Id: {request.Id} của khoa không giống nhau!");
+            if (id != request.Id)
+            {
+                throw new HocBaBadRequestException($"Id: {id} và Id: {request.Id} của khoa không giống nhau!");
+            }
+            var hocBa = await _repositoryMaster.HocBa.GetHocBaByIdAsync(id, false);
+            if (hocBa is null)
+            {
+                throw new HocBaNotFoundException(id);
+            }
+            var hocBaUpdate = _mapper.Map<HocBa>(request);
+            hocBaUpdate.LanHoc = hocBaUpdate.LanHoc + 1;
+            var diemso = _diemSoHelper.ComparePoint(request.DiemTongKetLopHocPhan, hocBaUpdate.DiemTongKet);
+            hocBaUpdate.DiemTongKet = diemso;
+            hocBaUpdate.KetQuaHocBaEnum = diemso >= 5 ? KetQuaHocBaEnum.DAT : KetQuaHocBaEnum.KHONG_DAT;
+            hocBaUpdate.UpdatedAt = DateTime.Now;
+
+            await _repositoryMaster.ExecuteInTransactionAsync(async () =>
+            {
+                _repositoryMaster.HocBa.UpdateHocBa(hocBaUpdate);
+                await Task.CompletedTask;
+            });
+            _loggerService.LogInfo("Cập nhật học bạ thành công.");
+        }catch (DbUpdateException ex)
+        {
+            throw new Exception($"Lỗi hệ thống!: {ex.Message}");   
         }
-        var hocBa = await _repositoryMaster.HocBa.GetHocBaByIdAsync(id, false);
-        if (hocBa is null)
-        {
-            throw new HocBaNotFoundException(id);
-        }
-        var hocBaUpdate = _mapper.Map<HocBa>(request);
-        hocBaUpdate.LanHoc = hocBaUpdate.LanHoc + 1;
-        var diemso = _diemSoHelper.ComparePoint(request.DiemTongKetLopHocPhan, hocBaUpdate.DiemTongKet);
-        hocBaUpdate.DiemTongKet = diemso;
-        hocBaUpdate.KetQuaHocBaEnum = diemso >= 5 ? KetQuaHocBaEnum.DAT : KetQuaHocBaEnum.KHONG_DAT;
-        hocBaUpdate.UpdatedAt = DateTime.Now;
-        
-        await _repositoryMaster.ExecuteInTransactionAsync(async () =>
-        {
-            _repositoryMaster.HocBa.UpdateHocBa(hocBaUpdate);
-            await Task.CompletedTask;
-        });
-        _loggerService.LogInfo("Cập nhật học bạ thành công.");
     }
 
     public async Task UpdateListHocBaAsync(RequestListUpdateHocbaDto request)

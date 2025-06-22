@@ -3,11 +3,13 @@ using AutoMapper;
 using Education_assistant.Contracts.LoggerServices;
 using Education_assistant.Exceptions.ThrowError.MonHocExceptions;
 using Education_assistant.Models;
+using Education_assistant.Modules.ModuleMonHoc.DTOs.Param;
 using Education_assistant.Modules.ModuleMonHoc.DTOs.Request;
 using Education_assistant.Modules.ModuleMonHoc.DTOs.Response;
 using Education_assistant.Repositories.Paginations;
 using Education_assistant.Repositories.RepositoryMaster;
 using Education_assistant.Services.BaseDtos;
+using Microsoft.EntityFrameworkCore;
 
 namespace Education_assistant.Modules.ModuleMonHoc.Services;
 
@@ -24,42 +26,63 @@ public class ServiceMonHoc : IServiceMonHoc
     }
     public async Task<ResponseMonHocDto> CreateAsync(RequestAddMonHocDto request)
     {
-        if (request is null)
+        try
         {
-            throw new MonHocBadRequestException("Thông tin bộ môn đầu vào không đủ thông tin!");
+            if (request is null)
+            {
+                throw new MonHocBadRequestException("Thông tin bộ môn đầu vào không đủ thông tin!");
+            }
+            var newMonHoc = _mapper.Map<MonHoc>(request);
+            await _repositoryMaster.ExecuteInTransactionAsync(async () =>
+            {
+                await _repositoryMaster.MonHoc.CreateAsync(newMonHoc);
+            });
+            _loggerService.LogInfo("Thêm thông tin bộ môn thành công.");
+            var monHocDto = _mapper.Map<ResponseMonHocDto>(newMonHoc);
+            return monHocDto; 
+        }catch (DbUpdateException ex)
+        {
+            throw new Exception($"Lỗi hệ thống!: {ex.Message}");   
         }
-        var newMonHoc = _mapper.Map<MonHoc>(request);
-        await _repositoryMaster.ExecuteInTransactionAsync(async () =>
-        {
-            await _repositoryMaster.MonHoc.CreateAsync(newMonHoc);
-        });
-        _loggerService.LogInfo("Thêm thông tin bộ môn thành công.");
-        var monHocDto = _mapper.Map<ResponseMonHocDto>(newMonHoc);
-        return monHocDto;
     }
 
     public async Task DeleteAsync(Guid id)
     {
-        if (id == Guid.Empty)
+        try
         {
-            throw new MonHocBadRequestException($"Môn học với {id} không được bỏ trống!");
+            if (id == Guid.Empty)
+            {
+                throw new MonHocBadRequestException($"Môn học với {id} không được bỏ trống!");
+            }
+            var monHoc = await _repositoryMaster.MonHoc.GetMonHocByIdAsync(id, false);
+            if (monHoc is null)
+            {
+                throw new MonHocNotFoundException(id);
+            }
+            await _repositoryMaster.ExecuteInTransactionAsync(async () =>
+            {
+                _repositoryMaster.MonHoc.DeleteMonHoc(monHoc);
+                await Task.CompletedTask;
+            });
+            _loggerService.LogInfo("Xóa môn học thành công.");
         }
-        var monHoc = await _repositoryMaster.MonHoc.GetMonHocByIdAsync(id, false);
-        if (monHoc is null)
+        catch (DbUpdateException ex)
         {
-            throw new MonHocNotFoundException(id);
+            var inner = ex.InnerException?.Message?.ToLower();
+            if (ex.InnerException != null && (inner!.Contains("foreign key") ||
+                        inner.Contains("reference constraint") ||
+                        inner.Contains("violates foreign key constraint") ||
+                        inner.Contains("cannot delete or update a parent row")))
+            {
+                throw new MonHocBadRequestException("Không thể xóa môn học vì có ràng buộc khóa ngoại!.");
+            }
+            throw new Exception($"Lỗi hệ thống!: {ex.Message}");
         }
-        await _repositoryMaster.ExecuteInTransactionAsync(async () =>
-        {
-            _repositoryMaster.MonHoc.DeleteMonHoc(monHoc);
-            await Task.CompletedTask;
-        });
-        _loggerService.LogInfo("Xóa môn học thành công.");
     }
 
-    public async Task<(IEnumerable<ResponseMonHocDto> data, PageInfo page)> GetAllPaginationAndSearchAsync(ParamBaseDto paramBaseDto)
+    public async Task<(IEnumerable<ResponseMonHocDto> data, PageInfo page)> GetAllPaginationAndSearchAsync(ParamMonHocDto paramMonHocDto)
     {
-        var monHocs = await _repositoryMaster.MonHoc.GetAllPaginatedAndSearchOrSortAsync(paramBaseDto.page, paramBaseDto.limit, paramBaseDto.search, paramBaseDto.sortBy, paramBaseDto.sortByOrder);
+        var monHocs = await _repositoryMaster.MonHoc.GetAllPaginatedAndSearchOrSortAsync(paramMonHocDto.page, paramMonHocDto.limit, paramMonHocDto.search, paramMonHocDto.sortBy, paramMonHocDto.sortByOrder);
         var monHocDto = _mapper.Map<IEnumerable<ResponseMonHocDto>>(monHocs);
         return (data: monHocDto, page: monHocs!.PageInfo);
     }
@@ -77,22 +100,28 @@ public class ServiceMonHoc : IServiceMonHoc
 
     public async Task UpdateAsync(Guid id, RequestUpdateMonHocDto request)
     {
-        if (id != request.Id)
+        try
         {
-            throw new MonHocBadRequestException($"Id và Id của môn học không giống nhau!");
+            if (id != request.Id)
+            {
+                throw new MonHocBadRequestException($"Id và Id của môn học không giống nhau!");
+            }
+            var truong = await _repositoryMaster.MonHoc.GetMonHocByIdAsync(id, false);
+            if (truong is null)
+            {
+                throw new MonHocNotFoundException(id);
+            }
+            var monHocUpdate = _mapper.Map<MonHoc>(request);
+            monHocUpdate.UpdatedAt = DateTime.Now;
+            await _repositoryMaster.ExecuteInTransactionAsync(async () =>
+            {
+                _repositoryMaster.MonHoc.UpdateMonHoc(monHocUpdate);
+                await Task.CompletedTask;
+            });
+            _loggerService.LogInfo("Cập nhật môn học thành công.");
+        } catch (DbUpdateException ex)
+        {
+            throw new Exception($"Lỗi hệ thống!: {ex.Message}");   
         }
-        var truong = await _repositoryMaster.MonHoc.GetMonHocByIdAsync(id, false);
-        if (truong is null)
-        {
-            throw new MonHocNotFoundException(id);
-        }
-        var monHocUpdate = _mapper.Map<MonHoc>(request);
-        monHocUpdate.UpdatedAt = DateTime.Now;
-        await _repositoryMaster.ExecuteInTransactionAsync(async () =>
-        {
-            _repositoryMaster.MonHoc.UpdateMonHoc(monHocUpdate);
-            await Task.CompletedTask;
-        });
-        _loggerService.LogInfo("Cập nhật môn học thành công.");
     }
 }

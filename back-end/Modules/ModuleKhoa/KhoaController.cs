@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Education_assistant.Modules.ModuleKhoa.DTOs.Param;
 using Education_assistant.Modules.ModuleKhoa.DTOs.Request;
 using Education_assistant.Services.BaseDtos;
 using Education_assistant.Services.ServiceMaster;
@@ -21,9 +22,9 @@ namespace Education_assistant.Modules.ModuleKhoa
             _serviceMaster = serviceMaster;
         }
         [HttpGet("")]
-        public async Task<ActionResult> GetAllKhoaAsync([FromQuery] ParamBaseDto paramBaseDto)
+        public async Task<ActionResult> GetAllKhoaAsync([FromQuery] ParamKhoaDto paramKhoaDto)
         {
-            var result = await _serviceMaster.Khoa.GetAllPaginationAndSearchAsync(paramBaseDto);
+            var result = await _serviceMaster.Khoa.GetAllPaginationAndSearchAsync(paramKhoaDto);
             Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(result.page));
             return Ok(result.data);
         }
@@ -35,14 +36,14 @@ namespace Education_assistant.Modules.ModuleKhoa
         }
         [HttpPost("")]
         [ServiceFilter(typeof(ValidationFilter))]
-        public async Task<ActionResult> AddKhoaAsync([FromBody] RequestAddKhoaDto model)
+        public async Task<ActionResult> AddKhoaAsync([FromForm] RequestAddKhoaDto model)
         {
             var result = await _serviceMaster.Khoa.CreateAsync(model);
             return Ok(result);
         }
         [HttpPut("{id}")]
         [ServiceFilter(typeof(ValidationFilter))]
-        public async Task<ActionResult> UpdateKhoaAsync(Guid id, [FromBody] RequestUpdateKhoaDto model)
+        public async Task<ActionResult> UpdateKhoaAsync(Guid id, [FromForm] RequestUpdateKhoaDto model)
         {
             await _serviceMaster.Khoa.UpdateAsync(id, model);
             return NoContent();

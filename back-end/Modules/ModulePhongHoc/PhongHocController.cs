@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using Education_assistant.Modules.ModuleLopHoc.DTOs.Request;
+using Education_assistant.Modules.ModulePhongHoc.DTOs.Param;
 using Education_assistant.Modules.ModulePhongHoc.DTOs.Request;
 using Education_assistant.Services.BaseDtos;
 using Education_assistant.Services.ServiceMaster;
@@ -21,9 +22,9 @@ namespace Education_assistant.Modules.ModulePhongHoc
             _serviceMaster = serviceMaster;
         }
         [HttpGet]
-        public async Task<ActionResult> GetAllPhongHocAsync([FromQuery] ParamBaseDto paramBaseDto)
+        public async Task<ActionResult> GetAllPhongHocAsync([FromQuery] ParamPhongHocDto paramPhongHocDto)
         {
-            var result = await _serviceMaster.PhongHoc.GetAllPhongHocAsync(paramBaseDto);
+            var result = await _serviceMaster.PhongHoc.GetAllPhongHocAsync(paramPhongHocDto);
             Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(result.page));
             return Ok(result.data);
         }
@@ -37,7 +38,7 @@ namespace Education_assistant.Modules.ModulePhongHoc
 
         [HttpPost()]
         [ServiceFilter(typeof(ValidationFilter))]
-        public async Task<ActionResult> AddPhongHocAsync([FromBody] RequestAddPhongHocDto model)
+        public async Task<ActionResult> AddPhongHocAsync([FromForm] RequestAddPhongHocDto model)
         {
             var result = await _serviceMaster.PhongHoc.CreateAsync(model);
             return Ok(result);
@@ -45,7 +46,7 @@ namespace Education_assistant.Modules.ModulePhongHoc
 
         [HttpPut("{id}")]
         [ServiceFilter(typeof(ValidationFilter))]
-        public async Task<ActionResult> UpdatePhongHocAsync(Guid id, [FromBody] RequestUpdatePhongHocDto model)
+        public async Task<ActionResult> UpdatePhongHocAsync(Guid id, [FromForm] RequestUpdatePhongHocDto model)
         {
             await _serviceMaster.PhongHoc.UpdateAsync(id, model);
             return NoContent();

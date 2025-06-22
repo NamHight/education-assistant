@@ -32,7 +32,7 @@ public class RepositoryTuan : RepositoryBase<Tuan>, IRepositoryTuan
         var query = _context.Tuans!
                         .AsNoTracking()
                         .AsQueryable();
-        if (namHoc.HasValue)
+        if (namHoc.HasValue && namHoc != 0)
         {   
             query = query.Where(t => t.NamHoc == namHoc);
         }

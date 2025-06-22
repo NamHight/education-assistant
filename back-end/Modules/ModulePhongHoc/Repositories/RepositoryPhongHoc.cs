@@ -26,14 +26,21 @@ namespace Education_assistant.Modules.ModulePhongHoc.Repositories
             Delete(phongHoc);
         }
 
-        public async Task<PagedListAsync<PhongHoc>> GetAllPhongHocAsync(int page, int limit, string search, string sortBy, string sortByOrder)
+        public async Task<PagedListAsync<PhongHoc>> GetAllPhongHocAsync(int page, int limit, string search, string sortBy, string sortByOrder, int? trangThai)
         {
-            return await PagedListAsync<PhongHoc>.ToPagedListAsync(_context.PhongHocs!.SearchBy(search, item => item.TenPhong)
-                                                                .SortByOptions(sortBy, sortByOder, new Dictionary<string, Expression<Func<PhongHoc, object>>>
-                                                                {
-                                                                    ["createdat"] = item => item.CreatedAt,
-                                                                    ["updatedat"] = item => item.UpdatedAt!,
-                                                                }).AsNoTracking()
+            var query = _context.PhongHocs!
+                                .AsNoTracking()
+                                .SearchBy(search, item => item.TenPhong)
+                                .AsQueryable();
+            if (trangThai.HasValue && trangThai != 0) {
+                query = query.Where(item => item.TrangThaiPhongHoc == trangThai);
+            }
+            return await PagedListAsync<PhongHoc>.ToPagedListAsync(query
+                                                                .SortByOptions(sortBy, sortByOrder, new Dictionary<string, Expression<Func<PhongHoc, object>>>
+                                                                 {
+                                                                     ["createdat"] = item => item.CreatedAt,
+                                                                     ["updatedat"] = item => item.UpdatedAt!,
+                                                                 })
                                                                 , page, limit);
         }
 
