@@ -50,7 +50,7 @@ namespace Education_assistant.Modules.ModuleLopHocPhan
         }
         [HttpPut("list-phan-cong")]
         [ServiceFilter(typeof(ValidationFilter))]
-        public async Task<ActionResult> UpdateListLopHocPhanAsync([FromBody] List<RequestUpdateLopHocPhanDto> listRequest)
+        public async Task<ActionResult> UpdateListLopHocPhanAsync([FromForm] List<RequestUpdateLopHocPhanDto> listRequest)
         {
             await _serviceMaster.LopHocPhan.UpdateListLophocPhanAsync(listRequest);
             return NoContent();

@@ -93,8 +93,8 @@ public class ServiceLopHocPhan : IServiceLopHocPhan
                                                                                 paramLopHocPhanDto.sortBy,
                                                                                 paramLopHocPhanDto.sortByOrder,
                                                                                 paramLopHocPhanDto.khoa,
-                                                                                paramLopHocPhanDto.loaiChuongTrinh,
-                                                                                paramLopHocPhanDto.chuongTrinhId,
+                                                                                paramLopHocPhanDto.loaiChuongTrinhDaoTao,
+                                                                                paramLopHocPhanDto.chuongTrinhDaoTaoId,
                                                                                 paramLopHocPhanDto.hocKy,
                                                                                 paramLopHocPhanDto.trangThai);
         var lopHocPhanDtos = _mapper.Map<IEnumerable<ResponseLopHocPhanDto>>(lopHocPhans);
