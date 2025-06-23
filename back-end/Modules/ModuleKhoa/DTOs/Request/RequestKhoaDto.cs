@@ -1,4 +1,3 @@
-using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace Education_assistant.Modules.ModuleKhoa.DTOs.Request;
@@ -24,8 +23,8 @@ public class RequestAddKhoaDto
 
     [MaxLength(255, ErrorMessage = "Website không được quá 255 ký tự")]
     public string Website { get; set; } = string.Empty;
-    public Guid TruongId { get; set; }
 }
+
 public class RequestUpdateKhoaDto
 {
     [Required(ErrorMessage = "Id khoa không được để trống")]
@@ -50,5 +49,4 @@ public class RequestUpdateKhoaDto
 
     [MaxLength(255, ErrorMessage = "Website không được quá 255 ký tự")]
     public string Website { get; set; } = string.Empty;
-    public Guid TruongId { get; set; }
 }

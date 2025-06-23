@@ -19,30 +19,31 @@ authApi.interceptors.request.use(async (config) => {
     }
     return config;
 })
-const refreshAuthLogic = async (failedRequest: any) => {
-    const refreshToken = await getRefreshToken();
-    if (!refreshToken) {
-        window.location.href = '/dang-nhap';
-        return Promise.reject(failedRequest);
-    }
-    try {
-        const response = await axios.post(
-            `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api'}/auth/refresh/`,
-            { refresh: refreshToken },
-            { withCredentials: true }
-        );
-        console.log("Token refreshed successfully:", response?.data);
-        const newAccessToken = response.data.token;
-        cookieStorage.set(TOKEN_ACCESS, newAccessToken);
-        failedRequest.response.config.headers['Authorization'] = 'Bearer ' + newAccessToken;
-        return Promise.resolve();
-    } catch (error) {
-        cookieStorage.remove(TOKEN_ACCESS);
-        cookieStorage.remove(REFRESH_TOKEN);
-        window.location.href = '/dang-nhap';
+authApi.interceptors.response.use(
+    (response) => response,
+    async (error) => {
+        const originalRequest = error.config;
+        if (error.response.status === 401 && !originalRequest._retry) {
+            originalRequest._retry = true;
+            const refreshToken = await getRefreshToken();
+            try {
+                const response: any = await axios.post(
+                    `${process.env.NEXT_PUBLIC_API_URL}${API.AUTH.REFRESH_TOKEN}`,
+                    { refreshToken }
+                );
+                const { accessToken,refreshToken: refreshTokenNew} = response?.data;
+                cookieStorage.set(TOKEN_ACCESS, accessToken);
+                cookieStorage.set(REFRESH_TOKEN, refreshTokenNew);
+                originalRequest.headers.Authorization = `Bearer ${accessToken}`;
+                return axios(originalRequest);
+            } catch (err) {
+                cookieStorage.remove(REFRESH_TOKEN);
+                cookieStorage.remove(TOKEN_ACCESS);
+                window.location.href = '/dang-nhap';
+                return Promise.reject(err);
+            }
+        }
         return Promise.reject(error);
     }
-};
-
-axiosAuthRefresh(authApi, refreshAuthLogic);
+);
 export default authApi;

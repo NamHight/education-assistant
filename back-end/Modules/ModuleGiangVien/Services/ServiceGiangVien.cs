@@ -8,21 +8,21 @@ using Education_assistant.Modules.ModuleGiangVien.DTOs.Request;
 using Education_assistant.Modules.ModuleGiangVien.DTOs.Response;
 using Education_assistant.Repositories.Paginations;
 using Education_assistant.Repositories.RepositoryMaster;
-using Education_assistant.Services.BaseDtos;
 using Education_assistant.Services.ServiceFile;
 
 namespace Education_assistant.Modules.ModuleGiangVien.Services;
 
 public sealed class ServiceGiangVien : IServiceGiangVien
 {
+    private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly ILoggerService _loggerService;
-    private readonly IRepositoryMaster _repositoryMaster;
     private readonly IMapper _mapper;
     private readonly IPasswordHash _passwordHash;
+    private readonly IRepositoryMaster _repositoryMaster;
     private readonly IServiceFIle _serviceFIle;
-    private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public ServiceGiangVien(IRepositoryMaster repositoryMaster, ILoggerService loggerService, IMapper mapper, IPasswordHash passwordHash, IHttpContextAccessor httpContextAccessor, IServiceFIle serviceFIle)
+    public ServiceGiangVien(IRepositoryMaster repositoryMaster, ILoggerService loggerService, IMapper mapper,
+        IPasswordHash passwordHash, IHttpContextAccessor httpContextAccessor, IServiceFIle serviceFIle)
     {
         _repositoryMaster = repositoryMaster;
         _loggerService = loggerService;
@@ -77,9 +77,12 @@ public sealed class ServiceGiangVien : IServiceGiangVien
         _loggerService.LogInfo("Xóa giảng viên thành công.");
     }
 
-    public async Task<(IEnumerable<ResponseGiangVienDto> data, PageInfo page)> GetAllGiangVienAsync(ParamGiangVienDto paramGiangVienDto)
+    public async Task<(IEnumerable<ResponseGiangVienDto> data, PageInfo page)> GetAllGiangVienAsync(
+        ParamGiangVienDto paramGiangVienDto)
     {
-        var giangViens = await _repositoryMaster.GiangVien.GetAllGiangVienAsync(paramGiangVienDto.page, paramGiangVienDto.limit, paramGiangVienDto.search, paramGiangVienDto.sortBy, paramGiangVienDto.sortByOrder, paramGiangVienDto.KhoaId, paramGiangVienDto.BoMonId);
+        var giangViens = await _repositoryMaster.GiangVien.GetAllGiangVienAsync(paramGiangVienDto.page,
+            paramGiangVienDto.limit, paramGiangVienDto.search, paramGiangVienDto.sortBy, paramGiangVienDto.sortByOrder,
+            paramGiangVienDto.KhoaId, paramGiangVienDto.BoMonId,paramGiangVienDto.active);
         var giangVienDtos = _mapper.Map<IEnumerable<ResponseGiangVienDto>>(giangViens);
         return (data: giangVienDtos, page: giangViens!.PageInfo);
     }
@@ -115,26 +118,36 @@ public sealed class ServiceGiangVien : IServiceGiangVien
 
     public async Task UpdateAsync(Guid id, RequestUpdateGiangVienDto request)
     {
-        if (id != request.Id)
-            throw new GiangVienBadRequestException($"Id: {id} và Id: {request.Id} của giảng viên không giống nhau!");
-        var giangVien = await _repositoryMaster.GiangVien.GetGiangVienByIdAsync(id, false);
+        var giangVien = await _repositoryMaster.GiangVien.GetGiangVienByIdAsync(id, true);
         if (giangVien is null) throw new GiangVienNotFoundException(id);
-        var giangVienUpdate = _mapper.Map<GiangVien>(request);
         if (request.File != null && request.File.Length > 0)
         {
             var hinhDaiDien = await _serviceFIle.UpLoadFile(request.File!, "giangvien");
             var context = _httpContextAccessor.HttpContext;
             hinhDaiDien = $"{context!.Request.Scheme}://{context.Request.Host}/uploads/{hinhDaiDien}";
-            giangVienUpdate.AnhDaiDien = hinhDaiDien;
+            giangVien.AnhDaiDien = hinhDaiDien;
         }
-
-        giangVienUpdate.UpdatedAt = DateTime.Now;
+        Console.WriteLine($"test 9999999999999 {giangVien.TaiKhoan.LoaiTaiKhoan}");
+        giangVien.UpdatedAt = DateTime.Now;
         await _repositoryMaster.ExecuteInTransactionAsync(async () =>
         {
-            _repositoryMaster.GiangVien.UpdateGiangVien(giangVienUpdate);
+            if (!string.IsNullOrWhiteSpace(request.Email)) giangVien.Email = request.Email;
+            if (!string.IsNullOrWhiteSpace(request.HoTen)) giangVien.HoTen = request.HoTen;
+            if (!string.IsNullOrWhiteSpace(request.CCCD)) giangVien.CCCD = request.CCCD;
+            giangVien.NgaySinh = request.NgaySinh;
+            giangVien.GioiTinh = request.GioiTinh;
+            giangVien.NgayVaoTruong = request.NgayVaoTruong;
+            if (!string.IsNullOrWhiteSpace(request.KhoaId.ToString())) giangVien.KhoaId = request.KhoaId;
+            if (!string.IsNullOrWhiteSpace(request.BoMonId.ToString())) giangVien.BoMonId = request.BoMonId;
+            if (!string.IsNullOrWhiteSpace(request.SoDienThoai)) giangVien.SoDienThoai = request.SoDienThoai;
+            if (!string.IsNullOrWhiteSpace(request.DiaChi)) giangVien.DiaChi = request.DiaChi;
+            if (!string.IsNullOrWhiteSpace(request.TrinhDo)) giangVien.TrinhDo = request.TrinhDo;
+            if (!string.IsNullOrWhiteSpace(request.ChuyenNganh)) giangVien.ChuyenNganh = request.ChuyenNganh;
+            if (request.ChucVu is not null) giangVien.ChucVu = request.ChucVu;
+            if (request.TrangThai is not null) giangVien.TrangThai = request.TrangThai;
+            if(request.LoaiTaiKhoan is not null) giangVien.TaiKhoan.LoaiTaiKhoan = request.LoaiTaiKhoan;
             await Task.CompletedTask;
         });
         _loggerService.LogInfo("Cập nhật giảng viên thành công.");
-
     }
 }

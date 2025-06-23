@@ -137,12 +137,10 @@ public class ServiceLopHocPhan : IServiceLopHocPhan
         await _repositoryMaster.ExecuteInTransactionBulkEntityAsync(async () =>
         {
             await _repositoryMaster.BulkUpdateEntityAsync<LopHocPhan>(lopHocPhans);
-            foreach (var request in listRequest) {
-                await _repositoryMaster.ChiTietLopHocPhan.UpdateCtlhpWithPhanCongAsync(request.Id, request.GiangVienId, request.MonHocId);
-            }
-                
+            foreach (var request in listRequest)
+                await _repositoryMaster.ChiTietLopHocPhan.UpdateCtlhpWithPhanCongAsync(request.Id, request.GiangVienId,
+                    request.MonHocId);
         });
         _loggerService.LogInfo("Cập nhật list phân công giảng viên thành công.");
     }
 }
-

@@ -43,7 +43,7 @@ public static class QueryableExtentions
         var key = sortBy.ToLower();
         if (!optiops.TryGetValue(key, out var keySelector))
         {
-            keySelector = optiops.ContainsKey("createat") ? optiops["createat"] : optiops.First().Value;
+            keySelector = optiops.ContainsKey("createdat") ? optiops["createdat"] : optiops.First().Value;
         }
         bool isDescending = string.Equals(SortByOrder, "desc", StringComparison.OrdinalIgnoreCase);
         return isDescending
