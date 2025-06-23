@@ -49,12 +49,14 @@ public class RequestUpdateChiTietLopHocPhanDto
     public Guid GiangVienId { get; set; }
     [Required(ErrorMessage = "Id lớp học phần không được bỏ trống")]
     public Guid LopHocPhanId { get; set; }
+    public DateTime? CreatedAt { get; set; }
 }
 public class RequestNopDiemChiTietLopHocPhanDto
 {
     public decimal DiemTongKet1 { get; set; }
     public decimal DiemTongKet2 { get; set; } = 0;
     public Guid? SinhVienId { get; set; }
+    public DateTime? CreatedAt { get; set; }
 }
 
 public class RequestDeleteChiTietLopHocPhanDto

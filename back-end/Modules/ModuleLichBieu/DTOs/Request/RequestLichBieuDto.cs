@@ -33,6 +33,7 @@ namespace Education_assistant.Modules.ModuleLichBieu.DTOs.Request
         public Guid? TuanId { get; set; }
         public Guid LopHocPhanId { get; set; }
         public Guid PhongHocId { get; set; }
+        public DateTime? CreatedAt { get; set; }
     }
     public class RequestAddLichBieuListTuanDto
     {

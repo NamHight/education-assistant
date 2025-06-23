@@ -48,4 +48,5 @@ public class RequestUpdateChiTietChuongTrinhDaoTaoDto
 
     [Required(ErrorMessage = "Loại môn không được để trống")]
     public int? LoaiMonHoc { get; set; }
+    public DateTime? CreatedAt { get; set; }
 }

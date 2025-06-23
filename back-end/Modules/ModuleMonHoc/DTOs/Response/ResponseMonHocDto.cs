@@ -21,5 +21,6 @@ public class MonHocSimpleDto
     public Guid Id { get; set; }
     public string MaMonHoc { get; set; } = string.Empty;
     public string TenMonHoc { get; set; } = string.Empty;
+    public Guid KhoaId { get; set; }
     public List<ChiTietChuongTrinhDaoTaoSimpleDto>? DanhSachChiTietChuongTrinhDaoTao { get; set; }
 }

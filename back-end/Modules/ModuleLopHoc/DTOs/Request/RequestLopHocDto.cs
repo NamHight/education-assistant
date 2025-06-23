@@ -37,6 +37,7 @@ namespace Education_assistant.Modules.ModuleLopHoc.DTOs.Request
 
         public Guid GiangVienId { get; set; }
         public Guid NganhId { get; set; }
+        public DateTime? CreatedAt { get; set; }
     }
 
 }

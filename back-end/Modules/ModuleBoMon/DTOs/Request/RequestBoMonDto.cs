@@ -34,4 +34,5 @@ public class RequestUpdateBoMonDto
     public string SoDienThoai { get; set; } = string.Empty;
     [Required(ErrorMessage = "Id khoa không được để trống")]
     public Guid? KhoaId { get; set; }
+    public DateTime? CreatedAt { get; set; }
 }
