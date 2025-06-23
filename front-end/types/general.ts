@@ -17,6 +17,10 @@ export const API = {
         REFRESH_TOKEN: "/Authenticate/refresh-token",
         USER: "/Authenticate/me",
     },
+    PHONG_HOC:{
+        GET_ALL: "/PhongHoc",
+        GET_BY_ID: "/PhongHoc/:id",
+    },
     NGANH:{
         GET_ALL: "/Nganh",
         GET_BY_ID: "/Nganh/:id",
@@ -64,37 +68,42 @@ export const APP_ROUTE = {
     GIANG_VIEN: {
         ROOT: "/giang-vien",
         ADD: "/giang-vien/them-moi",
-        EDIT: (id: string) => `/giang-vien/thay-doi/${id}`,
+        EDIT: (id: string) => `/giang-vien/${id}`,
+    },
+    PHONG_HOC:{
+        ROOT: "/phong-hoc",
+        ADD: "/phong-hoc/them-moi",
+        EDIT: (id: string) => `/phong-hoc/${id}`,
     },
     LOP_HOC_PHAN: {
         ROOT: "/lop-hoc-phan",
         ADD: "/lop-hoc-phan/them-moi",
-        EDIT: (id: string) => `/lop-hoc-phan/thay-doi/${id}`,
+        EDIT: (id: string) => `/lop-hoc-phan/${id}`,
     },
     SINH_VIEN:{
         ROOT: "/sinh-vien",
         ADD: "/sinh-vien/them-moi",
-        EDIT: (id: string) => `/sinh-vien/thay-doi/${id}`,
+        EDIT: (id: string) => `/sinh-vien/${id}`,
     },
     KHOA:{
         ROOT: "/khoa",
         ADD: "/khoa/them-moi",
-        EDIT: (id: string) => `/khoa/thay-doi/${id}`,
+        EDIT: (id: string) => `/khoa/${id}`,
     },
     MON_HOC:{
         ROOT: "/mon-hoc",
         ADD: "/mon-hoc/them-moi",
-        EDIT: (id: string) => `/mon-hoc/thay-doi/${id}`,
+        EDIT: (id: string) => `/mon-hoc/${id}`,
     },
     NGANH:{
         ROOT: "/nganh",
         ADD: "/nganh/them-moi",
-        EDIT: (id: string) => `/nganh/thay-doi/${id}`,
+        EDIT: (id: string) => `/nganh/${id}`,
     },
     BO_MON:{
         ROOT: "/bo-mon",
         ADD: "/bo-mon/them-moi",
-        EDIT: (id: string) => `/bo-mon/thay-doi/${id}`,
+        EDIT: (id: string) => `/bo-mon/${id}`,
     }
 }
 
