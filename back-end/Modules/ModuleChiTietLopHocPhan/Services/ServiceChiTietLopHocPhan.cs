@@ -154,7 +154,8 @@ public class ServiceChiTietLopHocPhan : IServiceChiTietLopHocPhan
                                                                         paramChiTietLopHocPhanDto.hocKy,
                                                                         paramChiTietLopHocPhanDto.loaiMonHoc,
                                                                         paramChiTietLopHocPhanDto.namHoc,
-                                                                        paramChiTietLopHocPhanDto.chuongTrinhId);
+                                                                        paramChiTietLopHocPhanDto.chuongTrinhId,
+                                                                        paramChiTietLopHocPhanDto.ngayNopDiem);
         var diemSoDto = _mapper.Map<IEnumerable<ResponseChiTietLopHocPhanDto>>(diemSos);
         return (data: diemSoDto, page: diemSos!.PageInfo);
     }
@@ -274,5 +275,20 @@ public class ServiceChiTietLopHocPhan : IServiceChiTietLopHocPhan
             await _repositoryMaster.BulkUpdateEntityAsync<ChiTietLopHocPhan>(diemSos);
         });
         _loggerService.LogInfo("Cập nhật điểm hàng loại thành công thành công.");
+    }
+
+    public async Task UpdateNopDiemChiTietLopHocPhanAsync(Guid lopHocPhanId)
+    {
+        try
+        {
+            await _repositoryMaster.ExecuteInTransactionAsync(async () =>
+            {
+                await _repositoryMaster.ChiTietLopHocPhan.UpdateNgayNopDiemChiTietLopHocPhanByLopHocPhanIdAsync(lopHocPhanId);
+            });
+        }
+        catch (Exception ex)
+        {
+            throw new Exception($"Lỗi hệ thống : {ex.Message}");
+        }
     }
 }

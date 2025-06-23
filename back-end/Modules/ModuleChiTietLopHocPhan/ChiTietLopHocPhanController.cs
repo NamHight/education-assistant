@@ -48,6 +48,12 @@ namespace Education_assistant.Modules.ModuleChiTietLopHocPhan
             await _serviceMaster.ChiTietLopHocPhan.UpdateAsync(id, model);
             return NoContent();
         }
+        [HttpPut("{id}/update-nop-diem")]
+        public async Task<ActionResult> UpdateNopDiemChiTietLopHocPhanAsync(Guid id)
+        {
+            await _serviceMaster.ChiTietLopHocPhan.UpdateNopDiemChiTietLopHocPhanAsync(id);
+            return NoContent();
+        }
         [HttpPut("update-list")]
         public async Task<ActionResult> UpdateListChiTietLopHocPhanAsync([FromForm] List<RequestUpdateChiTietLopHocPhanDto> model)
         {

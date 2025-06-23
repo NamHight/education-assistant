@@ -33,7 +33,7 @@ public class RepositoryChiTietLopHocPhan : RepositoryBase<ChiTietLopHocPhan>, IR
         await _context.ChiTietLopHocPhans.Where(c => ids.Contains(c.Id)).ExecuteDeleteAsync();
     }
 
-    public async Task<PagedListAsync<ChiTietLopHocPhan>> GetAllChiTietLopHocPhanAsync(int page, int limit, string search, string sortBy, string sortByOder, Guid? lopHocPhanId, int? hocKy, int? loaiMonHoc, int? namHoc, Guid? chuongTrinhId)
+    public async Task<PagedListAsync<ChiTietLopHocPhan>> GetAllChiTietLopHocPhanAsync(int page, int limit, string search, string sortBy, string sortByOder, Guid? lopHocPhanId, int? hocKy, int? loaiMonHoc, int? namHoc, Guid? chuongTrinhId, bool? ngayNopDiem)
     {
         var query = _context.ChiTietLopHocPhans!
                             .AsNoTracking()
@@ -74,6 +74,10 @@ public class RepositoryChiTietLopHocPhan : RepositoryBase<ChiTietLopHocPhan>, IR
         if (chuongTrinhId.HasValue && chuongTrinhId != Guid.Empty)
         {
             query = query.Where(ctlhp => ctlhp.LopHocPhan!.MonHoc!.DanhSachChiTietChuongTrinhDaoTao!.Any(ctctdt => ctctdt.ChuongTrinhDaoTaoId == chuongTrinhId));
+        }
+        if (ngayNopDiem == true)
+        {
+            query = query.Where(item => item.NgayNopDiem == null);
         }
         return await PagedListAsync<ChiTietLopHocPhan>.ToPagedListAsync(query
                                                                 .SortByOptions(sortBy, sortByOder, new Dictionary<string, Expression<Func<ChiTietLopHocPhan, object>>>
@@ -121,6 +125,7 @@ public class RepositoryChiTietLopHocPhan : RepositoryBase<ChiTietLopHocPhan>, IR
                             .Include(item => item.LopHocPhan).FirstOrDefaultAsync();
     }
 
+
     public void UpdateChiTietLopHocPhan(ChiTietLopHocPhan chiTietLopHocPhan)
     {
         Update(chiTietLopHocPhan);
@@ -136,6 +141,19 @@ public class RepositoryChiTietLopHocPhan : RepositoryBase<ChiTietLopHocPhan>, IR
         };
         var result = await _context.Database.ExecuteSqlRawAsync(
             @"CALL sp_updateChiTietLopHocPhan(?, ?, ?)",
+            parameters
+        );
+        return result;
+    }
+
+    public async Task<int> UpdateNgayNopDiemChiTietLopHocPhanByLopHocPhanIdAsync(Guid lopHocPhanId)
+    {
+        var parameters = new[]
+        {
+            new MySqlParameter("maLopHocPhan", lopHocPhanId),
+        };
+        var result = await _context.Database.ExecuteSqlRawAsync(
+            @"CALL sp_updateNgayNopDiemChitietLopHocPhan(?)",
             parameters
         );
         return result;

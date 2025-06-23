@@ -31,7 +31,6 @@ public class RepositoryChuongTrinhDaoTao : RepositoryBase<ChuongTrinhDaoTao>, IR
         return await PagedListAsync<ChuongTrinhDaoTao>.ToPagedListAsync(_context.ChuongTrinhDaoTaos!.SearchBy(search, item => item.TenChuongTrinh).Include(item => item.Nganh)
                                                     .SortByOptions(sortBy, sortByOrder, new Dictionary<string, Expression<Func<ChuongTrinhDaoTao, object>>>
                                                     {
-                                                        ["hocphi"] = item => item.HocPhi,
                                                         ["tongsotinchi"] = item => item.TongSoTinChi,
                                                         ["createdat"] = item => item.CreatedAt,
                                                         ["updatedat"] = item => item.UpdatedAt!,

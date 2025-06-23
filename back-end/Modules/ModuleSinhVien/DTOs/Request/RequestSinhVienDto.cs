@@ -86,4 +86,5 @@ public class RequestUpdateSinhVienDto
     public DateTime NgayNhapHoc { get; set; }
     public Guid? LopHocId { get; set; }
     public IFormFile? File { get; set; }
+    public DateTime? CreatedAt { get; set; }
 }

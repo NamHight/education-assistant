@@ -53,4 +53,6 @@ public class RequestUpdateChuongTrinhDaoTaoDto
     public int? Khoa { get; set; }
     [Required(ErrorMessage = "Id ngành không được để trống")]
     public Guid? NganhId { get; set; }
+    public DateTime? CreatedAt { get; set; }
+    
 }

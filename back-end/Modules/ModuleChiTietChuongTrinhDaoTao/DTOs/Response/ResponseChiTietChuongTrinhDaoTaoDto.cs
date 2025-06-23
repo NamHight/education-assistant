@@ -26,6 +26,7 @@ public class ChiTietChuongTrinhDaoTaoSimpleDto
 {
     public Guid Id { get; set; }
     public ChuongTrinhDaoTaoSimpleDto? ChuongTrinhDaoTao { get; set; }
+    public Guid? BoMonId { get; set; }  
     public int SoTinChi { get; set; }
     public int HocKy { get; set; }
     public bool DiemTichLuy { get; set; }

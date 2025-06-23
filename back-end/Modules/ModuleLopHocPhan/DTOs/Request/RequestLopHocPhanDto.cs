@@ -37,10 +37,11 @@ public class RequestUpdateLopHocPhanDto
     [Required(ErrorMessage = "Sỉ số không được để trống")]
     public int SiSo { get; set; }
     [Required(ErrorMessage = "Trạng thái không được để trống")]
-    public int TrangThai { get; set; } 
+    public int TrangThai { get; set; }
 
     [Required(ErrorMessage = "Id Môn học không được để trống")]
     public Guid MonHocId { get; set; }
     [Required(ErrorMessage = "Id giảng viên không được để trống")]
     public Guid GiangVienId { get; set; }
+    public DateTime? CreatedAt { get; set; }
 }

@@ -50,6 +50,7 @@ namespace Education_assistant.Modules.ModulePhongHoc.DTOs.Request
         [Required(ErrorMessage = "Trạng thái phòng học không được để trống")]
         [Range(1, 3, ErrorMessage = "Trạng thái phòng học không hợp lệ")]
         public int TrangThaiPhongHoc { get; set; }
+        public DateTime? CreatedAt { get; set; }
     }
 
 }
