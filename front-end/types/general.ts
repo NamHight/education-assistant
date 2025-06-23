@@ -34,6 +34,7 @@ export const API = {
         GET_ALL: "/giangviens",
         GET_ONE: "/giangviens/:id",
         RESTORE: "/giangviens/:id/restore",
+        GET_BY_KHOA_ID: "/giangviens/:khoaId/by-khoa",
     },  
     KHOA: {
         GET_ALL: "/khoa",
@@ -65,6 +66,11 @@ export const API = {
 export const APP_ROUTE = {
     DANG_NHAP: "/dang-nhap",
     DASHBOARD: "/",
+    CHUONG_TRINH_DAO_TAO: {
+        ROOT: "/chuong-trinh-dao-tao",
+        ADD: "/chuong-trinh-dao-tao/them-moi",
+        EDIT: (id: string) => `/chuong-trinh-dao-tao/${id}`,
+    },
     GIANG_VIEN: {
         ROOT: "/giang-vien",
         ADD: "/giang-vien/them-moi",
