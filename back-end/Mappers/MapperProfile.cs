@@ -70,6 +70,7 @@ public class MapperProfile : Profile
         CreateMap<RequestAddLopHocPhanDto, LopHocPhan>();
         CreateMap<RequestUpdateLopHocPhanDto, LopHocPhan>();
         CreateMap<LopHocPhan, ResponseLopHocPhanDto>();
+            
 
         //map giangvien
         CreateMap<RequestAddGiangVienDto, GiangVien>();
@@ -127,7 +128,8 @@ public class MapperProfile : Profile
         CreateMap<Khoa, KhoaSimpleDto>();
         CreateMap<LopHoc, LopHocSimpleDto>();
         CreateMap<LopHocPhan, LopHocPhanSimpleDto>();
-        CreateMap<MonHoc, MonHocSimpleDto>();
+        CreateMap<MonHoc, MonHocSimpleDto>()
+            .ForMember(dest => dest.ChiTietChuongTrinhDaoTao, opt => opt.MapFrom(src => src.DanhSachChiTietChuongTrinhDaoTao!.FirstOrDefault()));
         CreateMap<Nganh, NganhSimpleDto>();
         CreateMap<PhongHoc, PhongHocSimpleDto>();
         CreateMap<SinhVien, SinhVienSimpleDto>();
