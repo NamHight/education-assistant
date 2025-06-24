@@ -1,4 +1,3 @@
-using System;
 using Education_assistant.Modules.ModuleChiTietChuongTrinhDaoTao.DTOs.Response;
 using Education_assistant.Modules.ModuleKhoa.DTOs.Response;
 
@@ -16,11 +15,13 @@ public class ResponseMonHocDto
     public DateTime? UpdatedAt { get; set; }
     public DateTime? DeletedAt { get; set; }
 }
+
 public class MonHocSimpleDto
 {
     public Guid Id { get; set; }
     public string MaMonHoc { get; set; } = string.Empty;
     public string TenMonHoc { get; set; } = string.Empty;
     public Guid KhoaId { get; set; }
-    public List<ChiTietChuongTrinhDaoTaoSimpleDto>? DanhSachChiTietChuongTrinhDaoTao { get; set; }
+    public KhoaSimpleDto Khoa { get; set; }
+    public ChiTietChuongTrinhDaoTaoSimpleDto? ChiTietChuongTrinhDaoTao { get; set; }
 }

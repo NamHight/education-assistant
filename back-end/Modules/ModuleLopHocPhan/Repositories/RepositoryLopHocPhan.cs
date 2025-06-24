@@ -103,6 +103,8 @@ public class RepositoryLopHocPhan : RepositoryBase<LopHocPhan>, IRepositoryLopHo
         // Áp dụng search và sort
         query = query
             .Include(x => x.MonHoc)
+            .ThenInclude(mh => mh.Khoa)
+            .Include(x => x.MonHoc)
             .ThenInclude(mh => mh.DanhSachChiTietChuongTrinhDaoTao)!
             .ThenInclude(ct => ct.ChuongTrinhDaoTao)
             .Include(x => x.GiangVien)

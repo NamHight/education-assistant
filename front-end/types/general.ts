@@ -47,6 +47,7 @@ export const API = {
     LOP_HOC_PHAN:{
         GET_ALL: "/LopHocPhan",
         GET_BY_ID: "/LopHocPhan/:id",
+        PHAN_CONG: "/LopHocPhan/list-phan-cong"
     },
     MON_HOC: {
         GET_ALL: "/MonHoc",
