@@ -11,12 +11,20 @@ import HistoryEduIcon from '@mui/icons-material/HistoryEdu';
 import SchoolIcon from '@mui/icons-material/School';
 import HotelClassIcon from '@mui/icons-material/HotelClass';
 import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
+import SquareFootIcon from '@mui/icons-material/SquareFoot';
+import GroupWorkIcon from '@mui/icons-material/GroupWork';
 export const NAVIGATION: Navigation = [
   {
     segment: '/',
     title: 'Trang chủ',
     icon: <DashboardIcon />,
     pattern: `/:rest*`
+  },
+  {
+    segment: 'phan-cong',
+    title: 'Phân công',
+    icon: <GroupWorkIcon />,
+    pattern: `phan-cong/:rest*`
   },
   {
     segment: 'giang-vien',
@@ -65,6 +73,12 @@ export const NAVIGATION: Navigation = [
     title: 'Học bạ',
     icon: <LibraryBooksIcon />,
     pattern: `hoc-ba/:rest*`
+  },
+  {
+    segment: 'chuong-trinh-dao-tao',
+    title: 'Chương trình đào tạo',
+    icon: <SquareFootIcon />,
+    pattern: `chuong-trinh-dao-tao/:rest*`
   },
   {
     segment: 'phong-hoc',

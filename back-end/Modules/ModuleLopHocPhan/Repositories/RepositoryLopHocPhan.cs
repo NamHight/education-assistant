@@ -1,9 +1,7 @@
 using System.Linq.Expressions;
-using DocumentFormat.OpenXml.Office.CustomUI;
 using Education_assistant.Context;
 using Education_assistant.Extensions;
 using Education_assistant.Models;
-using Education_assistant.Modules.ModuleLopHocPhan.DTOs.Response;
 using Education_assistant.Repositories;
 using Education_assistant.Repositories.Paginations;
 using Microsoft.EntityFrameworkCore;
@@ -22,7 +20,8 @@ public class RepositoryLopHocPhan : RepositoryBase<LopHocPhan>, IRepositoryLopHo
         await Create(lopHocPhan);
     }
 
-    public async Task<int> CreateSinhVienLopHocPhanHocBa(Guid maLop, Guid maLhp, Guid? maGiangVien, Guid maMonHoc, Guid maCtctdt, int HocKy)
+    public async Task<int> CreateSinhVienLopHocPhanHocBa(Guid maLop, Guid maLhp, Guid? maGiangVien, Guid maMonHoc,
+        Guid maCtctdt, int HocKy)
     {
         var parameters = new[]
         {
@@ -80,21 +79,23 @@ public class RepositoryLopHocPhan : RepositoryBase<LopHocPhan>, IRepositoryLopHo
     // }
 
     public async Task<PagedListAsync<LopHocPhan>?> GetAllLopHocPhanAsync(
-    int page, int limit,
-    string? search,
-    string? sortBy,
-    string? sortByOder,
-    int? khoa,
-    int? loaiChuongTrinh,
-    Guid? chuongTrinhId,
-    int? hocKy,
-    int? trangThai)
+        int page, int limit,
+        string? search,
+        string? sortBy,
+        string? sortByOder,
+        int? khoa,
+        int? loaiChuongTrinh,
+        Guid? chuongTrinhId,
+        int? hocKy,
+        int? trangThai)
     {
         var query = _context.LopHocPhans!
             .AsNoTracking()
             .Include(x => x.MonHoc)
-                .ThenInclude(mh => mh.DanhSachChiTietChuongTrinhDaoTao)!
-                    .ThenInclude(ct => ct.ChuongTrinhDaoTao)
+            .ThenInclude(mh => mh.Khoa)
+            .Include(x => x.MonHoc)
+            .ThenInclude(mh => mh.DanhSachChiTietChuongTrinhDaoTao)!
+            .ThenInclude(ct => ct.ChuongTrinhDaoTao)
             .Include(x => x.GiangVien)
             .AsNoTracking();
 
@@ -136,11 +137,14 @@ public class RepositoryLopHocPhan : RepositoryBase<LopHocPhan>, IRepositoryLopHo
             SiSo = lhp.SiSo,
             TrangThai = lhp.TrangThai,
             CreatedAt = lhp.CreatedAt,
-            GiangVien = lhp.GiangVien != null ? new GiangVien
-            {
-                Id = lhp.GiangVien.Id,
-                HoTen = lhp.GiangVien.HoTen
-            } : null,
+            GiangVien = lhp.GiangVien != null
+                ? new GiangVien
+                {
+                    Id = lhp.GiangVien.Id,
+                    HoTen = lhp.GiangVien.HoTen
+                }
+                : null,
+            GiangVienId = lhp.GiangVienId,
             MonHocId = lhp.MonHocId,
             MonHoc = lhp.MonHoc != null ? new MonHoc
             {
@@ -166,13 +170,14 @@ public class RepositoryLopHocPhan : RepositoryBase<LopHocPhan>, IRepositoryLopHo
                         BoMonId = ct.BoMonId,
                         ChuongTrinhDaoTaoId = ct.ChuongTrinhDaoTaoId,
                         ChuongTrinhDaoTao = new ChuongTrinhDaoTao
-                        {
-                            Id = ct.ChuongTrinhDaoTao!.Id,
-                            MaChuongTrinh = ct.ChuongTrinhDaoTao.MaChuongTrinh,
-                            TenChuongTrinh = ct.ChuongTrinhDaoTao.TenChuongTrinh
-                        }
-                    }).ToList()
-            } : null
+                            {
+                                Id = ct.ChuongTrinhDaoTao!.Id,
+                                MaChuongTrinh = ct.ChuongTrinhDaoTao.MaChuongTrinh,
+                                TenChuongTrinh = ct.ChuongTrinhDaoTao.TenChuongTrinh
+                            }
+                        }).ToList()
+                }
+                : null
         }).ToList();
 
         // Trả về PagedListAsync mới với dữ liệu đã map
@@ -186,7 +191,8 @@ public class RepositoryLopHocPhan : RepositoryBase<LopHocPhan>, IRepositoryLopHo
 
     public async Task<LopHocPhan?> GetLopHocPhanByIdAsync(Guid id, bool trackChanges)
     {
-        return await FindByCondition(item => item.Id == id, trackChanges).Include(lhp => lhp.MonHoc).Include(lhp => lhp.GiangVien).FirstOrDefaultAsync();
+        return await FindByCondition(item => item.Id == id, trackChanges).Include(lhp => lhp.MonHoc)
+            .Include(lhp => lhp.GiangVien).FirstOrDefaultAsync();
     }
 
     public async Task<bool> KiemTraLopHocPhanDaTonTaiAsync(Guid nganhId, int hocKy, int khoa, Guid monHocId)
