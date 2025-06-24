@@ -41,6 +41,11 @@ public class RepositoryLopHoc : RepositoryBase<LopHoc>, IRepositoryLopHoc
         return await FindByCondition(item => item.Id == id, trackChanges).Include(item => item.GiangVien).Include(item => item.Nganh).FirstOrDefaultAsync();
     }
 
+    public async Task<IEnumerable<LopHoc>> GetLopHocByKhoaAndNganhIdAsync(int khoa, Guid nganhId)
+    {
+        return await FindAll(false).Where(item => item.NganhId == nganhId && item.NamHoc == khoa).ToListAsync();
+    }
+
     public void UpdateLopHoc(LopHoc lopHoc)
     {
         Update(lopHoc);

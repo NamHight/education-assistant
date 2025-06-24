@@ -4,7 +4,6 @@ using Education_assistant.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Education_assistant.Extensions;
 
-
 namespace Education_assistant.Modules.ModuleTruong.Repositories;
 
 public class RepositoryTruong : RepositoryBase<Truong>, IRepositoryTruong
@@ -22,6 +21,12 @@ public class RepositoryTruong : RepositoryBase<Truong>, IRepositoryTruong
     {
         Delete(truong);
     }
+
+    public async Task<IEnumerable<Truong>> GetAllTruongAsync()
+    {
+        return await FindAll(false).ToListAsync();
+    }
+
     public async Task<Dictionary<string, string>> GetTruongAsync(bool trackChanges)
     {
         return await FindAll(trackChanges).ToDictionaryAsync(e => e.Key, e => e.Value);
@@ -30,6 +35,11 @@ public class RepositoryTruong : RepositoryBase<Truong>, IRepositoryTruong
     public async Task<Truong?> GetTruongByIdAsync(Guid id, bool trackChanges)
     {
         return await FindByCondition(item => item.Id == id, trackChanges).FirstOrDefaultAsync();
+    }
+
+    public async Task<Truong?> GetTruongByKeyAsync(string key, bool trackChanges)
+    {
+        return await FindByCondition(item => item.Key == key, false).FirstOrDefaultAsync();
     }
 
     public void UpdateTruong(Truong truong)

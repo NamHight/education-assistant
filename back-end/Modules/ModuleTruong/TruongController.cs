@@ -23,6 +23,12 @@ public class TruongController : ControllerBase
         var result = await _serviceMaster.Truong.GetTruongAsync();
         return Ok(result);
     }
+    [HttpGet("all")]
+    public async Task<ActionResult> GetAllTruongAsync()
+    {
+        var result = await _serviceMaster.Truong.GetAllTruongAsync();
+        return Ok(result);
+    }
     [HttpGet("{id}")]
     public async Task<ActionResult> GetTruongByIdAsync(Guid id)
     {
@@ -35,6 +41,13 @@ public class TruongController : ControllerBase
     {
         var result = await _serviceMaster.Truong.CreateAsync(model);
         return Ok(result);
+    }
+    [HttpPost("import-image")]
+    [ServiceFilter(typeof(ValidationFilter))]
+    public async Task<ActionResult> ImportFileImage([FromForm] RequestUpdateFileTruongDto model)
+    {
+        await _serviceMaster.Truong.ImportFileImageTruongAsync(model);
+        return Ok("Thêm hình ảnh thành công.");
     }
     [HttpPut("{id}")]
     [ServiceFilter(typeof(ValidationFilter))]

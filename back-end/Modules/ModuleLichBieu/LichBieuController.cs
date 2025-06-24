@@ -44,7 +44,7 @@ namespace Education_assistant.Modules.ModuleLichBieu
         }
         [HttpPost("copy")]
         [ServiceFilter(typeof(ValidationFilter))]
-        public async Task<ActionResult> AddListLichBieuWithTuanAsync([FromForm] RequestAddLichBieuListTuanDto model)
+        public async Task<ActionResult> AddListLichBieuWithTuanAsync([FromBody] RequestAddLichBieuListTuanDto model)
         {
             await _serviceMaster.LichBieu.CopyTuanLichBieuAsync(model);
             return Ok("Sao chép tuần thành công.");

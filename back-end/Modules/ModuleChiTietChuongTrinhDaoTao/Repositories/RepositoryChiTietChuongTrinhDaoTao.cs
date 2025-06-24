@@ -52,6 +52,11 @@ public class RepositoryChiTietChuongTrinhDaoTao : RepositoryBase<ChiTietChuongTr
         return await _context.ChiTietChuongTrinhDaoTaos?.Where(item => item.ChuongTrinhDaoTaoId == id && item.HocKy == hocKy).AsNoTracking().ToListAsync()!;
     }
 
+    public async Task<IEnumerable<ChiTietChuongTrinhDaoTao>> GetChiTietChuongTrinhDaoTaoByHocKyAndChuongTrinhId(int hocKy, Guid chuongTrinhId)
+    {
+        return await FindAll(false).Where(item => item.ChuongTrinhDaoTaoId == chuongTrinhId && item.HocKy == hocKy).Include(item => item.MonHoc).ToListAsync();
+    }
+
     public async Task<ChiTietChuongTrinhDaoTao?> GetChiTietChuongTrinhDaoTaoByIdAsync(Guid id, bool trackChanges)
     {
         return await FindByCondition(item => item.Id == id, trackChanges)

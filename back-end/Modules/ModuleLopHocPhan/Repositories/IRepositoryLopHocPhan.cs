@@ -9,6 +9,7 @@ public interface IRepositoryLopHocPhan
     Task<PagedListAsync<LopHocPhan>?> GetAllLopHocPhanAsync(int page, int limit, string? search, string? sortBy, string? sortByOder, int? khoa, int? loaiChuongTrinh, Guid? chuongTrinhId, int? hocKy, int? trangThai);
     Task<LopHocPhan?> GetLopHocPhanByIdAsync(Guid id, bool trackChanges);
     Task<int> CreateSinhVienLopHocPhanHocBa(Guid maLop, Guid maLhp, Guid? maGiangVien, Guid maMonHoc, Guid maCtctdt, int HocKy);
+    Task<bool> KiemTraLopHocPhanDaTonTaiAsync(Guid nganhId, int hocKy, int khoa, Guid monHocId);
     Task CreateAsync(LopHocPhan lopHocPhan);
     void UpdateLopHocPhan(LopHocPhan lopHocPhan);
     void DeleteLopHocPhan(LopHocPhan lopHocPhan);

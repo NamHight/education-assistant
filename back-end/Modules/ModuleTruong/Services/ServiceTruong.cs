@@ -5,21 +5,26 @@ using Education_assistant.Models;
 using Education_assistant.Modules.ModuleTruong.DTOs.Request;
 using Education_assistant.Modules.ModuleTruong.DTOs.Response;
 using Education_assistant.Repositories.RepositoryMaster;
+using Education_assistant.Services.ServiceFile;
 using Microsoft.EntityFrameworkCore;
 
 namespace Education_assistant.Modules.ModuleTruong.Services;
 
 public class ServiceTruong : IServiceTruong
 {
+    private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly ILoggerService _loggerService;
     private readonly IMapper _mapper;
     private readonly IRepositoryMaster _repositoryMaster;
+    private readonly IServiceFIle _serviceFIle;
 
-    public ServiceTruong(IRepositoryMaster repositoryMaster, ILoggerService loggerService, IMapper mapper)
+    public ServiceTruong(IRepositoryMaster repositoryMaster, ILoggerService loggerService, IMapper mapper, IServiceFIle serviceFIle, IHttpContextAccessor httpContextAccessor)
     {
         _repositoryMaster = repositoryMaster;
         _loggerService = loggerService;
         _mapper = mapper;
+        _serviceFIle = serviceFIle;
+        _httpContextAccessor = httpContextAccessor;
     }
 
     public async Task<ResponseTruongDto> CreateAsync(RequestAddTruongDto request)
@@ -53,6 +58,12 @@ public class ServiceTruong : IServiceTruong
         _loggerService.LogInfo("Xóa trường thành công.");
     }
 
+    public async Task<IEnumerable<ResponseTruongDto>> GetAllTruongAsync()
+    {
+        var truongs = await _repositoryMaster.Truong.GetAllTruongAsync();
+        var truongDtos = _mapper.Map<IEnumerable<ResponseTruongDto>>(truongs);
+        return truongDtos;
+    }
 
     public async Task<Dictionary<string, string>> GetTruongAsync()
     {
@@ -64,6 +75,36 @@ public class ServiceTruong : IServiceTruong
         if (truong is null) throw new TruongNotFoundException(id);
         var truongDto = _mapper.Map<ResponseTruongDto>(truong);
         return truongDto;
+    }
+
+    public async Task ImportFileImageTruongAsync(RequestUpdateFileTruongDto requestUpdateFileDto)
+    {
+        try
+        {
+            var truong = await _repositoryMaster.Truong.GetTruongByIdAsync(requestUpdateFileDto.Id, false);
+            if (truong is null)
+            {
+                throw new TruongNotFoundException(requestUpdateFileDto.Id);
+            }
+            if (requestUpdateFileDto.File != null && requestUpdateFileDto.File.Length > 0)  
+            {
+                var hinhDaiDien = await _serviceFIle.UpLoadFile(requestUpdateFileDto.File!, "truong");
+                var context = _httpContextAccessor.HttpContext;
+                hinhDaiDien = $"{context!.Request.Scheme}://{context.Request.Host}/uploads/{hinhDaiDien}";
+                truong!.Value = hinhDaiDien;
+                truong.UpdatedAt = DateTime.Now;
+            }
+            await _repositoryMaster.ExecuteInTransactionAsync(async () =>
+            {
+                _repositoryMaster.Truong.UpdateTruong(truong);
+                await Task.CompletedTask;
+            });
+            _loggerService.LogInfo("Thêm hình ảnh thành công");
+        }
+        catch (DbUpdateException ex)
+        {
+            throw new Exception($"Lỗi hệ thống!: {ex.Message}");
+        }
     }
 
     public async Task UpdateAsync(Guid id, RequestUpdateTruongDto request)

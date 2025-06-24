@@ -11,5 +11,4 @@ public class ResponseTruongDto
     public string Value { get; set; } = string.Empty;
     public DateTime? CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
-    public ICollection<ResponseKhoaDto>? DanhSachKhoa { get; set; }
 }

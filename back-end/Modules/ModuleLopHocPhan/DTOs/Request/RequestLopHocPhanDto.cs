@@ -17,13 +17,6 @@ public class RequestAddLopHocPhanDto
     [Required(ErrorMessage = "Id Môn học không được để trống")]
     public Guid MonHocId { get; set; }
     public Guid? GiangVienId { get; set; }
-    [Required(ErrorMessage = "Id lớp học không được để trống")]
-    public Guid LopHocId { get; set; }
-    [Required(ErrorMessage = "Id Chương trình đào tạo không được để trống")]
-    public Guid ChuongTrinhDaoTaoId { get; set; }
-    [Required(ErrorMessage = "Học kỳ không được để trống")]
-    public int HocKy { get; set; }
-    
 }
 public class RequestUpdateLopHocPhanDto
 {
@@ -44,4 +37,13 @@ public class RequestUpdateLopHocPhanDto
     [Required(ErrorMessage = "Id giảng viên không được để trống")]
     public Guid GiangVienId { get; set; }
     public DateTime? CreatedAt { get; set; }
+}
+public class RequestGenerateLopHocPhanDto
+{
+    [Required(ErrorMessage = "Id ngành không được để trống")]
+    public Guid NganhId { get; set; }
+    [Required(ErrorMessage = "Học kỳ không được để trống")]
+    public int HocKy { get; set; }
+    [Required(ErrorMessage = "Khóa không được để trống")]
+    public int Khoa { get; set; }
 }
