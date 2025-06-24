@@ -15,7 +15,7 @@ public interface IServiceChiTietLopHocPhan
     Task ImportFileExcelAsync(RequestImportFileDiemSoDto request);
     Task<byte[]> ExportFileExcelAsync(Guid lopHocPhanId);
     Task UpdateAsync(Guid id, RequestUpdateChiTietLopHocPhanDto request);
-    Task UpdateListChiTietLopHocPhanAsync(List<RequestUpdateChiTietLopHocPhanDto> listRequest);
+    Task UpdateListChiTietLopHocPhanAsync(RequestListUpdateDiemSoDto request);
     Task UpdateNopDiemChiTietLopHocPhanAsync(Guid lopHocPhanId);
     Task DeleteAsync(Guid id);
     Task DeleteListChiTietLopHocPhanAsync(RequestDeleteChiTietLopHocPhanDto request);

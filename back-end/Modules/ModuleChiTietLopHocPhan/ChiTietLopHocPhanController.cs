@@ -48,18 +48,19 @@ namespace Education_assistant.Modules.ModuleChiTietLopHocPhan
             await _serviceMaster.ChiTietLopHocPhan.UpdateAsync(id, model);
             return NoContent();
         }
-        [HttpPut("{id}/update-nop-diem")]
-        public async Task<ActionResult> UpdateNopDiemChiTietLopHocPhanAsync(Guid id)
+        [HttpPut("{lopHocPhanId}/update-nop-diem")]
+        public async Task<ActionResult> UpdateNopDiemChiTietLopHocPhanAsync(Guid lopHocPhanId)
         {
-            await _serviceMaster.ChiTietLopHocPhan.UpdateNopDiemChiTietLopHocPhanAsync(id);
+            await _serviceMaster.ChiTietLopHocPhan.UpdateNopDiemChiTietLopHocPhanAsync(lopHocPhanId);
             return NoContent();
         }
         [HttpPut("update-list")]
-        public async Task<ActionResult> UpdateListChiTietLopHocPhanAsync([FromForm] List<RequestUpdateChiTietLopHocPhanDto> model)
+        [ServiceFilter(typeof(ValidationFilter))]
+        public async Task<ActionResult> UpdateListChiTietLopHocPhanAsync([FromBody] RequestListUpdateDiemSoDto model)
         {
-            if (model == null || !model.Any())
+            if (model == null)
             {
-                return BadRequest("Danh sách truyền lên bị null hoặc rỗng.");
+                return BadRequest("Dữ liệu truyền lên bị null hoặc rỗng.");
             }
             await _serviceMaster.ChiTietLopHocPhan.UpdateListChiTietLopHocPhanAsync(model);
             return NoContent();
@@ -71,18 +72,18 @@ namespace Education_assistant.Modules.ModuleChiTietLopHocPhan
             return NoContent();
         }
         [HttpDelete("delete-list")]
-        public async Task<ActionResult> DeleteListChiTietLopHocPhanAsync([FromForm] RequestDeleteChiTietLopHocPhanDto model)
+        public async Task<ActionResult> DeleteListChiTietLopHocPhanAsync([FromBody] RequestDeleteChiTietLopHocPhanDto model)
         {
             await _serviceMaster.ChiTietLopHocPhan.DeleteListChiTietLopHocPhanAsync(model);
             return NoContent();
         }
 
-        [HttpGet("{id}/export")]
-        public async Task<ActionResult> ExportAsync(Guid id)
+        [HttpGet("{lopHocPhanid}/export")]
+        public async Task<ActionResult> ExportAsync(Guid lopHocPhanid)
         {
             try
             {
-                var fileContents = await _serviceMaster.ChiTietLopHocPhan.ExportFileExcelAsync(id);
+                var fileContents = await _serviceMaster.ChiTietLopHocPhan.ExportFileExcelAsync(lopHocPhanid);
                 var fileName = $"DanhSachDiemSo_{DateTime.Now:yyyyMMddHHmmss}.xlsx";
                 return File(fileContents, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
             }

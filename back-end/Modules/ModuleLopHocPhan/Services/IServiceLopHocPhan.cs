@@ -12,6 +12,7 @@ public interface IServiceLopHocPhan
     Task<(IEnumerable<ResponseLopHocPhanDto> data, PageInfo page)> GetAllLopHocPhanAsync(ParamLopHocPhanDto paramLopHocPhanDto);
     Task<ResponseLopHocPhanDto> GetLopHocPhanByIdAsync(Guid id, bool trackChanges);
     Task<ResponseLopHocPhanDto> CreateAsync(RequestAddLopHocPhanDto request);
+    Task CreateAutoLopHocPhanAsync(RequestGenerateLopHocPhanDto request);
     Task UpdateAsync(Guid id, RequestUpdateLopHocPhanDto request);
     Task UpdateListLophocPhanAsync(List<RequestUpdateLopHocPhanDto> listRequest);
     Task DeleteAsync(Guid id);

@@ -25,3 +25,11 @@ public class RequestUpdateTruongDto
     [MaxLength(255, ErrorMessage = "Value không được quá 255 ký tự")]
     public string Value { get; set; } = string.Empty;
 }
+
+public class RequestUpdateFileTruongDto
+{
+    [Required(ErrorMessage = "Mã trường không được để trống")]
+    public Guid Id { get; set; }
+    [Required(ErrorMessage = "Mã trường không được để trống")]
+    public IFormFile? File { get; set; }
+}

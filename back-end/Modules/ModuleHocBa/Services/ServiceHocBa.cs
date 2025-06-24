@@ -177,6 +177,7 @@ public class ServiceHocBa : IServiceHocBa
                 SinhVienId = diemSo.SinhVienId,
                 LopHocPhanId = request.LopHocPhanId,
                 ChiTietChuongTrinhDaoTaoId = ctctdt.Id,
+                CreatedAt = exsitingHocBa.CreatedAt,
                 UpdatedAt = DateTime.Now,
             };
             updateHocBas.Add(hocBa);

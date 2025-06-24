@@ -49,7 +49,7 @@ namespace Education_assistant.Modules.ModuleHocBa
             return NoContent();
         }
         [HttpPut("update-list")]
-        public async Task<ActionResult> UpdateListHocBaAsync([FromForm] RequestListUpdateHocbaDto model)
+        public async Task<ActionResult> UpdateListHocBaAsync([FromBody] RequestListUpdateHocbaDto model)
         {
             if (model == null)
             {
@@ -65,7 +65,7 @@ namespace Education_assistant.Modules.ModuleHocBa
             return NoContent();
         }
         [HttpDelete("delete-list")]
-        public async Task<ActionResult> DeleteListHocBaAsync([FromForm] RequestDeleteHocBaDto model)
+        public async Task<ActionResult> DeleteListHocBaAsync([FromBody] RequestDeleteHocBaDto model)
         {
             await _serviceMaster.HocBa.DeleteListHocBaAsync(model);
             return NoContent();

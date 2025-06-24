@@ -5,6 +5,7 @@ using Education_assistant.Contracts.LoggerServices;
 using Education_assistant.Exceptions.ThrowError.ChiTietLopHocPhanExceptions;
 using Education_assistant.Exceptions.ThrowError.LopHocPhanExceptions;
 using Education_assistant.Models;
+using Education_assistant.Models.Enums;
 using Education_assistant.Modules.ModuleChiTietLopHocPhan.DTOs.Param;
 using Education_assistant.Modules.ModuleChiTietLopHocPhan.DTOs.Request;
 using Education_assistant.Modules.ModuleChiTietLopHocPhan.DTOs.Response;
@@ -154,7 +155,7 @@ public class ServiceChiTietLopHocPhan : IServiceChiTietLopHocPhan
                                                                         paramChiTietLopHocPhanDto.hocKy,
                                                                         paramChiTietLopHocPhanDto.loaiMonHoc,
                                                                         paramChiTietLopHocPhanDto.namHoc,
-                                                                        paramChiTietLopHocPhanDto.chuongTrinhId,
+                                                                        paramChiTietLopHocPhanDto.chuongTrinhDaoTaoId,
                                                                         paramChiTietLopHocPhanDto.ngayNopDiem);
         var diemSoDto = _mapper.Map<IEnumerable<ResponseChiTietLopHocPhanDto>>(diemSos);
         return (data: diemSoDto, page: diemSos!.PageInfo);
@@ -173,8 +174,14 @@ public class ServiceChiTietLopHocPhan : IServiceChiTietLopHocPhan
 
     public async Task ImportFileExcelAsync(RequestImportFileDiemSoDto request)
     {
-        if (request.File == null || request.File.Length == 0) {
-            
+        var lopHocPhan = await _repositoryMaster.LopHocPhan.GetLopHocPhanByIdAsync(request.LopHocPhanId, false);
+        if (lopHocPhan == null)
+        {
+            throw new LopHocPhanNotFoundException(request.LopHocPhanId);
+        }
+        if (request.File == null || request.File.Length == 0)
+        {
+            throw new ArgumentException("File không được để trống hoặc rỗng.");
         }
         try
         {
@@ -266,9 +273,38 @@ public class ServiceChiTietLopHocPhan : IServiceChiTietLopHocPhan
         }
     }
 
-    public async Task UpdateListChiTietLopHocPhanAsync(List<RequestUpdateChiTietLopHocPhanDto> listRequest)
+    public async Task UpdateListChiTietLopHocPhanAsync(RequestListUpdateDiemSoDto request)
     {
-        var diemSos = _mapper.Map<List<ChiTietLopHocPhan>>(listRequest);
+        var diemSos = new List<ChiTietLopHocPhan>();
+
+        foreach (var diemSo in request.ListDiemSo!)
+        {
+            var existingDiemSo = await _repositoryMaster.ChiTietLopHocPhan.GetChiTietLopHocPhanByIdAsync(diemSo.Id, false);
+            if (existingDiemSo is null)
+            {
+                continue;
+            }
+            existingDiemSo.DiemChuyenCan = diemSo.DiemChuyenCan;
+            existingDiemSo.DiemTrungBinh = diemSo.DiemTrungBinh;
+            existingDiemSo.DiemThi1 = diemSo.DiemThi1;
+            existingDiemSo.DiemThi2 = diemSo.DiemThi2;
+            if (request.LoaiMonHoc == (int)LoaiMonHocEnum.LY_THUYET)
+            {
+                existingDiemSo.DiemTongKet1 = (diemSo.DiemChuyenCan * 0.1m) + (diemSo.DiemTrungBinh * 0.4m) + (diemSo.DiemThi1 * 0.5m);
+                if (diemSo.DiemThi2.HasValue)
+                {
+                    existingDiemSo.DiemTongKet2 = (diemSo.DiemChuyenCan * 0.1m) + (diemSo.DiemTrungBinh * 0.4m) + (diemSo.DiemThi2 * 0.5m);
+                }
+            }
+            if (request.LoaiMonHoc == (int)LoaiMonHocEnum.MODUN)
+            {
+                existingDiemSo.DiemTongKet1 = (diemSo.DiemTrungBinh * 0.4m) + (diemSo.DiemThi1 * 0.6m);
+            }
+
+            existingDiemSo.GhiChu = diemSo.GhiChu;
+            existingDiemSo.NgayLuuDiem = DateTime.Now;
+            diemSos.Add(existingDiemSo);
+        }
         
         await _repositoryMaster.ExecuteInTransactionBulkEntityAsync(async () =>
         {
@@ -279,6 +315,11 @@ public class ServiceChiTietLopHocPhan : IServiceChiTietLopHocPhan
 
     public async Task UpdateNopDiemChiTietLopHocPhanAsync(Guid lopHocPhanId)
     {
+        var lopHocPhan = await _repositoryMaster.LopHocPhan.GetLopHocPhanByIdAsync(lopHocPhanId, false);
+        if (lopHocPhan == null)
+        {
+            throw new LopHocPhanNotFoundException(lopHocPhanId);
+        }
         try
         {
             await _repositoryMaster.ExecuteInTransactionAsync(async () =>

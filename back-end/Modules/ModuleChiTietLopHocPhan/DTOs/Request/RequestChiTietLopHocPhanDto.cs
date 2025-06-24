@@ -37,7 +37,6 @@ public class RequestUpdateChiTietLopHocPhanDto
     public decimal? DiemTongKet1 { get; set; }
     public decimal? DiemTongKet2 { get; set; }
     public DateTime? NgayLuuDiem { get; set; } = DateTime.Now;
-    public DateTime? NgayNopDiem { get; set; }
     public int HocKy { get; set; }
     public string? GhiChu { get; set; }
     public int TrangThai { get; set; }
@@ -56,7 +55,6 @@ public class RequestNopDiemChiTietLopHocPhanDto
     public decimal DiemTongKet1 { get; set; }
     public decimal DiemTongKet2 { get; set; } = 0;
     public Guid? SinhVienId { get; set; }
-    public DateTime? CreatedAt { get; set; }
 }
 
 public class RequestDeleteChiTietLopHocPhanDto
@@ -86,4 +84,25 @@ public class ImportDiemSoDto
     public decimal? DiemTongKet2 { get; set; }
     public int? HocKy { get; set; }
     public string? GhiChu { get; set; } = string.Empty;
+}
+
+public class UpdateChiTietLopHocPhanDto
+{
+    [Required(ErrorMessage = "Id không được bỏ trống")]
+    public Guid Id { get; set; }
+    public decimal? DiemChuyenCan { get; set; }
+    public decimal? DiemTrungBinh { get; set; }
+    public decimal? DiemThi1 { get; set; }
+    public decimal? DiemThi2 { get; set; }
+    public decimal? DiemTongKet1 { get; set; }
+    public decimal? DiemTongKet2 { get; set; }
+    public string? GhiChu { get; set; }
+}
+
+public class RequestListUpdateDiemSoDto
+{
+    [Required(ErrorMessage = "Danh sách điểm sô không được bỏ trống")]
+    public List<UpdateChiTietLopHocPhanDto>? ListDiemSo { get; set; }
+    [Required(ErrorMessage = "Loại môn học không được bỏ trống")]
+    public int LoaiMonHoc { get; set; }
 }

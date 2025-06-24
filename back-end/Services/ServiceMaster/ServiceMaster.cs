@@ -50,7 +50,7 @@ public class ServiceMaster : IServiceMaster
     {
         _giangVien = new Lazy<IServiceGiangVien>(() =>
             new ServiceGiangVien(repositoryMaster, loggerService, mapper, password, httpContextAccessor, serviceFIle));
-        _truong = new Lazy<IServiceTruong>(() => new ServiceTruong(repositoryMaster, loggerService, mapper));
+        _truong = new Lazy<IServiceTruong>(() => new ServiceTruong(repositoryMaster, loggerService, mapper, serviceFIle, httpContextAccessor));
         _khoa = new Lazy<IServiceKhoa>(() => new ServiceKhoa(repositoryMaster, loggerService, mapper));
         _monHoc = new Lazy<IServiceMonHoc>(() => new ServiceMonHoc(repositoryMaster, loggerService, mapper));
         _chuongTrinhDaoTao =

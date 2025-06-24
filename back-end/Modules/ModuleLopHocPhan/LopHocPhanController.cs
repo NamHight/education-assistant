@@ -34,23 +34,30 @@ namespace Education_assistant.Modules.ModuleLopHocPhan
             var result = await _serviceMaster.LopHocPhan.GetLopHocPhanByIdAsync(id, false);
             return Ok(result);
         }
-        [HttpPost]
+        [HttpPost("them-lop-hkp")]
         [ServiceFilter(typeof(ValidationFilter))]
         public async Task<ActionResult> AddLopHocPhanAsync([FromForm] RequestAddLopHocPhanDto model)
         {
             var result = await _serviceMaster.LopHocPhan.CreateAsync(model);
             return Ok(result);
         }
+        [HttpPost("them-auto")]
+        [ServiceFilter(typeof(ValidationFilter))]
+        public async Task<ActionResult> AddAutoLopHocPhanAsync([FromForm] RequestGenerateLopHocPhanDto model)
+        {
+            await _serviceMaster.LopHocPhan.CreateAutoLopHocPhanAsync(model);
+            return Ok("created successfully.");
+        }
         [HttpPut("{id}")]
         [ServiceFilter(typeof(ValidationFilter))]
         public async Task<ActionResult> UpdateLopHocPhanAsync(Guid id, [FromForm] RequestUpdateLopHocPhanDto model)
         {
-            await _serviceMaster.LopHocPhan.UpdateAsync(id, model);
+            await _serviceMaster.LopHocPhan.UpdateAsync(id, model); 
             return NoContent();
         }
         [HttpPut("list-phan-cong")]
         [ServiceFilter(typeof(ValidationFilter))]
-        public async Task<ActionResult> UpdateListLopHocPhanAsync([FromForm] List<RequestUpdateLopHocPhanDto> listRequest)
+        public async Task<ActionResult> UpdateListLopHocPhanAsync([FromBody] List<RequestUpdateLopHocPhanDto> listRequest)
         {
             await _serviceMaster.LopHocPhan.UpdateListLophocPhanAsync(listRequest);
             return NoContent();
