@@ -16,6 +16,7 @@ using Education_assistant.Modules.ModuleMonHoc.Services;
 using Education_assistant.Modules.ModuleNganh.Services;
 using Education_assistant.Modules.ModulePhongHoc.Services;
 using Education_assistant.Modules.ModuleSinhVien.Services;
+using Education_assistant.Modules.ModuleThongKe.Services;
 using Education_assistant.Modules.ModuleTruong.Services;
 using Education_assistant.Modules.ModuleTuan.Services;
 using Education_assistant.Repositories.RepositoryMaster;
@@ -43,6 +44,7 @@ public class ServiceMaster : IServiceMaster
     private readonly Lazy<IServiceTruong> _truong;
     private readonly Lazy<IServiceTuan> _tuan;
     private readonly Lazy<IServiceTaiKhoan> _taiKhoan;
+    private readonly Lazy<IServiceThongKe> _thongKe;
 
     public ServiceMaster(IRepositoryMaster repositoryMaster, ILoggerService loggerService, IMapper mapper,
         IPasswordHash password, IHttpContextAccessor httpContextAccessor, IServiceFIle serviceFIle,
@@ -75,6 +77,7 @@ public class ServiceMaster : IServiceMaster
         _authenticate = new Lazy<IServiceAuthenticate>(() =>
             new ServiceAuthenticate(loggerService, repositoryMaster, mapper, configuration, password, httpContextAccessor));
         _taiKhoan = new Lazy<IServiceTaiKhoan>(() => new ServiceTaiKhoan(repositoryMaster, loggerService, mapper, password));
+        _thongKe = new Lazy<IServiceThongKe>(() => new ServiceThongKe(repositoryMaster, loggerService, mapper));
     }
 
     public IServiceAuthenticate Authenticate => _authenticate.Value;
@@ -96,4 +99,6 @@ public class ServiceMaster : IServiceMaster
 
     public IServiceTuan Tuan => _tuan.Value;
     public IServiceTaiKhoan TaiKhoan => _taiKhoan.Value;
+
+    public IServiceThongKe ThongKe => _thongKe.Value;
 }

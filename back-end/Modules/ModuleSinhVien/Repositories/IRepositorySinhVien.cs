@@ -8,6 +8,7 @@ public interface IRepositorySinhVien
 {
     Task<PagedListAsync<SinhVien>?> GetAllSinhVienAsync(int page, int limit, string? search, string? sortBy, string? sortByOrder, Guid? lopId);    
     Task<SinhVien?> GetSinhVienByIdAsync(Guid id, bool trackChanges);
+    Task<SinhVien?> GetSinhVienByMssvOrCccdAsync(int mssv, string cccd);
     Task CreateAsync(SinhVien sinhVien);
     void UpdateSinhVien(SinhVien sinhVien);
     void DeleteSinhVien(SinhVien sinhVien);
