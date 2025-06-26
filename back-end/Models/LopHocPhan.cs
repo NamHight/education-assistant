@@ -26,7 +26,14 @@ public class LopHocPhan : BaseEntity
         get => TrangThai.HasValue ? (TrangThaiLopHocPhanEnum)TrangThai.Value : null;
         set => TrangThai = value.HasValue ? (int)value.Value : null;
     }
-
+    [Column("loai-lop")]
+    public int? Loai { get; set; }
+    [NotMapped]
+    public LoaiLopHocEnum? LoaiLopHocEnum
+    {
+        get => Loai.HasValue ? (LoaiLopHocEnum)Loai.Value : null;
+        set => Loai = value.HasValue ? (int)value.Value : null;
+    }
     [Column("mon_hoc_id")] public Guid MonHocId { get; set; }
     [ForeignKey("MonHocId")] public virtual MonHoc? MonHoc { get; set; }
 
