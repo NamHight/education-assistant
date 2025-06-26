@@ -37,6 +37,7 @@ const Content = () => {
   const mutation = useMutation({
     mutationFn: async (data: FormData) => {
       const result = await AuthenticateService.login(data);
+      console.log('Login result:', result);
       return result;
     },
     onSuccess: (data) => {
@@ -45,7 +46,7 @@ const Content = () => {
     },
     onError: (error: any) => {
       console.error('Login error:', error);
-      notification.show(error, {
+      notification.show(error?.Message, {
         severity: 'error',
         autoHideDuration: 4000
       });

@@ -18,25 +18,13 @@ const page = async ({ params }: IPageProps) => {
   const initialData = await LopHocPhanService.getLopHocPhanByIdServer(id);
   const monHoc = MonHocService.getAllMonHocServer();
   const giangVien = GiangVienService.danhSachGiangVienServer({ active: true });
-  const lopHoc = LopHocService.getAllLopHocServer();
-  const chuongTrinhDaoTao = ChuongTrinhDaoTaoService.getAllChuongTrinhDaoTaoServer({
-    sortBy: 'createdAt',
-    sortByOrder: 'desc'
-  });
-  const [monHocData, gianVienData, lopHocData, chuongTrinhDaoTaoData] = await Promise.all([
-    monHoc,
-    giangVien,
-    lopHoc,
-    chuongTrinhDaoTao
-  ]);
+  const [monHocData, gianVienData] = await Promise.all([monHoc, giangVien]);
   return (
     <div>
       <Content
         anotherData={{
           monHocs: monHocData,
-          giangViens: gianVienData?.data,
-          lopHocs: lopHocData?.data,
-          chuongTrinhDaoTaos: chuongTrinhDaoTaoData?.data
+          giangViens: gianVienData?.data
         }}
         id={id}
         initialData={initialData}

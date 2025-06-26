@@ -21,9 +21,7 @@ export default async function Page() {
         sortBy: 'createdAt',
         sortByOrder: 'desc'
       });
-      if (result?.data?.length <= 0) {
-        return [];
-      }
+      console.log('result', result);
       return result;
     }
   });

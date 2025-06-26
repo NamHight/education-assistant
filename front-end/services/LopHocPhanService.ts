@@ -1,3 +1,4 @@
+import { create } from 'zustand';
 import authApi from "@/lib/authAxios";
 import authApiServer from "@/lib/authAxiosServer";
 import { API } from "@/types/general";
@@ -68,6 +69,16 @@ export class LopHocPhanService {
             const result = await authApi.put(`${API.LOP_HOC_PHAN.PHAN_CONG}`, data);
             return result.data;
         } catch (error: any) {
+            throw error.response?.data;
+        }
+    }
+
+    static async createHocKyPhu(data: FormData) {
+        try {
+            const result = await authApi.post(`${API.LOP_HOC_PHAN.ADD_HOC_KY_PHU}`, data);
+            return result.data;
+        } catch (error: any) {
+            console.log('error', error);
             throw error.response?.data;
         }
     }

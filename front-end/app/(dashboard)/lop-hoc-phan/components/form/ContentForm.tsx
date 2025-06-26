@@ -45,13 +45,13 @@ import { LopHocService } from '@/services/LopHocService';
 import { ChuongTrinhDaoTaoService } from '@/services/ChuongTrinhDaoTaoService';
 
 export interface IFormData {
-  maHocPhan?: string;
-  hocKy?: IOption;
+  // maHocPhan?: string;
+  // hocKy?: IOption;
   siSo?: string;
   trangThai?: IOption;
-  chuongTrinhDaoTao?: IOption;
+  // chuongTrinhDaoTao?: IOption;
   giangVien?: IOption;
-  lopHoc?: IOption;
+  // lopHoc?: IOption;
   monHoc?: IOption;
 }
 
@@ -64,17 +64,17 @@ interface IContentFormProps {
 const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => {
   const schema = useMemo(() => {
     return yup.object().shape({
-      maHocPhan: yup.string().required('Mã học phần là bắt buộc'),
-      hocKy: data ? yup.object().notRequired() : yup.object().required('Học kỳ là bắt buộc'),
+      // maHocPhan: yup.string().required('Mã học phần là bắt buộc'),
+      // hocKy: data ? yup.object().notRequired() : yup.object().required('Học kỳ là bắt buộc'),
       siSo: yup
         .number()
         .required('Sỉ số là bắt buộc')
         .transform((value, originalValue) => (originalValue === '' ? null : value))
         .min(0, 'Sỉ số không được nhỏ hơn 0'),
       trangThai: yup.object().required('Trạng thái là bắt buộc'),
-      chuongTrinhDaoTao: data ? yup.object().notRequired() : yup.object().required('Chương trình đào tạo là bắt buộc'),
+      // chuongTrinhDaoTao: data ? yup.object().notRequired() : yup.object().required('Chương trình đào tạo là bắt buộc'),
       giangVien: yup.object().notRequired(),
-      lopHoc: data ? yup.object().notRequired() : yup.object().required('Lớp học là bắt buộc'),
+      // lopHoc: data ? yup.object().notRequired() : yup.object().required('Lớp học là bắt buộc'),
       monHoc: yup.object().required('Môn học là bắt buộc')
     });
   }, [data]);
@@ -110,39 +110,39 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
     },
     refetchOnWindowFocus: false
   });
-  const { data: lopHocs, isLoading: isLoadingLopHoc } = useQuery({
-    queryKey: ['lopHocs'],
-    queryFn: async () => {
-      const response = await LopHocService.getAllLopHoc();
-      return response?.data;
-    },
-    initialData: initialData?.lopHocs,
-    select: (data) => {
-      return data.map((item: any) => ({
-        id: item.id,
-        name: item.maLopHoc
-      }));
-    },
-    refetchOnWindowFocus: false
-  });
-  const { data: chuongTrinhDaoTaos, isLoading: isLoadingChuongTrinhDaoTao } = useQuery({
-    queryKey: ['chuongTrinhDaoTaos'],
-    queryFn: async () => {
-      const response = await ChuongTrinhDaoTaoService.getAllChuongTrinhDaoTao({
-        sortBy: 'createdAt',
-        sortByOrder: 'desc'
-      });
-      return response?.data;
-    },
-    initialData: initialData?.chuongTrinhDaoTaos,
-    select: (data) => {
-      return data.map((item: any) => ({
-        id: item.id,
-        name: item.tenChuongTrinh
-      }));
-    },
-    refetchOnWindowFocus: false
-  });
+  // const { data: lopHocs, isLoading: isLoadingLopHoc } = useQuery({
+  //   queryKey: ['lopHocs'],
+  //   queryFn: async () => {
+  //     const response = await LopHocService.getAllLopHoc();
+  //     return response?.data;
+  //   },
+  //   initialData: initialData?.lopHocs,
+  //   select: (data) => {
+  //     return data.map((item: any) => ({
+  //       id: item.id,
+  //       name: item.maLopHoc
+  //     }));
+  //   },
+  //   refetchOnWindowFocus: false
+  // });
+  // const { data: chuongTrinhDaoTaos, isLoading: isLoadingChuongTrinhDaoTao } = useQuery({
+  //   queryKey: ['chuongTrinhDaoTaos'],
+  //   queryFn: async () => {
+  //     const response = await ChuongTrinhDaoTaoService.getAllChuongTrinhDaoTao({
+  //       sortBy: 'createdAt',
+  //       sortByOrder: 'desc'
+  //     });
+  //     return response?.data;
+  //   },
+  //   initialData: initialData?.chuongTrinhDaoTaos,
+  //   select: (data) => {
+  //     return data.map((item: any) => ({
+  //       id: item.id,
+  //       name: item.tenChuongTrinh
+  //     }));
+  //   },
+  //   refetchOnWindowFocus: false
+  // });
   const {
     register,
     handleSubmit,
@@ -156,30 +156,28 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
     resolver: yupResolver(schema),
     defaultValues: {
       hocKy: null,
-      maHocPhan: ''
+      maHocPhan: '',
+      siSo: 0
     }
   });
   const handleSubmitForm = (formData: IFormData) => {
     const form = new FormData();
     console.log('formData', formData);
     if (data?.id) form.append('id', String(data.id));
-    if (formData.chuongTrinhDaoTao) form.append('chuongTrinhDaoTaoId', String(formData.chuongTrinhDaoTao?.id));
-    if (formData.giangVien) form.append('giangVienId', String(formData.giangVien?.id));
-    if (formData.lopHoc) form.append('lopHocId', String(formData.lopHoc?.id));
+    if (formData.giangVien) {
+      form.append('giangVienId', String(formData.giangVien?.id));
+    }
     if (formData.monHoc) form.append('monHocId', String(formData.monHoc?.id));
-    form.append('maHocPhan', formData?.maHocPhan || '');
     form.append('siSo', String(formData.siSo || 0));
-    if (formData.hocKy) form.append('HocKy', String(formData.hocKy?.id));
     form.append('trangThai', String(formData.trangThai?.id));
     if (onSubmit) {
       onSubmit(form);
     }
   };
-  console.log('data', data);
+
   useEffect(() => {
     if (data) {
       reset({
-        maHocPhan: data.maHocPhan || '',
         siSo: data.siSo || 0,
         trangThai: TrangThaiLopHocPhan.find((item) => item.id === data.trangThai) || null,
         giangVien: {
@@ -196,7 +194,7 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
   return (
     <FormControl fullWidth component={'form'} onSubmit={handleSubmit(handleSubmitForm)} className='flex flex-col gap-4'>
       <Grid container spacing={2} rowSpacing={1}>
-        <Grid size={{ xs: 12, sm: 6, md: 6, lg: 6 }}>
+        {/* <Grid size={{ xs: 12, sm: 6, md: 6, lg: 6 }}>
           <Input2
             {...register('maHocPhan')}
             name='maHocPhan'
@@ -206,7 +204,7 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
             isDisabled={true}
             type='text'
           />
-        </Grid>
+        </Grid> */}
         <Grid size={{ xs: 12, sm: 6, md: 6, lg: 6 }}>
           <Input2
             {...register('siSo')}
@@ -219,7 +217,7 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
         </Grid>
         {data ? null : (
           <>
-            <Grid size={{ xs: 12, sm: 6, md: 6, lg: 6 }}>
+            {/* <Grid size={{ xs: 12, sm: 6, md: 6, lg: 6 }}>
               <InputSelect2
                 control={control}
                 fullWidth
@@ -232,8 +230,8 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
                 getOptionLabel={(option: any) => option.name}
                 error={(errors.chuongTrinhDaoTao as any)?.message}
               />
-            </Grid>
-            <Grid size={{ xs: 12, sm: 6, md: 6, lg: 6 }}>
+            </Grid> */}
+            {/* <Grid size={{ xs: 12, sm: 6, md: 6, lg: 6 }}>
               <InputSelect2
                 control={control}
                 fullWidth
@@ -245,8 +243,8 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
                 getOptionLabel={(option: any) => option.name}
                 error={(errors.hocKy as any)?.message}
               />
-            </Grid>
-            <Grid size={{ xs: 12, sm: 6, md: 6, lg: 6 }}>
+            </Grid> */}
+            {/* <Grid size={{ xs: 12, sm: 6, md: 6, lg: 6 }}>
               <InputSelect2
                 control={control}
                 fullWidth
@@ -260,7 +258,7 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
                 getOnChangeValue={(value) => setValue('maHocPhan', value?.name)}
                 error={(errors.lopHoc as any)?.message}
               />
-            </Grid>
+            </Grid> */}
           </>
         )}
         <Grid size={{ xs: 12, sm: 6, md: 6, lg: 6 }}>
@@ -273,7 +271,7 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
             isLoading={isLoadingGiangVien}
             data={giangViens ?? []}
             getOptionKey={(option) => option.id}
-            getOptionLabel={(option: any) => option.name}
+            getOptionLabel={(option: any) => option.name ?? ''}
             error={(errors.giangVien as any)?.message}
           />
         </Grid>
@@ -287,7 +285,7 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
             isLoading={isLoadingMonHoc}
             data={monHocs ?? []}
             getOptionKey={(option) => option.id}
-            getOptionLabel={(option: any) => option.name}
+            getOptionLabel={(option: any) => option.name ?? ''}
             error={(errors.monHoc as any)?.message}
           />
         </Grid>

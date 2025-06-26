@@ -58,9 +58,7 @@ const Content = ({ initialData, id, anotherData }: IContentProps) => {
         data={data}
         initialData={{
           monHocs: anotherData?.monHocs,
-          giangViens: anotherData?.giangViens,
-          lopHocs: anotherData?.lopHocs,
-          chuongTrinhDaoTaos: anotherData?.chuongTrinhDaoTaos
+          giangViens: anotherData?.giangViens
         }}
       />
     </motion.div>

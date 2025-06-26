@@ -98,7 +98,7 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
       return response?.data;
     },
     initialData: initialData?.nganhs,
-    select: (data) => {
+    select: (data: any) => {
       return data.map((item: any) => ({
         id: item.id,
         name: item.tenNganh
@@ -163,7 +163,6 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
       onSubmit(form);
     }
   };
-  console.log('initialData', data);
   useEffect(() => {
     if (data) {
       reset({

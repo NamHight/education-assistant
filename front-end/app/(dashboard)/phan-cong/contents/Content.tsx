@@ -4,7 +4,7 @@ import { LopHocPhanService } from '@/services/LopHocPhanService';
 import { IParamChuongTrinhDaoTao, IParamLopHocPhan } from '@/types/params';
 import { Box, Typography } from '@mui/material';
 import { GridColDef, GridFilterModel } from '@mui/x-data-grid';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import React, { memo, useEffect, useMemo, useRef, useState } from 'react';
 
@@ -13,6 +13,9 @@ import SelectEditCell from '../selects/SelectEditCell';
 import dynamic from 'next/dynamic';
 import { ChuongTrinhDaoTaoService } from '@/services/ChuongTrinhDaoTaoService';
 import { LoaiMonHocEnum } from '@/models/MonHoc';
+import moment from 'moment';
+import { useNotifications } from '@toolpad/core';
+import { TrangThaiLopHocPhanEnum } from '@/types/options';
 
 const TableEdit = dynamic(() => import('@/components/tables/TableEdit'), {
   ssr: false
@@ -24,6 +27,8 @@ interface IContentProps {
 }
 
 const Content = ({ queryKey, ctdtServer }: IContentProps) => {
+  const notification = useNotifications();
+  const queryClient = useQueryClient();
   const [giangVienOptions, setGiangVienOptions] = useState<{ [khoaId: string]: any[] }>({});
   const [filter, setfilter] = useState<{
     hocKy: number;
@@ -42,16 +47,14 @@ const Content = ({ queryKey, ctdtServer }: IContentProps) => {
     queryKey: [queryKey, sortModel, filterModel, filter],
     queryFn: async () => {
       const searchKeyWord = handleTextSearch(filterModel?.quickFilterValues as any[]);
-      if (!filter?.chuongTrinh || !filter?.khoa || !filter?.hocKy || !filter?.loaiChuongTrinh) {
-        return [];
-      }
       let params: IParamLopHocPhan = {
         sortBy: 'createdat',
         sortByOrder: 'desc',
-        chuongTrinhDaoTaoId: filter.chuongTrinh,
-        hocKy: filter.hocKy,
-        khoa: filter.khoa,
-        loaiChuongTrinhDaoTao: filter.loaiChuongTrinh
+        trangThai: TrangThaiLopHocPhanEnum.DANG_HOAT_DONG,
+        chuongTrinhDaoTaoId: filter?.chuongTrinh,
+        hocKy: filter?.hocKy,
+        khoa: filter?.khoa,
+        loaiChuongTrinhDaoTao: filter?.loaiChuongTrinh
       };
 
       if (sortModel.field && sortModel.sort) {
@@ -67,9 +70,12 @@ const Content = ({ queryKey, ctdtServer }: IContentProps) => {
       const result = await LopHocPhanService.getAllLopHocPhan(params);
       return result;
     },
+    enabled: !!filter?.chuongTrinh && !!filter?.khoa && !!filter?.hocKy && !!filter?.loaiChuongTrinh,
     placeholderData: (prev) => prev,
-    refetchOnWindowFocus: false
+    refetchOnWindowFocus: false,
+    gcTime: 0
   });
+
   const { data: ctdt, isLoading: isLoadingCtdt } = useQuery({
     queryKey: ['ctdt-list'],
     queryFn: async () => {
@@ -91,16 +97,29 @@ const Content = ({ queryKey, ctdtServer }: IContentProps) => {
     placeholderData: (prev) => prev,
     refetchOnWindowFocus: false
   });
+  useEffect(() => {
+    console.log('isLoading', isLoading);
+  }, [isLoading]);
   const mutateSaving = useMutation({
     mutationFn: async (data: FormData) => {
       const result = await LopHocPhanService.phanCongLopHocPhan(data);
       return result;
     },
-    onSuccess: (data) => {
-      console.log('Phân công thành công:', data);
+    onSuccess: async (data) => {
+      notification.show('Phân công thành công', {
+        severity: 'success',
+        autoHideDuration: 5000
+      });
+      await queryClient.invalidateQueries({
+        queryKey: [queryKey],
+        exact: false
+      });
     },
     onError: (error) => {
-      console.error('Lỗi phân công:', error);
+      notification.show('Phân công thất bại', {
+        severity: 'error',
+        autoHideDuration: 5000
+      });
     }
   });
   const fetchGiangVienByKhoaId = async (khoaId: string) => {
@@ -213,7 +232,6 @@ const Content = ({ queryKey, ctdtServer }: IContentProps) => {
     ];
   }, [data?.data, giangVienOptions]);
   const handleSave = (item: any) => {
-    console.log('Saving item:', item);
     if (item && item.length === 0) return;
     const convertData = item?.map((item: any) => ({
       id: item.id,
@@ -221,10 +239,9 @@ const Content = ({ queryKey, ctdtServer }: IContentProps) => {
       siSo: item.siSo,
       trangThai: item.trangThai,
       monHocId: item.monHoc?.id,
-      giangVienId: item?.giangVienId
+      giangVienId: item?.giangVienId,
+      createdAt: moment().format('YYYY-MM-DD HH:mm:ss')
     }));
-    const form = new FormData();
-    form.append('listRequest', JSON.stringify(convertData));
     mutateSaving.mutate(convertData);
   };
   return (

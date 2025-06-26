@@ -232,8 +232,9 @@ const Content = ({ queryKey }: ContentProps) => {
   }, [data?.data]);
   return (
     <Box className='flex flex-col gap-4'>
-      <Box className='flex justify-start'>
-        <Button title={'Thêm mới'} onClick={() => router.push(APP_ROUTE.LOP_HOC_PHAN.ADD)} />
+      <Box className='flex justify-start gap-4'>
+        <Button title={'Thêm mới học phần'} onClick={() => router.push(APP_ROUTE.LOP_HOC_PHAN.ADD)} />
+        <Button title={'Thêm mới học kỳ phụ'} onClick={() => router.push(APP_ROUTE.LOP_HOC_PHAN.ADD_HOC_KY_PHU)} />
       </Box>
       <Table
         ref={refTable}

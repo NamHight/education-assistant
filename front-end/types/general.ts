@@ -47,7 +47,8 @@ export const API = {
     LOP_HOC_PHAN:{
         GET_ALL: "/LopHocPhan",
         GET_BY_ID: "/LopHocPhan/:id",
-        PHAN_CONG: "/LopHocPhan/list-phan-cong"
+        PHAN_CONG: "/LopHocPhan/list-phan-cong",
+        ADD_HOC_KY_PHU: "/LopHocPhan/them-lop-hkp"
     },
     MON_HOC: {
         GET_ALL: "/MonHoc",
@@ -85,6 +86,7 @@ export const APP_ROUTE = {
     LOP_HOC_PHAN: {
         ROOT: "/lop-hoc-phan",
         ADD: "/lop-hoc-phan/them-moi",
+        ADD_HOC_KY_PHU: "/lop-hoc-phan/them-moi-hoc-ky-phu",
         EDIT: (id: string) => `/lop-hoc-phan/${id}`,
     },
     SINH_VIEN:{
@@ -121,5 +123,9 @@ export const breadcrumbTranslations: { [key: string]: string } = {
     'chi-tiet': 'Chi tiết',
     'sinh-vien': 'Sinh viên',
     'lop-hoc': 'Lớp học',
+    'lop-hoc-phan': 'Lớp học phần',
+    'khoa': 'Khóa',
+    'them-moi-hoc-ky-phu': 'Thêm học kỳ phụ',
+    'mon-hoc': 'Môn học',
     // Thêm các bản dịch khác của bạn ở đây
   };

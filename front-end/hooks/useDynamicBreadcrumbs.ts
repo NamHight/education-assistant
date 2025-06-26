@@ -31,6 +31,7 @@ export function useDynamicBreadcrumbs() {
       index === 0 || item.path !== arr[index - 1].path
     );
     const lastSegment = relativePath.split('/').pop() || '';
+    console.log('lastSegment', lastSegment , 'params.id', params.id);
     const title = lastSegment === params.id
       ? `Chỉnh sửa #${params.id}`
       : breadcrumbTranslations[lastSegment] || capitalizeFirstLetter(lastSegment.replace(/-/g, ' '))
