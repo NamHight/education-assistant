@@ -3,6 +3,7 @@ using Education_assistant.Models;
 using Education_assistant.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Education_assistant.Extensions;
+using Education_assistant.Repositories.Paginations;
 
 namespace Education_assistant.Modules.ModuleTruong.Repositories;
 
@@ -22,9 +23,15 @@ public class RepositoryTruong : RepositoryBase<Truong>, IRepositoryTruong
         Delete(truong);
     }
 
-    public async Task<IEnumerable<Truong>> GetAllTruongAsync()
+    public async Task<PagedListAsync<Truong>> GetAllTruongAsync(int page, int limit, string? search, string? sortBy, string? sortByOrder)
     {
-        return await FindAll(false).ToListAsync();
+        return await PagedListAsync<Truong>.ToPagedListAsync(_context.Truongs!.SearchBy(search, item => item.Key)
+                                    .SortByOptions(sortBy, sortByOrder, new Dictionary<string, System.Linq.Expressions.Expression<Func<Truong, object>>>
+                                    {
+                                        ["createdat"] = item => item.CreatedAt,
+                                        ["updatedat"] = item => item.UpdatedAt!
+                                    }).AsNoTracking(),
+                                    page, limit);
     }
 
     public async Task<Dictionary<string, string>> GetTruongAsync(bool trackChanges)

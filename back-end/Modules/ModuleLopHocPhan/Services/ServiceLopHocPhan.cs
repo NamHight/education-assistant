@@ -191,7 +191,6 @@ public class ServiceLopHocPhan : IServiceLopHocPhan
 
     public async Task UpdateListLophocPhanAsync(List<RequestUpdateLopHocPhanDto> listRequest)
     {
-
         var lopHocPhans = _mapper.Map<List<LopHocPhan>>(listRequest);
         await _repositoryMaster.ExecuteInTransactionBulkEntityAsync(async () =>
         {

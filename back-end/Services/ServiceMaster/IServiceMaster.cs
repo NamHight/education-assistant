@@ -13,6 +13,7 @@ using Education_assistant.Modules.ModuleMonHoc.Services;
 using Education_assistant.Modules.ModuleNganh.Services;
 using Education_assistant.Modules.ModulePhongHoc.Services;
 using Education_assistant.Modules.ModuleSinhVien.Services;
+using Education_assistant.Modules.ModuleThongKe.Services;
 using Education_assistant.Modules.ModuleTruong.Services;
 using Education_assistant.Modules.ModuleTuan.Services;
 
@@ -38,4 +39,5 @@ public interface IServiceMaster
     IServiceAuthenticate Authenticate { get; }
     IServiceTuan Tuan { get; }
     IServiceTaiKhoan TaiKhoan { get; }
+    IServiceThongKe ThongKe { get; }
 }

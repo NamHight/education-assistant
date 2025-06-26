@@ -28,6 +28,8 @@ using Education_assistant.Modules.ModulePhongHoc.DTOs.Request;
 using Education_assistant.Modules.ModulePhongHoc.DTOs.Response;
 using Education_assistant.Modules.ModuleSinhVien.DTOs.Request;
 using Education_assistant.Modules.ModuleSinhVien.DTOs.Response;
+using Education_assistant.Modules.ModuleThongKe.DTOs.Response;
+using Education_assistant.Modules.ModuleThongKe.Record;
 using Education_assistant.Modules.ModuleTruong.DTOs.Request;
 using Education_assistant.Modules.ModuleTruong.DTOs.Response;
 using Education_assistant.Modules.ModuleTuan.DTOs.Request;
@@ -70,7 +72,7 @@ public class MapperProfile : Profile
         CreateMap<RequestAddLopHocPhanDto, LopHocPhan>();
         CreateMap<RequestUpdateLopHocPhanDto, LopHocPhan>();
         CreateMap<LopHocPhan, ResponseLopHocPhanDto>();
-            
+
 
         //map giangvien
         CreateMap<RequestAddGiangVienDto, GiangVien>();
@@ -133,5 +135,9 @@ public class MapperProfile : Profile
         CreateMap<Nganh, NganhSimpleDto>();
         CreateMap<PhongHoc, PhongHocSimpleDto>();
         CreateMap<SinhVien, SinhVienSimpleDto>();
+
+        //map record
+        CreateMap<TopStudentRaw, ResponseTopStudentRawDto>();
+        CreateMap<PassFailPointRaw, ResponsePassFailPointClassDto>();
     }
 }

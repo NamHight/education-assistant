@@ -33,6 +33,11 @@ public class ServiceSinhVien : IServiceSinhVien
 
     public async Task<ResponseSinhVienDto> CreateAsync(RequestAddSinhVienDto request)
     {
+        var exsitingSinhVien = await _repositoryMaster.SinhVien.GetSinhVienByMssvOrCccdAsync(request.MSSV, request.CCCD);
+        if (exsitingSinhVien != null)
+        {
+            throw new SinhVienBadRequestException("Mssv hoặc cccd đã tồn tại");
+        }
         try
         {
             var newSinhVien = _mapper.Map<SinhVien>(request);

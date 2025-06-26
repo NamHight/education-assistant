@@ -58,74 +58,7 @@ public class RepositoryContext : DbContext
         modelBuilder.Entity<Nganh>().HasQueryFilter(e => e.DeletedAt == null);
         modelBuilder.Entity<PhongHoc>().HasQueryFilter(e => e.DeletedAt == null);
         modelBuilder.Entity<Tuan>().HasQueryFilter(e => e.DeletedAt == null);
+
         base.OnModelCreating(modelBuilder);
     }
-    // protected override void Up(MigrationBuilder migrationBuilder)
-    // {
-    //      var sql = @"
-    //         DROP PROCEDURE IF EXISTS sp_taoSinhVienLopHocPhan;
-    //         CREATE PROCEDURE sp_taoSinhVienLopHocPhan(
-    //             IN maLop CHAR(36),
-    //             IN maLhp CHAR(36),
-    //             IN maGiangVien CHAR(36),
-    //             IN maMonHoc CHAR(36),
-    //             IN hocKy INT
-    //         )
-    //         BEGIN 
-    //             INSERT INTO chi_tiet_lop_hoc_phan(
-    //                 id,
-    //                 sinh_vien_id,
-    //                 mon_hoc_id,
-    //                 giang_vien_id,
-    //                 lop_hoc_phan_id,
-    //                 created_at
-    //             )
-    //             SELECT UUID(), s.id, maMonHoc, maGiangVien, maLhp, NOW()
-    //             FROM sinh_vien s
-    //             WHERE s.lop_hoc_id = maLop
-    //             AND NOT EXISTS (
-    //                 SELECT 1
-    //                 FROM chi_tiet_lop_hoc_phan ct
-    //                 WHERE ct.sinh_vien_id = s.id
-    //                 AND ct.lop_hoc_phan_id = maLhp
-    //                 AND ct.mon_hoc_id = maMonHoc
-    //                 AND ct.hoc_ky = hocKy
-    //             );
-    //         END";
-    //     migrationBuilder.Sql(sql);
-    // }
-    // public async Task CreateTaoSinhVienLopHocPhanProcedureAsync()
-    // {
-    //     var sql = @"
-    //         DROP PROCEDURE IF EXISTS sp_taoSinhVienLopHocPhan;
-    //         CREATE PROCEDURE sp_taoSinhVienLopHocPhan(
-    //             IN maLop CHAR(36),
-    //             IN maLhp CHAR(36),
-    //             IN maGiangVien CHAR(36),
-    //             IN maMonHoc CHAR(36),
-    //             IN hocKy INT
-    //         )
-    //         BEGIN 
-    //             INSERT INTO chi_tiet_lop_hoc_phan(
-    //                 id,
-    //                 sinh_vien_id,
-    //                 mon_hoc_id,
-    //                 giang_vien_id,
-    //                 lop_hoc_phan_id,
-    //                 created_at
-    //             )
-    //             SELECT UUID(), s.id, maMonHoc, maGiangVien, maLhp, NOW()
-    //             FROM sinh_vien s
-    //             WHERE s.lop_hoc_id = maLop
-    //             AND NOT EXISTS (
-    //                 SELECT 1
-    //                 FROM chi_tiet_lop_hoc_phan ct
-    //                 WHERE ct.sinh_vien_id = s.id
-    //                 AND ct.lop_hoc_phan_id = maLhp
-    //                 AND ct.mon_hoc_id = maMonHoc
-    //                 AND ct.hoc_ky = hocKy
-    //             );
-    //         END";
-    //     await Database.ExecuteSqlRawAsync(sql);
-    // }
 }

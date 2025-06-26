@@ -31,4 +31,5 @@ public class ChiTietChuongTrinhDaoTao : BaseEntity
         get => LoaiMonHoc.HasValue ? (LoaiMonHocEnum)LoaiMonHoc.Value : null;
         set => LoaiMonHoc = value.HasValue ? (int)value.Value : null;
     }
+    public virtual ICollection<HocBa>? DanhSachHocBa { get; set; }
 }

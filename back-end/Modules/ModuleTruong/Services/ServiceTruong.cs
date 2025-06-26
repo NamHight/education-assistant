@@ -2,6 +2,7 @@ using AutoMapper;
 using Education_assistant.Contracts.LoggerServices;
 using Education_assistant.Exceptions.ThrowError.TruongExceptions;
 using Education_assistant.Models;
+using Education_assistant.Modules.ModuleTruong.DTOs.Param;
 using Education_assistant.Modules.ModuleTruong.DTOs.Request;
 using Education_assistant.Modules.ModuleTruong.DTOs.Response;
 using Education_assistant.Repositories.RepositoryMaster;
@@ -58,9 +59,9 @@ public class ServiceTruong : IServiceTruong
         _loggerService.LogInfo("Xóa trường thành công.");
     }
 
-    public async Task<IEnumerable<ResponseTruongDto>> GetAllTruongAsync()
+    public async Task<IEnumerable<ResponseTruongDto>> GetAllTruongAsync(ParamTruongDto paramTruongDto)
     {
-        var truongs = await _repositoryMaster.Truong.GetAllTruongAsync();
+        var truongs = await _repositoryMaster.Truong.GetAllTruongAsync(paramTruongDto.page, paramTruongDto.limit, paramTruongDto.search, paramTruongDto.sortBy, paramTruongDto.sortByOrder);
         var truongDtos = _mapper.Map<IEnumerable<ResponseTruongDto>>(truongs);
         return truongDtos;
     }

@@ -1,3 +1,4 @@
+using Education_assistant.Modules.ModuleTruong.DTOs.Param;
 using Education_assistant.Modules.ModuleTruong.DTOs.Request;
 using Education_assistant.Repositories.RepositoryMaster;
 using Education_assistant.Services.ServiceMaster;
@@ -17,16 +18,16 @@ public class TruongController : ControllerBase
     {
         _serviceMaster = serviceMaster;
     }
-    [HttpGet("")]
+    [HttpGet("key-value")]
     public async Task<ActionResult> GetTruongAsync()
     {
         var result = await _serviceMaster.Truong.GetTruongAsync();
         return Ok(result);
     }
-    [HttpGet("all")]
-    public async Task<ActionResult> GetAllTruongAsync()
+    [HttpGet("")]
+    public async Task<ActionResult> GetAllTruongAsync([FromQuery] ParamTruongDto paramTruongDto)
     {
-        var result = await _serviceMaster.Truong.GetAllTruongAsync();
+        var result = await _serviceMaster.Truong.GetAllTruongAsync(paramTruongDto);
         return Ok(result);
     }
     [HttpGet("{id}")]
