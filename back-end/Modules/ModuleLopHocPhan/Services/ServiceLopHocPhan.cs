@@ -5,7 +5,9 @@ using Education_assistant.Exceptions.ThrowError.ChiTietChuongTrinhDaoTaoExceptio
 using Education_assistant.Exceptions.ThrowError.ChuongTrinhDaoTaoExceptions;
 using Education_assistant.Exceptions.ThrowError.LopHocExceptions;
 using Education_assistant.Exceptions.ThrowError.LopHocPhanExceptions;
+using Education_assistant.Exceptions.ThrowError.MonHocExceptions;
 using Education_assistant.Models;
+using Education_assistant.Models.Enums;
 using Education_assistant.Modules.ModuleLopHocPhan.DTOs.Param;
 using Education_assistant.Modules.ModuleLopHocPhan.DTOs.Request;
 using Education_assistant.Modules.ModuleLopHocPhan.DTOs.Response;
@@ -34,7 +36,13 @@ public class ServiceLopHocPhan : IServiceLopHocPhan
     {
         try
         {
+            var monHoc = await _repositoryMaster.MonHoc.GetMonHocByIdAsync(request.MonHocId, false);
+            if (monHoc is null) {
+                throw new MonHocNotFoundException(request.MonHocId);
+            }
             var newLopHocPhan = _mapper.Map<LopHocPhan>(request);
+            newLopHocPhan.MaHocPhan = $"LopHKP_{monHoc.TenMonHoc}_{DateTime.Now:dd_MM_yy}";
+            newLopHocPhan.Loai = (int)LoaiLopHocEnum.LOP_HOC_KY_PHU;
             await _repositoryMaster.ExecuteInTransactionAsync(async () =>
             {
                 await _repositoryMaster.LopHocPhan.CreateAsync(newLopHocPhan);
@@ -82,6 +90,7 @@ public class ServiceLopHocPhan : IServiceLopHocPhan
                     MonHocId = ctctdt.MonHocId!.Value,
                     SiSo = lopHoc.SiSo,
                     TrangThai = 1,
+                    Loai = (int)LoaiLopHocEnum.LOP_HOC_PHAN,
                     CreatedAt = DateTime.Now
                 };
                 newLopHocPhans.Add((lopHocPhan, lopHoc.Id));
@@ -154,7 +163,8 @@ public class ServiceLopHocPhan : IServiceLopHocPhan
                                                                                 paramLopHocPhanDto.loaiChuongTrinhDaoTao,
                                                                                 paramLopHocPhanDto.chuongTrinhDaoTaoId,
                                                                                 paramLopHocPhanDto.hocKy,
-                                                                                paramLopHocPhanDto.trangThai);
+                                                                                paramLopHocPhanDto.trangThai,
+                                                                                paramLopHocPhanDto.loaiLopHoc);
         var lopHocPhanDtos = _mapper.Map<IEnumerable<ResponseLopHocPhanDto>>(lopHocPhans);
         return (data: lopHocPhanDtos, page: lopHocPhans!.PageInfo);
     }
@@ -167,7 +177,7 @@ public class ServiceLopHocPhan : IServiceLopHocPhan
         return lopHocPhanDto;
     }
 
-    public async Task UpdateAsync(Guid id, RequestUpdateLopHocPhanDto request)
+    public async Task UpdateAsync(Guid id, RequestUpdateSimpleLopHocPhanDto request)
     {
         try
         {
@@ -175,11 +185,13 @@ public class ServiceLopHocPhan : IServiceLopHocPhan
             throw new LopHocPhanBadRequestException($"Id: {id} và Lớp học phần id: {request.Id} không giống nhau!");
             var lopHocPhan = await _repositoryMaster.LopHocPhan.GetLopHocPhanByIdAsync(id, false);
             if (lopHocPhan is null) throw new LopHocPhanNotFoundException(id);
-            var lopHocPhanUpdate = _mapper.Map<LopHocPhan>(request);
-            lopHocPhanUpdate.UpdatedAt = DateTime.Now;
+
+            lopHocPhan.SiSo = request.SiSo;
+            lopHocPhan.TrangThai = request.TrangThai;
+            lopHocPhan.UpdatedAt = DateTime.Now;
             await _repositoryMaster.ExecuteInTransactionAsync(async () =>
             {
-                _repositoryMaster.LopHocPhan.UpdateLopHocPhan(lopHocPhanUpdate);
+                _repositoryMaster.LopHocPhan.UpdateLopHocPhan(lopHocPhan);
                 await Task.CompletedTask;
             });
             _loggerService.LogInfo("Cập nhật lớp học phần thành công.");
@@ -201,5 +213,32 @@ public class ServiceLopHocPhan : IServiceLopHocPhan
             }
         });
         _loggerService.LogInfo("Cập nhật list phân công giảng viên thành công.");
+    }
+
+    public async Task UpdateTrangThaiAsync(Guid id, int trangThai)
+    {
+        try
+        {
+            if (trangThai <= 0 && trangThai >= 3)
+            {
+                throw new LopHocBadRequestException($"Trạng thái không đúng");
+            }
+            var lopHocPhan = await _repositoryMaster.LopHocPhan.GetLopHocPhanByIdAsync(id, false);
+            if (lopHocPhan is null)
+            {
+                throw new LopHocPhanNotFoundException(id);
+            }
+            lopHocPhan.TrangThai = trangThai;
+
+            await _repositoryMaster.ExecuteInTransactionAsync(async () =>
+            {
+                _repositoryMaster.LopHocPhan.UpdateLopHocPhan(lopHocPhan);
+                await Task.CompletedTask;
+            });
+        }
+        catch (DbUpdateException ex)
+        {
+            throw new Exception($"Lỗi hệ thống!: {ex.Message}");
+        }
     }
 }

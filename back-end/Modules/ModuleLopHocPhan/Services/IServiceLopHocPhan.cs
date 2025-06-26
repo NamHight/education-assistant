@@ -13,7 +13,8 @@ public interface IServiceLopHocPhan
     Task<ResponseLopHocPhanDto> GetLopHocPhanByIdAsync(Guid id, bool trackChanges);
     Task<ResponseLopHocPhanDto> CreateAsync(RequestAddLopHocPhanDto request);
     Task CreateAutoLopHocPhanAsync(RequestGenerateLopHocPhanDto request);
-    Task UpdateAsync(Guid id, RequestUpdateLopHocPhanDto request);
+    Task UpdateAsync(Guid id, RequestUpdateSimpleLopHocPhanDto request);
+    Task UpdateTrangThaiAsync(Guid id, int trangThai);
     Task UpdateListLophocPhanAsync(List<RequestUpdateLopHocPhanDto> listRequest);
     Task DeleteAsync(Guid id);
     

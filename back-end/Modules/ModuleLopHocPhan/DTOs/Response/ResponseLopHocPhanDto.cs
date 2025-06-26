@@ -9,6 +9,7 @@ public class ResponseLopHocPhanDto
     public string MaHocPhan { get; set; } = string.Empty;
     public int SiSo { get; set; }
     public int TrangThai { get; set; }
+    public int Loai { get; set; }
     public Guid? MonHocId { get; set; }
     public MonHocSimpleDto? MonHoc { get; set; }
     public Guid? GiangVienId { get; set; }

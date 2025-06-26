@@ -10,4 +10,5 @@ public class ParamLopHocPhanDto : BaseParam
     public Guid chuongTrinhDaoTaoId { get; set; }
     public int hocKy { get; set; }
     public int trangThai { get; set; }
+    public int loaiLopHoc { get; set; }
 }
