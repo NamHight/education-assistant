@@ -87,7 +87,8 @@ public class RepositoryLopHocPhan : RepositoryBase<LopHocPhan>, IRepositoryLopHo
         int? loaiChuongTrinh,
         Guid? chuongTrinhId,
         int? hocKy,
-        int? trangThai)
+        int? trangThai,
+        int? loaiLopHoc)
     {
         var query = _context.LopHocPhans!
             .AsNoTracking()
@@ -99,6 +100,10 @@ public class RepositoryLopHocPhan : RepositoryBase<LopHocPhan>, IRepositoryLopHo
             .Include(x => x.GiangVien)
             .AsNoTracking();
 
+        if (loaiLopHoc.HasValue && loaiLopHoc != 0)
+        {
+            query = query.Where(item => item.Loai == loaiLopHoc);
+        }
         if (trangThai.HasValue && trangThai != 0)
             query = query.Where(x => x.TrangThai == trangThai);
 
@@ -123,8 +128,8 @@ public class RepositoryLopHocPhan : RepositoryBase<LopHocPhan>, IRepositoryLopHo
             .SearchBy(search, x => x.MaHocPhan)
             .SortByOptions(sortBy, sortByOder, new Dictionary<string, Expression<Func<LopHocPhan, object>>>
             {
+                ["createdat"] = item => item.CreatedAt,
                 ["siso"] = item => item.SiSo,
-                ["createdat"] = item => item.CreatedAt
             });
         // Lấy ra PagedListAsync
         var pagedResult = await PagedListAsync<LopHocPhan>.ToPagedListAsync(query, page, limit);
