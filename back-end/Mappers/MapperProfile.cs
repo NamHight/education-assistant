@@ -70,6 +70,7 @@ public class MapperProfile : Profile
 
         //map lớp học phần
         CreateMap<RequestAddLopHocPhanDto, LopHocPhan>();
+        CreateMap<RequestUpdateSimpleLopHocPhanDto, LopHocPhan>();
         CreateMap<RequestUpdateLopHocPhanDto, LopHocPhan>();
         CreateMap<LopHocPhan, ResponseLopHocPhanDto>();
 

@@ -50,9 +50,16 @@ namespace Education_assistant.Modules.ModuleLopHocPhan
         }
         [HttpPut("{id}")]
         [ServiceFilter(typeof(ValidationFilter))]
-        public async Task<ActionResult> UpdateLopHocPhanAsync(Guid id, [FromForm] RequestUpdateLopHocPhanDto model)
+        public async Task<ActionResult> UpdateLopHocPhanAsync(Guid id, [FromForm] RequestUpdateSimpleLopHocPhanDto model)
         {
             await _serviceMaster.LopHocPhan.UpdateAsync(id, model); 
+            return NoContent();
+        }
+        
+        [HttpPut("{id}/update-trang-thai")]
+        public async Task<ActionResult> UpdateTrangThaiLopHocPhanAsync(Guid id, [FromForm] int trangThai)
+        {
+            await _serviceMaster.LopHocPhan.UpdateTrangThaiAsync(id, trangThai); 
             return NoContent();
         }
         [HttpPut("list-phan-cong")]
