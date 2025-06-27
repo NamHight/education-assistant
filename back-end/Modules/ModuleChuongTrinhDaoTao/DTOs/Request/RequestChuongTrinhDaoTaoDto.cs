@@ -46,7 +46,6 @@ public class RequestUpdateChuongTrinhDaoTaoDto
 
     [Required(ErrorMessage = "Thời gian đào tạo không được để trống")]
     public string ThoiGianDaoTao { get; set; } = string.Empty;
-
     public string? MoTa { get; set; }
 
     [Required(ErrorMessage = "Tổng số tín chỉ không được để trống")]

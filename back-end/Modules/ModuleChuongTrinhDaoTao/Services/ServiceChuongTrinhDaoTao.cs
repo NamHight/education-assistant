@@ -99,6 +99,11 @@ public class ServiceChuongTrinhDaoTao : IServiceChuongTrinhDaoTao
     {
         try
         {
+            var ChuongTrinhDaoTao = await _repositoryMaster.ChuongTrinhDaoTao.GetChuongTrinhDaoTaoByKhoaAndNganhIdAsync(request.Khoa.Value, request.NganhId.Value);
+            if (ChuongTrinhDaoTao is not null)
+            {
+                throw new ChuongTrinhDaoTaoBadRequestException($"Đã có chương trình đào tạo theo khóa thuộc ngành này rồi");
+            }
             if (id != request.Id)
                 throw new ChuongTrinhDaoTaoBadRequestException(
                     $"Id: {id} và Id của chương trình đào tạo: {request.Id} không giống nhau!.");
