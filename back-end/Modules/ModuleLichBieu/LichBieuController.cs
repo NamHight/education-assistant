@@ -51,7 +51,7 @@ namespace Education_assistant.Modules.ModuleLichBieu
         }
         [HttpPut("{id}")]
         [ServiceFilter(typeof(ValidationFilter))]
-        public async Task<ActionResult> UpdateLichBieuAsync(Guid id, [FromForm] RequestUpdateLichBieuDto model)
+        public async Task<ActionResult> UpdateLichBieuAsync(Guid id, [FromForm] RequestUpdateLichBieuSimpleDto model)
         {
             await _serviceMaster.LichBieu.UpdateAsync(id, model);
             return NoContent();

@@ -32,5 +32,4 @@ public class RequestUpdateMonHocDto
     [MaxLength(255, ErrorMessage = "Mô tả không được quá 255 ký tự")]
     public string MoTa { get; set; } = string.Empty;
     public Guid KhoaId { get; set; }   
-    public DateTime? CreatedAt { get; set; }
 }

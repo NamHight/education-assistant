@@ -99,11 +99,19 @@ public class ServiceChuongTrinhDaoTao : IServiceChuongTrinhDaoTao
                     $"Id: {id} và Id của chương trình đào tạo: {request.Id} không giống nhau!.");
             var ctDaoTaoExistting = await _repositoryMaster.ChuongTrinhDaoTao.GetChuongTrinhDaoTaoByIdAsync(id, false);
             if (ctDaoTaoExistting is null) throw new ChuongTrinhDaoTaoNotFoundException(id);
-            var ctDaoTaoUpdate = _mapper.Map<ChuongTrinhDaoTao>(request);
-            ctDaoTaoUpdate.UpdatedAt = DateTime.Now;
+
+            ctDaoTaoExistting.MaChuongTrinh = request.MaChuongTrinh;
+            ctDaoTaoExistting.TenChuongTrinh = request.TenChuongTrinh;
+            ctDaoTaoExistting.LoaiChuonTrinhDaoTao = request.LoaiChuonTrinhDaoTao;
+            ctDaoTaoExistting.ThoiGianDaoTao = request.ThoiGianDaoTao;
+            ctDaoTaoExistting.MoTa = request.MoTa;
+            ctDaoTaoExistting.TongSoTinChi = request.TongSoTinChi;
+            ctDaoTaoExistting.Khoa = request.Khoa;
+            ctDaoTaoExistting.NganhId = request.NganhId;
+            ctDaoTaoExistting.UpdatedAt = DateTime.Now;
             await _repositoryMaster.ExecuteInTransactionAsync(async () =>
             {
-                _repositoryMaster.ChuongTrinhDaoTao.UpdateChuongTrinhDaoTao(ctDaoTaoUpdate);
+                _repositoryMaster.ChuongTrinhDaoTao.UpdateChuongTrinhDaoTao(ctDaoTaoExistting);
                 await Task.CompletedTask;
             });
             _loggerService.LogInfo("Cập nhật chương trình đào tạo thành công.");

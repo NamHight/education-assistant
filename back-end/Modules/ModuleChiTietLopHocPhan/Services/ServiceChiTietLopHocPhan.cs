@@ -259,11 +259,19 @@ public class ServiceChiTietLopHocPhan : IServiceChiTietLopHocPhan
             {
                 throw new ChiTietLopHocPhanNotFoundException(id);
             }
-            var diemSoUpdate = _mapper.Map<ChiTietLopHocPhan>(request);
-            diemSoUpdate.UpdatedAt = DateTime.Now;
+            diemSoExstting.DiemChuyenCan = request.DiemChuyenCan;
+            diemSoExstting.DiemTrungBinh = request.DiemTrungBinh;
+            diemSoExstting.DiemThi1 = request.DiemThi1;
+            diemSoExstting.DiemThi2 = request.DiemThi2;
+            diemSoExstting.DiemTongKet1 = request.DiemTongKet1;
+            diemSoExstting.DiemTongKet2 = request.DiemTongKet2;
+            diemSoExstting.GhiChu = request.GhiChu;
+            diemSoExstting.TrangThai = request.TrangThai;
+            diemSoExstting.NgayLuuDiem = DateTime.Now;
+            diemSoExstting.UpdatedAt = DateTime.Now;
             await _repositoryMaster.ExecuteInTransactionAsync(async () =>
             {
-                _repositoryMaster.ChiTietLopHocPhan.UpdateChiTietLopHocPhan(diemSoUpdate);
+                _repositoryMaster.ChiTietLopHocPhan.UpdateChiTietLopHocPhan(diemSoExstting);
                 await Task.CompletedTask;
             });
             _loggerService.LogInfo("Cập nhật chi tiết lớp học phần thành công.");

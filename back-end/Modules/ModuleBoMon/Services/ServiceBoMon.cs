@@ -102,11 +102,14 @@ public class ServiceBoMon : IServiceBoMon
         {
             throw new BoMonNotFoundException(id);
         }
-        var boMonUpdate = _mapper.Map<BoMon>(request);
-        boMonUpdate.UpdatedAt = DateTime.Now;
+        boMonExsitting.TenBoMon = request.TenBoMon;
+        boMonExsitting.Email = request.Email;
+        boMonExsitting.SoDienThoai = request.SoDienThoai;
+        boMonExsitting.KhoaId = request.KhoaId;
+        boMonExsitting.UpdatedAt = DateTime.Now;
         await _repositoryMaster.ExecuteInTransactionAsync(async () =>
         {
-            _repositoryMaster.BoMon.UpdateBoMon(boMonUpdate);
+            _repositoryMaster.BoMon.UpdateBoMon(boMonExsitting);
             await Task.CompletedTask;
         });
         _loggerService.LogInfo("Cập nhật bộ môn thành công.");

@@ -95,11 +95,15 @@ public class ServiceKhoa : IServiceKhoa
                 throw new KhoaBadRequestException($"Id: {id} và Id: {request.Id} của khoa không giống nhau!");
             var khoa = await _repositoryMaster.Khoa.GetKhoaByIdAsync(id, false);
             if (khoa is null) throw new KhoaNotFoundException(id);
-            var khoaUpdate = _mapper.Map<Khoa>(request);
-            khoaUpdate.UpdatedAt = DateTime.Now;
+            khoa.TenKhoa = request.TenKhoa;
+            khoa.SoDienThoai = request.SoDienThoai;
+            khoa.Email = request.Email;
+            khoa.ViTriPhong = request.ViTriPhong;
+            khoa.Website = request.Website;
+            khoa.UpdatedAt = DateTime.Now;
             await _repositoryMaster.ExecuteInTransactionAsync(async () =>
             {
-                _repositoryMaster.Khoa.UpdateKhoa(khoaUpdate);
+                _repositoryMaster.Khoa.UpdateKhoa(khoa);
                 await Task.CompletedTask;
             });
             _loggerService.LogInfo("Cập nhật khoa thành công.");

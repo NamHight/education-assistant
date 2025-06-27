@@ -11,7 +11,6 @@ public class ResponseHocBaDto
     public Guid Id { get; set; }
     public decimal DiemTongKet { get; set; }
     public string? MoTa { get; set; }
-    public int LanHoc { get; set; } = 1;
     public int? KetQua { get; set; }
     public Guid? SinhVienId { get; set; }
     public SinhVienSimpleDto? SinhVien { get; set; }

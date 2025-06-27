@@ -119,16 +119,15 @@ public class ServiceHocBa : IServiceHocBa
             {
                 throw new HocBaNotFoundException(id);
             }
-            var hocBaUpdate = _mapper.Map<HocBa>(request);
-            hocBaUpdate.LanHoc = hocBaUpdate.LanHoc + 1;
-            var diemso = _diemSoHelper.ComparePoint(request.DiemTongKetLopHocPhan, hocBaUpdate.DiemTongKet);
-            hocBaUpdate.DiemTongKet = diemso;
-            hocBaUpdate.KetQuaHocBaEnum = diemso >= 5 ? KetQuaHocBaEnum.DAT : KetQuaHocBaEnum.KHONG_DAT;
-            hocBaUpdate.UpdatedAt = DateTime.Now;
+            hocBa.LanHoc = hocBa.LanHoc + 1;
+            var diemso = _diemSoHelper.ComparePoint(request.DiemTongKetLopHocPhan, hocBa.DiemTongKet);
+            hocBa.DiemTongKet = diemso;
+            hocBa.KetQuaHocBaEnum = diemso >= 5 ? KetQuaHocBaEnum.DAT : KetQuaHocBaEnum.KHONG_DAT;
+            hocBa.UpdatedAt = DateTime.Now;
 
             await _repositoryMaster.ExecuteInTransactionAsync(async () =>
             {
-                _repositoryMaster.HocBa.UpdateHocBa(hocBaUpdate);
+                _repositoryMaster.HocBa.UpdateHocBa(hocBa);
                 await Task.CompletedTask;
             });
             _loggerService.LogInfo("Cập nhật học bạ thành công.");
