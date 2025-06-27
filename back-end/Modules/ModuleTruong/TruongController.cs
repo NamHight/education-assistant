@@ -14,7 +14,7 @@ namespace Education_assistant.Modules.ModuleTruong;
 public class TruongController : ControllerBase
 {
     private readonly IServiceMaster _serviceMaster;
-    public TruongController(IServiceMaster serviceMaster, IRepositoryMaster repositoryMaster)
+    public TruongController(IServiceMaster serviceMaster)
     {
         _serviceMaster = serviceMaster;
     }
@@ -22,12 +22,6 @@ public class TruongController : ControllerBase
     public async Task<ActionResult> GetTruongAsync()
     {
         var result = await _serviceMaster.Truong.GetTruongAsync();
-        return Ok(result);
-    }
-    [HttpGet("")]
-    public async Task<ActionResult> GetAllTruongAsync([FromQuery] ParamTruongDto paramTruongDto)
-    {
-        var result = await _serviceMaster.Truong.GetAllTruongAsync(paramTruongDto);
         return Ok(result);
     }
     [HttpGet("{id}")]
@@ -43,18 +37,17 @@ public class TruongController : ControllerBase
         var result = await _serviceMaster.Truong.CreateAsync(model);
         return Ok(result);
     }
-    [HttpPost("import-image")]
+    [HttpPut("{id}/import-image")]
     [ServiceFilter(typeof(ValidationFilter))]
-    public async Task<ActionResult> ImportFileImage([FromForm] RequestUpdateFileTruongDto model)
+    public async Task<ActionResult> ImportFileImage(Guid id,[FromForm] RequestUpdateFileTruongDto model)
     {
-        await _serviceMaster.Truong.ImportFileImageTruongAsync(model);
-        return Ok("Thêm hình ảnh thành công.");
+        await _serviceMaster.Truong.ImportFileImageTruongAsync(id, model);
+        return Ok("Cập nhật hình ảnh thành công.");
     }
-    [HttpPut("{id}")]
-    [ServiceFilter(typeof(ValidationFilter))]
-    public async Task<ActionResult> UpdateTruongAsync(Guid id, [FromForm] RequestUpdateTruongDto model)
+    [HttpPut]
+    public async Task<ActionResult> UpdateTruongAsync([FromForm] RequestUpdateTruongDto model)
     {
-        await _serviceMaster.Truong.UpdateAsync(id, model);
+        await _serviceMaster.Truong.UpdateAsync(model);
         return NoContent();
     }
     [HttpDelete("{id}")]

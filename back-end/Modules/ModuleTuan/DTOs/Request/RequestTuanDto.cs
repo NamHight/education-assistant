@@ -28,5 +28,5 @@ public class RequestUpdateTuanDto
     public DateTime? NgayBatDau { get; set; }
     [Required(ErrorMessage = "Ngày kết thúc không được để trống")]
     public DateTime? NgayKetThuc { get; set; }
-    public DateTime? CreatedAt { get; set; }
+   
 }

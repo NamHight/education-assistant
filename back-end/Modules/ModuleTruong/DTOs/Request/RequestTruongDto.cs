@@ -15,21 +15,14 @@ public class RequestAddTruongDto
 }
 public class RequestUpdateTruongDto
 {
-    [Required(ErrorMessage = "Mã trường không được để trống")]
-    public Guid Id { get; set; }
-    [Required(ErrorMessage = "Key không được để trống")]
-    [MaxLength(255, ErrorMessage = "Key không được quá 255 ký tự")]
-    public string Key { get; set; } = string.Empty;
-
-    [Required(ErrorMessage = "Value không được để trống")]
-    [MaxLength(255, ErrorMessage = "Value không được quá 255 ký tự")]
-    public string Value { get; set; } = string.Empty;
+    public string? Name { get; set; } = string.Empty;
+    public IFormFile? File { get; set; }
 }
 
 public class RequestUpdateFileTruongDto
 {
     [Required(ErrorMessage = "Mã trường không được để trống")]
     public Guid Id { get; set; }
-    [Required(ErrorMessage = "Mã trường không được để trống")]
+    [Required(ErrorMessage = "File không được để trống")]
     public IFormFile? File { get; set; }
 }

@@ -37,18 +37,8 @@ public class RequestUpdateChiTietLopHocPhanDto
     public decimal? DiemTongKet1 { get; set; }
     public decimal? DiemTongKet2 { get; set; }
     public DateTime? NgayLuuDiem { get; set; } = DateTime.Now;
-    public int HocKy { get; set; }
     public string? GhiChu { get; set; }
     public int TrangThai { get; set; }
-    [Required(ErrorMessage = "Id sinh viên không được bỏ trống")]
-    public Guid SinhVienId { get; set; }
-    [Required(ErrorMessage = "Id môn học không được bỏ trống")]
-    public Guid MonHocId { get; set; }
-    [Required(ErrorMessage = "Id giảng viên không được bỏ trống")]
-    public Guid GiangVienId { get; set; }
-    [Required(ErrorMessage = "Id lớp học phần không được bỏ trống")]
-    public Guid LopHocPhanId { get; set; }
-    public DateTime? CreatedAt { get; set; }
 }
 public class RequestNopDiemChiTietLopHocPhanDto
 {

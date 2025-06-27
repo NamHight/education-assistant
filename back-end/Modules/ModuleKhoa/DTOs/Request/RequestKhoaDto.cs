@@ -49,5 +49,4 @@ public class RequestUpdateKhoaDto
 
     [MaxLength(255, ErrorMessage = "Website không được quá 255 ký tự")]
     public string Website { get; set; } = string.Empty;
-    public DateTime? CreatedAt { get; set; }
 }

@@ -17,6 +17,24 @@ namespace Education_assistant.Modules.ModuleLichBieu.DTOs.Request
         public Guid LopHocPhanId { get; set; }
         public Guid PhongHocId { get; set; }
     }
+    public class RequestUpdateLichBieuSimpleDto
+    {
+        [Required(ErrorMessage = "Id không được để trống")]
+        public Guid Id { get; set; }
+
+        [Required(ErrorMessage = "Tiết bắt đầu không được để trống")]
+        public int TietBatDau { get; set; }
+
+        [Required(ErrorMessage = "Tiết kết thúc không được để trống")]
+        public int TietKetThuc { get; set; }
+
+        [Required(ErrorMessage = "Thứ không được để trống")]
+        public int Thu { get; set; }
+        [Required(ErrorMessage = "Id lớp học phần không được để trống")]
+        public Guid LopHocPhanId { get; set; }
+        [Required(ErrorMessage = "Id phòng học không được để trống")]
+        public Guid PhongHocId { get; set; }
+    }
     public class RequestUpdateLichBieuDto
     {
         [Required(ErrorMessage = "Id không được để trống")]
@@ -33,7 +51,6 @@ namespace Education_assistant.Modules.ModuleLichBieu.DTOs.Request
         public Guid? TuanId { get; set; }
         public Guid LopHocPhanId { get; set; }
         public Guid PhongHocId { get; set; }
-        public DateTime? CreatedAt { get; set; }
     }
     public class RequestAddLichBieuListTuanDto
     {

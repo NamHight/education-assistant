@@ -34,7 +34,6 @@ public class RequestUpdateHocbaDto
     public Guid? ChiTietChuongTrinhDaoTaoId { get; set; }
     [Required(ErrorMessage = "Điểm tổng kết lớp học phần không được để trống")]
     public decimal DiemTongKetLopHocPhan { get; set; }
-    public DateTime? CreatedAt { get; set; }
 }
 public class RequestListUpdateHocbaDto
 {

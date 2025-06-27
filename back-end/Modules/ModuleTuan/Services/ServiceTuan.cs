@@ -121,11 +121,14 @@ public class ServiceTuan : IServiceTuan
             {
                 throw new TuanNotFoundException(id);
             }
-            var tuanUpdate = _mapper.Map<Tuan>(request);
-            tuanUpdate.UpdatedAt = DateTime.Now;
+            tuan.SoTuan = request.SoTuan;
+            tuan.NamHoc = request.NamHoc;
+            tuan.NgayBatDau = request.NgayBatDau;
+            tuan.NgayKetThuc = request.NgayKetThuc;
+            tuan.UpdatedAt = DateTime.Now;
             await _repositoryMaster.ExecuteInTransactionAsync(async () =>
             {
-                _repositoryMaster.Tuan.UpdateTuan(tuanUpdate);
+                _repositoryMaster.Tuan.UpdateTuan(tuan);
                 await Task.CompletedTask;
             });
             _loggerService.LogInfo("Cập nhật tuần thành công.");

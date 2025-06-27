@@ -13,7 +13,7 @@ namespace Education_assistant.Modules.ModuleLichBieu.Services
         Task<(IEnumerable<ResponseLichBieuDto> data, PageInfo page)> GetAllLichBieuAsync(ParamLichBieuDto paramLichBieuDto);
         Task<ResponseLichBieuDto> GetLichBieuByIdAsync(Guid id, bool trackChanges);
         Task<ResponseLichBieuDto> CreateAsync(RequestAddLichBieuDto request);
-        Task UpdateAsync(Guid id, RequestUpdateLichBieuDto request);
+        Task UpdateAsync(Guid id, RequestUpdateLichBieuSimpleDto request);
         Task CopyTuanLichBieuAsync(RequestAddLichBieuListTuanDto request);
         Task DeleteAsync(Guid id);
     }
