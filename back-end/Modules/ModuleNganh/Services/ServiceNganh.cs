@@ -108,11 +108,14 @@ public class ServiceNganh : IServiceNganh
             {
                 throw new NganhNotFoundException(id);
             }
-            var nganhUpdate = _mapper.Map<Nganh>(request);
-            nganhUpdate.UpdatedAt = DateTime.Now;
+            nganh.MaNganh = request.MaNganh;
+            nganh.TenNganh = request.TenNganh;
+            nganh.MoTa = request.MoTa;
+            nganh.KhoaId = request.KhoaId;
+            nganh.UpdatedAt = DateTime.Now;
             await _repositoryMaster.ExecuteInTransactionAsync(async () =>
             {
-                _repositoryMaster.Nganh.UpdateNganh(nganhUpdate);
+                _repositoryMaster.Nganh.UpdateNganh(nganh);
                 await Task.CompletedTask;
             });
             _loggerService.LogInfo("Cập nhật ngành thành công.");

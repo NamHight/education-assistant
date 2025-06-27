@@ -123,7 +123,7 @@ namespace Education_assistant.Modules.ModuleLichBieu.Services
             return lichBieuDto;
         }
 
-        public async Task UpdateAsync(Guid id, RequestUpdateLichBieuDto request)
+        public async Task UpdateAsync(Guid id, RequestUpdateLichBieuSimpleDto request)
         {
             try
             {
@@ -136,11 +136,15 @@ namespace Education_assistant.Modules.ModuleLichBieu.Services
                 {
                     throw new LichBieuNotFoundException(id);
                 }
-                var lichBieuUpdate = _mapper.Map<LichBieu>(request);
-                lichBieuUpdate.UpdatedAt = DateTime.Now;
+                lichBieu.TietBatDau = request.TietBatDau;
+                lichBieu.TietKetThuc = request.TietKetThuc;
+                lichBieu.Thu = request.Thu;
+                lichBieu.LopHocPhanId = request.LopHocPhanId;
+                lichBieu.PhongHocId = request.PhongHocId;
+                lichBieu.UpdatedAt = DateTime.Now;
                 await _repositoryMaster.ExecuteInTransactionAsync(async () =>
                 {
-                    _repositoryMaster.LichBieu.UpdateLichBieu(lichBieuUpdate);
+                    _repositoryMaster.LichBieu.UpdateLichBieu(lichBieu);
                     await Task.CompletedTask;
                 });
                 _loggerService.LogInfo($"Cập nhật lịch biểu có id = {id} thành công.");

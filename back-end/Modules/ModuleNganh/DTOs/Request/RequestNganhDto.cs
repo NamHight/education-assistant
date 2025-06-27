@@ -28,5 +28,4 @@ public class RequestUpdateNganhDto
     public string? MoTa { get; set; }
     [Required(ErrorMessage = "Id khoa không được để trống")]
     public Guid? KhoaId { get; set; }
-    public DateTime? CreatedAt { get; set; }
 }

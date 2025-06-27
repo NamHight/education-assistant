@@ -112,11 +112,15 @@ namespace Education_assistant.Modules.ModulePhongHoc.Services
                 {
                     throw new PhongHocNotFoundException(id);
                 }
-                var phongHocUpdate = _mapper.Map<PhongHoc>(request);
-                phongHocUpdate.UpdatedAt = DateTime.Now;
+                phongHoc.TenPhong = request.TenPhong;
+                phongHoc.ToaNha = request.ToaNha;
+                phongHoc.SucChua = request.SucChua;
+                phongHoc.LoaiPhongHoc = request.LoaiPhongHoc;
+                phongHoc.TrangThaiPhongHoc = request.TrangThaiPhongHoc;
+                phongHoc.UpdatedAt = DateTime.Now;
                 await _repositoryMaster.ExecuteInTransactionAsync(async () =>
                 {
-                    _repositoryMaster.PhongHoc.UpdatePhongHoc(phongHocUpdate);
+                    _repositoryMaster.PhongHoc.UpdatePhongHoc(phongHoc);
                     await Task.CompletedTask;
                 });
                 _loggerService.LogInfo($"Cập nhật phòng học có id = {id} thành công.");

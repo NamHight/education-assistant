@@ -106,16 +106,19 @@ public class ServiceMonHoc : IServiceMonHoc
             {
                 throw new MonHocBadRequestException($"Id và Id của môn học không giống nhau!");
             }
-            var truong = await _repositoryMaster.MonHoc.GetMonHocByIdAsync(id, false);
-            if (truong is null)
+            var monHoc = await _repositoryMaster.MonHoc.GetMonHocByIdAsync(id, false);
+            if (monHoc is null)
             {
                 throw new MonHocNotFoundException(id);
             }
-            var monHocUpdate = _mapper.Map<MonHoc>(request);
-            monHocUpdate.UpdatedAt = DateTime.Now;
+            monHoc.MaMonHoc = request.MaMonHoc;
+            monHoc.TenMonHoc = request.TenMonHoc;
+            monHoc.MoTa = request.MoTa;
+            monHoc.KhoaId = request.KhoaId;
+            monHoc.UpdatedAt = DateTime.Now;
             await _repositoryMaster.ExecuteInTransactionAsync(async () =>
             {
-                _repositoryMaster.MonHoc.UpdateMonHoc(monHocUpdate);
+                _repositoryMaster.MonHoc.UpdateMonHoc(monHoc);
                 await Task.CompletedTask;
             });
             _loggerService.LogInfo("Cập nhật môn học thành công.");

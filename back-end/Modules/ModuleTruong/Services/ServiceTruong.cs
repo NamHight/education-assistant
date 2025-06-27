@@ -78,14 +78,14 @@ public class ServiceTruong : IServiceTruong
         return truongDto;
     }
 
-    public async Task ImportFileImageTruongAsync(RequestUpdateFileTruongDto requestUpdateFileDto)
+    public async Task ImportFileImageTruongAsync(Guid id, RequestUpdateFileTruongDto requestUpdateFileDto)
     {
         try
         {
-            var truong = await _repositoryMaster.Truong.GetTruongByIdAsync(requestUpdateFileDto.Id, false);
+            var truong = await _repositoryMaster.Truong.GetTruongByIdAsync(id, false);
             if (truong is null)
             {
-                throw new TruongNotFoundException(requestUpdateFileDto.Id);
+                throw new TruongNotFoundException(id);
             }
             if (requestUpdateFileDto.File != null && requestUpdateFileDto.File.Length > 0)  
             {
@@ -108,20 +108,47 @@ public class ServiceTruong : IServiceTruong
         }
     }
 
-    public async Task UpdateAsync(Guid id, RequestUpdateTruongDto request)
+    public async Task UpdateAsync(RequestUpdateTruongDto request)
     {
         try
         {
-            if (id != request.Id) throw new TruongBadRequestException("Id và Id của trường không giống nhau!");
-            if (request is null) throw new TruongBadRequestException("Thông tin trường không đầy đủ!");
-            var truong = await _repositoryMaster.Truong.GetTruongByIdAsync(id, false);
-            if (truong is null) throw new TruongNotFoundException(id);
-            var truongUpdate = _mapper.Map<Truong>(request);
-            await _repositoryMaster.ExecuteInTransactionAsync(async () =>
+            if (!string.IsNullOrEmpty(request.Name))
             {
-                _repositoryMaster.Truong.UpdateTruong(truongUpdate);
-                await Task.CompletedTask;
-            });
+                var truongName = await _repositoryMaster.Truong.GetTruongByKeyAsync("name", false);
+                if (truongName is null)
+                {
+                    throw new TruongBadRequestException($"Trường name không tìm thấy.");
+                }
+                truongName.Value = request.Name;
+                truongName.UpdatedAt = DateTime.Now;
+                await _repositoryMaster.ExecuteInTransactionAsync(async () =>
+                {
+                    _repositoryMaster.Truong.UpdateTruong(truongName);
+                    await Task.CompletedTask;
+                });
+                _loggerService.LogInfo("Cập nhật name trường thành công.");
+            }
+            if (request.File != null && request.File.Length > 0)
+            {
+                var truongLogo = await _repositoryMaster.Truong.GetTruongByKeyAsync("logo", false);
+                if (truongLogo is null)
+                {
+                    throw new TruongBadRequestException($"Trường name không tìm thấy.");
+                }
+                var hinhDaiDien = await _serviceFIle.UpLoadFile(request.File!, "truong");
+                var context = _httpContextAccessor.HttpContext;
+                hinhDaiDien = $"{context!.Request.Scheme}://{context.Request.Host}/uploads/{hinhDaiDien}";
+                truongLogo.Value = hinhDaiDien;
+                truongLogo.UpdatedAt = DateTime.Now;
+                await _repositoryMaster.ExecuteInTransactionAsync(async () =>
+                {
+                    _repositoryMaster.Truong.UpdateTruong(truongLogo);
+                    await Task.CompletedTask;
+                });
+                _loggerService.LogInfo("Cập nhật logo trường thành công.");
+            }
+            
+                
             _loggerService.LogInfo("Cập nhật trường thành công.");
         }catch (DbUpdateException ex)
         {

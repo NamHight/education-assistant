@@ -28,6 +28,11 @@ public class ServiceChiTietChuongTrinhDaoTao : IServiceChiTietChuongTrinhDaoTao
     {
         try
         {
+            var ctctDaoTaoExisting = _repositoryMaster.ChiTietChuongTrinhDaoTao.GetChiTietChuongTrinhDaoTaoByMonHocIdAndChuongTrinhId(request.MonHocId, request.ChuongTrinhDaoTaoId);
+            if (ctctDaoTaoExisting is not null)
+            {
+                throw new ChiTietChuongTrinhDaoTaoBadRequestException("Môn học đã có trong chương trình đào tạo rồi.");
+            }
             var newctctDaoTao = _mapper.Map<ChiTietChuongTrinhDaoTao>(request);
             await _repositoryMaster.ExecuteInTransactionAsync(async () =>
             {
@@ -116,11 +121,17 @@ public class ServiceChiTietChuongTrinhDaoTao : IServiceChiTietChuongTrinhDaoTao
             {
                 throw new ChiTietChuongTrinhDaoTaoNotFoundException(id);
             }
-            var ctctDaoTaoUpdate = _mapper.Map<ChiTietChuongTrinhDaoTao>(request);
-            ctctDaoTaoUpdate.UpdatedAt = DateTime.Now;
+            ctctDaoTao.MonHocId = request.MonHocId;
+            ctctDaoTao.ChuongTrinhDaoTaoId = request.ChuongTrinhDaoTaoId;
+            ctctDaoTao.BoMonId = request.BoMonId;
+            ctctDaoTao.SoTinChi = request.SoTinChi;
+            ctctDaoTao.HocKy = request.HocKy;
+            ctctDaoTao.DiemTichLuy = request.DiemTichLuy;
+            ctctDaoTao.LoaiMonHoc = request.LoaiMonHoc;
+            ctctDaoTao.UpdatedAt = DateTime.Now;
             await _repositoryMaster.ExecuteInTransactionAsync(async () =>
             {
-                _repositoryMaster.ChiTietChuongTrinhDaoTao.UpdateChiTietChuongTrinhDaoTao(ctctDaoTaoUpdate);
+                _repositoryMaster.ChiTietChuongTrinhDaoTao.UpdateChiTietChuongTrinhDaoTao(ctctDaoTao);
                 await Task.CompletedTask;
             });
             _loggerService.LogInfo("Cập nhật chi tiết chương trình đào tạo thành công.");
