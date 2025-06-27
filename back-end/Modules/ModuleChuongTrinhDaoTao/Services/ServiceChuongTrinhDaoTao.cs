@@ -28,6 +28,11 @@ public class ServiceChuongTrinhDaoTao : IServiceChuongTrinhDaoTao
     {
         try
         {
+            var ChuongTrinhDaoTao = await _repositoryMaster.ChuongTrinhDaoTao.GetChuongTrinhDaoTaoByKhoaAndNganhIdAsync(request.Khoa.Value, request.NganhId.Value);
+            if (ChuongTrinhDaoTao is not null)
+            {
+                throw new ChuongTrinhDaoTaoBadRequestException($"Đã có chương trình đào tạo theo khóa thuộc ngành này rồi");
+            }
             var ctDaoTaoExistting =
                 await _repositoryMaster.ChuongTrinhDaoTao.GetChuongTrinhDaoTaoByMaAsync(request.MaChuongTrinh, false);
             if (ctDaoTaoExistting is not null) throw new ChuongTrinhDaoTaoExistedException(request.MaChuongTrinh);

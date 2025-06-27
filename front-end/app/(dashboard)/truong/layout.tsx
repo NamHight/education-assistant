@@ -1,7 +1,13 @@
-import React, { ReactNode } from 'react';
+'use server'
+import { Box } from '@mui/material';
+import React from 'react';
 
-const layout = ({ children }: { children: ReactNode }) => {
-  return <div>{children}</div>;
+interface LayoutProps{
+  children?: React.ReactNode;
+}
+
+const Layout = async ({ children }: LayoutProps ) => {
+  return <Box>{children}</Box>;
 };
 
-export default layout;
+export default Layout;
