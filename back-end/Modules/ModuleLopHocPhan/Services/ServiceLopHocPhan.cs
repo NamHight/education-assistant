@@ -41,7 +41,7 @@ public class ServiceLopHocPhan : IServiceLopHocPhan
                 throw new MonHocNotFoundException(request.MonHocId);
             }
             var newLopHocPhan = _mapper.Map<LopHocPhan>(request);
-            newLopHocPhan.MaHocPhan = $"LopHKP_{monHoc.TenMonHoc}_{DateTime.Now:dd_MM_yy}";
+            newLopHocPhan.MaHocPhan = $"{DateTime.Now:ddMMyy}_LopHKP_{monHoc.TenMonHoc}";
             newLopHocPhan.Loai = (int)LoaiLopHocEnum.LOP_HOC_KY_PHU;
             await _repositoryMaster.ExecuteInTransactionAsync(async () =>
             {

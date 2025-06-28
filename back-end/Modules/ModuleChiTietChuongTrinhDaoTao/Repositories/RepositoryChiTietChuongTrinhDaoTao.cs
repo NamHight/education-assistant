@@ -65,9 +65,9 @@ public class RepositoryChiTietChuongTrinhDaoTao : RepositoryBase<ChiTietChuongTr
                                 .Include(item => item.BoMon).FirstOrDefaultAsync();
     }
 
-    public async Task<ChiTietChuongTrinhDaoTao?> GetChiTietChuongTrinhDaoTaoByMonHocIdAndChuongTrinhId(Guid boMonId, Guid chuongTrinhDaoTaoId)
+    public async Task<ChiTietChuongTrinhDaoTao?> GetChiTietChuongTrinhDaoTaoByMonHocIdAndChuongTrinhId(Guid monHocId, Guid chuongTrinhDaoTaoId)
     {
-        return await FindByCondition(item => item.MonHocId == boMonId && item.ChuongTrinhDaoTaoId == chuongTrinhDaoTaoId, false).FirstOrDefaultAsync();
+        return await FindByCondition(item => item.MonHocId == monHocId && item.ChuongTrinhDaoTaoId == chuongTrinhDaoTaoId, false).FirstOrDefaultAsync();
     }
 
     public async Task<ChiTietChuongTrinhDaoTao?> GetCtctdtByCtctAndMonHocAsync(Guid chuongTrinhId, Guid monHocId)

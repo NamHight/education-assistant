@@ -16,7 +16,8 @@ public class RequestAddChiTietChuongTrinhDaoTaoDto
 
     [Required(ErrorMessage = "Số tín chỉ không được để trống")]
     public int SoTinChi { get; set; }
-    
+    [Required(ErrorMessage = "Học kỳ không được để trống")]
+    public int HocKy { get; set; }
 
     [Required(ErrorMessage = "Điểm tích lũy không được để trống")]
     public bool DiemTichLuy { get; set; }
@@ -48,4 +49,5 @@ public class RequestUpdateChiTietChuongTrinhDaoTaoDto
 
     [Required(ErrorMessage = "Loại môn không được để trống")]
     public int? LoaiMonHoc { get; set; }
+
 }

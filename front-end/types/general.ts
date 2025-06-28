@@ -60,6 +60,10 @@ export const API = {
     CHUONG_TRINH_DAO_TAO:{
         GET_ALL: "/ChuongTrinhDaoTao",
         GET_BY_ID: "/ChuongTrinhDaoTao/:id",
+    },
+    TRUONG: {
+      GET_ALL: "/Truong/key-value",
+      UPDATE: 'Truong',
     }
     
 }
@@ -111,6 +115,9 @@ export const APP_ROUTE = {
         ROOT: "/bo-mon",
         ADD: "/bo-mon/them-moi",
         EDIT: (id: string) => `/bo-mon/${id}`,
+    },
+    TRUONG: {
+        ROOT: "/truong",
     }
 }
 
