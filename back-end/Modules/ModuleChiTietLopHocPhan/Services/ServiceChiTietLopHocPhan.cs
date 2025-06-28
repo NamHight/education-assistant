@@ -152,10 +152,6 @@ public class ServiceChiTietLopHocPhan : IServiceChiTietLopHocPhan
                                                                         paramChiTietLopHocPhanDto.sortBy,
                                                                         paramChiTietLopHocPhanDto.sortByOrder,
                                                                         paramChiTietLopHocPhanDto.lopHocPhanId,
-                                                                        paramChiTietLopHocPhanDto.hocKy,
-                                                                        paramChiTietLopHocPhanDto.loaiMonHoc,
-                                                                        paramChiTietLopHocPhanDto.namHoc,
-                                                                        paramChiTietLopHocPhanDto.chuongTrinhDaoTaoId,
                                                                         paramChiTietLopHocPhanDto.ngayNopDiem);
         var diemSoDto = _mapper.Map<IEnumerable<ResponseChiTietLopHocPhanDto>>(diemSos);
         return (data: diemSoDto, page: diemSos!.PageInfo);

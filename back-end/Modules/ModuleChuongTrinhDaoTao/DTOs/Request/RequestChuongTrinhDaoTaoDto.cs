@@ -16,10 +16,6 @@ public class RequestAddChuongTrinhDaoTaoDto
 
     [Required(ErrorMessage = "Thời gian đào tạo không được để trống")]
     public string ThoiGianDaoTao { get; set; } = string.Empty;
-
-    [Required(ErrorMessage = "Học phí không được để trống")]
-    public decimal HocPhi { get; set; }
-
     public string? MoTa { get; set; }
 
     [Required(ErrorMessage = "Tổng số tín chỉ không được để trống")]
@@ -50,7 +46,6 @@ public class RequestUpdateChuongTrinhDaoTaoDto
 
     [Required(ErrorMessage = "Thời gian đào tạo không được để trống")]
     public string ThoiGianDaoTao { get; set; } = string.Empty;
-
     public string? MoTa { get; set; }
 
     [Required(ErrorMessage = "Tổng số tín chỉ không được để trống")]

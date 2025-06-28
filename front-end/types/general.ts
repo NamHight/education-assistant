@@ -64,11 +64,15 @@ export const API = {
         GET_ALL: "/ChuongTrinhDaoTao",
         GET_BY_ID: "/ChuongTrinhDaoTao/:id",
     },
-    CHI_TIET_CHUONG_TRINH_DAO_TAO: {
-        GET_ALL: "/ChiTietChuongTrinhDaoTao",
-        GET_BY_ID: "/ChiTietChuongTrinhDaoTao/:id",
-        ADD: "/ChiTietChuongTrinhDaoTao/them-moi",
-    },
+  CHI_TIET_CHUONG_TRINH_DAO_TAO: {
+    GET_ALL: "/ChiTietChuongTrinhDaoTao",
+    GET_BY_ID: "/ChiTietChuongTrinhDaoTao/:id",
+    ADD: "/ChiTietChuongTrinhDaoTao/them-moi",
+  },
+TRUONG: {
+  GET_ALL: "/Truong/key-value",
+    UPDATE: 'Truong',
+}
     
 }
 
@@ -126,6 +130,9 @@ export const APP_ROUTE = {
         ADD: "/chi-tiet-chuong-trinh-dao-tao/them-moi",
         EDIT: (id: string) => `/chi-tiet-chuong-trinh-dao-tao/${id}`,
     },
+    TRUONG: {
+        ROOT: "/truong",
+    }
 }
 
 export const breadcrumbTranslations: { [key: string]: string } = {

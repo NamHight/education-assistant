@@ -36,7 +36,7 @@ public class ServiceLopHocPhan : IServiceLopHocPhan
             var monHoc = await _repositoryMaster.MonHoc.GetMonHocByIdAsync(request.MonHocId, false);
             if (monHoc is null) throw new MonHocNotFoundException(request.MonHocId);
             var newLopHocPhan = _mapper.Map<LopHocPhan>(request);
-            newLopHocPhan.MaHocPhan = $"LopHKP_{monHoc.TenMonHoc}_{DateTime.Now:dd_MM_yy}";
+            newLopHocPhan.MaHocPhan = $"{DateTime.Now:ddMMyy}_LopHKP_{monHoc.TenMonHoc}";
             newLopHocPhan.Loai = (int)LoaiLopHocEnum.LOP_HOC_KY_PHU;
             await _repositoryMaster.ExecuteInTransactionAsync(async () =>
             {
@@ -89,7 +89,7 @@ public class ServiceLopHocPhan : IServiceLopHocPhan
         await _repositoryMaster.ExecuteInTransactionBulkEntityAsync(async () =>
         {
             var lopHocPhanEntities = newLopHocPhans.Select(item => item.LopHocPhan).ToList();
-            await _repositoryMaster.BulkAddEntityAsync(lopHocPhanEntities);
+            await _repositoryMaster.BulkAddEntityAsync<LopHocPhan>(lopHocPhanEntities);
         });
         try
         {
@@ -208,9 +208,8 @@ public class ServiceLopHocPhan : IServiceLopHocPhan
         {
             if (trangThai <= 0 && trangThai >= 3) throw new LopHocBadRequestException("Trạng thái không đúng");
             var lopHocPhan = await _repositoryMaster.LopHocPhan.GetLopHocPhanByIdAsync(id, true);
-            
+
             if (lopHocPhan is null) throw new LopHocPhanNotFoundException(id);
-            Console.WriteLine($"asdsadasdasdasasd 9999999 {trangThai}");
             await _repositoryMaster.ExecuteInTransactionAsync(async () =>
             {
                 lopHocPhan.TrangThai = trangThai;

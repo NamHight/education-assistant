@@ -51,6 +51,12 @@ namespace Education_assistant.Modules.ModulePhongHoc
             await _serviceMaster.PhongHoc.UpdateAsync(id, model);
             return NoContent();
         }
+        [HttpPatch("{id}/update-trang-thai")]
+        public async Task<ActionResult> UpdateTrangThaiLopHocPhanAsync(Guid id, [FromForm] int trangThai)
+        {
+            await _serviceMaster.PhongHoc.UpdateTrangThaiAsync(id, trangThai); 
+            return NoContent();
+        }
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeletePhongHocAsync(Guid id)
         {
