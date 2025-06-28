@@ -15,8 +15,10 @@ public class RequestAddChiTietChuongTrinhDaoTaoDto
     public Guid BoMonId { get; set; }
 
     [Required(ErrorMessage = "Số tín chỉ không được để trống")]
+    [Range(1, 10, ErrorMessage = "Số tín chỉ không hợp lệ")]
     public int SoTinChi { get; set; }
     [Required(ErrorMessage = "Học kỳ không được để trống")]
+    [Range(1, 10, ErrorMessage = "Học kỳ không hợp lệ")]
     public int HocKy { get; set; }
 
     [Required(ErrorMessage = "Điểm tích lũy không được để trống")]
@@ -40,8 +42,10 @@ public class RequestUpdateChiTietChuongTrinhDaoTaoDto
     public Guid BoMonId { get; set; }
 
     [Required(ErrorMessage = "Số tín chỉ không được để trống")]
+    [Range(1, 10, ErrorMessage = "Số tín chỉ không hợp lệ")]
     public int SoTinChi { get; set; }
     [Required(ErrorMessage = "Học Kỳ không được để trống")]
+    [Range(1, 10, ErrorMessage = "Học kỳ không hợp lệ")]
     public int HocKy { get; set; }
 
     [Required(ErrorMessage = "Điểm tích lũy không được để trống")]
