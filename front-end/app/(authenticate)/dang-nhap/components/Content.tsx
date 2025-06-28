@@ -45,7 +45,6 @@ const Content = () => {
       router.push('/');
     },
     onError: (error: any) => {
-      console.error('Login error:', error);
       notification.show(error?.Message, {
         severity: 'error',
         autoHideDuration: 4000

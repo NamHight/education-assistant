@@ -20,6 +20,7 @@ export const API = {
     PHONG_HOC:{
         GET_ALL: "/PhongHoc",
         GET_BY_ID: "/PhongHoc/:id",
+        CHANGE_STATUS: "/PhongHoc/:id/update-trang-thai",
     },
     NGANH:{
         GET_ALL: "/Nganh",
@@ -35,6 +36,7 @@ export const API = {
         GET_ONE: "/giangviens/:id",
         RESTORE: "/giangviens/:id/restore",
         GET_BY_KHOA_ID: "/giangviens/:khoaId/by-khoa",
+        CHANGE_PASSWORD: "/giangviens/change_password",
     },  
     KHOA: {
         GET_ALL: "/khoa",

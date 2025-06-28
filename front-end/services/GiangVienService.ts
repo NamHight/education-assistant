@@ -72,4 +72,12 @@ export class GiangVienService {
             throw error.response?.data;
         }
     }
+    static async changePassword(data: FormData) {
+        try {
+            const response = await authApi.put(`${API.GIANG_VIEN.CHANGE_PASSWORD}`, data);
+            return response.data;
+        } catch (error: any) {
+            throw error.response?.data;
+        }
+    }
 }

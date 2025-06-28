@@ -49,9 +49,11 @@ const TextArea = ({
         <Box className={'mb-2 flex justify-start items-center gap-1'}>
           <Typography
             sx={(theme) => ({
-              color: errorMessage ? 'red' : `${theme.palette.text.secondary}`
+              color: errorMessage ? '!text-red-600' : ``
             })}
-            className={'text-[16px] font-[500] leading-[140%] tracking-[0.015em] flex text-center justify-center'}
+            className={
+              '!text-[16px] !font-[500] !leading-6 !text-gray-500 tracking-[0.015em] flex text-center justify-center'
+            }
           >
             {title}
             {subTitle && (

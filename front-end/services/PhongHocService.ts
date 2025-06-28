@@ -58,4 +58,12 @@ export class PhongHocService{
             throw error.response?.data;
         }
     }
+    static async changeStatusPhongHoc(id: string | number | null, data: FormData) {
+        try {
+            const result = await authApi.patch(`${API.PHONG_HOC.CHANGE_STATUS}`.replace(':id', `${id}`), data)
+            return result.data;
+        } catch (error: any) {
+            throw error.response?.data;
+        }
+    }
 }

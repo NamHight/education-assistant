@@ -1,8 +1,10 @@
-import { alpha, Box, TextField, Typography } from '@mui/material';
-import React, { Fragment } from 'react';
+'use client';
+import { alpha, Box, IconButton, InputAdornment, TextField, Typography } from '@mui/material';
+import React, { Fragment, useState } from 'react';
 import MessageError from '../texts/MessageError';
 import clsx from 'clsx';
-
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 interface IInput2Props {
   title?: string;
   placeholder?: string;
@@ -14,6 +16,9 @@ interface IInput2Props {
 }
 
 const Input2 = ({ placeholder, title, name, type, error, isDisabled, ...rest }: IInput2Props) => {
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const isPassword = type === 'password';
+  const handleClickShowPassword = () => setShowPassword((show) => !show);
   return (
     <Fragment>
       {title && (
@@ -31,7 +36,7 @@ const Input2 = ({ placeholder, title, name, type, error, isDisabled, ...rest }: 
       <TextField
         {...rest}
         name={name}
-        type={type}
+        type={type === 'password' ? (showPassword ? 'text' : 'password') : type}
         variant='outlined'
         disabled={isDisabled}
         fullWidth
@@ -52,6 +57,24 @@ const Input2 = ({ placeholder, title, name, type, error, isDisabled, ...rest }: 
             }
           }
         })}
+        InputProps={{
+          endAdornment: isPassword ? (
+            <InputAdornment position='end'>
+              <IconButton
+                aria-label='toggle password visibility'
+                onClick={handleClickShowPassword}
+                edge='end'
+                tabIndex={-1}
+                className={
+                  '!border-none hover:!bg-transparent !p-0 !text-gray-500 hover:!text-gray-700' +
+                  (error ? ' !text-red-600' : '')
+                }
+              >
+                {showPassword ? <VisibilityOffIcon className='!w-4 !h-4' /> : <VisibilityIcon className='!w-4 !h-4' />}
+              </IconButton>
+            </InputAdornment>
+          ) : undefined
+        }}
       />
       {error && <MessageError message={error} />}
     </Fragment>

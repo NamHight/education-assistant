@@ -1,7 +1,11 @@
-import React, { ReactNode } from 'react';
+'use client';
+import React, { ReactNode, useState } from 'react';
 import MessageError from '../texts/MessageError';
-import { Box, TextField, Typography } from '@mui/material';
+import { Box, IconButton, InputAdornment, TextField, Typography } from '@mui/material';
 import { optional } from 'zod';
+import clsx from 'clsx';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 
 interface InputProps {
   control?: any;
@@ -16,6 +20,9 @@ interface InputProps {
 }
 
 const Input = ({ control, title, placeholder, register, name, type, error, isDisabled, options }: InputProps) => {
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const isPassword = type === 'password';
+  const handleClickShowPassword = () => setShowPassword((show) => !show);
   return (
     <Box className='w-full flex flex-col gap-1'>
       {title && (
@@ -36,7 +43,7 @@ const Input = ({ control, title, placeholder, register, name, type, error, isDis
       <div className='w-full'>
         <TextField
           {...register(name)}
-          type={type}
+          type={type === 'password' ? (showPassword ? 'text' : 'password') : type}
           disabled={isDisabled}
           fullWidth
           className='!text-gray-900 text-base sm:text-sm/6'
@@ -53,6 +60,28 @@ const Input = ({ control, title, placeholder, register, name, type, error, isDis
               caretColor: 'currentColor',
               borderRadius: 'inherit'
             }
+          }}
+          InputProps={{
+            endAdornment: isPassword ? (
+              <InputAdornment position='end'>
+                <IconButton
+                  aria-label='toggle password visibility'
+                  onClick={handleClickShowPassword}
+                  edge='end'
+                  tabIndex={-1}
+                  className={
+                    '!border-none hover:!bg-transparent !p-0 !text-gray-500 hover:!text-gray-700' +
+                    (error ? ' !text-red-600' : '')
+                  }
+                >
+                  {showPassword ? (
+                    <VisibilityOffIcon className='!w-4 !h-4' />
+                  ) : (
+                    <VisibilityIcon className='!w-4 !h-4' />
+                  )}
+                </IconButton>
+              </InputAdornment>
+            ) : undefined
           }}
         />
         {error && <MessageError message={error} />}

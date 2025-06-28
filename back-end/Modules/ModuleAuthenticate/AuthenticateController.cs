@@ -32,7 +32,6 @@ public class AuthenticateController : ControllerBase
     [HttpPost("refresh-token")]
     public async Task<IActionResult> RefreshToken([FromBody] RequestRefreshTokenDto requestRefreshTokenDto)
     {
-        Console.WriteLine($"9999999999 refreshToken {requestRefreshTokenDto.refreshToken}");
         if (string.IsNullOrEmpty(requestRefreshTokenDto.refreshToken))
             return Unauthorized(new { message = "Invalid tokens." });
         var result = await _serviceMaster.Authenticate.refresh(requestRefreshTokenDto.refreshToken);
