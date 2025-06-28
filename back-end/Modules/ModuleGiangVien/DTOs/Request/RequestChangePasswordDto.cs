@@ -15,7 +15,5 @@ namespace Education_assistant.Modules.ModuleGiangVien.DTOs.Request
         [Required(ErrorMessage = "Mật khẩu mới không được để trống")]
         public string NewPassword { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "Token không được để trống")]
-        public string Token { get; set; } = string.Empty;
     }
 }
