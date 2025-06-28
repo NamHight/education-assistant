@@ -114,7 +114,6 @@ public class ServiceChiTietChuongTrinhDaoTao : IServiceChiTietChuongTrinhDaoTao
     {
         try
         {
-            System.Console.WriteLine($"Request cập nhật: {JsonConvert.SerializeObject(request)}");
             if (id != request.Id)
             {
                 throw new ChiTietChuongTrinhDaoTaoBadRequestException($"Id và Id của chi tiết chương trình đào tạo không giống nhau!");
