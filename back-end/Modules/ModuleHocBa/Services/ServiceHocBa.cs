@@ -90,7 +90,12 @@ public class ServiceHocBa : IServiceHocBa
 
     public async Task<(IEnumerable<ResponseHocBaDto> data, PageInfo page)> GetAllHocBaAsync(ParamHocBaDto paramHocBaDto)
     {
-        var hocBas = await _repositoryMaster.HocBa.GetAllHocBaAsync(paramHocBaDto.page, paramHocBaDto.limit, paramHocBaDto.search, paramHocBaDto.sortBy, paramHocBaDto.sortByOrder);
+        var hocBas = await _repositoryMaster.HocBa.GetAllHocBaAsync(paramHocBaDto.page,
+                                                                    paramHocBaDto.limit,
+                                                                    paramHocBaDto.search,
+                                                                    paramHocBaDto.sortBy,
+                                                                    paramHocBaDto.sortByOrder,
+                                                                    paramHocBaDto.lopHocPhanId);
         var hocBaDtos = _mapper.Map<IEnumerable<ResponseHocBaDto>>(hocBas);
         return (data: hocBaDtos, page: hocBas!.PageInfo);
     }
@@ -185,6 +190,17 @@ public class ServiceHocBa : IServiceHocBa
         {
             await _repositoryMaster.BulkUpdateEntityAsync<HocBa>(updateHocBas);
         });
+        try
+        {
+            await _repositoryMaster.ExecuteInTransactionAsync(async () =>
+            {
+                await _repositoryMaster.ChiTietLopHocPhan.UpdateNgayNopDiemChiTietLopHocPhanByLopHocPhanIdAsync(request.LopHocPhanId);
+            });
+        }
+        catch (Exception ex)
+        {
+            throw new Exception($"Lỗi hệ thống khi cập nhất ngày nộp điểm chi tiết lớp học phần : {ex.Message}");
+        }
     }
 
     // public async Task UpdateListHocBaAsync(List<RequestUpdateHocbaDto> listRequest)

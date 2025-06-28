@@ -15,6 +15,7 @@ namespace Education_assistant.Modules.ModulePhongHoc.Services
         Task<ResponsePhongHocDto> GetPhongHocByIdAsync(Guid id, bool trackChanges);
         Task<ResponsePhongHocDto> CreateAsync(RequestAddPhongHocDto request);
         Task UpdateAsync(Guid id, RequestUpdatePhongHocDto request);
+        Task UpdateTrangThaiAsync(Guid id, int trangThai);
         Task DeleteAsync(Guid id);
     }
 }
