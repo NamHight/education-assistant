@@ -10,6 +10,7 @@ using Education_assistant.Repositories.Paginations;
 using Education_assistant.Repositories.RepositoryMaster;
 using Education_assistant.Services.BaseDtos;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace Education_assistant.Modules.ModuleChiTietChuongTrinhDaoTao.Services;
 
@@ -28,7 +29,8 @@ public class ServiceChiTietChuongTrinhDaoTao : IServiceChiTietChuongTrinhDaoTao
     {
         try
         {
-            var ctctDaoTaoExisting = _repositoryMaster.ChiTietChuongTrinhDaoTao.GetChiTietChuongTrinhDaoTaoByMonHocIdAndChuongTrinhId(request.MonHocId, request.ChuongTrinhDaoTaoId);
+            
+            var ctctDaoTaoExisting = await _repositoryMaster.ChiTietChuongTrinhDaoTao.GetChiTietChuongTrinhDaoTaoByMonHocIdAndChuongTrinhId(request.MonHocId, request.ChuongTrinhDaoTaoId);
             if (ctctDaoTaoExisting is not null)
             {
                 throw new ChiTietChuongTrinhDaoTaoBadRequestException("Môn học đã có trong chương trình đào tạo rồi.");
@@ -112,26 +114,27 @@ public class ServiceChiTietChuongTrinhDaoTao : IServiceChiTietChuongTrinhDaoTao
     {
         try
         {
+            System.Console.WriteLine($"Request cập nhật: {JsonConvert.SerializeObject(request)}");
             if (id != request.Id)
             {
                 throw new ChiTietChuongTrinhDaoTaoBadRequestException($"Id và Id của chi tiết chương trình đào tạo không giống nhau!");
             }
-            var ctctDaoTao = await _repositoryMaster.ChiTietChuongTrinhDaoTao.GetChiTietChuongTrinhDaoTaoByIdAsync(id, false);
+            var ctctDaoTao = await _repositoryMaster.ChiTietChuongTrinhDaoTao.GetChiTietChuongTrinhDaoTaoByIdAsync(id, true);
             if (ctctDaoTao is null)
             {
                 throw new ChiTietChuongTrinhDaoTaoNotFoundException(id);
             }
-            ctctDaoTao.MonHocId = request.MonHocId;
-            ctctDaoTao.ChuongTrinhDaoTaoId = request.ChuongTrinhDaoTaoId;
-            ctctDaoTao.BoMonId = request.BoMonId;
-            ctctDaoTao.SoTinChi = request.SoTinChi;
-            ctctDaoTao.HocKy = request.HocKy;
-            ctctDaoTao.DiemTichLuy = request.DiemTichLuy;
-            ctctDaoTao.LoaiMonHoc = request.LoaiMonHoc;
-            ctctDaoTao.UpdatedAt = DateTime.Now;
+            
             await _repositoryMaster.ExecuteInTransactionAsync(async () =>
             {
-                _repositoryMaster.ChiTietChuongTrinhDaoTao.UpdateChiTietChuongTrinhDaoTao(ctctDaoTao);
+                ctctDaoTao.MonHocId = request.MonHocId;
+                ctctDaoTao.ChuongTrinhDaoTaoId = request.ChuongTrinhDaoTaoId;
+                ctctDaoTao.BoMonId = request.BoMonId;
+                ctctDaoTao.SoTinChi = request.SoTinChi;
+                ctctDaoTao.HocKy = request.HocKy;
+                ctctDaoTao.DiemTichLuy = request.DiemTichLuy;
+                ctctDaoTao.LoaiMonHoc = request.LoaiMonHoc;
+                ctctDaoTao.UpdatedAt = DateTime.Now;
                 await Task.CompletedTask;
             });
             _loggerService.LogInfo("Cập nhật chi tiết chương trình đào tạo thành công.");
