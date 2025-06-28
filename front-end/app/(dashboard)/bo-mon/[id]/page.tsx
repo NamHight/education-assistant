@@ -17,9 +17,12 @@ interface IPageProps {
 const page = async ({ params }: IPageProps) => {
   const { id } = await params;
   const boMon = BoMonService.getBoMonByIdServer(id);
-  const khoa = KhoaService.getAllKhoaServer();
+  const khoa = KhoaService.getAllKhoaServer({
+    limit: 99999999999,
+    sortBy: 'createdAt',
+    sortByOrder: 'desc'
+  });
   const [boMonData, khoaData] = await Promise.all([boMon, khoa]);
-  console.log('khoa asds ', boMonData, khoaData);
   return (
     <div>
       <Content

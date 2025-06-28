@@ -13,6 +13,7 @@ interface IPageProps {
 const page = async ({ params }: IPageProps) => {
   const { id } = await params;
   const lopHoc = LopHocService.getAllLopHocServer({
+    limit: 99999999999,
     sortBy: 'createdAt',
     sortByOrder: 'desc'
   });

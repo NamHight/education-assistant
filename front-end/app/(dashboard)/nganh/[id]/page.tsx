@@ -16,9 +16,12 @@ interface IPageProps {
 const page = async ({ params }: IPageProps) => {
   const { id } = await params;
   const nganh = NganhService.getNganhByIdServer(id);
-  const khoa = KhoaService.getAllKhoaServer();
+  const khoa = KhoaService.getAllKhoaServer({
+    limit: 99999999999,
+    sortBy: 'createdAt',
+    sortByOrder: 'desc'
+  });
   const [nganhData, khoaData] = await Promise.all([nganh, khoa]);
-  console.log('khoa asds ', nganhData, khoaData);
   return (
     <div>
       <Content

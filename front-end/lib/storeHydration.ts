@@ -23,6 +23,7 @@ export const storeHydration = async (): Promise<IStoreHydration> => {
         }
     }
    } catch (error) {
+    console.log('Error fetching user data:', error);
     return {
         auth: {
             user: null,

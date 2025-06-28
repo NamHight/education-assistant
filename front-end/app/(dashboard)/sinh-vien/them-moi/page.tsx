@@ -8,6 +8,7 @@ import { LopHocService } from '@/services/LopHocService';
 
 const page = async () => {
   const lopHoc = await LopHocService.getAllLopHocServer({
+    limit: 99999999999,
     sortBy: 'createdAt',
     sortByOrder: 'desc'
   });

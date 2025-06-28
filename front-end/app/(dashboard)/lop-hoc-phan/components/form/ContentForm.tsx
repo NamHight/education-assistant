@@ -110,39 +110,7 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
     },
     refetchOnWindowFocus: false
   });
-  // const { data: lopHocs, isLoading: isLoadingLopHoc } = useQuery({
-  //   queryKey: ['lopHocs'],
-  //   queryFn: async () => {
-  //     const response = await LopHocService.getAllLopHoc();
-  //     return response?.data;
-  //   },
-  //   initialData: initialData?.lopHocs,
-  //   select: (data) => {
-  //     return data.map((item: any) => ({
-  //       id: item.id,
-  //       name: item.maLopHoc
-  //     }));
-  //   },
-  //   refetchOnWindowFocus: false
-  // });
-  // const { data: chuongTrinhDaoTaos, isLoading: isLoadingChuongTrinhDaoTao } = useQuery({
-  //   queryKey: ['chuongTrinhDaoTaos'],
-  //   queryFn: async () => {
-  //     const response = await ChuongTrinhDaoTaoService.getAllChuongTrinhDaoTao({
-  //       sortBy: 'createdAt',
-  //       sortByOrder: 'desc'
-  //     });
-  //     return response?.data;
-  //   },
-  //   initialData: initialData?.chuongTrinhDaoTaos,
-  //   select: (data) => {
-  //     return data.map((item: any) => ({
-  //       id: item.id,
-  //       name: item.tenChuongTrinh
-  //     }));
-  //   },
-  //   refetchOnWindowFocus: false
-  // });
+
   const {
     register,
     handleSubmit,

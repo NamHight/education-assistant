@@ -31,6 +31,7 @@ authApi.interceptors.response.use(
                     `${process.env.NEXT_PUBLIC_API_URL}${API.AUTH.REFRESH_TOKEN}`,
                     { refreshToken }
                 );
+                console.log('response', response);
                 const { accessToken,refreshToken: refreshTokenNew} = response?.data;
                 cookieStorage.set(TOKEN_ACCESS, accessToken);
                 cookieStorage.set(REFRESH_TOKEN, refreshTokenNew);

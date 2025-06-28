@@ -82,4 +82,26 @@ export class LopHocPhanService {
             throw error.response?.data;
         }
     }
+
+    static async changeStatusLopHocPhan(id: string | number | null,data:FormData) {
+        try {
+        
+            const result = await authApi.put(`${API.LOP_HOC_PHAN.CHANGE_STATUS}`.replace(':id', `${id}`), data);
+
+            return result.data;
+        } catch (error: any) {
+            console.log('error', error);
+            throw error.response?.data;
+        }
+    }
+
+    static async createLopHocPhanAuto(data: any){
+        try {
+            const result = await authApi.post(`${API.LOP_HOC_PHAN.ADD_AUTO}`, data);
+            return result.data;
+        } catch (error: any) {
+            console.log('error', error);
+            throw error.response?.data;
+        }
+    }
 }

@@ -13,6 +13,7 @@ import HotelClassIcon from '@mui/icons-material/HotelClass';
 import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
 import SquareFootIcon from '@mui/icons-material/SquareFoot';
 import GroupWorkIcon from '@mui/icons-material/GroupWork';
+import AddchartIcon from '@mui/icons-material/Addchart';
 export const NAVIGATION: Navigation = [
   {
     segment: '/',
@@ -79,6 +80,12 @@ export const NAVIGATION: Navigation = [
     title: 'Chương trình đào tạo',
     icon: <SquareFootIcon />,
     pattern: `chuong-trinh-dao-tao/:rest*`
+  },
+  {
+    segment: 'chi-tiet-chuong-trinh-dao-tao',
+    title: 'Chi tiết chương trình đào tạo',
+    icon: <AddchartIcon />,
+    pattern: `chi-tiet-chuong-trinh-dao-tao/:rest*`
   },
   {
     segment: 'phong-hoc',

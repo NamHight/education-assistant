@@ -7,6 +7,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { NotificationsProvider } from '@toolpad/core';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import 'moment/locale/vi';
+import { PopoverLockProvider } from '@/hooks/context/PopoverLock';
 interface ProviderProps {
   children?: React.ReactNode;
 }
@@ -43,7 +44,7 @@ const Provider = ({ children }: ProviderProps) => {
             }
           }}
         >
-          {children}
+          <PopoverLockProvider>{children}</PopoverLockProvider>
         </NotificationsProvider>
       </LocalizationProvider>
       <ReactQueryDevtools />

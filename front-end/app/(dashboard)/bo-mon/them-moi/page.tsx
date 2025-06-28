@@ -8,7 +8,11 @@ import { LopHocService } from '@/services/LopHocService';
 import { KhoaService } from '@/services/KhoaService';
 
 const page = async () => {
-  const khoa = await KhoaService.getAllKhoaServer();
+  const khoa = await KhoaService.getAllKhoaServer({
+    limit: 99999999999,
+    sortBy: 'createdAt',
+    sortByOrder: 'desc'
+  });
   return (
     <Box className='flex flex-col border border-gray-200 rounded-lg p-4 shadow-sm'>
       <Content

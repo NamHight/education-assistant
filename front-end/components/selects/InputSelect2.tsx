@@ -26,6 +26,9 @@ interface InputSelectProps {
   getOptionLabel?: (option: any) => string;
   getOptionKey?: (option: any) => string | number;
   getOnChangeValue?: (value: any) => void;
+  disablePortal?: boolean;
+  onOpen?: () => void;
+  onClose?: () => void;
   [key: string]: any;
 }
 
@@ -49,6 +52,9 @@ const InputSelect2 = (props: InputSelectProps) => {
     setValueSelect,
     getKeyValueSelect,
     getOnChangeValue,
+    disablePortal,
+    onOpen,
+    onClose,
     ...rest
   } = props;
 
@@ -230,6 +236,9 @@ const InputSelect2 = (props: InputSelectProps) => {
         <>
           <Autocomplete
             {...rest}
+            disablePortal={disablePortal}
+            onOpen={onOpen}
+            onClose={onClose}
             freeSolo={freeSolo}
             multiple={multiple}
             fullWidth={fullWidth}

@@ -9,10 +9,17 @@ import { ChuongTrinhDaoTaoService } from '@/services/ChuongTrinhDaoTaoService';
 
 const page = async () => {
   const queryKey = 'phan-cong-list';
-  const ctdt = await ChuongTrinhDaoTaoService.getAllChuongTrinhDaoTaoServer({
-    sortBy: 'createdat',
-    sortByOrder: 'desc'
-  });
+  let ctdt = null;
+  try {
+    ctdt = await ChuongTrinhDaoTaoService.getAllChuongTrinhDaoTaoServer({
+      sortBy: 'createdAt',
+      sortByOrder: 'desc',
+      limit: 99999999999
+    });
+  } catch (error) {
+    console.error('Error fetching Chuong Trinh Dao Tao:', error);
+    ctdt = { data: [] };
+  }
   return (
     <Box>
       <Content queryKey={queryKey} ctdtServer={ctdt?.data} />

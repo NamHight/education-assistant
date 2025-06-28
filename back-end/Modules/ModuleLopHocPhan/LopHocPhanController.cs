@@ -59,6 +59,7 @@ namespace Education_assistant.Modules.ModuleLopHocPhan
         [HttpPut("{id}/update-trang-thai")]
         public async Task<ActionResult> UpdateTrangThaiLopHocPhanAsync(Guid id, [FromForm] int trangThai)
         {
+            Console.WriteLine($"trangthai 9999999 {trangThai}");
             await _serviceMaster.LopHocPhan.UpdateTrangThaiAsync(id, trangThai); 
             return NoContent();
         }

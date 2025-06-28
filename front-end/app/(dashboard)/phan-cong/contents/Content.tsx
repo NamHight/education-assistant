@@ -2,11 +2,11 @@
 import { handleTextSearch } from '@/lib/string';
 import { LopHocPhanService } from '@/services/LopHocPhanService';
 import { IParamChuongTrinhDaoTao, IParamLopHocPhan } from '@/types/params';
-import { Box, Typography } from '@mui/material';
+import { Box, MenuItem, Select, Typography } from '@mui/material';
 import { GridColDef, GridFilterModel } from '@mui/x-data-grid';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-import React, { memo, useEffect, useMemo, useRef, useState } from 'react';
+import React, { Fragment, memo, ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { GiangVienService } from '@/services/GiangVienService';
 import SelectEditCell from '../selects/SelectEditCell';
@@ -15,7 +15,10 @@ import { ChuongTrinhDaoTaoService } from '@/services/ChuongTrinhDaoTaoService';
 import { LoaiMonHocEnum } from '@/models/MonHoc';
 import moment from 'moment';
 import { useNotifications } from '@toolpad/core';
-import { TrangThaiLopHocPhanEnum } from '@/types/options';
+import { LoaiLopHocPhan, TrangThaiLopHocPhanEnum } from '@/types/options';
+import InputSelect2 from '@/components/selects/InputSelect2';
+import { usePopoverLock } from '@/hooks/context/PopoverLock';
+import { set } from 'lodash';
 
 const TableEdit = dynamic(() => import('@/components/tables/TableEdit'), {
   ssr: false
@@ -30,6 +33,7 @@ const Content = ({ queryKey, ctdtServer }: IContentProps) => {
   const notification = useNotifications();
   const queryClient = useQueryClient();
   const [giangVienOptions, setGiangVienOptions] = useState<{ [khoaId: string]: any[] }>({});
+  // const [loaiLopHocPhan, setloaiLopHocPhan] = useState<number | null>(null);
   const [filter, setfilter] = useState<{
     hocKy: number;
     loaiChuongTrinh: number;
@@ -43,20 +47,18 @@ const Content = ({ queryKey, ctdtServer }: IContentProps) => {
   const [filterModel, setFilterModel] = useState<GridFilterModel>({
     items: []
   });
+  const [isOpenPopover, setisOpenPopover] = useState<boolean>(false);
   const { data, isLoading } = useQuery({
     queryKey: [queryKey, sortModel, filterModel, filter],
     queryFn: async () => {
       const searchKeyWord = handleTextSearch(filterModel?.quickFilterValues as any[]);
       let params: IParamLopHocPhan = {
-        sortBy: 'createdat',
-        sortByOrder: 'desc',
         trangThai: TrangThaiLopHocPhanEnum.DANG_HOAT_DONG,
         chuongTrinhDaoTaoId: filter?.chuongTrinh,
         hocKy: filter?.hocKy,
         khoa: filter?.khoa,
         loaiChuongTrinhDaoTao: filter?.loaiChuongTrinh
       };
-
       if (sortModel.field && sortModel.sort) {
         params.sortBy = sortModel.field;
         params.sortByOrder = sortModel.sort === 'asc' ? 'asc' : 'desc';
@@ -75,7 +77,6 @@ const Content = ({ queryKey, ctdtServer }: IContentProps) => {
     refetchOnWindowFocus: false,
     gcTime: 0
   });
-
   const { data: ctdt, isLoading: isLoadingCtdt } = useQuery({
     queryKey: ['ctdt-list'],
     queryFn: async () => {
@@ -97,9 +98,6 @@ const Content = ({ queryKey, ctdtServer }: IContentProps) => {
     placeholderData: (prev) => prev,
     refetchOnWindowFocus: false
   });
-  useEffect(() => {
-    console.log('isLoading', isLoading);
-  }, [isLoading]);
   const mutateSaving = useMutation({
     mutationFn: async (data: FormData) => {
       const result = await LopHocPhanService.phanCongLopHocPhan(data);
@@ -175,7 +173,7 @@ const Content = ({ queryKey, ctdtServer }: IContentProps) => {
         editable: false,
         disableColumnMenu: true,
         renderCell: (params) => {
-          return <Typography variant='body2'>{`${params.value} - ${params.row?.monHoc?.tenMonHoc}`}</Typography>;
+          return <Typography variant='body2'>{`${params.value}`}</Typography>;
         }
       },
       {
@@ -231,6 +229,40 @@ const Content = ({ queryKey, ctdtServer }: IContentProps) => {
       }
     ];
   }, [data?.data, giangVienOptions]);
+  const handleOpenPopover = () => {
+    setisOpenPopover(true);
+  };
+  const handleClosePopover = () => {
+    setisOpenPopover(false);
+  };
+  // const handleShowFilter = useMemo((): ReactNode => {
+  //   return (
+  //     <Fragment>
+  //       <Select
+  //         fullWidth
+  //         displayEmpty
+  //         value={loaiLopHocPhan ?? ''}
+  //         onChange={(e) => {
+  //           setloaiLopHocPhan(Number(e.target.value) || null);
+  //         }}
+  //         renderValue={(selected) => {
+  //           if (!selected) return <em>Chọn loại lớp học phần</em>;
+  //           const selectedOption = (LoaiLopHocPhan ?? []).find((option) => option.id === Number(selected));
+  //           return selectedOption ? selectedOption.name : '';
+  //         }}
+  //       >
+  //         <MenuItem value=''>
+  //           <em>Chọn loại lớp học phần</em>
+  //         </MenuItem>
+  //         {(LoaiLopHocPhan ?? []).map((option) => (
+  //           <MenuItem key={option.id} value={option.id}>
+  //             {option.name}
+  //           </MenuItem>
+  //         ))}
+  //       </Select>
+  //     </Fragment>
+  //   );
+  // }, [loaiLopHocPhan]);
   const handleSave = (item: any) => {
     if (item && item.length === 0) return;
     const convertData = item?.map((item: any) => ({
@@ -256,6 +288,10 @@ const Content = ({ queryKey, ctdtServer }: IContentProps) => {
         columns={columns}
         isLoading={isLoading}
         setfilter={setfilter}
+        // contentPopover={handleShowFilter}
+        // isOpen={isOpenPopover}
+        // handleClick={handleOpenPopover}
+        // onClose={handleClosePopover}
       />
     </Box>
   );

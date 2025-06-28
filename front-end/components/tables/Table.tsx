@@ -217,6 +217,7 @@ interface TableProps {
   handleDeleteCallBack?: (id: string | number | null) => void;
   moreActions?: (id: string | number | null, row: any) => ReactNode;
   urlNavigate?: string;
+  isDisableEdit?: boolean;
   [key: string]: any;
 }
 
@@ -239,6 +240,7 @@ const Table = React.forwardRef<any, TableProps>(function table(
     handleDeleteCallBack,
     moreActions,
     urlNavigate,
+    isDisableEdit,
     editMode = 'row',
     ...rest
   },
@@ -345,20 +347,22 @@ const Table = React.forwardRef<any, TableProps>(function table(
           horizontal: 'right'
         }}
       >
-        <MenuItem
-          disabled={!!item?.row?.deletedAt}
-          onClick={() => router.push(`${urlNavigate}/${item.id}`)}
-          sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}
-        >
-          <EditIcon sx={{ color: 'blue' }} />
-          <Typography
-            className={'!text-[14px] !font-[500] !leading-6 group-hover:!text-blue-800 group-hover:!font-semibold'}
-            variant={'body1'}
-            sx={{ width: '100%' }}
+        {isDisableEdit ? null : (
+          <MenuItem
+            disabled={!!item?.row?.deletedAt}
+            onClick={() => router.push(`${urlNavigate}/${item.id}`)}
+            sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}
           >
-            Chỉnh sửa
-          </Typography>
-        </MenuItem>
+            <EditIcon sx={{ color: 'blue' }} />
+            <Typography
+              className={'!text-[14px] !font-[500] !leading-6 group-hover:!text-blue-800 group-hover:!font-semibold'}
+              variant={'body1'}
+              sx={{ width: '100%' }}
+            >
+              Chỉnh sửa
+            </Typography>
+          </MenuItem>
+        )}
         <MenuItem
           disabled={!!item?.row?.deletedAt}
           onClick={handleOpenDelete}

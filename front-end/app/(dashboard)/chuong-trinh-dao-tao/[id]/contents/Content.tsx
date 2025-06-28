@@ -25,7 +25,7 @@ const Content = ({ initialData, id, anotherData }: IContentProps) => {
   const { data } = useQuery({
     queryKey: ['chuong-trinh-dao-tao', { id: id }],
     queryFn: async () => {
-      const result = await ChuongTrinhDaoTaoService.getChuongTrinhDaoTaoByIdServer(id);
+      const result = await ChuongTrinhDaoTaoService.getChuongTrinhDaoTaoById(id);
       return result;
     },
     initialData: initialData,

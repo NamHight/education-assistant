@@ -179,3 +179,14 @@ export const LoaiMonHoc: IOption[] = [
   { id: LoaiMonHocEnum.THI_TOT_NGHIEP_THUC_HANH, name: 'Thi tốt nghiệp thực hành' },
   { id: LoaiMonHocEnum.CHUC_CHUNG_CHI, name: 'Chứng chỉ' }
 ];
+
+
+export enum LoaiLopHocEnum
+{
+    LOP_HOC_PHAN = 1,
+    LOP_HOC_KY_PHU = 2
+}
+export const LoaiLopHocPhan: IOption[] = [
+  { id: LoaiLopHocEnum.LOP_HOC_PHAN, name: 'Lớp học phần' },
+  { id: LoaiLopHocEnum.LOP_HOC_KY_PHU, name: 'Lớp học kỳ phụ' }
+];

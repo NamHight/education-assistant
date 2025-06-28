@@ -17,6 +17,7 @@ export interface IParamLopHocPhan extends IBaseParams {
     chuongTrinhDaoTaoId?: string;
     hocKy?: number;
     trangThai?: number;
+    loaiLopHoc?: number;
 }
 
 export interface IParamMonHoc extends IBaseParams {
@@ -44,3 +45,5 @@ export interface IParamNganh extends IBaseParams {
 export interface IParamBoMon extends IBaseParams {}
 
 export interface IParamPhongHoc extends IBaseParams {}
+
+export interface IParamChiTietChuongTrinhDaoTao extends IBaseParams {}

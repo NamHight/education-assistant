@@ -48,7 +48,9 @@ export const API = {
         GET_ALL: "/LopHocPhan",
         GET_BY_ID: "/LopHocPhan/:id",
         PHAN_CONG: "/LopHocPhan/list-phan-cong",
-        ADD_HOC_KY_PHU: "/LopHocPhan/them-lop-hkp"
+        ADD_HOC_KY_PHU: "/LopHocPhan/them-lop-hkp",
+        CHANGE_STATUS: "/LopHocPhan/:id/update-trang-thai",
+        ADD_AUTO: "/LopHocPhan/them-auto",
     },
     MON_HOC: {
         GET_ALL: "/MonHoc",
@@ -61,7 +63,12 @@ export const API = {
     CHUONG_TRINH_DAO_TAO:{
         GET_ALL: "/ChuongTrinhDaoTao",
         GET_BY_ID: "/ChuongTrinhDaoTao/:id",
-    }
+    },
+    CHI_TIET_CHUONG_TRINH_DAO_TAO: {
+        GET_ALL: "/ChiTietChuongTrinhDaoTao",
+        GET_BY_ID: "/ChiTietChuongTrinhDaoTao/:id",
+        ADD: "/ChiTietChuongTrinhDaoTao/them-moi",
+    },
     
 }
 
@@ -113,7 +120,12 @@ export const APP_ROUTE = {
         ROOT: "/bo-mon",
         ADD: "/bo-mon/them-moi",
         EDIT: (id: string) => `/bo-mon/${id}`,
-    }
+    },
+    CHI_TIET_CHUONG_TRINH_DAO_TAO: {
+        ROOT: "/chi-tiet-chuong-trinh-dao-tao",
+        ADD: "/chi-tiet-chuong-trinh-dao-tao/them-moi",
+        EDIT: (id: string) => `/chi-tiet-chuong-trinh-dao-tao/${id}`,
+    },
 }
 
 export const breadcrumbTranslations: { [key: string]: string } = {
