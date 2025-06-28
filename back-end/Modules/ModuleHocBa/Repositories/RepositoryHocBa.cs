@@ -25,7 +25,7 @@ public class RepositoryHocBa : RepositoryBase<HocBa>, IRepositoryHocBa
         Delete(hocBa);
     }
 //.SearchBy(search, item => item.SinhVien!.HoTen)
-    public async Task<PagedListAsync<HocBa>> GetAllHocBaAsync(int page, int limit, string search, string sortBy, string sortByOrder)
+    public async Task<PagedListAsync<HocBa>> GetAllHocBaAsync(int page, int limit, string search, string sortBy, string sortByOrder, Guid? lopHocPhanId)
     {
         var query = _context.HocBas!
                     .AsNoTracking()
@@ -44,15 +44,16 @@ public class RepositoryHocBa : RepositoryBase<HocBa>, IRepositoryHocBa
             {
                 query = query.SearchBy(search, item => item.SinhVien!.HoTen);
             }
-        }            
+        }
+        query = query.Where(item => item.LopHocPhanId == lopHocPhanId); 
         return await PagedListAsync<HocBa>.ToPagedListAsync(query
                                                     .SortByOptions(sortBy, sortByOrder, new Dictionary<string, Expression<Func<HocBa, object>>>
-                                                     {
-                                                         ["createdat"] = item => item.CreatedAt,
-                                                         ["updatedat"] = item => item.UpdatedAt!,
-                                                         ["lanhoc"] = item => item.LanHoc,
-                                                         ["ketqua"] = item => item.KetQua!,
-                                                     }), page, limit);
+                                                    {
+                                                        ["createdat"] = item => item.CreatedAt,
+                                                        ["updatedat"] = item => item.UpdatedAt!,
+                                                        ["lanhoc"] = item => item.LanHoc,
+                                                        ["ketqua"] = item => item.KetQua!,
+                                                    }), page, limit);
     }
 
     public async Task<IEnumerable<HocBa>> GetAllHocBaByIdAsync(List<Guid> ids)

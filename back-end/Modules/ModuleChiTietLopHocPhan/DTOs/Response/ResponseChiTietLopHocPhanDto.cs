@@ -19,7 +19,7 @@ public class ResponseChiTietLopHocPhanDto
     public DateTime? NgayNopDiem { get; set; }
     public int HocKy { get; set; }
     public string? GhiChu { get; set; }
-    public int? TrangThaiChiTietLopHocPhanEnum { get; set; }
+    public int? TrangThai { get; set; }
     public Guid? SinhVienId { get; set; }
     public SinhVienSimpleDto? SinhVien { get; set; }
     public Guid? MonHocId { get; set; }

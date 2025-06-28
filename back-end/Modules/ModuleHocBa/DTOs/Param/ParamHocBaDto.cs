@@ -5,5 +5,5 @@ namespace Education_assistant.Modules.ModuleHocBa.DTOs.Param;
 
 public class ParamHocBaDto : BaseParam
 {
-
+    public Guid lopHocPhanId { get; set; }
 }

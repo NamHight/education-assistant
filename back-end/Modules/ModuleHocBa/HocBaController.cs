@@ -48,7 +48,7 @@ namespace Education_assistant.Modules.ModuleHocBa
             await _serviceMaster.HocBa.UpdateAsync(id, model);
             return NoContent();
         }
-        [HttpPut("update-list")]
+        [HttpPut("nop-diem")]
         public async Task<ActionResult> UpdateListHocBaAsync([FromBody] RequestListUpdateHocbaDto model)
         {
             if (model == null)

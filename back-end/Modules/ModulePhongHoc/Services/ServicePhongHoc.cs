@@ -129,5 +129,34 @@ namespace Education_assistant.Modules.ModulePhongHoc.Services
                 throw new Exception($"Lỗi hệ thống!: {ex.Message}");   
             }
         }
+
+        public async Task UpdateTrangThaiAsync(Guid id, int trangThai)
+        {
+            try
+            {
+                System.Console.WriteLine($"99999999999: {trangThai}");
+                if (trangThai <= 0 || trangThai >= 4)
+                {
+                    throw new LopHocBadRequestException($"Trạng thái không đúng");
+                }
+                var phongHoc = await _repositoryMaster.PhongHoc.GetPhongHocByIdAsync(id, false);
+                if (phongHoc is null)
+                {
+                    throw new PhongHocNotFoundException(id);
+                }
+                phongHoc.TrangThaiPhongHoc = trangThai;
+
+                await _repositoryMaster.ExecuteInTransactionAsync(async () =>
+                {
+                    _repositoryMaster.PhongHoc.UpdatePhongHoc(phongHoc);
+                    await Task.CompletedTask;
+                });
+                 _loggerService.LogInfo($"Cập nhật trạng thái phòng học có id = {id} thành công.");
+            }
+            catch (DbUpdateException ex)
+            {
+                throw new Exception($"Lỗi hệ thống!: {ex.Message}");
+            }
+        }
     }
 }

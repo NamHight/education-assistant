@@ -219,7 +219,7 @@ public class ServiceLopHocPhan : IServiceLopHocPhan
     {
         try
         {
-            if (trangThai <= 0 && trangThai >= 3)
+            if (trangThai <= 0 || trangThai >= 3)
             {
                 throw new LopHocBadRequestException($"Trạng thái không đúng");
             }

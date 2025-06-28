@@ -33,7 +33,7 @@ public class RepositoryChiTietLopHocPhan : RepositoryBase<ChiTietLopHocPhan>, IR
         await _context.ChiTietLopHocPhans.Where(c => ids.Contains(c.Id)).ExecuteDeleteAsync();
     }
 
-    public async Task<PagedListAsync<ChiTietLopHocPhan>> GetAllChiTietLopHocPhanAsync(int page, int limit, string search, string sortBy, string sortByOder, Guid? lopHocPhanId, int? hocKy, int? loaiMonHoc, int? namHoc, Guid? chuongTrinhId, bool? ngayNopDiem)
+    public async Task<PagedListAsync<ChiTietLopHocPhan>> GetAllChiTietLopHocPhanAsync(int page, int limit, string search, string sortBy, string sortByOder, Guid? lopHocPhanId, bool? ngayNopDiem)
     {
         var query = _context.ChiTietLopHocPhans!
                             .AsNoTracking()
@@ -53,28 +53,7 @@ public class RepositoryChiTietLopHocPhan : RepositoryBase<ChiTietLopHocPhan>, IR
                 query = query.SearchBy(search, item => item.SinhVien!.HoTen);
             }
         }   
-        if (lopHocPhanId.HasValue && lopHocPhanId != Guid.Empty)
-        {
-            query = query.Where(item => item.LopHocPhanId == lopHocPhanId);
-        }
-        if (hocKy.HasValue && hocKy != 0)
-        {
-            query = query.Where(item => item.HocKy == hocKy);
-        }
-        if (loaiMonHoc.HasValue && loaiMonHoc != 0)
-        {
-            query = query.Where(ctlhp => ctlhp.LopHocPhan!.MonHoc!.DanhSachChiTietChuongTrinhDaoTao!
-                    .Any(ct => ct.LoaiMonHoc == loaiMonHoc.Value));
-        }
-        if (namHoc.HasValue && namHoc != 0)
-        {
-            var startOfYear = new DateTime(namHoc.Value, 1, 1);
-            query = query.Where(ctlhp => ctlhp.LopHocPhan!.CreatedAt >= startOfYear);
-        }
-        if (chuongTrinhId.HasValue && chuongTrinhId != Guid.Empty)
-        {
-            query = query.Where(ctlhp => ctlhp.LopHocPhan!.MonHoc!.DanhSachChiTietChuongTrinhDaoTao!.Any(ctctdt => ctctdt.ChuongTrinhDaoTaoId == chuongTrinhId));
-        }
+        query = query.Where(item => item.LopHocPhanId == lopHocPhanId);
         if (ngayNopDiem == true)
         {
             query = query.Where(item => item.NgayNopDiem == null);
