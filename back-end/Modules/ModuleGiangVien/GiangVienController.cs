@@ -73,6 +73,6 @@ public class GiangVienController : ControllerBase
     public async Task<ActionResult> ChangePassword([FromForm] RequestChangePasswordDto model)
     {
         await _serviceMaster.TaiKhoan.ChangePassword(model);
-        return Ok("Cập nhật mật khẩu thành công");
+        return NoContent();
     }
 }

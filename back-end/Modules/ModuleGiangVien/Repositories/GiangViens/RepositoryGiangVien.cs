@@ -35,6 +35,7 @@ public class RepositoryGiangVien : RepositoryBase<GiangVien>, IRepositoryGiangVi
                     .AsNoTracking()
                     .Include(gv => gv.Khoa)
                     .Include(gv => gv.BoMon)
+                    .Include(gv => gv.TaiKhoan)
                     .AsQueryable();
         if (khoaId.HasValue && khoaId != Guid.Empty)
         {
