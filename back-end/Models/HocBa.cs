@@ -13,7 +13,6 @@ public class HocBa : BaseEntity
     [Precision(4,2)] 
     public decimal DiemTongKet { get; set; }
     [Column("mo_ta")] public string? MoTa { get; set; }
-    [Column("lan_hoc")] public int LanHoc { get; set; } = 0;
     [Column("ket_qua")]
     [Range(1, 2, ErrorMessage ="Kết quả không hợp lệ")]
     public int? KetQua { get; set; }

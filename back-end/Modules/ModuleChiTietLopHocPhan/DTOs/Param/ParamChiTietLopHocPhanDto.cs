@@ -8,3 +8,8 @@ public class ParamChiTietLopHocPhanDto : BaseParam
     public Guid lopHocPhanId { get; set; }
     public bool ngayNopDiem { get; set; } = true;
 }
+
+public class ParamChiTietLopHocPhanSimpleDto
+{
+    public Guid lopHocPhanId { get; set; }
+}

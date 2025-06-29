@@ -67,6 +67,19 @@ public class RepositoryChiTietLopHocPhan : RepositoryBase<ChiTietLopHocPhan>, IR
                                                                 , page, limit);
     }
 
+    public async Task<IEnumerable<ChiTietLopHocPhan>> GetAllChiTietLopHocPhanByLopHocPhanIdAsync(Guid lopHocPhanId)
+    {
+        var query = _context.ChiTietLopHocPhans!
+                        .AsNoTracking()
+                        .Include(item => item.MonHoc)
+                        .Include(item => item.GiangVien)
+                        .Include(item => item.SinhVien)
+                        .Include(item => item.LopHocPhan)
+                        .Where(item => item.NgayNopDiem == null && item.LopHocPhanId == lopHocPhanId)
+                        .AsQueryable();
+        return await query.ToListAsync();         
+    }
+
     public async Task<List<ResponseExportFileDiemSoDto>> GetAllDiemSoExportFileAsync(Guid lopHocPhanId)
     {
         return await _context.ChiTietLopHocPhans!
@@ -89,7 +102,7 @@ public class RepositoryChiTietLopHocPhan : RepositoryBase<ChiTietLopHocPhan>, IR
                     }).ToListAsync();
     }
 
-    public async Task<ChiTietLopHocPhan?> GetByMaSinhVienAndLopHocPhanIdAsync(int maSinhVien, Guid lopHocPhanId)
+    public async Task<ChiTietLopHocPhan?> GetByMaSinhVienAndLopHocPhanIdAsync(string maSinhVien, Guid lopHocPhanId)
     {
         return await FindByCondition(item => item.LopHocPhanId == lopHocPhanId && item.SinhVien.MSSV == maSinhVien, false).FirstOrDefaultAsync();
 
