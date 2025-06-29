@@ -13,6 +13,7 @@ using Education_assistant.Repositories.Paginations;
 using Education_assistant.Repositories.RepositoryMaster;
 using Education_assistant.Services.BaseDtos;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace Education_assistant.Modules.ModuleChiTietLopHocPhan.Services;
 
@@ -91,7 +92,9 @@ public class ServiceChiTietLopHocPhan : IServiceChiTietLopHocPhan
             throw new ChiTietLopHocPhanBadRequestException("Id lớp học phần không được bỏ trống");
         }
         var diemSoList = await _repositoryMaster.ChiTietLopHocPhan.GetAllDiemSoExportFileAsync(lopHocPhanId);
-        using (var workbook = new XLWorkbook()) {
+        System.Console.WriteLine($"diemSoList: {JsonConvert.SerializeObject(diemSoList)}");
+        using (var workbook = new XLWorkbook())
+        {
             var worksheet = workbook.Worksheets.Add("DanhSachDiemSo");
 
             worksheet.Cell(1, 1).Value = "STT";
@@ -137,7 +140,8 @@ public class ServiceChiTietLopHocPhan : IServiceChiTietLopHocPhan
             worksheet.Column(11).Style.NumberFormat.Format = "0.00";
 
             worksheet.Columns().AdjustToContents();
-            using (var stream = new MemoryStream()) {
+            using (var stream = new MemoryStream())
+            {
                 workbook.SaveAs(stream);
                 return stream.ToArray();
             }
@@ -235,8 +239,8 @@ public class ServiceChiTietLopHocPhan : IServiceChiTietLopHocPhan
                 existingRecord.DiemThi2 = item.DiemThi2;
                 existingRecord.DiemTongKet1 = item.DiemTongKet1;
                 existingRecord.DiemTongKet2 = item.DiemTongKet2;
-                existingRecord.HocKy = item.HocKy!.Value;
                 existingRecord.GhiChu = item.GhiChu;
+                existingRecord.NgayLuuDiem = DateTime.Now;
                 existingRecord.UpdatedAt = DateTime.Now;
                 listChiTiets.Add(existingRecord);
             }

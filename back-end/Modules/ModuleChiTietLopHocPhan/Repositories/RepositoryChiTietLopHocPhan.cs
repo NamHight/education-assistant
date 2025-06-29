@@ -96,7 +96,10 @@ public class RepositoryChiTietLopHocPhan : RepositoryBase<ChiTietLopHocPhan>, IR
     {
         return await _context.ChiTietLopHocPhans!
                     .AsNoTracking()
-                    .Where(ctlhp => ctlhp.LopHocPhanId == lopHocPhanId)
+                    .Where(ctlhp => ctlhp.LopHocPhanId == lopHocPhanId && ctlhp.SinhVien != null)
+                    .Include(item => item.SinhVien)
+                    .Include(item => item.MonHoc)
+                    .Include(item => item.GiangVien)
                     .Select(ctlhp => new ResponseExportFileDiemSoDto
                     {
                         MaSinhVien = ctlhp.SinhVien!.MSSV,
