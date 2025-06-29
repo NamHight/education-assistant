@@ -1,0 +1,21 @@
+{
+  "extends": ["prettier"],
+  "plugins": ["react","prettier"],
+  "rules": {
+    "prettier/prettier": [
+      "error",
+      {
+        "singleQuote": true,
+        "trailingComma": "all",
+        "printWidth": 120,
+        "tabWidth": 2,
+        "semi": true,
+        "useTabs": false,
+        "bracketSpacing": true,
+        "jsxBracketSameLine": false,
+        "arrowParens": "always",
+        "endOfLine": "auto",
+      }
+    ]
+  }
+}

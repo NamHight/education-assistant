@@ -1,0 +1,265 @@
+'use client';
+import React, { FC, memo, useEffect, useMemo } from 'react';
+import {
+  alpha,
+  Box,
+  Button,
+  Checkbox,
+  FormControl,
+  FormControlLabel,
+  Grid,
+  TextField,
+  Typography
+} from '@mui/material';
+import { Controller, useForm } from 'react-hook-form';
+import SaveIcon from '@mui/icons-material/Save';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { GiangVien } from '@/models/GiangVien';
+import * as yup from 'yup';
+import Input2 from '@/components/inputs/Input2';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { emailPattern } from '@/lib/pattern';
+import CustomEmailInput from '@/components/inputs/InputEmail';
+import InputSelect2 from '@/components/selects/InputSelect2';
+import {
+  chucVuOptions,
+  gioiTinhOptions,
+  IOption,
+  LoaiPhongHoc,
+  loaiTaiKhoanOptions,
+  TrangThaiGiangVien,
+  TrangThaiPhongHoc,
+  TrangThaiSinhVien,
+  trinhDoOptions,
+  yearOptions
+} from '@/types/options';
+import DatePicke from '@/components/datepickes/DatePicke';
+import { KhoaService } from '@/services/KhoaService';
+import { useQuery } from '@tanstack/react-query';
+import { BoMonService } from '@/services/BoMonService';
+import UploadImage from '@/components/uploads/UploadImage';
+import clsx from 'clsx';
+import moment from 'moment';
+import { SinhVien } from '@/models/SinhVien';
+import { LopHocService } from '@/services/LopHocService';
+import { Khoa } from '@/models/Khoa';
+import { MonHoc } from '@/models/MonHoc';
+import TextArea from '@/components/textarea/TextArea';
+import { Nganh } from '@/models/Nganh';
+import { BoMon } from '@/models/BoMon';
+import { PhongHoc } from '@/models/PhongHoc';
+import { LopHoc } from '@/models/LopHoc';
+import { GiangVienService } from '@/services/GiangVienService';
+import { NganhService } from '@/services/NganhService';
+
+export interface IFormData {
+  MaLopHoc: string;
+  SiSo: number;
+  NamHoc: IOption;
+  GiangVien: IOption;
+  Nganh: IOption;
+}
+
+interface IContentFormProps {
+  data?: LopHoc;
+  initialData?: any;
+  onSubmit: (data: any) => void;
+}
+
+const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => {
+  const schema = useMemo(() => {
+    return yup.object().shape({
+      MaLopHoc: yup.string().required('Mã lớp học không được để trống'),
+      SiSo: yup
+        .number()
+        .typeError('Sĩ số phải là số')
+        .required('Sĩ số không được để trống')
+        .min(1, 'Sĩ số phải lớn hơn 0'),
+      NamHoc: yup.object().required('Năm học không được để trống'),
+      GiangVien: yup.object().nullable().required('Giảng viên không được để trống'),
+      Nganh: yup.object().nullable().required('Ngành không được để trống')
+    });
+  }, [data]);
+
+  const { data: giangViens, isLoading: isLoadingGiangVien } = useQuery({
+    queryKey: ['giangviens'],
+    queryFn: async () => {
+      const response = await GiangVienService.danhSachGiangVien({
+        limit: 9999999999,
+        sortBy: 'createdAt',
+        sortByOrder: 'desc',
+        active: true
+      });
+      return response?.data;
+    },
+    initialData: initialData?.giangViens,
+    select: (data) => {
+      return data.map((item: any) => ({
+        id: item.id,
+        name: item.hoTen
+      }));
+    },
+    refetchOnWindowFocus: false
+  });
+  const { data: nganhs, isLoading: isLoadingNganh } = useQuery({
+    queryKey: ['nganhs'],
+    queryFn: async () => {
+      const response = await NganhService.getAllNganh({
+        limit: 9999999999,
+        sortBy: 'createdAt',
+        sortByOrder: 'desc'
+      });
+      return response?.data;
+    },
+    initialData: initialData?.nganhs,
+    select: (data) => {
+      return data.map((item: any) => ({
+        id: item.id,
+        name: item.tenNganh
+      }));
+    },
+    refetchOnWindowFocus: false
+  });
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+    control,
+    watch,
+    getValues,
+    setValue
+  } = useForm<IFormData | any>({
+    mode: 'onChange',
+    resolver: yupResolver(schema),
+    defaultValues: {
+      MaLopHoc: '',
+      SiSo: 0,
+      NamHoc: '',
+      GiangVien: null,
+      Nganh: null
+    }
+  });
+  const handleSubmitForm = (formData: IFormData) => {
+    const form = new FormData();
+    console.log('formData', formData);
+    if (data?.id) {
+      form.append('Id', data.id);
+    }
+    if (formData.MaLopHoc) {
+      form.append('MaLopHoc', formData.MaLopHoc);
+    }
+    if (formData.SiSo) {
+      form.append('SiSo', formData.SiSo.toString());
+    }
+    if (formData.NamHoc) {
+      form.append('NamHoc', formData.NamHoc.id.toString());
+    }
+    if (formData.GiangVien) {
+      form.append('GiangVienId', String(formData.GiangVien?.id));
+    }
+    if (formData.Nganh) {
+      form.append('NganhId', String(formData.Nganh?.id));
+    }
+    form.append('CreatedAt', moment().toISOString());
+    if (onSubmit) {
+      onSubmit(form);
+    }
+  };
+  useEffect(() => {
+    if (data) {
+      reset({
+        MaLopHoc: data.maLopHoc,
+        SiSo: data.siSo,
+        NamHoc: yearOptions.find((item: any) => item.id === data.namHoc) || '',
+        GiangVien: {
+          id: data.giangVien?.id,
+          name: data.giangVien?.hoTen
+        },
+        Nganh: {
+          id: data.nganh?.id,
+          name: data.nganh?.tenNganh
+        }
+      });
+    }
+  }, [reset, data]);
+  console.log('Data', data);
+  return (
+    <FormControl fullWidth component={'form'} onSubmit={handleSubmit(handleSubmitForm)} className='flex flex-col gap-4'>
+      <Grid container spacing={2} rowSpacing={1}>
+        <Grid size={{ xs: 12, sm: 6, md: 6, lg: 6 }}>
+          <Input2
+            {...register('MaLopHoc')}
+            title='Mã lớp học'
+            placeholder='Mã lớp học'
+            error={errors.MaLopHoc?.message}
+            isDisabled={false}
+            type='text'
+          />
+        </Grid>
+        <Grid size={{ xs: 12, sm: 6, md: 6, lg: 6 }}>
+          <Input2
+            {...register('SiSo')}
+            title='Sĩ số'
+            placeholder='Nhập sĩ số'
+            error={errors.SiSo?.message}
+            isDisabled={false}
+            type='number'
+          />
+        </Grid>
+        <Grid size={{ xs: 12, sm: 6, md: 6, lg: 6 }}>
+          <InputSelect2
+            control={control}
+            fullWidth
+            name={'GiangVien'}
+            placeholder={'Chọn giảng viên'}
+            title={'Giảng viên'}
+            data={giangViens ?? []}
+            isLoading={isLoadingGiangVien}
+            getOptionKey={(option) => option.id}
+            getOptionLabel={(option: any) => option.name}
+            error={(errors.GiangVien as any)?.message}
+          />
+        </Grid>
+        <Grid size={{ xs: 12, sm: 6, md: 6, lg: 6 }}>
+          <InputSelect2
+            control={control}
+            fullWidth
+            name={'Nganh'}
+            placeholder={'Chọn ngành'}
+            title={'Ngành'}
+            data={nganhs ?? []}
+            isLoading={isLoadingNganh}
+            getOptionKey={(option) => option.id}
+            getOptionLabel={(option: any) => option.name}
+            error={(errors.Nganh as any)?.message}
+          />
+        </Grid>
+        <Grid size={{ xs: 12, sm: 6, md: 6, lg: 6 }}>
+          <InputSelect2
+            control={control}
+            fullWidth
+            name={'NamHoc'}
+            placeholder={'Chọn năm học'}
+            title={'Năm học'}
+            data={yearOptions ?? []}
+            getOptionKey={(option) => option.id}
+            getOptionLabel={(option: any) => option.name}
+            error={(errors.NamHoc as any)?.message}
+          />
+        </Grid>
+      </Grid>
+      <Box>
+        <Button
+          type={'submit'}
+          className='flex items-center gap-3 !bg-blue-500 !px-4 !py-2 rounded !hover:bg-blue-600 transition-all !duration-200 !ease-in-out !shadow-sm !text-white !font-semibold !text-base !leading-6 hover:transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed'
+        >
+          <SaveIcon className='!text-white !w-6 !h-6' />
+          <Typography className='!text-lg !text-white !leading-6 !font-semibold'>Lưu</Typography>
+        </Button>
+      </Box>
+    </FormControl>
+  );
+};
+
+export default memo(ContentForm);
