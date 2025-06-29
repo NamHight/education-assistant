@@ -18,7 +18,7 @@ const page = async () => {
     });
   } catch (error) {
     console.error('Error fetching Chuong Trinh Dao Tao:', error);
-    ctdt = { data: [] };
+    ctdt = { data: undefined };
   }
   return (
     <Box>

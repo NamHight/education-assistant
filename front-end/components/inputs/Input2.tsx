@@ -12,17 +12,31 @@ interface IInput2Props {
   isDisabled?: boolean;
   name: string;
   type?: string;
+  editAble?: boolean;
+  onClickEdit?: () => void;
+  isEditAble?: boolean;
   [key: string]: any;
 }
 
-const Input2 = ({ placeholder, title, name, type, error, isDisabled, ...rest }: IInput2Props) => {
+const Input2 = ({
+  placeholder,
+  title,
+  name,
+  type,
+  error,
+  isDisabled,
+  onClickEdit,
+  editAble,
+  isEditAble,
+  ...rest
+}: IInput2Props) => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const isPassword = type === 'password';
   const handleClickShowPassword = () => setShowPassword((show) => !show);
   return (
     <Fragment>
       {title && (
-        <Box>
+        <Box className='flex items-center justify-between'>
           <Typography
             className={clsx('!text-[16px] !font-[500] !leading-6', {
               '!text-gray-500': !error,
@@ -31,6 +45,25 @@ const Input2 = ({ placeholder, title, name, type, error, isDisabled, ...rest }: 
           >
             {title}
           </Typography>
+          {isEditAble &&
+            (editAble ? (
+              <Typography
+                component={'span'}
+                className={'text-blue-500 cursor-pointer hover:underline'}
+                onClick={onClickEdit}
+              >
+                Chỉnh sửa
+              </Typography>
+            ) : (
+              <Typography
+                type='submit'
+                onClick={onClickEdit}
+                component={'button'}
+                className={'text-blue-500 cursor-pointer hover:underline'}
+              >
+                Cập nhật
+              </Typography>
+            ))}
         </Box>
       )}
       <TextField
@@ -44,7 +77,12 @@ const Input2 = ({ placeholder, title, name, type, error, isDisabled, ...rest }: 
         error={!!error}
         placeholder={placeholder}
         sx={(theme) => ({
+          '& .MuiOutlinedInput-input.Mui-disabled': {
+            color: '#222',
+            '-webkit-text-fill-color': '#222'
+          },
           '& .MuiOutlinedInput-root': {
+            backgroundColor: isDisabled ? theme.palette.grey[100] : theme.palette.common.white,
             borderColor: error ? alpha(theme.palette.error.main, 0.5) : alpha(theme.palette.grey[600], 0.5),
             '& fieldset': {
               borderColor: alpha(theme.palette.divider, 0.5)

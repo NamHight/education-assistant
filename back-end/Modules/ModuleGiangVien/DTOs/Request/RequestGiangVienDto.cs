@@ -80,3 +80,13 @@ public class RequestUpdateGiangVienDto
     public Guid? BoMonId { get; set; }
     public IFormFile? File { get; set; }
 }
+
+public class RequestUpdateGiangVienOptionDto
+{
+    public string? HoTen { get; set; }
+    [DataType(DataType.Date)] public DateTime? NgaySinh { get; set; }
+    public string? CCCD { get; set; } = string.Empty;
+    public string? SoDienThoai { get; set; }
+    public string? DiaChi { get; set; }
+    public IFormFile? File { get; set; }
+}

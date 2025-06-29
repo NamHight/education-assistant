@@ -20,33 +20,7 @@ export const metadata: Metadata = {
   title: 'CKC Hỗ trợ đào tạo',
   description: 'Ứng dụng hỗ trợ đào tạo của CKC',
   icons: {
-    icon: '/favicon.ico',
-    apple: '/apple-touch-icon.png',
-    shortcut: '/favicon-32x32.png',
-    other: [
-      {
-        rel: 'mask-icon',
-        url: '/safari-pinned-tab.svg',
-        color: '#000000'
-      }
-    ]
-  },
-  metadataBase: new URL('https://ckc.edu.vn'),
-  openGraph: {
-    title: 'CKC Hỗ trợ đào tạo',
-    description: 'Ứng dụng hỗ trợ đào tạo của CKC',
-    url: 'https://ckc.edu.vn',
-    siteName: 'CKC Hỗ trợ đào tạo',
-    images: [
-      {
-        url: 'https://ckc.edu.vn/og-image.png',
-        width: 1200,
-        height: 630,
-        alt: 'CKC Hỗ trợ đào tạo'
-      }
-    ],
-    locale: 'vi_VN',
-    type: 'website'
+    icon: '/favicon.ico'
   }
 };
 const BRANDING: Branding = {
@@ -58,17 +32,13 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const storeHydrater = await storeHydration();
   return (
     <html lang='en' data-toolpad-color-scheme='light'>
       <body className={`antialiased`} style={{ fontFamily: 'Roboto, Arial, sans-serif' }}>
         <AppRouterCacheProvider options={{ enableCssLayer: true, speedy: true }}>
           <Suspense fallback={<LinearProgress />}>
             <NextAppProvider theme={theme} navigation={NAVIGATION} branding={BRANDING}>
-              <Provider>
-                <StoreHydrater auth={storeHydrater.auth} setting={storeHydrater.setting} />
-                {children}
-              </Provider>
+              <Provider>{children}</Provider>
             </NextAppProvider>
           </Suspense>
         </AppRouterCacheProvider>

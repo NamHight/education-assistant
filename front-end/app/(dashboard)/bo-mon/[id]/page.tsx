@@ -16,12 +16,12 @@ interface IPageProps {
 
 const page = async ({ params }: IPageProps) => {
   const { id } = await params;
-  const boMon = BoMonService.getBoMonByIdServer(id);
+  const boMon = BoMonService.getBoMonByIdServer(id).catch(() => undefined);
   const khoa = KhoaService.getAllKhoaServer({
     limit: 99999999999,
     sortBy: 'createdAt',
     sortByOrder: 'desc'
-  });
+  }).catch(() => ({ data: [] }));
   const [boMonData, khoaData] = await Promise.all([boMon, khoa]);
   return (
     <div>
@@ -29,7 +29,7 @@ const page = async ({ params }: IPageProps) => {
         id={id}
         initialData={boMonData}
         anotherData={{
-          khoas: khoaData?.data
+          khoas: khoaData?.data?.length > 0 ? khoaData?.data : undefined
         }}
       />
     </div>

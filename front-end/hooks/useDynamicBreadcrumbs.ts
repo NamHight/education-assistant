@@ -1,11 +1,12 @@
+
 'use client'
-import {useEffect, useState} from 'react';
-import {useActivePage} from "@toolpad/core/useActivePage";
-import {Breadcrumb} from "@toolpad/core/PageContainer";
-import {useParams, usePathname} from "next/navigation";
+import { useEffect, useState } from 'react';
+import { useActivePage } from "@toolpad/core/useActivePage";
+import { Breadcrumb } from "@toolpad/core/PageContainer";
+import { useParams, usePathname } from "next/navigation";
 import { breadcrumbTranslations } from '@/types/general';
 
-const initBreadcrumbs: {title: string; path: string}[] = [
+const initBreadcrumbs: { title: string; path: string }[] = [
   { title: 'Trang chủ', path: '/' },
 ]
 const hrefNotInclude: {
@@ -27,7 +28,7 @@ export function useDynamicBreadcrumbs() {
   const [breadcrumbData, setBreadcrumbData] = useState<{
     title: string;
     breadcrumbs: Breadcrumb[];
-  }>({title: '', breadcrumbs: []});
+  }>({ title: '', breadcrumbs: [] });
   const activePage = useActivePage();
   const pathName = usePathname();
   const params = useParams();
@@ -56,7 +57,7 @@ export function useDynamicBreadcrumbs() {
       index === 0 || item.path !== arr[index - 1].path
     );
     const lastSegment = relativePath.split('/').pop() || '';
-    console.log('lastSegment', lastSegment , 'params.id', params.id);
+    console.log('lastSegment', lastSegment, 'params.id', params.id);
     const title = lastSegment === params.id
       ? `Chỉnh sửa #${params.id}`
       : breadcrumbTranslations[lastSegment] || capitalizeFirstLetter(lastSegment.replace(/-/g, ' '))
@@ -65,7 +66,7 @@ export function useDynamicBreadcrumbs() {
       title: title || activePage.title,
       breadcrumbs: processedBreadcrumbs
     });
-  }, [pathName, params,activePage]);
+  }, [pathName, params, activePage]);
 
   return breadcrumbData;
 }

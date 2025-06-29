@@ -191,7 +191,7 @@ interface ITableEditProps {
       khoa: number;
     } | null>
   >;
-  truongTrinhDaoTao?: any;
+  chuongTrinhDaotao?: any;
   isLoadingCtdt?: boolean;
   contentPopover?: React.ReactNode;
   isOpen?: boolean;
@@ -212,7 +212,7 @@ const TableEdit = forwardRef(
       handleSave,
       setfilter,
       isLoadingCtdt,
-      truongTrinhDaoTao,
+      chuongTrinhDaotao,
       contentPopover,
       isOpen,
       handleClick,
@@ -294,7 +294,7 @@ const TableEdit = forwardRef(
         className='flex flex-col gap-4'
         style={{ height: 'calc(100vh - 200px)' }}
       >
-        <Box className='flex w-full gap-4 items-center'>
+        <Box className='flex w-full gap-4 p-4 border border-gray-200 rounded-lg shadow-sm light:bg-white'>
           <Box className='flex justify-center items-center gap-3 w-full'>
             <Typography className='!text-[16px] !leading-6 !font-semibold'>Bậc</Typography>
             <Box className='flex-1'>
@@ -340,7 +340,7 @@ const TableEdit = forwardRef(
                 fullWidth
                 name={'daoTao'}
                 placeholder={'Chọn đào tạo'}
-                data={truongTrinhDaoTao ?? []}
+                data={chuongTrinhDaotao ?? []}
                 isLoading={isLoadingCtdt}
                 getOptionKey={(option) => option.id}
                 getOptionLabel={(option: any) => option.name}

@@ -43,6 +43,40 @@ public class RepositoryLopHocPhan : RepositoryBase<LopHocPhan>, IRepositoryLopHo
         Delete(lopHocPhan);
     }
 
+
+    public async Task<LopHocPhan?> GetLopHocPhanByIdAsync(Guid id, bool trackChanges)
+    {
+        return await FindByCondition(item => item.Id == id, trackChanges).Include(lhp => lhp.MonHoc)
+            .Include(lhp => lhp.GiangVien).FirstOrDefaultAsync();
+    }
+
+    public async Task<bool> KiemTraLopHocPhanDaTonTaiAsync(Guid nganhId, int hocKy, int khoa, Guid monHocId)
+    {
+        var lopHocs = await _context.LopHocs!
+            .AsNoTracking()
+            .Where(lh => lh.NganhId == nganhId && lh.NamHoc == khoa)
+            .ToListAsync();
+
+        if (!lopHocs.Any()) return false;
+        var maLopHocs = lopHocs.Select(lh => lh.MaLopHoc).ToList();
+        var chiTietLopHocPhans = await _context.ChiTietLopHocPhans!
+            .AsNoTracking()
+            .Include(ct => ct.LopHocPhan)
+            .Where(ct =>
+                ct.HocKy == hocKy &&
+                ct.LopHocPhan != null &&
+                ct.LopHocPhan.MonHocId == monHocId)
+            .ToListAsync();
+
+        return chiTietLopHocPhans
+            .Any(ct => maLopHocs.Any(maLop => ct.LopHocPhan!.MaHocPhan.StartsWith(maLop)));
+    }
+
+    public void UpdateLopHocPhan(LopHocPhan lopHocPhan)
+    {
+        Update(lopHocPhan);
+    }
+
     // public async Task<PagedListAsync<LopHocPhan>?> GetAllLopHocPhanAsync(int page, int limit, string? search, string? sortBy, string? sortByOder, int? khoa, int? loaiChuongTrinh, Guid? chuongTrinhId, int? hocKy, int? trangThai)
     // {
     //     var query = _context.LopHocPhans!
@@ -88,7 +122,9 @@ public class RepositoryLopHocPhan : RepositoryBase<LopHocPhan>, IRepositoryLopHo
         Guid? chuongTrinhId,
         int? hocKy,
         int? trangThai,
-        int? loaiLopHoc)
+        int? loaiLopHoc,
+        Guid? giangVienId
+    )
     {
         var query = _context.LopHocPhans!
             .AsNoTracking()
@@ -101,37 +137,34 @@ public class RepositoryLopHocPhan : RepositoryBase<LopHocPhan>, IRepositoryLopHo
             .AsNoTracking();
 
         if (loaiLopHoc.HasValue && loaiLopHoc != 0 && loaiLopHoc != null)
-        {
             query = query.Where(item => item.Loai == loaiLopHoc);
-        }
         if (trangThai.HasValue && trangThai != 0)
             query = query.Where(x => x.TrangThai == trangThai);
-        if (loaiLopHoc.HasValue && loaiLopHoc != 2 )
-        {
-            if (chuongTrinhId.HasValue && chuongTrinhId != Guid.Empty ||
-            khoa.HasValue && khoa != 0 ||
-            loaiChuongTrinh.HasValue && loaiChuongTrinh != 0 ||
-            hocKy.HasValue && hocKy != 0)
-            {
+        if (loaiLopHoc.HasValue && loaiLopHoc != 2)
+            if ((chuongTrinhId.HasValue && chuongTrinhId != Guid.Empty) ||
+                (khoa.HasValue && khoa != 0) ||
+                (loaiChuongTrinh.HasValue && loaiChuongTrinh != 0) ||
+                (hocKy.HasValue && hocKy != 0))
                 query = query.Where(lhp => lhp.MonHoc != null &&
-                                        lhp.MonHoc.DanhSachChiTietChuongTrinhDaoTao != null &&
-                                        lhp.MonHoc.DanhSachChiTietChuongTrinhDaoTao
-                                            .Any(ct => ct.ChuongTrinhDaoTaoId == chuongTrinhId.Value &&
-                                                        ct.ChuongTrinhDaoTao!.Khoa == khoa.Value &&
-                                                        ct.ChuongTrinhDaoTao!.LoaiChuonTrinhDaoTao == loaiChuongTrinh.Value &&
-                                                        ct.HocKy == hocKy.Value) &&
-                                                        _context.LopHocs!.Any(lh => lh.NamHoc == khoa.Value &&
-                                                                                    lhp.MaHocPhan.StartsWith(lh.MaLopHoc)));
-            }
-        }
-        
+                                           lhp.MonHoc.DanhSachChiTietChuongTrinhDaoTao != null &&
+                                           lhp.MonHoc.DanhSachChiTietChuongTrinhDaoTao
+                                               .Any(ct => ct.ChuongTrinhDaoTaoId == chuongTrinhId.Value &&
+                                                          ct.ChuongTrinhDaoTao!.Khoa == khoa.Value &&
+                                                          ct.ChuongTrinhDaoTao!.LoaiChuonTrinhDaoTao ==
+                                                          loaiChuongTrinh.Value &&
+                                                          ct.HocKy == hocKy.Value) &&
+                                           _context.LopHocs!.Any(lh => lh.NamHoc == khoa.Value &&
+                                                                       lhp.MaHocPhan.StartsWith(lh.MaLopHoc)));
+
+        if (giangVienId.HasValue && giangVienId != Guid.Empty)
+            query = query.Where(item => item.GiangVienId == giangVienId.Value);
         // Áp dụng search và sort
         query = query
             .SearchBy(search, x => x.MaHocPhan)
             .SortByOptions(sortBy, sortByOder, new Dictionary<string, Expression<Func<LopHocPhan, object>>>
             {
                 ["createdat"] = item => item.CreatedAt,
-                ["siso"] = item => item.SiSo,
+                ["siso"] = item => item.SiSo
             });
         // Lấy ra PagedListAsync
         var pagedResult = await PagedListAsync<LopHocPhan>.ToPagedListAsync(query, page, limit);
@@ -154,31 +187,34 @@ public class RepositoryLopHocPhan : RepositoryBase<LopHocPhan>, IRepositoryLopHo
                 : null,
             GiangVienId = lhp.GiangVienId,
             MonHocId = lhp.MonHocId,
-            MonHoc = lhp.MonHoc != null ? new MonHoc
-            {
-                Id = lhp.MonHoc.Id,
-                TenMonHoc = lhp.MonHoc.TenMonHoc,
-                MaMonHoc = lhp.MonHoc.MaMonHoc,
-                KhoaId = lhp.MonHoc.KhoaId,
-                Khoa = lhp.MonHoc.Khoa,
-                DanhSachChiTietChuongTrinhDaoTao = lhp.MonHoc.DanhSachChiTietChuongTrinhDaoTao!
-                    .Where(ct =>
-                        (!chuongTrinhId.HasValue || ct.ChuongTrinhDaoTaoId == chuongTrinhId) &&
-                        (!khoa.HasValue || ct.ChuongTrinhDaoTao!.Khoa == khoa) &&
-                        (!loaiChuongTrinh.HasValue || ct.ChuongTrinhDaoTao!.LoaiChuonTrinhDaoTao == loaiChuongTrinh) &&
-                        (!hocKy.HasValue || ct.HocKy == hocKy) &&
-                        _context.LopHocs!.Any(lh => lh.NamHoc == khoa!.Value && lhp.MaHocPhan.StartsWith(lh.MaLopHoc))
+            MonHoc = lhp.MonHoc != null
+                ? new MonHoc
+                {
+                    Id = lhp.MonHoc.Id,
+                    TenMonHoc = lhp.MonHoc.TenMonHoc,
+                    MaMonHoc = lhp.MonHoc.MaMonHoc,
+                    KhoaId = lhp.MonHoc.KhoaId,
+                    Khoa = lhp.MonHoc.Khoa,
+                    DanhSachChiTietChuongTrinhDaoTao = lhp.MonHoc.DanhSachChiTietChuongTrinhDaoTao!
+                        .Where(ct =>
+                            (!chuongTrinhId.HasValue || ct.ChuongTrinhDaoTaoId == chuongTrinhId) &&
+                            (!khoa.HasValue || ct.ChuongTrinhDaoTao!.Khoa == khoa) &&
+                            (!loaiChuongTrinh.HasValue ||
+                             ct.ChuongTrinhDaoTao!.LoaiChuonTrinhDaoTao == loaiChuongTrinh) &&
+                            (!hocKy.HasValue || ct.HocKy == hocKy) &&
+                            _context.LopHocs!.Any(lh =>
+                                lh.NamHoc == khoa!.Value && lhp.MaHocPhan.StartsWith(lh.MaLopHoc))
                         )
-                    .Select(ct => new ChiTietChuongTrinhDaoTao
-                    {
-                        Id = ct.Id,
-                        HocKy = ct.HocKy,
-                        SoTinChi = ct.SoTinChi,
-                        DiemTichLuy = ct.DiemTichLuy,
-                        LoaiMonHoc = ct.LoaiMonHoc,
-                        BoMonId = ct.BoMonId,
-                        ChuongTrinhDaoTaoId = ct.ChuongTrinhDaoTaoId,
-                        ChuongTrinhDaoTao = new ChuongTrinhDaoTao
+                        .Select(ct => new ChiTietChuongTrinhDaoTao
+                        {
+                            Id = ct.Id,
+                            HocKy = ct.HocKy,
+                            SoTinChi = ct.SoTinChi,
+                            DiemTichLuy = ct.DiemTichLuy,
+                            LoaiMonHoc = ct.LoaiMonHoc,
+                            BoMonId = ct.BoMonId,
+                            ChuongTrinhDaoTaoId = ct.ChuongTrinhDaoTaoId,
+                            ChuongTrinhDaoTao = new ChuongTrinhDaoTao
                             {
                                 Id = ct.ChuongTrinhDaoTao!.Id,
                                 MaChuongTrinh = ct.ChuongTrinhDaoTao.MaChuongTrinh,
@@ -195,42 +231,5 @@ public class RepositoryLopHocPhan : RepositoryBase<LopHocPhan>, IRepositoryLopHo
             pagedResult.PageInfo.TotalCount,
             pagedResult.PageInfo.CurrentPage,
             pagedResult.PageInfo.PageSize);
-    }
-
-
-    public async Task<LopHocPhan?> GetLopHocPhanByIdAsync(Guid id, bool trackChanges)
-    {
-        return await FindByCondition(item => item.Id == id, trackChanges).Include(lhp => lhp.MonHoc)
-            .Include(lhp => lhp.GiangVien).FirstOrDefaultAsync();
-    }
-
-    public async Task<bool> KiemTraLopHocPhanDaTonTaiAsync(Guid nganhId, int hocKy, int khoa, Guid monHocId)
-    {
-        var lopHocs = await _context.LopHocs!
-                .AsNoTracking()
-                .Where(lh => lh.NganhId == nganhId && lh.NamHoc == khoa)
-                .ToListAsync();
-
-        if (!lopHocs.Any())
-        {
-            return false;
-        }
-        var maLopHocs = lopHocs.Select(lh => lh.MaLopHoc).ToList();
-        var chiTietLopHocPhans = await _context.ChiTietLopHocPhans!
-            .AsNoTracking()
-            .Include(ct => ct.LopHocPhan)
-            .Where(ct =>
-                ct.HocKy == hocKy &&
-                ct.LopHocPhan != null &&
-                ct.LopHocPhan.MonHocId == monHocId)
-            .ToListAsync();
-
-        return chiTietLopHocPhans
-            .Any(ct => maLopHocs.Any(maLop => ct.LopHocPhan!.MaHocPhan.StartsWith(maLop)));
-    }
-
-    public void UpdateLopHocPhan(LopHocPhan lopHocPhan)
-    {
-        Update(lopHocPhan);
     }
 }

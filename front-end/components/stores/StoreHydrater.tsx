@@ -10,7 +10,7 @@ import React, { useEffect } from 'react';
 
 interface StoreHydraterProps {
   auth: {
-    user: GiangVien | null;
+    user: GiangVien | undefined;
   };
   setting: {
     theme: 'light' | 'dark';

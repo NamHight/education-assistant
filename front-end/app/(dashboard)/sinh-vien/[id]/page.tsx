@@ -16,12 +16,16 @@ const page = async ({ params }: IPageProps) => {
     limit: 99999999999,
     sortBy: 'createdAt',
     sortByOrder: 'desc'
-  });
-  const sinhVien = SinhVienService.getSinhVienByIdServer(id);
+  }).catch(() => ({ data: [] }));
+  const sinhVien = SinhVienService.getSinhVienByIdServer(id).catch(() => ({ data: undefined }));
   const [lopHocData, sinhVienData] = await Promise.all([lopHoc, sinhVien]);
   return (
     <div>
-      <Content anotherData={{ lopHocs: lopHocData?.data }} id={id} initialData={sinhVienData} />
+      <Content
+        anotherData={{ lopHocs: lopHocData?.data?.length > 0 ? lopHocData?.data : undefined }}
+        id={id}
+        initialData={sinhVienData}
+      />
     </div>
   );
 };

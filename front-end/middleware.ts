@@ -1,7 +1,8 @@
-import type {NextRequest} from "next/server";
-import {NextResponse} from "next/server";
+import type { NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 import { APP_ROUTE, REFRESH_TOKEN, TOKEN_ACCESS } from "./types/general";
 import { cookies } from "next/headers";
+import path from "path";
 
 const routeBlock = [
   '/',
@@ -19,14 +20,14 @@ export async function middleware(req: NextRequest) {
   if (routeBlock.includes(pathname) && !refresh_token) {
     return NextResponse.redirect(new URL(APP_ROUTE.DANG_NHAP, req.url));
   }
-  if(routeHaveToken.includes(pathname) && refresh_token){
+  if (routeHaveToken.includes(pathname) && refresh_token) {
     return NextResponse.redirect(new URL(APP_ROUTE.DASHBOARD, req.url));
   }
   return NextResponse.next();
 }
 
 export const config = {
-  matcher:  [
+  matcher: [
     '/:path*',
     "/",
   ],

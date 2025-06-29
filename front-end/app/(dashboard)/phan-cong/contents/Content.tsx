@@ -57,7 +57,8 @@ const Content = ({ queryKey, ctdtServer }: IContentProps) => {
         chuongTrinhDaoTaoId: filter?.chuongTrinh,
         hocKy: filter?.hocKy,
         khoa: filter?.khoa,
-        loaiChuongTrinhDaoTao: filter?.loaiChuongTrinh
+        loaiChuongTrinhDaoTao: filter?.loaiChuongTrinh,
+        limit: 99999999999999
       };
       if (sortModel.field && sortModel.sort) {
         params.sortBy = sortModel.field;
@@ -159,13 +160,14 @@ const Content = ({ queryKey, ctdtServer }: IContentProps) => {
           return null;
       }
     };
+    console.log('data?.data', data?.data);
     return [
       {
         field: 'maHocPhan',
         headerName: 'Mã học phần',
         type: 'string',
         headerAlign: 'left',
-        minWidth: 200,
+        minWidth: 100,
         flex: 1,
         sortable: false,
         display: 'flex',
@@ -178,8 +180,7 @@ const Content = ({ queryKey, ctdtServer }: IContentProps) => {
       },
       {
         field: 'monHoc',
-        headerName: 'Loại',
-        type: 'string',
+        headerName: 'Môn học',
         headerAlign: 'left',
         minWidth: 200,
         flex: 1,
@@ -189,12 +190,29 @@ const Content = ({ queryKey, ctdtServer }: IContentProps) => {
         editable: false,
         disableColumnMenu: true,
         renderCell: (params) => {
-          return params.value ? formatType(params.value?.chiTietChuongTrinhDaoTao?.loaiMonHoc) : null;
+          return params.value ? <Typography>{`${params.value?.tenMonHoc}`}</Typography> : null;
+        }
+      },
+      {
+        field: 'loai',
+        headerName: 'Loại',
+        type: 'string',
+        headerAlign: 'left',
+        minWidth: 100,
+        flex: 1,
+        sortable: false,
+        display: 'flex',
+        align: 'left',
+        editable: false,
+        disableColumnMenu: true,
+        renderCell: (params) => {
+          console.log('params.row', params.row);
+          return params.row?.monHoc ? formatType(params.row?.monHoc?.chiTietChuongTrinhDaoTao?.loaiMonHoc) : null;
         }
       },
       {
         field: 'giangVienId',
-        headerName: 'Tên giản viên',
+        headerName: 'Giảng viên',
         headerAlign: 'left',
         minWidth: 140,
         sortable: false,
@@ -279,7 +297,7 @@ const Content = ({ queryKey, ctdtServer }: IContentProps) => {
   return (
     <Box className='flex flex-col gap-4'>
       <TableEdit
-        truongTrinhDaoTao={ctdt}
+        chuongTrinhDaotao={ctdt}
         isLoadingCtdt={isLoadingCtdt}
         setSortModel={setSortModel}
         setFilterModel={setFilterModel}

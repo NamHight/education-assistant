@@ -38,7 +38,7 @@ const UploadImage: FC<Readonly<UploadImageProps>> = ({
   photoSize = PHOTO_SIZE,
   fileFormats = FILE_FORMATS,
   align = 'center',
-  titleAllowed = 'Allowed *.jpeg, *.jpg, *.png',
+  titleAllowed = 'Cho phép *.jpeg, *.jpg, *.png',
   isSvg,
   w50,
   w60,
@@ -136,7 +136,7 @@ const UploadImage: FC<Readonly<UploadImageProps>> = ({
           >
             <AddAPhotoIcon />
             <Typography variant='caption' component={'p'}>
-              {fileReview ? 'Update photo' : 'Upload photo'}
+              {fileReview ? 'Cập nhật ảnh' : 'Tải lên ảnh'}
             </Typography>
           </Box>
         </Box>
@@ -151,7 +151,7 @@ const UploadImage: FC<Readonly<UploadImageProps>> = ({
           ) : (
             <>
               {isSvg ? titleAllowed + ' *.svg' : titleAllowed}
-              <br /> Max size of {fData(photoSize)}
+              <br /> Tối đa kích cỡ {fData(photoSize)}
             </>
           )}
         </Typography>

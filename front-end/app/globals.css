@@ -158,3 +158,11 @@ body {
   height: 100%;
   content: "";
 }
+
+.MuiOutlinedInput-root.Mui-disabled,
+.MuiPickersOutlinedInput-root.Mui-disabled,
+.MuiPickersOutlinedInput-root.Mui-disabled * {
+  color: #222 !important;
+  -webkit-text-fill-color: #222 !important;
+  opacity: 1 !important;
+}

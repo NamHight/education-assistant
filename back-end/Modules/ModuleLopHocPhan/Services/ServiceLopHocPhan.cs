@@ -151,7 +151,8 @@ public class ServiceLopHocPhan : IServiceLopHocPhan
             paramLopHocPhanDto.chuongTrinhDaoTaoId,
             paramLopHocPhanDto.hocKy,
             paramLopHocPhanDto.trangThai,
-            paramLopHocPhanDto.loaiLopHoc);
+            paramLopHocPhanDto.loaiLopHoc,
+            paramLopHocPhanDto.giangVienId);
         var lopHocPhanDtos = _mapper.Map<IEnumerable<ResponseLopHocPhanDto>>(lopHocPhans);
         return (data: lopHocPhanDtos, page: lopHocPhans!.PageInfo);
     }

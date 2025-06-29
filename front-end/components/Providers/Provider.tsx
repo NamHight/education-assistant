@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-
+import moment from 'moment-timezone';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { isServer, QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
@@ -36,7 +36,7 @@ const Provider = ({ children }: ProviderProps) => {
   const queryClient = getQueryClient();
   return (
     <QueryClientProvider client={queryClient}>
-      <LocalizationProvider dateAdapter={AdapterMoment} adapterLocale='vi'>
+      <LocalizationProvider dateAdapter={AdapterMoment} adapterLocale='vi' dateLibInstance={moment}>
         <NotificationsProvider
           slotProps={{
             snackbar: {

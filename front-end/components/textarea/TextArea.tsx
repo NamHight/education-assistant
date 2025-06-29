@@ -16,7 +16,10 @@ interface InputsProps {
   inputMode?: 'search' | 'text' | 'none' | 'tel' | 'url' | 'email' | 'numeric' | 'decimal' | undefined;
   disabled?: boolean;
   subTitle?: string;
+  editAble?: boolean;
+  onClickEdit?: () => void;
   onChange?: (e: any) => void;
+  isEditAble?: boolean;
 }
 
 const TextArea = ({
@@ -33,6 +36,9 @@ const TextArea = ({
   disabled,
   subTitle,
   onChange,
+  editAble,
+  onClickEdit,
+  isEditAble,
   ...rest
 }: InputsProps) => {
   const { ...inputProps } = { ref: null };
@@ -46,14 +52,14 @@ const TextArea = ({
       }}
     >
       {title && (
-        <Box className={'mb-2 flex justify-start items-center gap-1'}>
+        <Box className={clsx('mb-2 flex justify-between items-center gap-1')}>
           <Typography
             sx={(theme) => ({
               color: errorMessage ? '!text-red-600' : ``
             })}
-            className={
+            className={clsx(
               '!text-[16px] !font-[500] !leading-6 !text-gray-500 tracking-[0.015em] flex text-center justify-center'
-            }
+            )}
           >
             {title}
             {subTitle && (
@@ -67,6 +73,25 @@ const TextArea = ({
               *
             </Typography>
           )}
+          {isEditAble &&
+            (editAble ? (
+              <Typography
+                component={'span'}
+                className={'text-blue-500 cursor-pointer hover:underline'}
+                onClick={onClickEdit}
+              >
+                Chỉnh sửa
+              </Typography>
+            ) : (
+              <Typography
+                type='submit'
+                onClick={onClickEdit}
+                component={'button'}
+                className={'text-blue-500 cursor-pointer hover:underline'}
+              >
+                Cập nhật
+              </Typography>
+            ))}
         </Box>
       )}
       <TextareaAutosize
@@ -81,7 +106,11 @@ const TextArea = ({
         onInput={(e: any) => onChange && onChange(e)}
         className={clsx(
           'border-solid border-[1.2px] leading-[20px] not-italic letter-spacing-[0.015em] font-sans overflow-y-auto bg-0 rounded-md resize-none border-gray-500 active:border-blue-500 focus-within:border-blue-500 focus-visible:border-blue-500 !text-[16px] !font-[400] focus:ring-blue-500 focus:outline-none focus-within:ring-blue-500 block w-full pl-[13px] pr-[5px] py-[10px] focus:border-blue-500 text-area-custom',
-          className
+          className,
+          {
+            'bg-gray-100': disabled,
+            'bg-white': !disabled
+          }
         )}
         autoComplete={autoComplete}
         onWheel={(e) => e.target instanceof HTMLElement && (e.target as any).type === 'number' && e.target.blur()}

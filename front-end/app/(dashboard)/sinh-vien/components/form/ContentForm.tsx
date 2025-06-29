@@ -134,13 +134,18 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
       LoaiTaiKhoan: null,
       TrangThai: null,
       NgaySinh: null,
-      NgayNhapHoc: null
+      NgayNhapHoc: null,
+      CCCD: '',
+      SoDienThoai: '',
+      DiaChi: '',
+      MSSV: ''
     }
   });
   const handleSubmitForm = (formData: IFormData) => {
     const form = new FormData();
     console.log('formData', formData);
     if (data?.id) form.append('Id', data.id);
+    if (formData.MSSV) form.append('MSSV', formData.MSSV);
     if (formData.HoTen) form.append('HoTen', formData.HoTen);
     if (formData.Email) form.append('Email', formData.Email);
     if (formData.CCCD) form.append('CCCD', formData.CCCD);
@@ -223,7 +228,7 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
             title='Mã số sinh viên'
             placeholder='Nhập mã số sinh viên'
             error={errors.MSSV?.message}
-            isDisabled={true}
+            isDisabled={false}
             type='text'
           />
         </Grid>

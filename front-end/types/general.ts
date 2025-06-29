@@ -2,7 +2,7 @@ export const TOKEN_ACCESS: string = "access_token";
 export const REFRESH_TOKEN: string = "refresh_token";
 export const THEME_LIGHT: string = "light";
 export const THEME_DARK: string = "dark";
-export const TOOLPAD_MODE:string = "toolpad-mode";
+export const TOOLPAD_MODE: string = "toolpad-mode";
 export const USER: string = "user";
 
 
@@ -16,17 +16,34 @@ export const API = {
         REGISTER: "/Authenticate/register",
         REFRESH_TOKEN: "/Authenticate/refresh-token",
         USER: "/Authenticate/me",
+        FORGOT_PASSWORD: "/Authenticate/forgot-password",
+        RESET_PASSWORD: "/Authenticate/reset-password",
+        PASSWORD_CONFIRM: "/Authenticate//forgot-password-confirm",
     },
-    PHONG_HOC:{
+    CHI_TIET_LOP_HOC_PHAN: {
+        GET_ALL: "/ChiTietLopHocPhan",
+        GET_BY_ID: "/ChiTietLopHocPhan/:id",
+    },
+    HOC_BA: {
+        GET_ALL: "/HocBa",
+        GET_BY_ID: "/HocBa/:id",
+        NOP_DIEM: "/HocBa/nop-diem",
+        DELETE_LIST: "/HocBa/delete-list",
+    },
+    THONG_KE: {
+        GET_LUOT_ROT: "/ThongKe/diem-lop-hoc-phan",
+        GET_SINH_VIEN_GIOI_NHAT: "/ThongKe/dssvien-gioi-nhat",
+    },
+    PHONG_HOC: {
         GET_ALL: "/PhongHoc",
         GET_BY_ID: "/PhongHoc/:id",
         CHANGE_STATUS: "/PhongHoc/:id/update-trang-thai",
     },
-    NGANH:{
+    NGANH: {
         GET_ALL: "/Nganh",
         GET_BY_ID: "/Nganh/:id",
     },
-    SINH_VIEN:{
+    SINH_VIEN: {
         GET_ALL: "/SinhVien",
         GET_BY_ID: "/SinhVien/:id",
         RESTORE: "/SinhVien/:id/restore",
@@ -37,7 +54,8 @@ export const API = {
         RESTORE: "/giangviens/:id/restore",
         GET_BY_KHOA_ID: "/giangviens/:khoaId/by-khoa",
         CHANGE_PASSWORD: "/giangviens/change_password",
-    },  
+        UPDATE_PROFILE: "/giangviens/:id/update-giang-vien",
+    },
     KHOA: {
         GET_ALL: "/khoa",
         GET_BY_ID: "/Khoa/:id"
@@ -46,7 +64,7 @@ export const API = {
         GET_ALL: "/BoMon",
         GET_BY_ID: "/BoMon/:id"
     },
-    LOP_HOC_PHAN:{
+    LOP_HOC_PHAN: {
         GET_ALL: "/LopHocPhan",
         GET_BY_ID: "/LopHocPhan/:id",
         PHAN_CONG: "/LopHocPhan/list-phan-cong",
@@ -62,36 +80,41 @@ export const API = {
         GET_ALL: "/LopHoc",
         GET_BY_ID: "/LopHoc/:id",
     },
-    CHUONG_TRINH_DAO_TAO:{
+    CHUONG_TRINH_DAO_TAO: {
         GET_ALL: "/ChuongTrinhDaoTao",
         GET_BY_ID: "/ChuongTrinhDaoTao/:id",
     },
-  CHI_TIET_CHUONG_TRINH_DAO_TAO: {
-    GET_ALL: "/ChiTietChuongTrinhDaoTao",
-    GET_BY_ID: "/ChiTietChuongTrinhDaoTao/:id",
-    ADD: "/ChiTietChuongTrinhDaoTao/them-moi",
-  },
-TRUONG: {
-  GET_ALL: "/Truong/key-value",
-    UPDATE: 'Truong',
-}
-    
+    CHI_TIET_CHUONG_TRINH_DAO_TAO: {
+        GET_ALL: "/ChiTietChuongTrinhDaoTao",
+        GET_BY_ID: "/ChiTietChuongTrinhDaoTao/:id",
+        ADD: "/ChiTietChuongTrinhDaoTao/them-moi",
+    },
+    TRUONG: {
+        GET_ALL: "/Truong/key-value",
+        UPDATE: 'Truong',
+    }
+
 }
 
 export const APP_ROUTE = {
     DANG_NHAP: "/dang-nhap",
-    DASHBOARD: "/",
+    DASHBOARD: "/thong-ke",
     CHUONG_TRINH_DAO_TAO: {
         ROOT: "/chuong-trinh-dao-tao",
         ADD: "/chuong-trinh-dao-tao/them-moi",
         EDIT: (id: string) => `/chuong-trinh-dao-tao/${id}`,
+    },
+    HOC_BA: {
+        ROOT: "/hoc-ba",
+        ADD: "/hoc-ba/them-moi",
+        EDIT: (id: string) => `/hoc-ba/${id}`,
     },
     GIANG_VIEN: {
         ROOT: "/giang-vien",
         ADD: "/giang-vien/them-moi",
         EDIT: (id: string) => `/giang-vien/${id}`,
     },
-    PHONG_HOC:{
+    PHONG_HOC: {
         ROOT: "/phong-hoc",
         ADD: "/phong-hoc/them-moi",
         EDIT: (id: string) => `/phong-hoc/${id}`,
@@ -102,27 +125,27 @@ export const APP_ROUTE = {
         ADD_HOC_KY_PHU: "/lop-hoc-phan/them-moi-hoc-ky-phu",
         EDIT: (id: string) => `/lop-hoc-phan/${id}`,
     },
-    SINH_VIEN:{
+    SINH_VIEN: {
         ROOT: "/sinh-vien",
         ADD: "/sinh-vien/them-moi",
         EDIT: (id: string) => `/sinh-vien/${id}`,
     },
-    KHOA:{
+    KHOA: {
         ROOT: "/khoa",
         ADD: "/khoa/them-moi",
         EDIT: (id: string) => `/khoa/${id}`,
     },
-    MON_HOC:{
+    MON_HOC: {
         ROOT: "/mon-hoc",
         ADD: "/mon-hoc/them-moi",
         EDIT: (id: string) => `/mon-hoc/${id}`,
     },
-    NGANH:{
+    NGANH: {
         ROOT: "/nganh",
         ADD: "/nganh/them-moi",
         EDIT: (id: string) => `/nganh/${id}`,
     },
-    BO_MON:{
+    BO_MON: {
         ROOT: "/bo-mon",
         ADD: "/bo-mon/them-moi",
         EDIT: (id: string) => `/bo-mon/${id}`,
@@ -134,6 +157,11 @@ export const APP_ROUTE = {
     },
     TRUONG: {
         ROOT: "/truong",
+    },
+    LOP_HOC: {
+        ROOT: "/lop-hoc",
+        ADD: "/lop-hoc/them-moi",
+        EDIT: (id: string) => `/lop-hoc/${id}`,
     }
 }
 
@@ -145,8 +173,16 @@ export const breadcrumbTranslations: { [key: string]: string } = {
     'sinh-vien': 'Sinh viên',
     'lop-hoc': 'Lớp học',
     'lop-hoc-phan': 'Lớp học phần',
-    'khoa': 'Khóa',
+    'khoa': 'Khoa',
     'them-moi-hoc-ky-phu': 'Thêm học kỳ phụ',
     'mon-hoc': 'Môn học',
+    'chuong-trinh-dao-tao': 'Chương trình đào tạo',
+    'chi-tiet-chuong-trinh-dao-tao': 'Chi tiết chương trình đào tạo',
+    'bo-mon': 'Bộ môn',
+    'phong-hoc': 'Phòng học',
+    'nganh': 'Ngành',
+    'hoc-ba': 'Học bạ',
+    'truong': 'Trường',
+    'phan-cong': 'Phân công',
     // Thêm các bản dịch khác của bạn ở đây
-  };
+};

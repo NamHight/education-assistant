@@ -40,7 +40,7 @@ const Input = ({ control, title, placeholder, register, name, type, error, isDis
           {options}
         </Box>
       )}
-      <div className='w-full'>
+      <div className='w-full flex flex-col gap-1'>
         <TextField
           {...register(name)}
           type={type === 'password' ? (showPassword ? 'text' : 'password') : type}

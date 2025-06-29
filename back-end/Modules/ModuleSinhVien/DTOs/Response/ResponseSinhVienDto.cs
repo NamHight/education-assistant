@@ -1,5 +1,3 @@
-using System;
-using System.ComponentModel.DataAnnotations;
 using Education_assistant.Modules.ModuleLopHoc.DTOs.Response;
 
 namespace Education_assistant.Modules.ModuleSinhVien.DTOs.Response;
@@ -26,9 +24,11 @@ public class ResponseSinhVienDto
     public DateTime? UpdatedAt { get; set; }
     public DateTime? DeletedAt { get; set; }
 }
+
 public class SinhVienSimpleDto
 {
     public Guid Id { get; set; }
     public int MSSV { get; set; }
     public string HoTen { get; set; } = string.Empty;
+    public DateTime? NgaySinh { get; set; }
 }

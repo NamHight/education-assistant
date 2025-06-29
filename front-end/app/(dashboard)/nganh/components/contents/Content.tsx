@@ -139,7 +139,16 @@ const Content = ({ queryKey }: ContentProps) => {
         disableColumnMenu: true,
         sortable: false,
         display: 'flex',
-        flex: 1
+        flex: 1,
+        renderCell: (params) => {
+          return !params.row?.deletedAt ? (
+            <Link href={`${APP_ROUTE.NGANH.EDIT(params.row?.id)}`} className='text-blue-500 hover:underline'>
+              {params.value}
+            </Link>
+          ) : (
+            <span>{params.value}</span>
+          );
+        }
       },
       {
         field: 'maNganh',
@@ -191,7 +200,7 @@ const Content = ({ queryKey }: ContentProps) => {
   }, [data?.data]);
   return (
     <Box className='flex flex-col gap-4'>
-      <Box className='flex justify-start'>
+      <Box className='flex justify-start gap-4 border border-gray-200 rounded-lg p-4 shadow-sm'>
         <Button title={'Thêm mới'} onClick={() => router.push(APP_ROUTE.NGANH.ADD)} />
       </Box>
       <Table

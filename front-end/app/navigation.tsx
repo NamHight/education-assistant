@@ -14,12 +14,20 @@ import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
 import SquareFootIcon from '@mui/icons-material/SquareFoot';
 import GroupWorkIcon from '@mui/icons-material/GroupWork';
 import AddchartIcon from '@mui/icons-material/Addchart';
+import HouseIcon from '@mui/icons-material/House';
+import ScoreIcon from '@mui/icons-material/Score';
 export const NAVIGATION: Navigation = [
   {
     segment: '/',
     title: 'Trang chủ',
     icon: <DashboardIcon />,
     pattern: `/:rest*`
+  },
+  {
+    segment: 'nhap-diem',
+    title: 'Nhập điểm',
+    icon: <ScoreIcon />,
+    pattern: `nhap-diem/:rest*`
   },
   {
     segment: 'phan-cong',
@@ -92,6 +100,12 @@ export const NAVIGATION: Navigation = [
     title: 'Phòng học',
     icon: <HotelClassIcon />,
     pattern: `phong-hoc/:rest*`
+  },
+  {
+    segment: 'lop-hoc',
+    title: 'Lớp học',
+    icon: <HouseIcon />,
+    pattern: `lop-hoc/:rest*`
   },
   {
     segment: 'truong',

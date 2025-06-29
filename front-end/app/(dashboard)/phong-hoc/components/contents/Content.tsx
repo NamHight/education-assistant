@@ -120,7 +120,7 @@ const Content = ({ queryKey }: ContentProps) => {
       queryClient.invalidateQueries({ queryKey: [queryKey], exact: false });
     },
     onError: (error: any) => {
-      notification.show(error?.Message || 'Xoá bộ môn thất bại', {
+      notification.show(error?.Message || 'Xoá phòng học thất bại', {
         severity: 'error',
         autoHideDuration: 4000
       });
@@ -242,7 +242,14 @@ const Content = ({ queryKey }: ContentProps) => {
         disableColumnMenu: true,
         sortable: false,
         display: 'flex',
-        flex: 1
+        flex: 1,
+        renderCell: (params: any) => {
+          return (
+            <Link href={`${APP_ROUTE.PHONG_HOC.EDIT}/${params.row.id}`} className='text-blue-600 hover:underline'>
+              {params.value}
+            </Link>
+          );
+        }
       },
       {
         field: 'toaNha',
@@ -344,7 +351,7 @@ const Content = ({ queryKey }: ContentProps) => {
           </button>
         ))}
       </Popover>
-      <Box className='flex justify-start'>
+      <Box className='flex justify-start gap-4 border border-gray-200 rounded-lg p-4 shadow-sm'>
         <Button title={'Thêm mới'} onClick={() => router.push(APP_ROUTE.PHONG_HOC.ADD)} />
       </Box>
       <Table

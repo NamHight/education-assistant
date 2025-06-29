@@ -14,6 +14,7 @@ import { MonHocService } from '@/services/MonHocService';
 import { NganhService } from '@/services/NganhService';
 import { BoMonService } from '@/services/BoMonService';
 import { PhongHocService } from '@/services/PhongHocService';
+import { HocBaService } from '@/services/HocBaService';
 interface ContentProps {
   initialData?: any;
   anotherData?: any;
@@ -25,7 +26,7 @@ const Content: FC<ContentProps> = ({ initialData, anotherData }) => {
   const queryClient = useQueryClient();
   const mutationCreate = useMutation({
     mutationFn: async (formData: any) => {
-      const response = await PhongHocService.createPhongHoc(formData);
+      const response = await HocBaService.createHocBa(formData);
       return response;
     },
     onSuccess: (data) => {
@@ -34,10 +35,10 @@ const Content: FC<ContentProps> = ({ initialData, anotherData }) => {
         autoHideDuration: 5000
       });
       queryClient.invalidateQueries({
-        queryKey: ['phong-hoc-list'],
+        queryKey: ['hoc-ba-list'],
         exact: false
       });
-      router.push('/phong-hoc');
+      router.push('/hoc-ba');
     },
     onError: (error) => {
       notification.show('Thêm thất bại', {
@@ -52,7 +53,14 @@ const Content: FC<ContentProps> = ({ initialData, anotherData }) => {
   };
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
-      <ContentForm onSubmit={handleSubmitForm} />
+      <ContentForm
+        onSubmit={handleSubmitForm}
+        initialData={{
+          sinhViens: anotherData?.sinhViens,
+          lopHocPhans: anotherData?.lopHocPhans,
+          chiTietChuongTrinhDaoTaos: anotherData?.chiTietChuongTrinhDaoTaos
+        }}
+      />
     </motion.div>
   );
 };

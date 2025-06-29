@@ -160,16 +160,6 @@ public class ServiceAuthenticate : IServiceAuthenticate
         return tokenHandler.WriteToken(token);
     }
 
-    public async Task ForgotPasswordConfirm(ParamForgotPasswordDto request)
-    {
-        var taiKhoan =
-            await _repositoryMaster.Authenticate.GetTaiKhoanByEmailAndTokenAsync(request.Email, request.Token, false);
-        if (taiKhoan is null || taiKhoan.ResetPasswordExpires < DateTime.Now)
-            throw new TaiKhoanBadRequestException(
-                "Dữ liệu đầu vào không tìm thấy, thời gian very email đã hết 5 phút, gửi lại");
-        _loggerService.LogInfo("Confirm mật khẩu quên thành công!");
-    }
-
     public async Task ResetPassword(RequestForgotPasswordDto request)
     {
         var taiKhoan =
@@ -196,6 +186,16 @@ public class ServiceAuthenticate : IServiceAuthenticate
         if (giangVien is null) throw new TaiKhoanNotFoundException(taiKhoanId);
         var giangVienDto = _mapper.Map<ResponseGiangVienDto>(giangVien);
         return giangVienDto;
+    }
+
+    public async Task<bool> ForgotPasswordConfirm(ParamForgotPasswordDto request)
+    {
+        var taiKhoan =
+            await _repositoryMaster.Authenticate.GetTaiKhoanByEmailAndTokenAsync(request.Email, request.Token, false);
+        if (taiKhoan is null || taiKhoan.ResetPasswordExpires < DateTime.Now) return false;
+
+        _loggerService.LogInfo("Confirm mật khẩu quên thành công!");
+        return true;
     }
 
     private string GenerateRefreshToken()

@@ -97,7 +97,10 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
     queryKey: ['giangViens'],
     queryFn: async () => {
       const response = await GiangVienService.danhSachGiangVien({
-        active: true
+        active: true,
+        limit: 99999999999,
+        sortBy: 'createdAt',
+        sortByOrder: 'desc'
       });
       return response?.data;
     },

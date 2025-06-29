@@ -253,8 +253,12 @@ const Content = ({ queryKey }: ContentProps) => {
         display: 'flex',
         align: 'left',
         disableColumnMenu: true,
-        valueFormatter: (value: any) => {
-          return value ? value : '';
+        renderCell: (params: any) => {
+          return params?.value ? (
+            <Link href={`${APP_ROUTE.LOP_HOC_PHAN.EDIT(params.row?.id)}`} className='text-blue-500 hover:underline'>
+              {params.value}
+            </Link>
+          ) : null;
         }
       },
       {
@@ -355,11 +359,10 @@ const Content = ({ queryKey }: ContentProps) => {
 
   return (
     <Box className='flex flex-col gap-4'>
-      <Box className='flex justify-start gap-4'>
+      <Box className='flex justify-start gap-4 border border-gray-200 rounded-lg p-4 shadow-sm'>
         <Button title={'Thêm mới học phần'} onClick={() => handleClickOpenAdd()} />
         <Button title={'Thêm mới học kỳ phụ'} onClick={() => router.push(APP_ROUTE.LOP_HOC_PHAN.ADD_HOC_KY_PHU)} />
       </Box>
-
       <Table
         ref={refTable}
         rows={data?.data || []}

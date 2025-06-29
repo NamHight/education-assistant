@@ -7,5 +7,5 @@ export const login = z.object({
 });
 
 export const giangVien = z.object({
-  
+
 })

@@ -7,6 +7,7 @@ import Content from './components/contents/Content';
 import { GiangVienService } from '@/services/GiangVienService';
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
 import getQueryClient from '@/hooks/getQueryClient';
+import ButtonRedirect from './components/buttons/ButtonRedirect';
 
 export default async function Page() {
   const queryClient = getQueryClient();
@@ -19,13 +20,18 @@ export default async function Page() {
         limit: 10,
         sortBy: 'createdAt',
         sortByOrder: 'desc'
-      });
-      return result;
+      }).catch(() => ({ data: [] }));
+      return result?.data?.length > 0 ? result : undefined;
     }
   });
   return (
-    <HydrationBoundary state={dehydrate(queryClient)}>
-      <Content queryKey={queryKey} />
-    </HydrationBoundary>
+    <Box className='flex flex-col gap-3'>
+      <Box className={cn('flex border border-gray-200 rounded-lg p-4 shadow-sm')}>
+        <ButtonRedirect />
+      </Box>
+      <HydrationBoundary state={dehydrate(queryClient)}>
+        <Content queryKey={queryKey} />
+      </HydrationBoundary>
+    </Box>
   );
 }
