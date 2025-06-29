@@ -1,6 +1,7 @@
 using System;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using DocumentFormat.OpenXml.Office.CustomUI;
 using Education_assistant.Context;
 using Education_assistant.Extensions;
 using Education_assistant.Models;
@@ -46,7 +47,7 @@ public class RepositoryChiTietLopHocPhan : RepositoryBase<ChiTietLopHocPhan>, IR
         {
             if (int.TryParse(search, out var mssv))
             {
-                query = query.SearchBy(mssv.ToString(), item => item.SinhVien!.MSSV.ToString());
+                query = query.SearchBy(mssv.ToString(), item => item.SinhVien!.MSSV);
             }
             else
             {
@@ -67,7 +68,7 @@ public class RepositoryChiTietLopHocPhan : RepositoryBase<ChiTietLopHocPhan>, IR
                                                                 , page, limit);
     }
 
-    public async Task<IEnumerable<ChiTietLopHocPhan>> GetAllChiTietLopHocPhanByLopHocPhanIdAsync(Guid lopHocPhanId)
+    public async Task<IEnumerable<ChiTietLopHocPhan>> GetAllChiTietLopHocPhanByLopHocPhanIdAsync(Guid lopHocPhanId, string search)
     {
         var query = _context.ChiTietLopHocPhans!
                         .AsNoTracking()
@@ -77,6 +78,17 @@ public class RepositoryChiTietLopHocPhan : RepositoryBase<ChiTietLopHocPhan>, IR
                         .Include(item => item.LopHocPhan)
                         .Where(item => item.NgayNopDiem == null && item.LopHocPhanId == lopHocPhanId)
                         .AsQueryable();
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            if (int.TryParse(search, out var mssv))
+            {
+                query = query.SearchBy(mssv.ToString(), item => item.SinhVien!.MSSV);
+            }
+            else
+            {
+                query = query.SearchBy(search, item => item.SinhVien!.HoTen);
+            }
+        }
         return await query.ToListAsync();         
     }
 

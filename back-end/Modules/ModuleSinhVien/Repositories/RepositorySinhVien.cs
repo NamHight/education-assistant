@@ -39,7 +39,7 @@ public class RepositorySinhVien : RepositoryBase<SinhVien>, IRepositorySinhVien
         {
             if (int.TryParse(search, out var mssv))
             {
-                query = query.SearchBy(mssv.ToString(), item => item.MSSV.ToString());
+                query = query.SearchBy(mssv.ToString(), item => item.MSSV);
             }
             else
             {
