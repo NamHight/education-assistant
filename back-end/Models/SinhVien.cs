@@ -9,7 +9,8 @@ public class SinhVien : BaseEntity
 {
     [Column("mssv")]
     [Required(ErrorMessage = "Mã số sinh viên không được để trống")]
-    public int MSSV { get; set; }
+    [MaxLength(255, ErrorMessage = "Mã số sinh viên không được quá 255 ký tự")]
+    public string MSSV { get; set; } = string.Empty; 
 
     [Column("cccd")]
     [Required(ErrorMessage = "Căn cước công dân không được để trống")]

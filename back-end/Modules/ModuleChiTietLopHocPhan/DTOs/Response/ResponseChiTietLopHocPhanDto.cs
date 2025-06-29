@@ -31,11 +31,36 @@ public class ResponseChiTietLopHocPhanDto
     public DateTime? CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
 }
-
+public class ResponseChiTietLopHocPhanByLopHocPhanDto
+{
+    public Guid? Id { get; set; }
+    public int STT { get; set; }
+    public decimal? DiemChuyenCan { get; set; }
+    public decimal? DiemTrungBinh { get; set; }
+    public decimal? DiemThi1 { get; set; }
+    public decimal? DiemThi2 { get; set; }
+    public decimal? DiemTongKet1 { get; set; }
+    public decimal? DiemTongKet2 { get; set; }
+    public DateTime? NgayLuuDiem { get; set; }
+    public DateTime? NgayNopDiem { get; set; }
+    public int HocKy { get; set; }
+    public string? GhiChu { get; set; }
+    public int? TrangThai { get; set; }
+    public Guid? SinhVienId { get; set; }
+    public SinhVienSimpleDto? SinhVien { get; set; }
+    public Guid? MonHocId { get; set; }
+    public MonHocSimpleDto? MonHoc { get; set; }
+    public Guid? GiangVienId { get; set; }
+    public GiangVienSimpleDto? GiangVien { get; set; }
+    public Guid? LopHocPhanId { get; set; }
+    public LopHocPhanSimpleDto? LopHocPhan { get; set; }
+    public DateTime? CreatedAt { get; set; }
+    public DateTime? UpdatedAt { get; set; }
+}
 public class ResponseExportFileDiemSoDto
 { 
     public int STT { get; set; }
-    public int MaSinhVien { get; set; }
+    public string MaSinhVien { get; set; } = string.Empty;
     public string HoTenSinhVien { get; set; } = string.Empty;
     public string TenMonHoc { get; set; } = string.Empty;
     public string HoTenGiangVien { get; set; } = string.Empty;

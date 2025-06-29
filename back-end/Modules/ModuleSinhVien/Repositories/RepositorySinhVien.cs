@@ -63,7 +63,7 @@ public class RepositorySinhVien : RepositoryBase<SinhVien>, IRepositorySinhVien
         return await FindByCondition(item => item.Id == id, trackChanges).Include(item => item.LopHoc).FirstOrDefaultAsync();
     }
 
-    public async Task<SinhVien?> GetSinhVienByMssvOrCccdAsync(int mssv, string cccd)
+    public async Task<SinhVien?> GetSinhVienByMssvOrCccdAsync(string mssv, string cccd)
     {
         return await FindByCondition(item => item.MSSV == mssv || item.CCCD == cccd, false).FirstOrDefaultAsync();
     }

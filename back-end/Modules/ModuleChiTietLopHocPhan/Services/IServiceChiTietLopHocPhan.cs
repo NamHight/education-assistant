@@ -10,6 +10,7 @@ namespace Education_assistant.Modules.ModuleChiTietLopHocPhan.Services;
 public interface IServiceChiTietLopHocPhan
 {
     Task<(IEnumerable<ResponseChiTietLopHocPhanDto> data, PageInfo page)> GetAllChiTietLopHocPhanAsync(ParamChiTietLopHocPhanDto paramChiTietLopHocPhanDto);
+    Task<IEnumerable<ResponseChiTietLopHocPhanByLopHocPhanDto>> GetAllChiTietLopHocPhanByLopHocPhanIdAsync(Guid lopHocPhanId);
     Task<ResponseChiTietLopHocPhanDto> GetChiTietLopHocPhanByIdAsync(Guid id, bool trackChanges);
     Task<ResponseChiTietLopHocPhanDto> CreateAsync(RequestAddChiTietLopHocPhanDto request);
     Task ImportFileExcelAsync(RequestImportFileDiemSoDto request);
