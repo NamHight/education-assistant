@@ -15,6 +15,7 @@ public class ParamLopHocPhanDto : BaseParam
 
 public class ParamLopHocPhanSimpleDto
 {
+    public int loaiChuongTrinhDaoTao { get; set; }
     public int khoa { get; set; }
     public int hocKy { get; set; }
     public Guid giangVienId { get; set; }

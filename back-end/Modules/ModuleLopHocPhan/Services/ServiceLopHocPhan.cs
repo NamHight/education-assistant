@@ -159,7 +159,10 @@ public class ServiceLopHocPhan : IServiceLopHocPhan
 
     public async Task<IEnumerable<ResponseLopHocPhanDto>> GetAllLopHocPhanByGiangVienAsync(ParamLopHocPhanSimpleDto paramLopHocPhanSimpleDto)
     {
-        var lopHocPhans = await _repositoryMaster.LopHocPhan.GetAllLopHocPhanByGiangVienAsync(paramLopHocPhanSimpleDto.khoa, paramLopHocPhanSimpleDto.hocKy, paramLopHocPhanSimpleDto.giangVienId);
+        var lopHocPhans = await _repositoryMaster.LopHocPhan.GetAllLopHocPhanByGiangVienAsync(paramLopHocPhanSimpleDto.loaiChuongTrinhDaoTao,
+                                                                                            paramLopHocPhanSimpleDto.khoa,
+                                                                                            paramLopHocPhanSimpleDto.hocKy,
+                                                                                            paramLopHocPhanSimpleDto.giangVienId);
         var lopHocPhanDtos = _mapper.Map<IEnumerable<ResponseLopHocPhanDto>>(lopHocPhans);
         return lopHocPhanDtos;
     }

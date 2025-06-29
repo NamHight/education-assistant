@@ -119,20 +119,19 @@ public class ServiceHocBa : IServiceHocBa
             {
                 throw new HocBaBadRequestException($"Id: {id} và Id: {request.Id} của khoa không giống nhau!");
             }
-            var hocBa = await _repositoryMaster.HocBa.GetHocBaByIdAsync(id, false);
+            var hocBa = await _repositoryMaster.HocBa.GetHocBaByIdAsync(id, true);
             if (hocBa is null)
             {
                 throw new HocBaNotFoundException(id);
             }
-            hocBa.LanHoc = hocBa.LanHoc + 1;
-            var diemso = _diemSoHelper.ComparePoint(request.DiemTongKetLopHocPhan, hocBa.DiemTongKet);
-            hocBa.DiemTongKet = diemso;
-            hocBa.KetQuaHocBaEnum = diemso >= 5 ? KetQuaHocBaEnum.DAT : KetQuaHocBaEnum.KHONG_DAT;
-            hocBa.UpdatedAt = DateTime.Now;
-
             await _repositoryMaster.ExecuteInTransactionAsync(async () =>
             {
-                _repositoryMaster.HocBa.UpdateHocBa(hocBa);
+                hocBa.DiemTongKet = request.DiemTongKet;
+                hocBa.KetQua = request.DiemTongKet >= 5 ? (int)KetQuaHocBaEnum.DAT : (int)KetQuaHocBaEnum.KHONG_DAT;
+                hocBa.SinhVienId = request.SinhVienId;
+                hocBa.LopHocPhanId = request.LopHocPhanId;
+                hocBa.ChiTietChuongTrinhDaoTaoId = request.ChiTietChuongTrinhDaoTaoId;
+                hocBa.UpdatedAt = DateTime.Now;
                 await Task.CompletedTask;
             });
             _loggerService.LogInfo("Cập nhật học bạ thành công.");
@@ -176,7 +175,6 @@ public class ServiceHocBa : IServiceHocBa
                 Id = exsitingHocBa.Id,
                 DiemTongKet = diemSoTong,
                 MoTa = exsitingHocBa.MoTa,
-                LanHoc = exsitingHocBa.LanHoc + 1,
                 KetQua = diemSoTong >= 5 ? (int)KetQuaHocBaEnum.DAT : (int)KetQuaHocBaEnum.KHONG_DAT,
                 SinhVienId = diemSo.SinhVienId,
                 LopHocPhanId = request.LopHocPhanId,
