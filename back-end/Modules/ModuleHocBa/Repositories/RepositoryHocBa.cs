@@ -51,7 +51,6 @@ public class RepositoryHocBa : RepositoryBase<HocBa>, IRepositoryHocBa
                                                     {
                                                         ["createdat"] = item => item.CreatedAt,
                                                         ["updatedat"] = item => item.UpdatedAt!,
-                                                        ["lanhoc"] = item => item.LanHoc,
                                                         ["ketqua"] = item => item.KetQua!,
                                                     }), page, limit);
     }

@@ -75,6 +75,7 @@ public class MapperProfile : Profile
         CreateMap<LopHocPhan, ResponseLopHocPhanDto>();
 
 
+
         //map giangvien
         CreateMap<RequestAddGiangVienDto, GiangVien>();
         CreateMap<RequestUpdateGiangVienDto, GiangVien>();
@@ -85,6 +86,7 @@ public class MapperProfile : Profile
         CreateMap<RequestAddChiTietLopHocPhanDto, ChiTietLopHocPhan>();
         CreateMap<RequestUpdateChiTietLopHocPhanDto, ChiTietLopHocPhan>();
         CreateMap<ChiTietLopHocPhan, ResponseChiTietLopHocPhanDto>();
+        CreateMap<ChiTietLopHocPhan, ResponseChiTietLopHocPhanByLopHocPhanDto>();
 
         //map sinh vien
         CreateMap<RequestAddSinhVienDto, SinhVien>();

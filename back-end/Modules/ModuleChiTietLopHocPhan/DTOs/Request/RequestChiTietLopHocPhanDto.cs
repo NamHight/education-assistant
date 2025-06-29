@@ -62,7 +62,7 @@ public class RequestImportFileDiemSoDto
 public class ImportDiemSoDto
 {
     public int STT { get; set; }
-    public int MaSinhVien { get; set; }
+    public string MaSinhVien { get; set; } = string.Empty;
     public string HoTenSinhVien { get; set; } = string.Empty;
     public string TenMonHoc { get; set; } = string.Empty;
     public string HoTenGiangVien { get; set; } = string.Empty;

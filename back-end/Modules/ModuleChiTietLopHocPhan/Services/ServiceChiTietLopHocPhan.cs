@@ -157,6 +157,18 @@ public class ServiceChiTietLopHocPhan : IServiceChiTietLopHocPhan
         return (data: diemSoDto, page: diemSos!.PageInfo);
     }
 
+    public async Task<IEnumerable<ResponseChiTietLopHocPhanByLopHocPhanDto>> GetAllChiTietLopHocPhanByLopHocPhanIdAsync(Guid lopHocPhanId)
+    {
+        var diemSos = await _repositoryMaster.ChiTietLopHocPhan.GetAllChiTietLopHocPhanByLopHocPhanIdAsync(lopHocPhanId);
+        var diemSoDtos = _mapper.Map<IEnumerable<ResponseChiTietLopHocPhanByLopHocPhanDto>>(diemSos)
+                .Select((dto, index) =>
+                {
+                    dto.STT = index + 1;
+                    return dto;
+                });
+        return diemSoDtos;
+    }
+
     public async Task<ResponseChiTietLopHocPhanDto> GetChiTietLopHocPhanByIdAsync(Guid id, bool trackChanges)
     {
         var diemSo = await _repositoryMaster.ChiTietLopHocPhan.GetChiTietLopHocPhanByIdAsync(id, false);
@@ -189,11 +201,11 @@ public class ServiceChiTietLopHocPhan : IServiceChiTietLopHocPhan
                 var rows = worksheet.RowsUsed().Skip(1);
 
                 foreach (var row in rows)
-                {
+                { 
                     var dto = new ImportDiemSoDto
                     {
                         STT = row.Cell(1).GetValue<int>(),
-                        MaSinhVien = row.Cell(2).GetValue<int>(),
+                        MaSinhVien = row.Cell(2).GetString()?.Trim()!,
                         HoTenSinhVien = row.Cell(3).GetString()?.Trim()!,
                         TenMonHoc = row.Cell(4).GetString()?.Trim()!,
                         HoTenGiangVien = row.Cell(5).GetString()?.Trim()!,

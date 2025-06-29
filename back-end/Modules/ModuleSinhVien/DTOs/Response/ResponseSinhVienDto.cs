@@ -5,7 +5,7 @@ namespace Education_assistant.Modules.ModuleSinhVien.DTOs.Response;
 public class ResponseSinhVienDto
 {
     public Guid Id { get; set; }
-    public int MSSV { get; set; }
+    public string MSSV { get; set; } = string.Empty;
     public string CCCD { get; set; } = string.Empty;
     public string? AnhDaiDien { get; set; } = string.Empty;
     public string HoTen { get; set; } = string.Empty;
@@ -28,7 +28,7 @@ public class ResponseSinhVienDto
 public class SinhVienSimpleDto
 {
     public Guid Id { get; set; }
-    public int MSSV { get; set; }
+    public string MSSV { get; set; } = string.Empty;
     public string HoTen { get; set; } = string.Empty;
     public DateTime? NgaySinh { get; set; }
 }

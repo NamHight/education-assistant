@@ -6,7 +6,7 @@ namespace Education_assistant.Modules.ModuleSinhVien.DTOs.Request;
 public class RequestAddSinhVienDto
 {
     [Required(ErrorMessage = "Mã số sinh viên không được để trống")]
-    public int MSSV { get; set; }
+    public string MSSV { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "Căn cước công dân không được để trống")]
     [MaxLength(255, ErrorMessage = "Căn cước công dân không được quá 255 ký tự")]
@@ -49,7 +49,7 @@ public class RequestUpdateSinhVienDto
     [Required(ErrorMessage = "Id sinh viên không được để trống")]
     public Guid Id { get; set; }
     [Required(ErrorMessage = "Mã số sinh viên không được để trống")]
-    public int MSSV { get; set; }
+    public string MSSV { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "Căn cước công dân không được để trống")]
     [MaxLength(255, ErrorMessage = "Căn cước công dân không được quá 255 ký tự")]
