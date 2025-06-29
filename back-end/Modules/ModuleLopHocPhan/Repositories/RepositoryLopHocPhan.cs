@@ -198,7 +198,7 @@ public class RepositoryLopHocPhan : RepositoryBase<LopHocPhan>, IRepositoryLopHo
             pagedResult.PageInfo.PageSize);
     }
 
-    public async Task<IEnumerable<LopHocPhan>> GetAllLopHocPhanByGiangVienAsync(int khoa, int hocKy, Guid giangVienId)
+    public async Task<IEnumerable<LopHocPhan>> GetAllLopHocPhanByGiangVienAsync(int loaiChuongTrinhDaoTao, int khoa, int hocKy, Guid giangVienId)
     {
         var giangVienKhoaId = await _context.GiangViens!
         .AsNoTracking()
@@ -212,6 +212,7 @@ public class RepositoryLopHocPhan : RepositoryBase<LopHocPhan>, IRepositoryLopHo
                         .ThenInclude(mh => mh!.DanhSachChiTietChuongTrinhDaoTao!
                             .Where(ct => ct.ChuongTrinhDaoTao != null
                                 && ct.ChuongTrinhDaoTao.Khoa == khoa
+                                && ct.ChuongTrinhDaoTao.LoaiChuonTrinhDaoTao == loaiChuongTrinhDaoTao
                                 && ct.HocKy == hocKy
                                 && ct.ChuongTrinhDaoTao.Nganh != null
                                 && ct.ChuongTrinhDaoTao.Nganh.KhoaId == giangVienKhoaId))
@@ -227,6 +228,7 @@ public class RepositoryLopHocPhan : RepositoryBase<LopHocPhan>, IRepositoryLopHo
                         && lhp.MonHoc.DanhSachChiTietChuongTrinhDaoTao!
                             .Any(ct => ct.ChuongTrinhDaoTao != null
                                 && ct.ChuongTrinhDaoTao.Khoa == khoa
+                                && ct.ChuongTrinhDaoTao.LoaiChuonTrinhDaoTao == loaiChuongTrinhDaoTao
                                 && ct.HocKy == hocKy
                                 && ct.ChuongTrinhDaoTao.Nganh != null
                                 && ct.ChuongTrinhDaoTao.Nganh.KhoaId == giangVienKhoaId
