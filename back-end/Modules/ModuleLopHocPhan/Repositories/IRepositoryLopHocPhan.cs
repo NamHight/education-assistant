@@ -5,10 +5,8 @@ namespace Education_assistant.Modules.ModuleLopHocPhan.Repositories;
 
 public interface IRepositoryLopHocPhan
 {
-    Task<PagedListAsync<LopHocPhan>?> GetAllLopHocPhanAsync(int page, int limit, string? search, string? sortBy,
-        string? sortByOder, int? khoa, int? loaiChuongTrinh, Guid? chuongTrinhId, int? hocKy, int? trangThai,
-        int? loaiLopHoc, Guid? giangVienId);
-
+    Task<PagedListAsync<LopHocPhan>?> GetAllLopHocPhanAsync(int page, int limit, string? search, string? sortBy, string? sortByOder, int? khoa, int? loaiChuongTrinh, Guid? chuongTrinhId, int? hocKy, int? trangThai, int? loaiLopHoc);
+    Task<IEnumerable<LopHocPhan>> GetAllLopHocPhanByGiangVienAsync(int khoa, int hocKy, Guid giangVienId);
     Task<LopHocPhan?> GetLopHocPhanByIdAsync(Guid id, bool trackChanges);
 
     Task<int> CreateSinhVienLopHocPhanHocBa(Guid maLop, Guid maLhp, Guid? maGiangVien, Guid maMonHoc, Guid maCtctdt,

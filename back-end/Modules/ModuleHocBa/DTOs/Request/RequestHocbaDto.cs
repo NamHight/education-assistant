@@ -9,7 +9,6 @@ public class RequestAddHocbaDto
     [Required(ErrorMessage = "Điểm tổng kết không được để trống")]
     public decimal DiemTongKet { get; set; } = 0;
     public string? MoTa { get; set; }
-    public int LanHoc { get; set; } = 0;
     [Required(ErrorMessage = "Kết quả học tập không được để trống")]
     public int? KetQua { get; set; } = 2;
     [Required(ErrorMessage = "Id sinh viên không được để trống")]

@@ -2,6 +2,7 @@ using System.Linq.Expressions;
 using Education_assistant.Context;
 using Education_assistant.Extensions;
 using Education_assistant.Models;
+using Education_assistant.Models.Enums;
 using Education_assistant.Repositories;
 using Education_assistant.Repositories.Paginations;
 using Microsoft.EntityFrameworkCore;
@@ -231,5 +232,78 @@ public class RepositoryLopHocPhan : RepositoryBase<LopHocPhan>, IRepositoryLopHo
             pagedResult.PageInfo.TotalCount,
             pagedResult.PageInfo.CurrentPage,
             pagedResult.PageInfo.PageSize);
+    }
+
+    public async Task<IEnumerable<LopHocPhan>> GetAllLopHocPhanByGiangVienAsync(int khoa, int hocKy, Guid giangVienId)
+    {
+        var giangVienKhoaId = await _context.GiangViens!
+        .AsNoTracking()
+        .Where(gv => gv.Id == giangVienId)
+        .Select(gv => gv.KhoaId)
+        .FirstOrDefaultAsync();
+
+        var query = _context.LopHocPhans!
+                    .AsNoTracking()
+                    .Include(lhp => lhp.MonHoc)
+                        .ThenInclude(mh => mh!.DanhSachChiTietChuongTrinhDaoTao!
+                            .Where(ct => ct.ChuongTrinhDaoTao != null
+                                && ct.ChuongTrinhDaoTao.Khoa == khoa
+                                && ct.HocKy == hocKy
+                                && ct.ChuongTrinhDaoTao.Nganh != null
+                                && ct.ChuongTrinhDaoTao.Nganh.KhoaId == giangVienKhoaId))
+                        .ThenInclude(ct => ct.ChuongTrinhDaoTao)
+                            .ThenInclude(ctdt => ctdt!.Nganh)
+                                .ThenInclude(n => n!.Khoa)
+                    .Include(lhp => lhp.GiangVien)
+                    .Where(lhp => lhp.GiangVienId == giangVienId
+                        && lhp.TrangThai == (int)TrangThaiLopHocPhanEnum.DANG_HOAT_DONG
+                        && lhp.GiangVien != null
+                        && lhp.GiangVien.Khoa != null
+                        && lhp.MonHoc != null
+                        && lhp.MonHoc.DanhSachChiTietChuongTrinhDaoTao!
+                            .Any(ct => ct.ChuongTrinhDaoTao != null
+                                && ct.ChuongTrinhDaoTao.Khoa == khoa
+                                && ct.HocKy == hocKy
+                                && ct.ChuongTrinhDaoTao.Nganh != null
+                                && ct.ChuongTrinhDaoTao.Nganh.KhoaId == giangVienKhoaId
+                                && _context.LopHocs!.Any(lh => lh.NamHoc == khoa && lhp.MaHocPhan.StartsWith(lh.MaLopHoc))));
+
+        return await query.ToListAsync();
+    }
+
+    public async Task<LopHocPhan?> GetLopHocPhanByIdAsync(Guid id, bool trackChanges)
+    {
+        return await FindByCondition(item => item.Id == id, trackChanges).Include(lhp => lhp.MonHoc)
+            .Include(lhp => lhp.GiangVien).FirstOrDefaultAsync();
+    }
+
+    public async Task<bool> KiemTraLopHocPhanDaTonTaiAsync(Guid nganhId, int hocKy, int khoa, Guid monHocId)
+    {
+        var lopHocs = await _context.LopHocs!
+                .AsNoTracking()
+                .Where(lh => lh.NganhId == nganhId && lh.NamHoc == khoa)
+                .ToListAsync();
+
+        if (!lopHocs.Any())
+        {
+            return false;
+        }
+        var maLopHocs = lopHocs.Select(lh => lh.MaLopHoc).ToList();
+        var chiTietLopHocPhans = await _context.ChiTietLopHocPhans!
+            .AsNoTracking()
+            .Include(ct => ct.LopHocPhan)
+            .Where(ct =>
+                ct.HocKy == hocKy &&
+                ct.LopHocPhan != null &&
+                ct.LopHocPhan.MonHocId == monHocId)
+            .ToListAsync();
+
+        return chiTietLopHocPhans
+            .Any(ct => maLopHocs.Any(maLop => ct.LopHocPhan!.MaHocPhan.StartsWith(maLop)));
+    }
+
+    public void UpdateLopHocPhan(LopHocPhan lopHocPhan)
+    {
+        Update(lopHocPhan);
     }
 }
