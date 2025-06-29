@@ -157,9 +157,9 @@ public class ServiceChiTietLopHocPhan : IServiceChiTietLopHocPhan
         return (data: diemSoDto, page: diemSos!.PageInfo);
     }
 
-    public async Task<IEnumerable<ResponseChiTietLopHocPhanByLopHocPhanDto>> GetAllChiTietLopHocPhanByLopHocPhanIdAsync(Guid lopHocPhanId)
+    public async Task<IEnumerable<ResponseChiTietLopHocPhanByLopHocPhanDto>> GetAllChiTietLopHocPhanByLopHocPhanIdAsync(Guid lopHocPhanId, ParamChiTietLopHocPhanSimpleDto ParamChiTietLopHocPhanSimpleDto)
     {
-        var diemSos = await _repositoryMaster.ChiTietLopHocPhan.GetAllChiTietLopHocPhanByLopHocPhanIdAsync(lopHocPhanId);
+        var diemSos = await _repositoryMaster.ChiTietLopHocPhan.GetAllChiTietLopHocPhanByLopHocPhanIdAsync(lopHocPhanId, ParamChiTietLopHocPhanSimpleDto.search);
         var diemSoDtos = _mapper.Map<IEnumerable<ResponseChiTietLopHocPhanByLopHocPhanDto>>(diemSos)
                 .Select((dto, index) =>
                 {

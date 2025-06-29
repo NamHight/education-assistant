@@ -38,7 +38,7 @@ public class RepositoryHocBa : RepositoryBase<HocBa>, IRepositoryHocBa
         {
             if (int.TryParse(search, out var mssv))
             {
-                query = query.SearchBy(mssv.ToString(), item => item.SinhVien!.MSSV.ToString());
+                query = query.SearchBy(mssv.ToString(), item => item.SinhVien!.MSSV);
             }
             else
             {

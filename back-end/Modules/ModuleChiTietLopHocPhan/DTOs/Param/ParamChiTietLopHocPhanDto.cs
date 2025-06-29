@@ -11,5 +11,6 @@ public class ParamChiTietLopHocPhanDto : BaseParam
 
 public class ParamChiTietLopHocPhanSimpleDto
 {
-    public Guid lopHocPhanId { get; set; }
+    public string search { get; set; } = string.Empty;
 }
+

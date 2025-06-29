@@ -29,9 +29,9 @@ namespace Education_assistant.Modules.ModuleChiTietLopHocPhan
             return Ok(result.data);
         }
         [HttpGet("{lopHocPhanId}/by-lop-hoc-phan")]
-        public async Task<ActionResult> GetAllChiTietLopHocPhanByLopHocPhanAsync(Guid lopHocPhanId)
+        public async Task<ActionResult> GetAllChiTietLopHocPhanByLopHocPhanAsync(Guid lopHocPhanId, [FromQuery] ParamChiTietLopHocPhanSimpleDto ParamChiTietLopHocPhanSimpleDto)
         {
-            var result = await _serviceMaster.ChiTietLopHocPhan.GetAllChiTietLopHocPhanByLopHocPhanIdAsync(lopHocPhanId);
+            var result = await _serviceMaster.ChiTietLopHocPhan.GetAllChiTietLopHocPhanByLopHocPhanIdAsync(lopHocPhanId, ParamChiTietLopHocPhanSimpleDto);
             return Ok(result);
         }
         [HttpGet("{id}")]
@@ -90,7 +90,7 @@ namespace Education_assistant.Modules.ModuleChiTietLopHocPhan
             try
             {
                 var fileContents = await _serviceMaster.ChiTietLopHocPhan.ExportFileExcelAsync(lopHocPhanid);
-                var fileName = $"DanhSachDiemSo_{DateTime.Now:yyyyMMddHHmmss}.xlsx";
+                var fileName = $"DanhSachDiemSo_{DateTime.Now:ddMMyyyy}.xlsx";
                 return File(fileContents, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
             }
             catch (Exception ex)
