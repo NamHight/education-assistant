@@ -28,6 +28,12 @@ namespace Education_assistant.Modules.ModuleLopHocPhan
             Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(result.page));
             return Ok(result.data);
         }
+        [HttpGet("by-giang-vien")]
+        public async Task<ActionResult> GetAllLopHocPhanByGiangVienAsync([FromQuery] ParamLopHocPhanSimpleDto paramLopHocPhanSimpleDto)
+        {
+            var result = await _serviceMaster.LopHocPhan.GetAllLopHocPhanByGiangVienAsync(paramLopHocPhanSimpleDto);
+            return Ok(result);
+        }
         [HttpGet("{id}")]
         public async Task<ActionResult> GetLopHocPhanByIdAsync(Guid id)
         {
