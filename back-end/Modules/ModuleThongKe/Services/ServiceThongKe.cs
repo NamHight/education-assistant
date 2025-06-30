@@ -47,4 +47,9 @@ public class ServiceThongKe : IServiceThongKe
         var sinhVienDtos = _mapper.Map<List<ResponseTopStudentRawDto>>(sinhViens);
         return sinhVienDtos;
     }
+
+    public async Task<Dictionary<string, double>> ThongKetTinhTrangHocTap()
+    {
+        return await _repositoryMaster.ThongKe.ThongKetTinhTrangHocTap();
+    }
 }

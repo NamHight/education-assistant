@@ -79,24 +79,13 @@ public class ServiceSinhVien : IServiceSinhVien
         _loggerService.LogInfo("Xóa sinh viên thành công.");
     }
 
-    public async Task<(ResponseSinhVienSummaryDto data, PageInfo page)> GetAllSinhVienAsync(
+    public async Task<(IEnumerable<ResponseSinhVienTinhTrangHocTapDto> data, PageInfo page)> GetAllSinhVienAsync(
         ParamSinhVienDto paramSinhVienDto)
     {
         var sinhViens = await _repositoryMaster.SinhVien.GetAllSinhVienAsync(paramSinhVienDto.page,
             paramSinhVienDto.limit, paramSinhVienDto.search, paramSinhVienDto.sortBy, paramSinhVienDto.sortByOrder,
             paramSinhVienDto.lopId, paramSinhVienDto.tinhTrangHocTap);
-
-        var tongSo = await _repositoryMaster.SinhVien.GetAllTongSoAsync(paramSinhVienDto.lopId);
-        var soXuatSac = await _repositoryMaster.SinhVien.GetAllSoXuatSacAsync(paramSinhVienDto.lopId);
-        var soKha = await _repositoryMaster.SinhVien.GetAllSoKhaAsync(paramSinhVienDto.lopId);
-        var SoCanCaiThien = await _repositoryMaster.SinhVien.GetAllSoCanCaiThienAsync(paramSinhVienDto.lopId);
-
-        var soDangHoc = await _repositoryMaster.SinhVien.GetAllSoDangHocAsync(paramSinhVienDto.lopId);
-        var soDaTotNghiep = await _repositoryMaster.SinhVien.GetAllSoDaTotNghiepAsync(paramSinhVienDto.lopId);
-        var SoTamNghi = await _repositoryMaster.SinhVien.GetAllSoTamNghiAsync(paramSinhVienDto.lopId);
-
         
-
         var sinhVienDtos = _mapper.Map<IEnumerable<ResponseSinhVienTinhTrangHocTapDto>>(sinhViens);
         foreach (var svDto in sinhVienDtos)
         {
@@ -107,6 +96,19 @@ public class ServiceSinhVien : IServiceSinhVien
             svDto.DiemDanh = diemDanh;
         }
 
+        return (data: sinhVienDtos, page: sinhViens!.PageInfo);
+    }
+
+    public async Task<ResponseSinhVienSummaryDto> GetALlSummaryAsync(Guid lopHocId)
+    {
+        var tongSo = await _repositoryMaster.SinhVien.GetAllTongSoAsync(lopHocId);
+        var soXuatSac = await _repositoryMaster.SinhVien.GetAllSoXuatSacAsync(lopHocId);
+        var soKha = await _repositoryMaster.SinhVien.GetAllSoKhaAsync(lopHocId);
+        var SoCanCaiThien = await _repositoryMaster.SinhVien.GetAllSoCanCaiThienAsync(lopHocId);
+
+        var soDangHoc = await _repositoryMaster.SinhVien.GetAllSoDangHocAsync(lopHocId);
+        var soDaTotNghiep = await _repositoryMaster.SinhVien.GetAllSoDaTotNghiepAsync(lopHocId);
+        var SoTamNghi = await _repositoryMaster.SinhVien.GetAllSoTamNghiAsync(lopHocId);
         var dataSinhVien = new ResponseSinhVienSummaryDto
         {
             TongSoSinhVien = tongSo,
@@ -117,13 +119,10 @@ public class ServiceSinhVien : IServiceSinhVien
             SoDangHoc = soDangHoc,
             SoDaTotNghiep = soDaTotNghiep,
             SoTamNghi = SoTamNghi,
-
-            DanhSachSinhVien = sinhVienDtos,
         };
 
-        return (data: dataSinhVien, page: sinhViens!.PageInfo);
+        return dataSinhVien;
     }
-
 
     public async Task<ResponseSinhVienDto> GetSinhVienByIdAsync(Guid id, bool trackChanges)
     {

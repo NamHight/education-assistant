@@ -29,6 +29,12 @@ namespace Education_assistant.Modules.ModuleSinhVien
             Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(result.page));
             return Ok(result.data);
         }
+        [HttpGet("all-tinh-trang-hoc-tap")]
+        public async Task<ActionResult> GetAllSummaryAsync([FromQuery] Guid lopId)
+        {
+            var result = await _serviceMaster.SinhVien.GetALlSummaryAsync(lopId);
+            return Ok(result);
+        }
         [HttpGet("{id}")]
         public async Task<ActionResult> GetSinhVienByIdAsync(Guid id)
         {

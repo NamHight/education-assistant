@@ -89,4 +89,50 @@ public class RepositoryThongKe : IRepositoryThongKe
 
         return result;
     }
+
+    public async Task<Dictionary<string, double>> ThongKetTinhTrangHocTap()
+    {
+        var result = new Dictionary<string, double>();
+        var labelMap = new Dictionary<int, string>
+        {
+            { 1, "Yếu"},
+            { 2, "Trung bình"},
+            { 3, "Khá"},
+            { 4, "Giỏi"},
+            { 5, "Xuất sắc"},
+            { 6, "Đình chỉ"},
+        };
+
+        var temp = new Dictionary<string, int>();
+        int tong = 0;
+
+
+        using var conn = _context.Database.GetDbConnection();
+
+        await conn.OpenAsync();
+        using var cmd = conn.CreateCommand();
+
+        cmd.CommandText = "CALL ThongKe_TinhTrangHocTap";
+        cmd.CommandType = CommandType.Text;
+
+        using var reader = await cmd.ExecuteReaderAsync();
+        while (await reader.ReadAsync())
+        {
+            int maTinhTrang = reader.GetInt32(0);
+            int soLuong = reader.GetInt32(1);
+
+            tong += soLuong;
+
+            string label = labelMap[maTinhTrang];
+            temp[label] = soLuong;
+        }
+
+        foreach (var item in temp)
+        {
+            double phanTram = Math.Round((item.Value * 100.0) / tong, 1);
+            result[item.Key] = phanTram;
+        }
+
+        return result;
+    }
 }
