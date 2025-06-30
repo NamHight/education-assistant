@@ -16,6 +16,7 @@ public interface IServiceSinhVien
     Task<ResponseSinhVienDto> CreateAsync(RequestAddSinhVienDto request);
     Task<ResponseSinhVienDto> ReStoreSinhVienAsync(Guid id);
     Task ImportFileExcelAsync(RequestImportFileSinhVienDto request);
+    Task<byte[]> ExportFileExcelAsync(Guid lopId);
     Task UpdateAsync(Guid id, RequestUpdateSinhVienDto request);
     Task DeleteAsync(Guid id);
 }

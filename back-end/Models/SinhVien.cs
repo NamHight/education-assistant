@@ -74,8 +74,8 @@ public class SinhVien : BaseEntity
         set => TinhTrangHocTap = value.HasValue ? (int)value.Value : null;
     }
 
-    [Column("ngay_tot_nghiep")] public DateTime NgayTotNghiep { get; set; }
-    [Column("ngay_nhap_hoc")] public DateTime NgayNhapHoc { get; set; }
+    [Column("ngay_tot_nghiep")] public DateTime? NgayTotNghiep { get; set; }
+    [Column("ngay_nhap_hoc")] public DateTime? NgayNhapHoc { get; set; }
 
     [Column("lop_hoc_id")] public Guid? LopHocId { get; set; }
     [ForeignKey("LopHocId")] public virtual LopHoc? LopHoc { get; set; }
