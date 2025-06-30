@@ -16,7 +16,6 @@ using Education_assistant.Modules.ModuleNganh.Repositories;
 using Education_assistant.Modules.ModulePhongHoc.Repositories;
 using Education_assistant.Modules.ModuleSinhVien.Repositories;
 using Education_assistant.Modules.ModuleThongKe.Repositories;
-using Education_assistant.Modules.ModuleTruong.Repositories;
 using Education_assistant.Modules.ModuleTuan.Repositories;
 
 namespace Education_assistant.Repositories.RepositoryMaster;
@@ -35,7 +34,6 @@ public interface IRepositoryMaster : IDisposable
     IRepositoryMonHoc MonHoc { get; }
     IRepositorySinhVien SinhVien { get; }
     IRepositoryTaiKhoan TaiKhoan { get; }
-    IRepositoryTruong Truong { get; }
     IRepositoryBoMon BoMon { get; }
     IRepositoryNganh Nganh { get; }
     IRepositoryPhongHoc PhongHoc { get; }

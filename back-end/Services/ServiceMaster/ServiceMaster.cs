@@ -17,10 +17,9 @@ using Education_assistant.Modules.ModuleNganh.Services;
 using Education_assistant.Modules.ModulePhongHoc.Services;
 using Education_assistant.Modules.ModuleSinhVien.Services;
 using Education_assistant.Modules.ModuleThongKe.Services;
-using Education_assistant.Modules.ModuleTruong.Services;
 using Education_assistant.Modules.ModuleTuan.Services;
 using Education_assistant.Repositories.RepositoryMaster;
-using Education_assistant.Services.ServiceFile;
+using Education_assistant.Services.ServiceFile;  
 
 namespace Education_assistant.Services.ServiceMaster;
 
@@ -41,7 +40,6 @@ public class ServiceMaster : IServiceMaster
     private readonly Lazy<IServiceNganh> _nganh;
     private readonly Lazy<IServicePhongHoc> _phongHoc;
     private readonly Lazy<IServiceSinhVien> _sinhVien;
-    private readonly Lazy<IServiceTruong> _truong;
     private readonly Lazy<IServiceTuan> _tuan;
     private readonly Lazy<IServiceTaiKhoan> _taiKhoan;
     private readonly Lazy<IServiceThongKe> _thongKe;
@@ -52,7 +50,6 @@ public class ServiceMaster : IServiceMaster
     {
         _giangVien = new Lazy<IServiceGiangVien>(() =>
             new ServiceGiangVien(repositoryMaster, loggerService, mapper, password, httpContextAccessor, serviceFIle));
-        _truong = new Lazy<IServiceTruong>(() => new ServiceTruong(repositoryMaster, loggerService, mapper, serviceFIle, httpContextAccessor));
         _khoa = new Lazy<IServiceKhoa>(() => new ServiceKhoa(repositoryMaster, loggerService, mapper));
         _monHoc = new Lazy<IServiceMonHoc>(() => new ServiceMonHoc(repositoryMaster, loggerService, mapper));
         _chuongTrinhDaoTao =
@@ -82,7 +79,6 @@ public class ServiceMaster : IServiceMaster
 
     public IServiceAuthenticate Authenticate => _authenticate.Value;
     public IServiceGiangVien GiangVien => _giangVien.Value;
-    public IServiceTruong Truong => _truong.Value;
     public IServiceKhoa Khoa => _khoa.Value;
     public IServiceMonHoc MonHoc => _monHoc.Value;
     public IServiceChuongTrinhDaoTao ChuongTrinhDaoTao => _chuongTrinhDaoTao.Value;

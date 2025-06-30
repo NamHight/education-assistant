@@ -70,3 +70,18 @@ public class ResponseSinhVienTinhTrangHocTapDto
     public DateTime? UpdatedAt { get; set; }
     public DateTime? DeletedAt { get; set; }
 }
+public class ResponseExportFileSinhVienDto
+{
+    public int STT { get; set; }
+    public string MSSV { get; set; } = string.Empty;
+    public string CCCD { get; set; } = string.Empty;
+    public string HoTen { get; set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
+    public string SoDienThoai { get; set; } = string.Empty;
+    public DateTime? NgaySinh { get; set; }
+    public string GioiTinh { get; set; } = string.Empty;
+    public string DiaChi { get; set; } = string.Empty;
+    public DateTime? NgayNhapHoc { get; set; }
+    public DateTime? NgayTotNghiep { get; set; }
+    public string TenLop { get; set; } = string.Empty;
+}

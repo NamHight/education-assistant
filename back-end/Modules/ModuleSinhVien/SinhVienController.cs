@@ -67,12 +67,27 @@ namespace Education_assistant.Modules.ModuleSinhVien
             await _serviceMaster.SinhVien.DeleteAsync(id);
             return NoContent();
         }
+        [HttpGet("{lopId}/export")]
+        public async Task<ActionResult> ExportAsync(Guid lopId)
+        {
+            try
+            {
+                var fileContents = await _serviceMaster.SinhVien.ExportFileExcelAsync(lopId);
+                var fileName = $"DanhSachSinhVien_{DateTime.Now:ddMMyyyy}.xlsx";
+                return File(fileContents, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+            }
+            catch (Exception ex)
+            {
+
+                return StatusCode(500, new { Message = $"Lỗi khi xuất file: {ex.Message}" });
+            }
+        }
         [HttpPost("import")]
         [ServiceFilter(typeof(ValidationFilter))]
         public async Task<ActionResult> ImportAsync([FromForm] RequestImportFileSinhVienDto model)
         {
             await _serviceMaster.SinhVien.ImportFileExcelAsync(model);
-            return Ok("Import file cập nhật điểm số thành công.");
+            return Ok("Import file thêm sinh viên thành công.");
         }
     }
 }

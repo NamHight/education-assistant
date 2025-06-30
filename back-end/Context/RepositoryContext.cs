@@ -21,7 +21,6 @@ public class RepositoryContext : DbContext
     public DbSet<LopHocPhan>? LopHocPhans { get; set; }
     public DbSet<MonHoc>? MonHocs { get; set; }
     public DbSet<SinhVien>? SinhViens { get; set; }
-    public DbSet<Truong>? Truongs { get; set; }
 
     public DbSet<HocBa>? HocBas { get; set; }
     public DbSet<LichBieu>? LichBieus { get; set; }
@@ -46,7 +45,6 @@ public class RepositoryContext : DbContext
         modelBuilder.Entity<LopHocPhan>().HasQueryFilter(e => e.DeletedAt == null);
         modelBuilder.Entity<MonHoc>().HasQueryFilter(e => e.DeletedAt == null);
         modelBuilder.Entity<SinhVien>().HasQueryFilter(e => e.DeletedAt == null);
-        modelBuilder.Entity<Truong>().HasQueryFilter(e => e.DeletedAt == null);
 
         modelBuilder.Entity<ChiTietChuongTrinhDaoTao>().HasQueryFilter(e => e.DeletedAt == null);
         modelBuilder.Entity<ChiTietLopHocPhan>().HasQueryFilter(e => e.DeletedAt == null);
