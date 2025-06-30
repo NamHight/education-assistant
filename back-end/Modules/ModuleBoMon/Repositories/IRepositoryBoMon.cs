@@ -11,4 +11,6 @@ public interface IRepositoryBoMon
     Task CreateAsync(BoMon boMon);
     void UpdateBoMon(BoMon boMon);
     void DeleteBoMon(BoMon boMon);
+    Task<List<BoMon>> GetBoMonByKhoaIdAsync(Guid khoaId, bool trackChanges);
+
 }

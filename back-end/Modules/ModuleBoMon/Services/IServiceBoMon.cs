@@ -14,4 +14,6 @@ public interface IServiceBoMon
     Task<ResponseBoMonDto> CreateAsync(RequestAddBoMonDto request);
     Task UpdateAsync(Guid id, RequestUpdateBoMonDto request);
     Task DeleteAsync(Guid id);
+    Task<List<ResponseBoMonDto>> GetBoMonByKhoaIdAsync(Guid khoaId, bool trackChanges);
+
 }
