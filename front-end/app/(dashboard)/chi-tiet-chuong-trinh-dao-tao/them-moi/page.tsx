@@ -11,33 +11,24 @@ import { ChuongTrinhDaoTaoService } from '@/services/ChuongTrinhDaoTaoService';
 import { MonHocService } from '@/services/MonHocService';
 
 const page = async () => {
-  const boMon = authApiServer
-    .get(`${API.BO_MON.GET_ALL}`, {
-      params: {
-        limit: 99999999999,
-        sortBy: 'createdAt',
-        sortByOrder: 'desc'
-      }
-    })
-    .catch(() => ({ data: [] }));
+  const khoa = KhoaService.getAllKhoaServer({
+    limit: 99999999999,
+    sortBy: 'createdAt',
+    sortByOrder: 'desc'
+  }).catch(() => ({ data: [] }));
   const chuongTrinhDaoTao = ChuongTrinhDaoTaoService.getAllChuongTrinhDaoTaoServer({
     limit: 99999999999,
     sortBy: 'createdAt',
     sortByOrder: 'desc'
   }).catch(() => ({ data: [] }));
-  const monHoc = MonHocService.getAllMonHocServer({
-    limit: 99999999999,
-    sortBy: 'createdAt',
-    sortByOrder: 'desc'
-  }).catch(() => ({ data: [] }));
-  const [boMonData, chuongTrinhDaoTaoData, monHocData] = await Promise.all([boMon, chuongTrinhDaoTao, monHoc]);
+
+  const [khoaData, chuongTrinhDaoTaoData] = await Promise.all([khoa, chuongTrinhDaoTao]);
   return (
     <Box className='flex flex-col border border-gray-200 rounded-lg p-4 shadow-sm'>
       <Content
         anotherData={{
-          boMons: boMonData.data?.length > 0 ? boMonData.data : undefined,
-          chuongTrinhDaoTaos: chuongTrinhDaoTaoData.data?.length > 0 ? chuongTrinhDaoTaoData.data : undefined,
-          monHocs: monHocData.data?.length > 0 ? monHocData.data : undefined
+          khoas: khoaData.data?.length > 0 ? khoaData.data : undefined,
+          chuongTrinhDaoTaos: chuongTrinhDaoTaoData.data?.length > 0 ? chuongTrinhDaoTaoData.data : undefined
         }}
       />
     </Box>

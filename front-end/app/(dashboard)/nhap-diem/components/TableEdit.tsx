@@ -331,7 +331,6 @@ const TableEdit = forwardRef(
         });
       },
       onError: (error: any) => {
-        console.error('Error while exporting file:', error);
         notification.show(error?.Message || 'Đã xảy ra lỗi khi xuất file.', {
           severity: 'error',
           autoHideDuration: 4000
@@ -355,7 +354,6 @@ const TableEdit = forwardRef(
         });
       },
       onError: (error: any) => {
-        console.error('Error while importing file:', error);
         notification.show(error?.Message || 'Đã xảy ra lỗi khi import file.', {
           severity: 'error',
           autoHideDuration: 4000
@@ -465,7 +463,6 @@ const TableEdit = forwardRef(
                     getOptionKey={(option) => option.id}
                     getOptionLabel={(option: any) => option.name}
                     getOnChangeValue={(value) => {
-                      console.log('Selected value:', value);
                       setfilter((prev: any) => ({
                         ...prev,
                         lopHocPhan: {

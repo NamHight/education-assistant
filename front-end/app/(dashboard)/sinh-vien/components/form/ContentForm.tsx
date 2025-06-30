@@ -143,7 +143,6 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
   });
   const handleSubmitForm = (formData: IFormData) => {
     const form = new FormData();
-    console.log('formData', formData);
     if (data?.id) form.append('Id', data.id);
     if (formData.MSSV) form.append('MSSV', formData.MSSV);
     if (formData.HoTen) form.append('HoTen', formData.HoTen);
@@ -163,7 +162,6 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
       form.append('TrangThaiSinhVienEnum', String(formData.TrangThaiSinhVienEnum?.id));
     }
     if (formData.File && formData.File instanceof File && formData.File.size > 0) {
-      console.log('formData.File đã vào đây', formData.File);
       form.append('File', formData.File);
     }
     if (onSubmit) {
@@ -171,7 +169,6 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
     }
   };
   useEffect(() => {
-    console.log('data', data);
     if (data) {
       reset({
         MSSV: data?.mssv || '',

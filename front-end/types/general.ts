@@ -35,8 +35,7 @@ export const API = {
         DELETE_LIST: "/HocBa/delete-list",
     },
     THONG_KE: {
-        GET_LUOT_ROT: "/ThongKe/diem-lop-hoc-phan",
-        GET_SINH_VIEN_GIOI_NHAT: "/ThongKe/dssvien-gioi-nhat",
+        GET_XEP_LOAI_HOC_LUC: "/ThongKe/xep-loai-hoc-luc",
     },
     PHONG_HOC: {
         GET_ALL: "/PhongHoc",
@@ -51,6 +50,8 @@ export const API = {
         GET_ALL: "/SinhVien",
         GET_BY_ID: "/SinhVien/:id",
         RESTORE: "/SinhVien/:id/restore",
+        TINH_TRANG_HOC_TAP: "/SinhVien/all-tinh-trang-hoc-tap",
+        IMPORT: "/SinhVien/import",
     },
     GIANG_VIEN: {
         GET_ALL: "/giangviens",
@@ -66,7 +67,8 @@ export const API = {
     },
     BO_MON: {
         GET_ALL: "/BoMon",
-        GET_BY_ID: "/BoMon/:id"
+        GET_BY_ID: "/BoMon/:id",
+        GET_ALL_BY_KHOA_ID: "/BoMon/by-khoa/:khoaId",
     },
     LOP_HOC_PHAN: {
         GET_ALL: "/LopHocPhan",
@@ -80,6 +82,7 @@ export const API = {
     MON_HOC: {
         GET_ALL: "/MonHoc",
         GET_BY_ID: "/MonHoc/:id",
+        GET_ALL_BY_KHOA_ID: "/MonHoc/by-khoa/:khoaId",
     },
     LOP_HOC: {
         GET_ALL: "/LopHoc",

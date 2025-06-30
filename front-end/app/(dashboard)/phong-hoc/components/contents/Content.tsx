@@ -151,7 +151,6 @@ const Content = ({ queryKey }: ContentProps) => {
     mutationDelete.mutate(id);
   };
   const handleChangeStatus = (id: string | number | null, trangThai: number) => {
-    console.log('id', id, 'trangThai', trangThai);
     mutationChangeStatus.mutate({ id, data: { trangThai: trangThai } });
   };
 

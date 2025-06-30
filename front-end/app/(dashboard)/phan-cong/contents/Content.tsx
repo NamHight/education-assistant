@@ -160,7 +160,6 @@ const Content = ({ queryKey, ctdtServer }: IContentProps) => {
           return null;
       }
     };
-    console.log('data?.data', data?.data);
     return [
       {
         field: 'maHocPhan',
@@ -206,7 +205,6 @@ const Content = ({ queryKey, ctdtServer }: IContentProps) => {
         editable: false,
         disableColumnMenu: true,
         renderCell: (params) => {
-          console.log('params.row', params.row);
           return params.row?.monHoc ? formatType(params.row?.monHoc?.chiTietChuongTrinhDaoTao?.loaiMonHoc) : null;
         }
       },

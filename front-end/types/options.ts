@@ -203,3 +203,21 @@ export const KetQuaHocBa: IOption[] = [
   { id: KetQuaHocBaEnum.DAT, name: 'Đạt' },
   { id: KetQuaHocBaEnum.KHONG_DAT, name: 'Không đạt' }
 ];
+
+export enum TinhTrangHocTapSinhVienEnum {
+  YEU = 1,
+  TRUNG_BINH = 2,
+  KHA = 3,
+  GIOI = 4,
+  XUAT_SAC = 5,
+  DINH_CHI = 6
+}
+
+export const TinhTrangHocTapSinhVien: IOption[] = [
+  { id: TinhTrangHocTapSinhVienEnum.YEU, name: 'Yếu' },
+  { id: TinhTrangHocTapSinhVienEnum.TRUNG_BINH, name: 'Trung bình' },
+  { id: TinhTrangHocTapSinhVienEnum.KHA, name: 'Khá' },
+  { id: TinhTrangHocTapSinhVienEnum.GIOI, name: 'Giỏi' },
+  { id: TinhTrangHocTapSinhVienEnum.XUAT_SAC, name: 'Xuất sắc' },
+  { id: TinhTrangHocTapSinhVienEnum.DINH_CHI, name: 'Đình chỉ' }
+];

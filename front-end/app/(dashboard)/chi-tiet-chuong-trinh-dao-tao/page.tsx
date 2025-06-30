@@ -29,7 +29,6 @@ export default async function Page() {
     await queryClient.prefetchQuery({
       queryKey: [queryKey, { page: 0, pageSize: 10 }, { field: '', sort: '' }, { items: [] }],
       queryFn: async () => {
-        console.log('Fetching Chuong Trinh Dao Tao:', result);
         return result?.data?.length > 0 ? result : undefined;
       }
     });

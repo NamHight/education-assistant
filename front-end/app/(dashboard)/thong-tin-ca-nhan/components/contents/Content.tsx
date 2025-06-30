@@ -96,7 +96,6 @@ const Content = ({ data }: IContentProps) => {
     queryKey: ['user'],
     queryFn: async () => {
       const response = await AuthenticateService.getMe();
-      console.log('Giảng viên:', response);
       return response;
     },
     refetchOnWindowFocus: false,
@@ -146,7 +145,7 @@ const Content = ({ data }: IContentProps) => {
   const handleSubmitForm = (formData: IFormData) => {
     if (!giangVien) return;
     const form = new FormData();
-    console.log('formData', formData);
+
     if (formData.HoTen) form.append('HoTen', formData.HoTen);
     if (formData.CCCD) form.append('CCCD', formData.CCCD);
     if (formData.SoDienThoai) form.append('SoDienThoai', formData.SoDienThoai);

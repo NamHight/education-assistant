@@ -51,7 +51,6 @@ const Content = () => {
       router.push('/quen-mat-khau/thanh-cong');
     },
     onError: (error: any) => {
-      console.log('Error:', error);
       notification.show(error?.Message, {
         severity: 'error',
         autoHideDuration: 4000

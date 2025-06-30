@@ -99,7 +99,7 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
   });
   const handleSubmitForm = (formData: IFormData) => {
     const form = new FormData();
-    console.log('formData', formData);
+
     if (data?.id) {
       form.append('Id', data.id);
     }

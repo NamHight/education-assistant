@@ -1,5 +1,5 @@
 'use client';
-import React, { FC, memo, useEffect, useMemo } from 'react';
+import React, { FC, memo, useEffect, useMemo, useState } from 'react';
 import {
   alpha,
   Box,
@@ -56,6 +56,7 @@ import { ChuongTrinhDaoTao } from '@/models/ChuongTrinhDaoTao';
 import { NganhService } from '@/services/NganhService';
 import { MonHocService } from '@/services/MonHocService';
 import { ChuongTrinhDaoTaoService } from '@/services/ChuongTrinhDaoTaoService';
+import { TriangleAlert } from 'lucide-react';
 
 export interface IFormData {
   MonHoc: IOption;
@@ -65,6 +66,7 @@ export interface IFormData {
   DiemTichLuy: boolean;
   LoaiMonHoc: IOption;
   HocKy: IOption;
+  Khoa: IOption;
 }
 
 interface IContentFormProps {
@@ -74,6 +76,10 @@ interface IContentFormProps {
 }
 
 const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => {
+  const [khoa, setkhoa] = useState<{
+    id: string | number | null;
+    name: string;
+  } | null>(null);
   const schema = useMemo(() => {
     return yup.object().shape({
       MonHoc: yup.object().required('Vui lòng chọn môn học'),
@@ -87,43 +93,57 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
         .max(10, 'Số tín chỉ không được lớn hơn 10'),
       DiemTichLuy: yup.boolean().notRequired(),
       LoaiMonHoc: yup.object().required('Vui lòng chọn loại môn học'),
-      HocKy: yup.object().required('Vui lòng chọn học kỳ')
+      HocKy: yup.object().required('Vui lòng chọn học kỳ'),
+      Khoa: yup.object().required('Vui lòng chọn khoa')
     });
   }, [data]);
   const { data: monHocs, isLoading: isLoadingMonHoc } = useQuery({
-    queryKey: ['monhocs'],
+    queryKey: ['monhocs', khoa?.id],
     queryFn: async () => {
-      const response = await MonHocService.getAllMonHoc({
-        limit: 99999999999,
-        sortBy: 'createdAt',
-        sortByOrder: 'desc'
-      });
-      return response?.data;
+      if (!khoa?.id) return [];
+      const response = await MonHocService.getAllMonHocByKhoaId(khoa?.id).catch(() => []);
+      return response;
     },
-    initialData: initialData?.monHocs,
     select: (data: any) => {
       return data.map((item: any) => ({
         id: item.id,
         name: item.tenMonHoc
       }));
     },
-    refetchOnWindowFocus: false
+    refetchOnWindowFocus: false,
+    enabled: !!khoa?.id || !!khoa
   });
   const { data: boMons, isLoading: isLoadingBoMon } = useQuery({
-    queryKey: ['boMons'],
+    queryKey: ['boMons', khoa?.id],
     queryFn: async () => {
-      const response = await BoMonService.getAllBoMon({
+      if (!khoa?.id) return [];
+      const response = await BoMonService.getAllBoMonByKhoaId(khoa?.id).catch(() => []);
+      return response;
+    },
+    select: (data: any) => {
+      return data.map((item: any) => ({
+        id: item.id,
+        name: item.tenBoMon
+      }));
+    },
+    enabled: !!khoa?.id || !!khoa,
+    refetchOnWindowFocus: false
+  });
+  const { data: khoas, isLoading: isLoadingKhoa } = useQuery({
+    queryKey: ['khoas'],
+    queryFn: async () => {
+      const response = await KhoaService.getAllKhoa({
         limit: 99999999999,
         sortBy: 'createdAt',
         sortByOrder: 'desc'
       });
       return response?.data;
     },
-    initialData: initialData?.boMons,
-    select: (data: any) => {
+    initialData: initialData?.khoas,
+    select: (data) => {
       return data.map((item: any) => ({
         id: item.id,
-        name: item.tenBoMon
+        name: item.tenKhoa
       }));
     },
     refetchOnWindowFocus: false
@@ -168,7 +188,7 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
   });
   const handleSubmitForm = (formData: IFormData) => {
     const form = new FormData();
-    console.log('formData', formData);
+
     if (data?.id) form.append('id', String(data.id));
     if (formData.BoMon) form.append('BoMonId', String(formData.BoMon?.id));
     if (formData.MonHoc) form.append('MonHocId', String(formData.MonHoc?.id));
@@ -214,6 +234,27 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
             error={errors.SoTinChi?.message}
             isDisabled={false}
             type='number'
+          />
+        </Grid>
+        <Grid size={{ xs: 12, sm: 6, md: 6, lg: 6 }} className='relative'>
+          <Box className='flex absolute items-center gap-1 left-11 top-[2px] text-amber-300'>
+            <TriangleAlert className='h-3 w-3' />
+            <Typography>Bắt buộc</Typography>
+          </Box>
+          <InputSelect2
+            control={control}
+            fullWidth
+            name={'Khoa'}
+            placeholder={'Chọn khoa'}
+            isLoading={isLoadingKhoa}
+            title={'Khoa'}
+            data={khoas ?? []}
+            getOptionKey={(option) => option.id}
+            getOptionLabel={(option: any) => option.name}
+            getOnChangeValue={(option) => {
+              setkhoa(option);
+            }}
+            error={(errors.Khoa as any)?.message}
           />
         </Grid>
         <Grid size={{ xs: 12, sm: 6, md: 6, lg: 6 }}>

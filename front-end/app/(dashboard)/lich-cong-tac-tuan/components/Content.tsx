@@ -114,7 +114,6 @@ const Content = ({ queryKey, giangVienServer }: IContentProps) => {
     refetchOnWindowFocus: false,
     enabled: !!user && !!filter?.khoa && !!filter?.hocKy && !!filter?.loaiChuongTrinh
   });
-  console.log('giangViens', giangViens);
   useEffect(() => {
     filterRef.current = filter;
   }, [filter]);

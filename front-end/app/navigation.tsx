@@ -113,11 +113,5 @@ export const NAVIGATION: Navigation = [
     title: 'Lớp học',
     icon: <HouseIcon />,
     pattern: `lop-hoc/:rest*`
-  },
-  {
-    segment: 'truong',
-    title: 'Trường',
-    icon: <SchoolIcon />,
-    pattern: `truong/:rest*`
   }
 ];

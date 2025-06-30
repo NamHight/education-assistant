@@ -142,7 +142,6 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
   });
   const handleSubmitForm = (formData: IFormData) => {
     const form = new FormData();
-    console.log('formData', formData);
     if (data?.id) {
       form.append('Id', data.id);
     }
@@ -183,7 +182,7 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
       });
     }
   }, [reset, data]);
-  console.log('Data', data);
+
   return (
     <FormControl fullWidth component={'form'} onSubmit={handleSubmit(handleSubmitForm)} className='flex flex-col gap-4'>
       <Grid container spacing={2} rowSpacing={1}>

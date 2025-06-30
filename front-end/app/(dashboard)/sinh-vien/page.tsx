@@ -14,7 +14,7 @@ export default async function Page() {
   const queryClient = getQueryClient();
   const queryKey = 'sinh-vien-list';
   await queryClient.prefetchQuery({
-    queryKey: [queryKey, { page: 0, pageSize: 10 }, { field: '', sort: '' }, { items: [] }],
+    queryKey: [queryKey, { page: 0, pageSize: 10 }, { field: '', sort: '' }, { items: [] }, null, null],
     queryFn: async () => {
       const result = await SinhVienService.getAllSinhVienServer({
         page: 1,
@@ -30,9 +30,14 @@ export default async function Page() {
     sortBy: 'createdAt',
     sortByOrder: 'desc'
   }).catch(() => ({ data: [] }));
+  const tinhTrangHocTap = await SinhVienService.getAllTinhTrangHocTapServer().catch(() => undefined);
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <Content queryKey={queryKey} lopHocServers={lopHoc?.data?.length > 0 ? lopHoc.data : undefined} />
+      <Content
+        queryKey={queryKey}
+        lopHocServers={lopHoc?.data?.length > 0 ? lopHoc.data : undefined}
+        tinhTrangHocTapServer={tinhTrangHocTap}
+      />
     </HydrationBoundary>
   );
 }

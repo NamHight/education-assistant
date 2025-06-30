@@ -86,7 +86,7 @@ export class LopHocPhanService {
             const result = await authApi.post(`${API.LOP_HOC_PHAN.ADD_HOC_KY_PHU}`, data);
             return result.data;
         } catch (error: any) {
-            console.log('error', error);
+
             throw error.response?.data;
         }
     }
@@ -98,7 +98,7 @@ export class LopHocPhanService {
 
             return result.data;
         } catch (error: any) {
-            console.log('error', error);
+
             throw error.response?.data;
         }
     }
@@ -108,7 +108,7 @@ export class LopHocPhanService {
             const result = await authApi.post(`${API.LOP_HOC_PHAN.ADD_AUTO}`, data);
             return result.data;
         } catch (error: any) {
-            console.log('error', error);
+
             throw error.response?.data;
         }
     }

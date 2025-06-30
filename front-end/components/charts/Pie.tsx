@@ -18,18 +18,36 @@ const Pie = ({ width, height, data, ...rest }: IPieProps) => {
       data-testid='pie-chart'
       series={[
         {
-          data: data,
-          arcLabel: (item) => `${item.value}`,
-          arcLabelMinAngle: 35,
-          arcLabelRadius: '60%',
+          data: data.map((item) => ({
+            ...item,
+            label: item.label // chỉ để label, không kèm value
+          })),
+          arcLabel: (item) => `${item.value}`, // chỉ hiện value trên vòng tròn
+          arcLabelMinAngle: 10,
+          arcLabelRadius: '70%',
           highlightScope: { fade: 'global', highlight: 'item' },
-          faded: { innerRadius: 30, additionalRadius: -30, color: 'gray' },
+          faded: { innerRadius: 40, additionalRadius: -20, color: '#e0e0e0' },
+          innerRadius: 50,
+          outerRadius: 110,
+          paddingAngle: 2,
+          cornerRadius: 8,
           ...rest
         }
       ]}
       sx={{
         [`& .${pieArcLabelClasses.root}`]: {
-          fontWeight: 'bold'
+          fontWeight: 'bold',
+          fontSize: 16,
+          fill: '#333',
+          textShadow: '1px 1px 2px #fff'
+        },
+        '.MuiPieArc-root': {
+          stroke: '#fff',
+          strokeWidth: 2,
+          filter: 'drop-shadow(0 2px 6px rgba(0,0,0,0.08))'
+        },
+        '.MuiPieArc--highlighted': {
+          filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.18))'
         }
       }}
       width={width}

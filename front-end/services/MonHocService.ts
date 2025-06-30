@@ -6,7 +6,7 @@ import { ca } from "zod/v4/locales";
 
 export class MonHocService {
     static async getAllMonHoc(params?: IParamMonHoc) {
-        return await authApi.get(`${API.MON_HOC.GET_ALL}`,{
+        return await authApi.get(`${API.MON_HOC.GET_ALL}`, {
             params: params,
         })
             .then(response => ({
@@ -17,7 +17,7 @@ export class MonHocService {
     }
     static async getAllMonHocServer(params?: IParamMonHoc) {
         return await authApiServer.get(`${API.MON_HOC.GET_ALL}`, {
-            params:params
+            params: params
         })
             .then(response => ({
                 data: response.data,
@@ -25,8 +25,13 @@ export class MonHocService {
             }))
             .catch(error => error.response?.data);
     }
-            static async getMonHocById(id: number | string | null) {
+    static async getMonHocById(id: number | string | null) {
         return await authApi.get(`${API.MON_HOC.GET_BY_ID}`.replace(':id', `${id}`))
+            .then(response => response.data)
+            .catch(error => error.response?.data);
+    }
+    static async getAllMonHocByKhoaId(khoaId: number | string | null) {
+        return await authApi.get(`${API.MON_HOC.GET_ALL_BY_KHOA_ID}`.replace(':khoaId', `${khoaId}`))
             .then(response => response.data)
             .catch(error => error.response?.data);
     }
@@ -48,16 +53,16 @@ export class MonHocService {
         try {
             const result = await authApi.put(`${API.MON_HOC.GET_BY_ID}`.replace(':id', `${id}`), data);
             return result.data;
-        }catch (error: any) {
+        } catch (error: any) {
             throw error.response?.data;
         }
     }
 
     static async deleteMonHoc(id: number | string | null) {
-        try{
+        try {
             const result = await authApi.delete(`${API.MON_HOC.GET_BY_ID}`.replace(':id', `${id}`));
             return result.data;
-        }catch (error:any) {
+        } catch (error: any) {
             throw error.response?.data;
         }
     }

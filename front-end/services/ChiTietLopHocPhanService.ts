@@ -43,7 +43,6 @@ export class ChiTietLopHocPhanService {
             });
             return response.data;
         } catch (error: any) {
-            console.error('Error while entering scores:', error);
             throw error.response?.data;
         }
     }
@@ -55,7 +54,7 @@ export class ChiTietLopHocPhanService {
             });
             return response.data;
         } catch (error: any) {
-            console.error('Error while exporting file:', error);
+
             throw error.response?.data;
         }
     }

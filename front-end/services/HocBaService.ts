@@ -12,7 +12,6 @@ export class HocBaService {
             data: response.data,
             meta: response.headers['x-pagination'] ? JSON.parse(response.headers['x-pagination'] || '{}') : {}
         })).catch((error) => {
-            console.error('Error fetching Hoc Ba:', error);
             return Promise.reject(error.response?.data);
         });
     }
@@ -24,7 +23,7 @@ export class HocBaService {
             data: response.data,
             meta: response.headers['x-pagination'] ? JSON.parse(response.headers['x-pagination'] || '{}') : {}
         })).catch((error) => {
-            console.error('Error fetching Hoc Ba on server:', error);
+
             return Promise.reject(error.response?.data);
         });
     }
@@ -33,7 +32,7 @@ export class HocBaService {
         return await authApi.get(`${API.HOC_BA.GET_BY_ID}`.replace(':id', `${id}`))
             .then((response) => Promise.resolve(response.data))
             .catch((error) => {
-                console.error('Error fetching Hoc Ba by ID:', error);
+
                 return Promise.reject(error.response?.data);
             });
     }
@@ -42,7 +41,7 @@ export class HocBaService {
         return await authApiServer.get(`${API.HOC_BA.GET_BY_ID}`.replace(':id', `${id}`))
             .then((response) => Promise.resolve(response.data))
             .catch((error) => {
-                console.error('Error fetching Hoc Ba by ID on server:', error);
+
                 return Promise.reject(error.response?.data);
             });
     }
@@ -52,7 +51,7 @@ export class HocBaService {
             const response = await authApi.put(`${API.HOC_BA.GET_BY_ID.replace(':id', `${id}`)}`, data);
             return response.data;
         } catch (error: any) {
-            console.error('Error updating Hoc Ba:', error);
+
             throw error.response?.data;
         }
     }
@@ -62,7 +61,7 @@ export class HocBaService {
             const response = await authApi.delete(`${API.HOC_BA.GET_BY_ID.replace(':id', `${id}`)}`);
             return response.data;
         } catch (error: any) {
-            console.error('Error deleting Hoc Ba:', error);
+
             throw error.response?.data;
         }
     }
@@ -72,7 +71,7 @@ export class HocBaService {
             const response = await authApi.post(`${API.HOC_BA.GET_ALL}`, data);
             return response.data;
         } catch (error: any) {
-            console.error('Error creating Hoc Ba:', error);
+
             throw error.response?.data;
         }
     }
@@ -85,7 +84,7 @@ export class HocBaService {
             });
             return response.data;
         } catch (error: any) {
-            console.error('Error submitting Hoc Ba scores:', error);
+
             throw error.response?.data;
         }
     }
@@ -97,7 +96,6 @@ export class HocBaService {
             });
             return response.data;
         } catch (error: any) {
-            console.error('Error deleting Hoc Ba list:', error);
             throw error.response?.data;
         }
     }

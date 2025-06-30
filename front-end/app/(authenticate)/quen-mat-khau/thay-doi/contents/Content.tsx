@@ -67,7 +67,6 @@ const Content = ({ email, token }: Props) => {
       router.push('/dang-nhap');
     },
     onError: (error: any) => {
-      console.log('Error:', error);
       notification.show(error?.Message || 'Đã xảy ra lỗi khi đổi mật khẩu.', {
         severity: 'error',
         autoHideDuration: 4000
@@ -78,7 +77,6 @@ const Content = ({ email, token }: Props) => {
     if (!email || !token) {
       return;
     }
-    console.log('Data:', email);
     const formData = new FormData();
     formData.append('email', email);
     formData.append('token', token);

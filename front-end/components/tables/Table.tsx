@@ -53,6 +53,7 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import EditIcon from '@mui/icons-material/Edit';
 import theme from '@/theme';
 import { useRouter } from 'next/navigation';
+import { Eye, EyeClosed } from 'lucide-react';
 function TextInput(props: React.InputHTMLAttributes<HTMLInputElement>) {
   return (
     <input
@@ -218,6 +219,8 @@ interface TableProps {
   moreActions?: (id: string | number | null, row: any) => ReactNode;
   urlNavigate?: string;
   isDisableEdit?: boolean;
+  isOpenOption?: () => void;
+  isMoreCellAction?: boolean;
   [key: string]: any;
 }
 
@@ -240,6 +243,8 @@ const Table = React.forwardRef<any, TableProps>(function table(
     handleDeleteCallBack,
     moreActions,
     urlNavigate,
+    isOpenOption,
+    isMoreCellAction,
     isDisableEdit,
     editMode = 'row',
     ...rest
@@ -293,26 +298,91 @@ const Table = React.forwardRef<any, TableProps>(function table(
       {
         field: 'actions',
         type: 'actions',
-        headerName: 'Actions',
+        headerName: 'Thao tác',
         width: 100,
         cellClassName: 'actions',
         getActions: ({ id, row }) => {
-          return [
-            <GridActionsCellItem
-              key={id}
-              icon={<MoreVertIcon />}
-              label='Edit'
-              onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
-                handleChooseRow?.(id, row);
-                handleClick(event);
-                setItem({
-                  id: id,
-                  row: row
-                });
-              }}
-              color='inherit'
-            />
-          ];
+          return isMoreCellAction
+            ? [
+                <GridActionsCellItem
+                  key={id}
+                  icon={
+                    <span
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        position: 'relative',
+                        width: 24,
+                        height: 24
+                      }}
+                      className='group'
+                    >
+                      <Eye
+                        className='!transition-opacity !duration-200 group-hover:!opacity-0'
+                        style={{
+                          position: 'absolute',
+                          left: 0,
+                          top: 0,
+                          opacity: 1,
+                          transition: 'opacity 0.2s',
+                          color: '#00bcd4' // teal/cyan, more vibrant
+                        }}
+                      />
+                      <EyeClosed
+                        className='!transition-opacity !duration-200 group-hover:!opacity-100 opacity-0'
+                        style={{
+                          position: 'absolute',
+                          left: 0,
+                          top: 0,
+                          opacity: 0,
+                          transition: 'opacity 0.2s',
+                          color: '#26c6da' // lighter cyan
+                        }}
+                      />
+                    </span>
+                  }
+                  label='More'
+                  onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
+                    handleChooseRow?.(id, row);
+                    isOpenOption?.();
+                    setItem({
+                      id: id,
+                      row: row
+                    });
+                  }}
+                  color='inherit'
+                />,
+                <GridActionsCellItem
+                  key={id}
+                  icon={<MoreVertIcon />}
+                  label='Edit'
+                  onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
+                    handleChooseRow?.(id, row);
+                    handleClick(event);
+                    setItem({
+                      id: id,
+                      row: row
+                    });
+                  }}
+                  color='inherit'
+                />
+              ]
+            : [
+                <GridActionsCellItem
+                  key={id}
+                  icon={<MoreVertIcon />}
+                  label='Edit'
+                  onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
+                    handleChooseRow?.(id, row);
+                    handleClick(event);
+                    setItem({
+                      id: id,
+                      row: row
+                    });
+                  }}
+                  color='inherit'
+                />
+              ];
         }
       }
     ];

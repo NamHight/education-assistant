@@ -35,7 +35,6 @@ const Content: FC<ContentProps> = ({ initialData, anotherData }) => {
       router.push('/lop-hoc-phan');
     },
     onError: (error: any) => {
-      console.log('error', error);
       notification.show(error.Message || 'Thêm thất bại', {
         severity: 'error',
         autoHideDuration: 5000

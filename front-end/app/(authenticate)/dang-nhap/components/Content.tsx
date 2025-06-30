@@ -38,7 +38,6 @@ const Content = () => {
   const mutation = useMutation({
     mutationFn: async (data: FormData) => {
       const result = await AuthenticateService.login(data);
-      console.log('Login result:', result);
       return result;
     },
     onSuccess: (data) => {

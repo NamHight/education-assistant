@@ -3,13 +3,13 @@ import authApiServer from "@/lib/authAxiosServer";
 import { API } from "@/types/general";
 
 export class ThongKeService {
-    static async getLuotRot() {
-        return await authApi.get(`${API.THONG_KE.GET_LUOT_ROT}`)
+    static async getXepLoaiHocLuc() {
+        return await authApi.get(`${API.THONG_KE.GET_XEP_LOAI_HOC_LUC}`)
             .then((response) => response.data)
             .catch((error) => error.response?.data);
     }
-    static async getLuotRotServer() {
-        return await authApiServer.get(`${API.THONG_KE.GET_LUOT_ROT}`)
+    static async getXepLoaiHocLucServer() {
+        return await authApiServer.get(`${API.THONG_KE.GET_XEP_LOAI_HOC_LUC}`)
             .then((response) => response.data)
             .catch((error) => error.response?.data);
     }

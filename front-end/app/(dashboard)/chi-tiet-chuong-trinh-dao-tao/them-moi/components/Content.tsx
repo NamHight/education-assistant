@@ -42,7 +42,6 @@ const Content: FC<ContentProps> = ({ initialData, anotherData }) => {
       router.push('/chi-tiet-chuong-trinh-dao-tao');
     },
     onError: (error: any) => {
-      console.log('error', error.Message);
       notification.show(error?.Message || 'Thêm thất bại', {
         severity: 'error',
         autoHideDuration: 5000
@@ -58,9 +57,8 @@ const Content: FC<ContentProps> = ({ initialData, anotherData }) => {
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
       <ContentForm
         initialData={{
-          boMons: anotherData.boMons || [],
           chuongTrinhDaoTaos: anotherData.chuongTrinhDaoTaos || [],
-          monHocs: anotherData.monHocs || []
+          khoas: anotherData.khoas || []
         }}
         onSubmit={handleSubmitForm}
       />

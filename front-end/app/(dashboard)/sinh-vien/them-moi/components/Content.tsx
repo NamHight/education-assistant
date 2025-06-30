@@ -45,7 +45,6 @@ const Content: FC<ContentProps> = ({ initialData, anotherData }) => {
   const handleSubmitForm = (formData: any) => {
     mutationCreate.mutate(formData);
   };
-  console.log('anotherData', anotherData);
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
       <ContentForm

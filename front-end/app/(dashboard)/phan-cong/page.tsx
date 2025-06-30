@@ -17,7 +17,6 @@ const page = async () => {
       limit: 99999999999
     });
   } catch (error) {
-    console.error('Error fetching Chuong Trinh Dao Tao:', error);
     ctdt = { data: undefined };
   }
   return (

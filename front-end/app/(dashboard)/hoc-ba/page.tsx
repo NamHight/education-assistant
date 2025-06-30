@@ -28,7 +28,6 @@ export default async function Page() {
   })
     .then((res) => res?.data)
     .catch((error) => {
-      console.error('Error fetching Lop Hoc Phan:', error);
       return [];
     });
   return (
