@@ -1,6 +1,5 @@
 using System;
 using Education_assistant.Models;
-using Education_assistant.Modules.ModuleTruong.DTOs.Response;
 
 namespace Education_assistant.Modules.ModuleKhoa.DTOs.Response;
 

@@ -14,7 +14,6 @@ using Education_assistant.Modules.ModuleNganh.Services;
 using Education_assistant.Modules.ModulePhongHoc.Services;
 using Education_assistant.Modules.ModuleSinhVien.Services;
 using Education_assistant.Modules.ModuleThongKe.Services;
-using Education_assistant.Modules.ModuleTruong.Services;
 using Education_assistant.Modules.ModuleTuan.Services;
 
 namespace Education_assistant.Services.ServiceMaster;
@@ -22,7 +21,6 @@ namespace Education_assistant.Services.ServiceMaster;
 public interface IServiceMaster
 {
     IServiceGiangVien GiangVien { get; }
-    IServiceTruong Truong { get; }
     IServiceKhoa Khoa { get; }
     IServiceMonHoc MonHoc { get; }
     IServiceChuongTrinhDaoTao ChuongTrinhDaoTao { get; }

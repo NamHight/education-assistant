@@ -5,6 +5,7 @@ using Education_assistant.Context;
 using Education_assistant.Extensions;
 using Education_assistant.Models;
 using Education_assistant.Models.Enums;
+using Education_assistant.Modules.ModuleSinhVien.DTOs.Response;
 using Education_assistant.Repositories;
 using Education_assistant.Repositories.Paginations;
 using Microsoft.AspNetCore.Razor.Language;
@@ -66,6 +67,28 @@ public class RepositorySinhVien : RepositoryBase<SinhVien>, IRepositorySinhVien
     public async Task<IEnumerable<SinhVien>> GetAllSinhVienByLopHoc(Guid lopHocId)
     {
         return await FindAll(false).Where(item => item.LopHocId == lopHocId).ToListAsync();
+    }
+
+    public async Task<List<ResponseExportFileSinhVienDto>> GetAllSinhVienExportFileAsync(Guid lopHocId)
+    {
+        return await _context.SinhViens!
+                    .AsNoTracking()
+                    .Where(sv => sv.LopHocId == lopHocId)
+                    .Include(sv => sv.LopHoc)
+                    .Select(sv => new ResponseExportFileSinhVienDto
+                    {
+                        MSSV = sv.MSSV,
+                        CCCD = sv.CCCD,
+                        HoTen = sv.HoTen,
+                        Email = sv.HoTen,
+                        SoDienThoai = sv.SoDienThoai,
+                        NgaySinh = sv.NgaySinh,
+                        GioiTinh = sv.GioiTinh == 1 ? "Nam" : "Nữ",
+                        DiaChi = sv.DiaChi,
+                        NgayNhapHoc = sv.NgayNhapHoc,
+                        NgayTotNghiep = sv.NgayTotNghiep,
+                        TenLop = sv.LopHoc.MaLopHoc
+                    }).ToListAsync();
     }
 
     public async Task<int> GetAllSoCanCaiThienAsync(Guid? lopHocId)
@@ -165,7 +188,7 @@ public class RepositorySinhVien : RepositoryBase<SinhVien>, IRepositorySinhVien
 
     public async Task<SinhVien?> GetSinhVienByMssvOrCccdAsync(string mssv, string cccd)
     {
-        return await FindByCondition(item => item.MSSV == mssv || item.CCCD == cccd, false).FirstOrDefaultAsync();
+        return await FindByCondition(item => item.MSSV == mssv || item.CCCD == cccd, false).IgnoreQueryFilters().FirstOrDefaultAsync();
     }
 
     public async Task<SinhVien?> GetSinhVienDeleteAsync(Guid id, bool trackChanges)
