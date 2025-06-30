@@ -14,6 +14,9 @@ interface IDatePickeProps {
   fullWidth?: boolean;
   format?: string;
   minDate?: any;
+  editAble?: boolean;
+  isEditAble?: boolean;
+  onClickEdit?: () => void;
   [key: string]: any;
 }
 
@@ -27,12 +30,15 @@ const DatePicke = ({
   fullWidth,
   format,
   minDate,
+  editAble,
+  isEditAble,
+  onClickEdit,
   ...rest
 }: IDatePickeProps) => {
   return (
     <Fragment>
       {title && (
-        <Box>
+        <Box className='flex items-center justify-between'>
           <Typography
             className={clsx('!text-[16px] !font-[500] !leading-6', {
               '!text-gray-500': !error,
@@ -41,6 +47,25 @@ const DatePicke = ({
           >
             {title}
           </Typography>
+          {isEditAble &&
+            (editAble ? (
+              <Typography
+                component={'span'}
+                className={'text-blue-500 cursor-pointer hover:underline'}
+                onClick={onClickEdit}
+              >
+                Chỉnh sửa
+              </Typography>
+            ) : (
+              <Typography
+                type='submit'
+                onClick={onClickEdit}
+                component={'button'}
+                className={'text-blue-500 cursor-pointer hover:underline'}
+              >
+                Cập nhật
+              </Typography>
+            ))}
         </Box>
       )}
       <Controller
@@ -52,6 +77,7 @@ const DatePicke = ({
             minDate={minDate}
             disabled={isDisabled}
             {...field}
+            timezone='Asia/Ho_Chi_Minh'
             format={format || 'DD/MM/YYYY'}
             className={clsx('!mb-[5px]', { 'w-full': fullWidth })}
             sx={(theme) => ({
@@ -79,6 +105,7 @@ const DatePicke = ({
                 fullWidth: fullWidth,
                 sx: (theme) => ({
                   '& .MuiPickersOutlinedInput-root': {
+                    backgroundColor: isDisabled ? theme.palette.grey[100] : theme.palette.common.white,
                     borderColor: error ? 'red' : theme.palette.grey[600],
                     '& fieldset': {
                       borderColor: theme.palette.divider

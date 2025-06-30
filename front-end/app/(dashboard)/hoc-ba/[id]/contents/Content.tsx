@@ -12,6 +12,7 @@ import { MonHocService } from '@/services/MonHocService';
 import { NganhService } from '@/services/NganhService';
 import { BoMonService } from '@/services/BoMonService';
 import { PhongHocService } from '@/services/PhongHocService';
+import { HocBaService } from '@/services/HocBaService';
 interface IContentProps {
   initialData: any;
   anotherData?: any;
@@ -22,19 +23,18 @@ const Content = ({ initialData, id, anotherData }: IContentProps) => {
   const router = useRouter();
   const queryClient = useQueryClient();
   const { data } = useQuery({
-    queryKey: ['bo-mon', { id: id }],
+    queryKey: ['hoc-ba', { id: id }],
     queryFn: async () => {
-      const result = await PhongHocService.getPhongHocById(id);
+      const result = await HocBaService.getHocBaById(id);
       return result;
     },
     initialData: initialData,
     refetchOnWindowFocus: false,
     gcTime: 0
   });
-
   const mutationUpdate = useMutation({
     mutationFn: async (data: FormData) => {
-      const result = await PhongHocService.updatePhongHoc(id, data);
+      const result = await HocBaService.updateHocBa(id, data);
       return result;
     },
     onSuccess: async (data: any) => {
@@ -42,8 +42,7 @@ const Content = ({ initialData, id, anotherData }: IContentProps) => {
         severity: 'success',
         autoHideDuration: 5000
       });
-      await queryClient.invalidateQueries({ queryKey: ['phong-hoc-list'], exact: false });
-      router.push('/phong-hoc');
+      await queryClient.invalidateQueries({ queryKey: ['hoc-ba'], exact: false });
     },
     onError: (error: any) => {
       notifications.show(error.Message, {
@@ -57,7 +56,15 @@ const Content = ({ initialData, id, anotherData }: IContentProps) => {
   };
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
-      <ContentForm onSubmit={handleSubmitForm} data={data} />
+      <ContentForm
+        onSubmit={handleSubmitForm}
+        data={data}
+        initialData={{
+          sinhViens: anotherData?.sinhViens,
+          lopHocPhans: anotherData?.lopHocPhans,
+          chiTietChuongTrinhDaoTaos: anotherData?.chiTietChuongTrinhDaoTaos
+        }}
+      />
     </motion.div>
   );
 };

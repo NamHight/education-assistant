@@ -1,3 +1,4 @@
+import { giangVien } from './validate/login';
 interface IBaseParams {
     page?: number;
     limit?: number;
@@ -8,7 +9,7 @@ interface IBaseParams {
 
 
 export interface IParamGiangVien extends IBaseParams {
-  active?: boolean;
+    active?: boolean;
 }
 
 export interface IParamLopHocPhan extends IBaseParams {
@@ -16,6 +17,9 @@ export interface IParamLopHocPhan extends IBaseParams {
     loaiChuongTrinhDaoTao?: number;
     chuongTrinhDaoTaoId?: string;
     hocKy?: number;
+    trangThai?: number;
+    loaiLopHoc?: number;
+    giangVienId?: string;
 }
 
 export interface IParamMonHoc extends IBaseParams {
@@ -23,23 +27,43 @@ export interface IParamMonHoc extends IBaseParams {
 }
 
 export interface IParamLopHoc extends IBaseParams {
-    
+
 }
 
 export interface IParamChuongTrinhDaoTao extends IBaseParams {
 
 }
 export interface IParamSinhVien extends IBaseParams {
-    LopId?: number;
+    lopId?: number;
+    tinhTrangHocTap?: number;
 }
 
 export interface IParamKhoa extends IBaseParams {
-    
+
 }
 
 export interface IParamNganh extends IBaseParams {
 
 }
-export interface IParamBoMon extends IBaseParams {}
+export interface IParamBoMon extends IBaseParams { }
 
-export interface IParamPhongHoc extends IBaseParams {}
+export interface IParamPhongHoc extends IBaseParams { }
+
+export interface IParamChiTietChuongTrinhDaoTao extends IBaseParams { }
+
+export interface IParamHocBa extends IBaseParams {
+    lopHocPhanId?: string;
+}
+
+export interface IParamChiTietLopHocPhan extends IBaseParams {
+    lopHocPhanId?: string;
+    ngayNopDiem?: boolean;
+}
+
+export interface IParamLopHocPhan2 {
+    loaiChuongTrinhDaoTao?: number;
+    khoa?: number;
+    hocky?: number;
+    giangVienId?: string;
+    lopHocPhanid?: string;
+}

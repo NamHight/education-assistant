@@ -26,11 +26,13 @@ public class ResponseSinhVienDto
     public DateTime? UpdatedAt { get; set; }
     public DateTime? DeletedAt { get; set; }
 }
+
 public class SinhVienSimpleDto
 {
     public Guid Id { get; set; }
     public string MSSV { get; set; } = string.Empty;
     public string HoTen { get; set; } = string.Empty;
+    public DateTime? NgaySinh { get; set; }
 }
 
 public class ResponseSinhVienSummaryDto

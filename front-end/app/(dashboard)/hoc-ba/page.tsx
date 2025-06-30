@@ -13,26 +13,26 @@ import { MonHocService } from '@/services/MonHocService';
 import { NganhService } from '@/services/NganhService';
 import { BoMonService } from '@/services/BoMonService';
 import { PhongHocService } from '@/services/PhongHocService';
+import { HocBaService } from '@/services/HocBaService';
+import { LopHocPhanService } from '@/services/LopHocPhanService';
+import { TrangThaiLopHocPhanEnum } from '@/types/options';
 
 export default async function Page() {
   const queryClient = getQueryClient();
-  const queryKey = 'phong-hoc-list';
-  await queryClient.prefetchQuery({
-    queryKey: [queryKey, { page: 0, pageSize: 10 }, { field: '', sort: '' }, { items: [] }],
-    queryFn: async () => {
-      const result = await PhongHocService.getAllPhongHocServer({
-        page: 1,
-        limit: 10,
-        sortBy: 'createdAt',
-        sortByOrder: 'desc'
-      });
-      console.log('result', result);
-      return result;
-    }
-  });
+  const queryKey = 'hoc-ba-list';
+  const lopHocPhans = await LopHocPhanService.getAllLopHocPhanServer({
+    trangThai: TrangThaiLopHocPhanEnum.DANG_HOAT_DONG,
+    sortBy: 'createdAt',
+    sortByOrder: 'desc',
+    limit: 99999999999
+  })
+    .then((res) => res?.data)
+    .catch((error) => {
+      return [];
+    });
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <Content queryKey={queryKey} />
+      <Content queryKey={queryKey} lopHocPhanServer={lopHocPhans?.length > 0 ? lopHocPhans : undefined} />
     </HydrationBoundary>
   );
 }

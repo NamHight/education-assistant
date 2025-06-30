@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 :root {
   --foreground: #171717;
@@ -18,7 +18,7 @@
   --education-blue-light-3: #bed7f3;
   --education-blue-light-4: #e8f1fb;
   --education-blue-light-5: #f6f9fc;
-  --education-blue-light-6: #66CCFF;
+  --education-blue-light-6: #66ccff;
   --education-blue-dark-1: #17497f;
   --education-blue-dark-2: #103055;
   --education-blue-dark-3: #08182a;
@@ -92,7 +92,6 @@
   --warning: #f2bb2e;
   --white: #ffffff;
   --warning-dark: #9b6907;
-
 }
 @theme inline {
   --color-background: var(--background);
@@ -113,32 +112,130 @@ body {
   height: 100vh;
 }
 
+@layer utilities {
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0px) rotate(0deg);
+    }
+    50% {
+      transform: translateY(-20px) rotate(180deg);
+    }
+  }
+
+  @keyframes spin-reverse {
+    from {
+      transform: rotate(360deg);
+    }
+    to {
+      transform: rotate(0deg);
+    }
+  }
+
+  @keyframes pulse-slow {
+    0%,
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    50% {
+      transform: scale(1.05);
+      opacity: 0.8;
+    }
+  }
+
+  @keyframes blink {
+    0%,
+    50% {
+      opacity: 1;
+    }
+    51%,
+    100% {
+      opacity: 0;
+    }
+  }
+
+  @keyframes shimmer {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(100%);
+    }
+  }
+
+  @keyframes fade-out {
+    0% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+
+  @keyframes wave {
+    0%,
+    100% {
+      height: 20px;
+    }
+    50% {
+      height: 40px;
+    }
+  }
+
+  .animate-float {
+    animation: float 4s ease-in-out infinite;
+  }
+  .animate-spin-reverse {
+    animation: spin-reverse 3s linear infinite;
+  }
+  .animate-pulse-slow {
+    animation: pulse-slow 2s ease-in-out infinite;
+  }
+  .animate-blink {
+    animation: blink 1s infinite;
+  }
+  .animate-shimmer {
+    animation: shimmer 2s infinite;
+  }
+  .animate-fade-out {
+    animation: fade-out 1s ease-out forwards;
+  }
+  .animate-wave {
+    animation: wave 1s ease-in-out infinite;
+  }
+
+  .grid-cols-20 {
+    grid-template-columns: repeat(20, minmax(0, 1fr));
+  }
+}
+
 .MuiDayCalendar-weekDayLabel:nth-child(1)::after {
-  content: "T2";
+  content: 'T2';
 }
 
 .MuiDayCalendar-weekDayLabel:nth-child(2)::after {
-  content: "T3";
+  content: 'T3';
 }
 
 .MuiDayCalendar-weekDayLabel:nth-child(3)::after {
-  content: "T4";
+  content: 'T4';
 }
 
 .MuiDayCalendar-weekDayLabel:nth-child(4)::after {
-  content: "T5";
+  content: 'T5';
 }
 
 .MuiDayCalendar-weekDayLabel:nth-child(5)::after {
-  content: "T6";
+  content: 'T6';
 }
 
 .MuiDayCalendar-weekDayLabel:nth-child(6)::after {
-  content: "T7";
+  content: 'T7';
 }
 
 .MuiDayCalendar-weekDayLabel:nth-child(7)::after {
-  content: "CN";
+  content: 'CN';
 }
 
 .MuiDayCalendar-weekDayLabel {
@@ -156,5 +253,13 @@ body {
   text-align: center;
   width: 100%;
   height: 100%;
-  content: "";
+  content: '';
+}
+
+.MuiOutlinedInput-root.Mui-disabled,
+.MuiPickersOutlinedInput-root.Mui-disabled,
+.MuiPickersOutlinedInput-root.Mui-disabled * {
+  color: #222 !important;
+  -webkit-text-fill-color: #222 !important;
+  opacity: 1 !important;
 }

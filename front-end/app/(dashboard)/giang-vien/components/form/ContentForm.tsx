@@ -108,7 +108,11 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
   const { data: khoas, isLoading: isLoadingKhoa } = useQuery({
     queryKey: ['khoas'],
     queryFn: async () => {
-      const response = await KhoaService.getAllKhoa();
+      const response = await KhoaService.getAllKhoa({
+        limit: 9999999999,
+        sortBy: 'createdAt',
+        sortByOrder: 'desc'
+      });
       return response?.data;
     },
     initialData: initialData?.Khoas,
@@ -123,7 +127,11 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
   const { data: boMons, isLoading: isLoadingBoMon } = useQuery({
     queryKey: ['bomons'],
     queryFn: async () => {
-      const response = await BoMonService.getAllBoMon();
+      const response = await BoMonService.getAllBoMon({
+        limit: 9999999999,
+        sortBy: 'createdAt',
+        sortByOrder: 'desc'
+      });
       return response?.data;
     },
     initialData: initialData?.BoMons,

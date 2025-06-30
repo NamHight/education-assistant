@@ -1,5 +1,5 @@
 'use client';
-import React, { Dispatch, forwardRef, RefObject, useState } from 'react';
+import React, { Dispatch, forwardRef, RefObject, useMemo, useState } from 'react';
 import {
   DataGrid,
   GridRowId,
@@ -11,7 +11,12 @@ import {
   gridClasses,
   GridCellModes,
   GridCellModesModel,
-  GridCellParams
+  GridCellParams,
+  GridToolbarContainer,
+  QuickFilter,
+  QuickFilterTrigger,
+  QuickFilterControl,
+  QuickFilterClear
 } from '@mui/x-data-grid';
 import Button from '@mui/material/Button';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -21,9 +26,154 @@ import SaveIcon from '@mui/icons-material/Save';
 import { darken } from '@mui/material/styles';
 import { GridApiCommunity } from '@mui/x-data-grid/internals';
 import { motion } from 'motion/react';
-import { Box, Typography } from '@mui/material';
+import { Box, Popover, Typography } from '@mui/material';
 import InputSelect2 from '../selects/InputSelect2';
 import { HocKyLopHocPhan, LoaiChuongTrinhDaoTao, yearOptions } from '@/types/options';
+import { ToolbarButton } from '@mui/x-data-grid';
+import SearchIcon from '@mui/icons-material/Search';
+import clsx from 'clsx';
+import CancelIcon from '@mui/icons-material/Cancel';
+import FilterListIcon from '@mui/icons-material/FilterList';
+import { PopoverLockProvider, usePopoverLock } from '@/hooks/context/PopoverLock';
+function TextInput(props: React.InputHTMLAttributes<HTMLInputElement>) {
+  return (
+    <input
+      {...props}
+      className={clsx(
+        '!h-[37px] w-full rounded border border-neutral-200 dark:border-neutral-700 dark:bg-neutral-200 px-2.5 text-base text-wwhite dark:text-black focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600',
+        props.className
+      )}
+    />
+  );
+}
+const CustomToolbar = ({
+  contentPopover,
+  isOpen,
+  onClose,
+  handleClick
+}: {
+  contentPopover?: React.ReactNode;
+  isOpen?: boolean;
+  onClose?: () => void;
+  handleClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+}) => {
+  const { isLocked, toggleLock } = usePopoverLock();
+
+  return (
+    <>
+      <GridToolbarContainer
+        sx={(theme) => ({
+          display: 'flex',
+          justifyContent: 'flex-start',
+          alignItems: 'center',
+          padding: '8px 16px',
+          backgroundColor: theme.palette.background.paper,
+          borderBottom: '1px solid #e0e0e0'
+        })}
+      >
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'flex-start',
+            width: '100% !important',
+            gap: '16px'
+          }}
+        >
+          <QuickFilter
+            render={(props, state) => (
+              <div {...props} className='flex overflow-clip justify-start items-center'>
+                <QuickFilterTrigger
+                  className={state.expanded ? 'rounded-r-none border-r-0' : ''}
+                  render={
+                    <ToolbarButton
+                      render={
+                        <Button
+                          aria-label='Search'
+                          className='!px-4 !py-[18px] !border !border-neutral-200 !rounded-r-none'
+                        >
+                          <SearchIcon fontSize='small' className='!h-6 !w-6' />
+                        </Button>
+                      }
+                    />
+                  }
+                />
+                <div
+                  className={clsx(
+                    'flex overflow-clip transition-all duration-300 ease-in-out items-center justify-center',
+                    state.expanded ? 'w-100' : 'w-0'
+                  )}
+                >
+                  <QuickFilterControl
+                    aria-label='Search'
+                    placeholder='Search'
+                    render={({ slotProps, size, ...controlProps }) => (
+                      <TextInput
+                        {...controlProps}
+                        {...slotProps?.htmlInput}
+                        placeholder={'Tìm kiếm'}
+                        className={clsx(
+                          'flex-1 rounded-l-none !bg-white ',
+                          state.expanded && state.value !== '' && 'rounded-r-none'
+                        )}
+                      />
+                    )}
+                  />
+                  {state.expanded && state.value !== '' && (
+                    <QuickFilterClear
+                      render={
+                        <Button
+                          aria-label='Clear'
+                          className='!px-2 !py-[18px] !border !border-neutral-200 !rounded-l-none !ml-0 group'
+                        >
+                          <CancelIcon fontSize='small' className='!h-6 !w-6 group-hover:text-red-500' />
+                        </Button>
+                      }
+                    />
+                  )}
+                </div>
+              </div>
+            )}
+          />
+          {contentPopover ? (
+            <Box className='relative'>
+              <Button className='!p-0 flex gap-2 !border !border-neutral-200 !px-3 !rounded-none' onClick={handleClick}>
+                <FilterListIcon />
+                <Typography className='!text-[16px] !leading-6 !font-semibold'>Lọc</Typography>
+              </Button>
+              {isOpen && (
+                <Box
+                  sx={{
+                    position: 'absolute',
+                    top: '100%',
+                    left: 0,
+                    width: '300px',
+                    maxHeight: '400px',
+                    overflowY: 'auto',
+                    padding: '16px',
+                    boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
+                    borderRadius: '8px',
+                    backgroundColor: 'background.paper',
+                    zIndex: 10
+                  }}
+                  className='flex flex-col gap-3 justify-center items-center'
+                >
+                  {contentPopover}
+                  <Box className='w-full flex justify-end'>
+                    <Button size='small' onClick={onClose}>
+                      Tắt
+                    </Button>
+                  </Box>
+                </Box>
+              )}
+            </Box>
+          ) : null}
+        </Box>
+      </GridToolbarContainer>
+    </>
+  );
+};
+
 interface ITableEditProps {
   row: any[];
   columns: GridColDef[];
@@ -41,8 +191,12 @@ interface ITableEditProps {
       khoa: number;
     } | null>
   >;
-  truongTrinhDaoTao?: any;
+  chuongTrinhDaotao?: any;
   isLoadingCtdt?: boolean;
+  contentPopover?: React.ReactNode;
+  isOpen?: boolean;
+  onClose?: () => void;
+  handleClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
 const TableEdit = forwardRef(
@@ -58,7 +212,11 @@ const TableEdit = forwardRef(
       handleSave,
       setfilter,
       isLoadingCtdt,
-      truongTrinhDaoTao
+      chuongTrinhDaotao,
+      contentPopover,
+      isOpen,
+      handleClick,
+      onClose
     }: ITableEditProps,
     ref
   ) => {
@@ -134,8 +292,9 @@ const TableEdit = forwardRef(
           ease: [0.22, 1, 0.36, 1]
         }}
         className='flex flex-col gap-4'
+        style={{ height: 'calc(100vh - 200px)' }}
       >
-        <Box className='flex w-full gap-4 items-center'>
+        <Box className='flex w-full gap-4 p-4 border border-gray-200 rounded-lg shadow-sm light:bg-white'>
           <Box className='flex justify-center items-center gap-3 w-full'>
             <Typography className='!text-[16px] !leading-6 !font-semibold'>Bậc</Typography>
             <Box className='flex-1'>
@@ -181,7 +340,7 @@ const TableEdit = forwardRef(
                 fullWidth
                 name={'daoTao'}
                 placeholder={'Chọn đào tạo'}
-                data={truongTrinhDaoTao ?? []}
+                data={chuongTrinhDaotao ?? []}
                 isLoading={isLoadingCtdt}
                 getOptionKey={(option) => option.id}
                 getOptionLabel={(option: any) => option.name}
@@ -226,6 +385,7 @@ const TableEdit = forwardRef(
             </LoadingButton>
           </Box>
         </Box>
+
         <DataGrid
           apiRef={apiRef}
           rows={row}
@@ -237,9 +397,12 @@ const TableEdit = forwardRef(
           onCellModesModelChange={handleCellModesModelChange}
           processRowUpdate={processRowUpdate}
           ignoreValueFormatterDuringExport
-          filterDebounceMs={1000}
+          filterDebounceMs={600}
           editMode='cell'
           onFilterModelChange={setFilterModel}
+          slots={{
+            toolbar: () => CustomToolbar({ contentPopover, isOpen, onClose, handleClick })
+          }}
           onSortModelChange={(model) => {
             if (model.length > 0) {
               return (
@@ -251,10 +414,10 @@ const TableEdit = forwardRef(
               );
             }
           }}
-          sortingMode='client'
-          filterMode='client'
-          showColumnVerticalBorder
+          sortingMode='server'
+          filterMode='server'
           showCellVerticalBorder
+          showToolbar
           disableColumnResize
           autoHeight={false}
           disableColumnMenu
@@ -267,7 +430,8 @@ const TableEdit = forwardRef(
             }
           }}
           sx={(theme) => ({
-            height: 'calc(100% - 300px) !important',
+            height: '100%',
+            overflowY: 'auto',
             borderColor: theme.palette.grey[600],
             [`& .${gridClasses.columnHeaders}`]: {
               borderBottom: `1px solid ${theme.palette.grey[600]}`

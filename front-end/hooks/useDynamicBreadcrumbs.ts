@@ -1,19 +1,45 @@
+
 'use client'
-import {useEffect, useState} from 'react';
-import {useActivePage} from "@toolpad/core/useActivePage";
-import {Breadcrumb} from "@toolpad/core/PageContainer";
-import {useParams, usePathname} from "next/navigation";
+import { useEffect, useState } from 'react';
+import { useActivePage } from "@toolpad/core/useActivePage";
+import { Breadcrumb } from "@toolpad/core/PageContainer";
+import { useParams, usePathname } from "next/navigation";
 import { breadcrumbTranslations } from '@/types/general';
+
+const initBreadcrumbs: { title: string; path: string }[] = [
+  { title: 'Trang chủ', path: '/' },
+]
+const hrefNotInclude: {
+  [key: string]: {
+    title: string;
+    breadcrumbs: { title: string; path: string }[];
+  };
+} = {
+  '/thong-tin-ca-nhan': {
+    title: 'Thông tin cá nhân',
+    breadcrumbs: [
+      ...initBreadcrumbs,
+      { title: 'Thông tin cá nhân', path: '/thong-tin-ca-nhan' }
+    ]
+  }
+}
 
 export function useDynamicBreadcrumbs() {
   const [breadcrumbData, setBreadcrumbData] = useState<{
     title: string;
     breadcrumbs: Breadcrumb[];
-  }>({title: '', breadcrumbs: []});
+  }>({ title: '', breadcrumbs: [] });
   const activePage = useActivePage();
   const pathName = usePathname();
   const params = useParams();
   useEffect(() => {
+    if (hrefNotInclude[pathName]) {
+      setBreadcrumbData({
+        title: hrefNotInclude[pathName].title,
+        breadcrumbs: hrefNotInclude[pathName].breadcrumbs
+      });
+      return;
+    }
     if (!activePage) return;
     const basePath = activePage.path || '';
     const fullPath = pathName || '';
@@ -39,7 +65,7 @@ export function useDynamicBreadcrumbs() {
       title: title || activePage.title,
       breadcrumbs: processedBreadcrumbs
     });
-  }, [pathName, params,activePage]);
+  }, [pathName, params, activePage]);
 
   return breadcrumbData;
 }

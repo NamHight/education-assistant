@@ -63,6 +63,31 @@ public sealed class ServiceGiangVien : IServiceGiangVien
         return giangVienDto;
     }
 
+    public async Task UpdateOptionalAsync(Guid id, RequestUpdateGiangVienOptionDto request)
+    {
+        var giangVien = await _repositoryMaster.GiangVien.GetGiangVienByIdAsync(id, true);
+        if (giangVien is null) throw new GiangVienNotFoundException(id);
+        if (request.File != null && request.File.Length > 0)
+        {
+            var hinhDaiDien = await _serviceFIle.UpLoadFile(request.File!, "giangvien");
+            var context = _httpContextAccessor.HttpContext;
+            hinhDaiDien = $"{context!.Request.Scheme}://{context.Request.Host}/uploads/{hinhDaiDien}";
+            giangVien.AnhDaiDien = hinhDaiDien;
+        }
+
+        giangVien.UpdatedAt = DateTime.Now;
+        await _repositoryMaster.ExecuteInTransactionAsync(async () =>
+        {
+            if (!string.IsNullOrWhiteSpace(request.HoTen)) giangVien.HoTen = request.HoTen;
+            if (!string.IsNullOrWhiteSpace(request.CCCD)) giangVien.CCCD = request.CCCD;
+            giangVien.NgaySinh = request.NgaySinh;
+            if (!string.IsNullOrWhiteSpace(request.SoDienThoai)) giangVien.SoDienThoai = request.SoDienThoai;
+            if (!string.IsNullOrWhiteSpace(request.DiaChi)) giangVien.DiaChi = request.DiaChi;
+            await Task.CompletedTask;
+        });
+        _loggerService.LogInfo("Cập nhật giảng viên thành công.");
+    }
+
     public async Task DeleteAsync(Guid id)
     {
         if (id == Guid.Empty) throw new GiangVienBadRequestException($"Khoa với {id} không được bỏ trống!");
@@ -82,7 +107,7 @@ public sealed class ServiceGiangVien : IServiceGiangVien
     {
         var giangViens = await _repositoryMaster.GiangVien.GetAllGiangVienAsync(paramGiangVienDto.page,
             paramGiangVienDto.limit, paramGiangVienDto.search, paramGiangVienDto.sortBy, paramGiangVienDto.sortByOrder,
-            paramGiangVienDto.KhoaId, paramGiangVienDto.BoMonId,paramGiangVienDto.active);
+            paramGiangVienDto.KhoaId, paramGiangVienDto.BoMonId, paramGiangVienDto.active);
         var giangVienDtos = _mapper.Map<IEnumerable<ResponseGiangVienDto>>(giangViens);
         return (data: giangVienDtos, page: giangViens!.PageInfo);
     }
@@ -127,6 +152,7 @@ public sealed class ServiceGiangVien : IServiceGiangVien
             hinhDaiDien = $"{context!.Request.Scheme}://{context.Request.Host}/uploads/{hinhDaiDien}";
             giangVien.AnhDaiDien = hinhDaiDien;
         }
+
         Console.WriteLine($"test 9999999999999 {giangVien.TaiKhoan.LoaiTaiKhoan}");
         giangVien.UpdatedAt = DateTime.Now;
         await _repositoryMaster.ExecuteInTransactionAsync(async () =>
@@ -145,7 +171,7 @@ public sealed class ServiceGiangVien : IServiceGiangVien
             if (!string.IsNullOrWhiteSpace(request.ChuyenNganh)) giangVien.ChuyenNganh = request.ChuyenNganh;
             if (request.ChucVu is not null) giangVien.ChucVu = request.ChucVu;
             if (request.TrangThai is not null) giangVien.TrangThai = request.TrangThai;
-            if(request.LoaiTaiKhoan is not null) giangVien.TaiKhoan.LoaiTaiKhoan = request.LoaiTaiKhoan;
+            if (request.LoaiTaiKhoan is not null) giangVien.TaiKhoan.LoaiTaiKhoan = request.LoaiTaiKhoan;
             await Task.CompletedTask;
         });
         _loggerService.LogInfo("Cập nhật giảng viên thành công.");

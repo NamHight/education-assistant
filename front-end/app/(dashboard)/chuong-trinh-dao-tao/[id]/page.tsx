@@ -18,19 +18,19 @@ interface IPageProps {
 
 const page = async ({ params }: IPageProps) => {
   const { id } = await params;
-  const chuongTrinhDaoTao = await ChuongTrinhDaoTaoService.getChuongTrinhDaoTaoByIdServer(id);
+  const chuongTrinhDaoTao = await ChuongTrinhDaoTaoService.getChuongTrinhDaoTaoByIdServer(id).catch(() => undefined);
   const nganh = await NganhService.getAllNganhServer({
     limit: 99999999999,
     sortBy: 'createdAt',
     sortByOrder: 'desc'
-  });
+  })?.catch(() => ({ data: [] }));
   return (
     <div>
       <Content
         id={id}
         initialData={chuongTrinhDaoTao}
         anotherData={{
-          nganhs: nganh.data || []
+          nganhs: nganh.data?.length > 0 ? nganh.data : undefined
         }}
       />
     </div>

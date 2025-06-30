@@ -4,7 +4,7 @@ import { API } from "@/types/general";
 import { IParamNganh } from "@/types/params";
 
 export class NganhService {
-    static async getAllNganh(params:IParamNganh ){
+    static async getAllNganh(params: IParamNganh) {
         return await authApi.get(`${API.NGANH.GET_ALL}`, {
             params: params,
         })
@@ -15,7 +15,7 @@ export class NganhService {
             .catch(error => error.response?.data);
     }
 
-    static async getAllNganhServer(params:IParamNganh ){
+    static async getAllNganhServer(params: IParamNganh) {
         return await authApiServer.get(`${API.NGANH.GET_ALL}`, {
             params: params,
         })

@@ -24,9 +24,8 @@ export default async function Page() {
         limit: 10,
         sortBy: 'createdAt',
         sortByOrder: 'desc'
-      });
-      console.log('result', result);
-      return result;
+      }).catch(() => ({ data: [] }));
+      return result?.data?.length > 0 ? result : undefined;
     }
   });
   return (

@@ -15,60 +15,34 @@ import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
+import LoadingScreen from '@/components/loading/LoadingScreen';
+import { WaveAnimationLoading } from '@/components/loading/LoadingScreenWave';
+import Image from 'next/image';
 
 export const metadata: Metadata = {
   title: 'CKC Hỗ trợ đào tạo',
   description: 'Ứng dụng hỗ trợ đào tạo của CKC',
   icons: {
-    icon: '/favicon.ico',
-    apple: '/apple-touch-icon.png',
-    shortcut: '/favicon-32x32.png',
-    other: [
-      {
-        rel: 'mask-icon',
-        url: '/safari-pinned-tab.svg',
-        color: '#000000'
-      }
-    ]
-  },
-  metadataBase: new URL('https://ckc.edu.vn'),
-  openGraph: {
-    title: 'CKC Hỗ trợ đào tạo',
-    description: 'Ứng dụng hỗ trợ đào tạo của CKC',
-    url: 'https://ckc.edu.vn',
-    siteName: 'CKC Hỗ trợ đào tạo',
-    images: [
-      {
-        url: 'https://ckc.edu.vn/og-image.png',
-        width: 1200,
-        height: 630,
-        alt: 'CKC Hỗ trợ đào tạo'
-      }
-    ],
-    locale: 'vi_VN',
-    type: 'website'
+    icon: '/favicon.ico'
   }
 };
 const BRANDING: Branding = {
-  title: 'Education Assistant',
-  homeUrl: '/'
+  title: 'CKC Hỗ trợ đào tạo',
+  homeUrl: '/',
+  logo: <Image src='/assets/images/logo.png' alt='CKC Hỗ trợ đào tạo' width={40} height={50} priority />
 };
 export default async function RootLayout({
   children
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const storeHydrater = await storeHydration();
   return (
     <html lang='en' data-toolpad-color-scheme='light'>
       <body className={`antialiased`} style={{ fontFamily: 'Roboto, Arial, sans-serif' }}>
         <AppRouterCacheProvider options={{ enableCssLayer: true, speedy: true }}>
-          <Suspense fallback={<LinearProgress />}>
+          <Suspense fallback={<WaveAnimationLoading />}>
             <NextAppProvider theme={theme} navigation={NAVIGATION} branding={BRANDING}>
-              <Provider>
-                <StoreHydrater auth={storeHydrater.auth} setting={storeHydrater.setting} />
-                {children}
-              </Provider>
+              <Provider>{children}</Provider>
             </NextAppProvider>
           </Suspense>
         </AppRouterCacheProvider>

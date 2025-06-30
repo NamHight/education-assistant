@@ -13,8 +13,7 @@ interface IPageProps {
 
 const page = async ({ params }: IPageProps) => {
   const { id } = await params;
-  const khoa = await KhoaService.getKhoaByIdServer(id);
-  console.log('khoa asds ', khoa);
+  const khoa = await KhoaService.getKhoaByIdServer(id).catch(() => undefined);
   return (
     <div>
       <Content id={id} initialData={khoa} />

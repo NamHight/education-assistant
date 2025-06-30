@@ -13,7 +13,7 @@ public interface IServiceAuthenticate
     Task<(string accessToken, string refreshToken)> refresh(string refreshToken);
 
     Task Logout(string email, HttpContext httpContext);
-    Task ForgotPasswordConfirm(ParamForgotPasswordDto request);
+    Task<bool> ForgotPasswordConfirm(ParamForgotPasswordDto request);
     Task ResetPassword(RequestForgotPasswordDto request);
     string GenerateToken(TaiKhoan taiKhoan);
     Task<ResponseGiangVienDto> GetMeAsync();

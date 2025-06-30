@@ -21,6 +21,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import { useNotifications } from '@toolpad/core';
 import ClearIcon from '@mui/icons-material/Clear';
 import RestoreIcon from '@mui/icons-material/Restore';
+import Link from 'next/link';
 const Table = dynamic(() => import('@/components/tables/Table'), {
   ssr: false
 });
@@ -240,7 +241,16 @@ const Content = ({ queryKey }: ContentProps) => {
         disableColumnMenu: true,
         sortable: false,
         display: 'flex',
-        flex: 1
+        flex: 1,
+        renderCell: (params: any) => {
+          return !params.row?.deletedAt ? (
+            <Link href={`${APP_ROUTE.GIANG_VIEN.EDIT(params.row?.id)}`} className='text-blue-500 hover:underline'>
+              {params.value}
+            </Link>
+          ) : (
+            <span>{params.value}</span>
+          );
+        }
       },
       {
         field: 'email',
@@ -325,9 +335,6 @@ const Content = ({ queryKey }: ContentProps) => {
   }, [data?.data]);
   return (
     <Box className='flex flex-col gap-4'>
-      <Box className='flex justify-start'>
-        <Button title={'Thêm mới'} onClick={() => router.push(APP_ROUTE.GIANG_VIEN.ADD)} />
-      </Box>
       <Table
         ref={refTable}
         moreActions={moreActions}

@@ -1,7 +1,7 @@
 'use client';
 
 import ToolTipImage from '@/components/tooltips/ToolTipImage';
-import { Box, MenuItem, Typography } from '@mui/material';
+import { Box, MenuItem, Popover, Typography } from '@mui/material';
 import { GridActionsCellItem, GridColDef, GridFilterModel } from '@mui/x-data-grid';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { motion } from 'motion/react';
@@ -23,13 +23,14 @@ import ClearIcon from '@mui/icons-material/Clear';
 import RestoreIcon from '@mui/icons-material/Restore';
 import { SinhVienService } from '@/services/SinhVienService';
 import Link from 'next/link';
-import { TrangThaiPhongHocEnum, TrangThaiSinhVienEnum } from '@/types/options';
+import { TrangThaiPhongHoc, TrangThaiPhongHocEnum, TrangThaiSinhVienEnum } from '@/types/options';
 import { GioiTinhEnum } from '@/models/GiangVien';
 import { KhoaService } from '@/services/KhoaService';
 import { MonHocService } from '@/services/MonHocService';
 import { NganhService } from '@/services/NganhService';
 import { BoMonService } from '@/services/BoMonService';
 import { PhongHocService } from '@/services/PhongHocService';
+import ChangeCircleOutlinedIcon from '@mui/icons-material/ChangeCircleOutlined';
 import { LoaiPhongHocEnum } from '@/models/PhongHoc';
 const Table = dynamic(() => import('@/components/tables/Table'), {
   ssr: false
@@ -55,6 +56,13 @@ const Content = ({ queryKey }: ContentProps) => {
   const [filterModel, setFilterModel] = useState<GridFilterModel>({
     items: []
   });
+  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
+  const [itemRow, setItemRow] = useState<Record<string, any>>({
+    id: null,
+    row: {}
+  });
+  const open = Boolean(anchorEl);
+  const id = open ? 'simple-popover' : undefined;
   const queryClient = useQueryClient();
   const { data, isLoading, isFetching } = useQuery({
     queryKey: [queryKey, paginationModel, sortModel, filterModel],
@@ -90,6 +98,15 @@ const Content = ({ queryKey }: ContentProps) => {
     }
     return rowCountRef.current;
   }, [data?.meta?.TotalCount]);
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+    refTable.current?.handleClose();
+  };
+
   const mutationDelete = useMutation({
     mutationFn: async (id: string | number | null) => {
       const result = await PhongHocService.deletePhongHoc(id);
@@ -103,7 +120,28 @@ const Content = ({ queryKey }: ContentProps) => {
       queryClient.invalidateQueries({ queryKey: [queryKey], exact: false });
     },
     onError: (error: any) => {
-      notification.show(error?.Message || 'Xoá bộ môn thất bại', {
+      notification.show(error?.Message || 'Xoá phòng học thất bại', {
+        severity: 'error',
+        autoHideDuration: 4000
+      });
+    }
+  });
+  const mutationChangeStatus = useMutation({
+    mutationFn: async ({ id, data }: { id: string | number | null; data: any }) => {
+      const formData = new FormData();
+      formData.append('trangThai', data.trangThai.toString());
+      const result = await PhongHocService.changeStatusPhongHoc(id, formData);
+      return result;
+    },
+    onSuccess: () => {
+      notification.show('Thay đổi trạng thái thành công', {
+        severity: 'success',
+        autoHideDuration: 4000
+      });
+      queryClient.invalidateQueries({ queryKey: [queryKey], exact: false });
+    },
+    onError: (error: any) => {
+      notification.show(error?.Message || 'Thay đổi trạng thái thất bại', {
         severity: 'error',
         autoHideDuration: 4000
       });
@@ -112,6 +150,31 @@ const Content = ({ queryKey }: ContentProps) => {
   const handleDelete = (id: string | number | null) => {
     mutationDelete.mutate(id);
   };
+  const handleChangeStatus = (id: string | number | null, trangThai: number) => {
+    mutationChangeStatus.mutate({ id, data: { trangThai: trangThai } });
+  };
+
+  const moreActions = useCallback((id: string | number | null, row: any) => {
+    return [
+      <MenuItem
+        key='change-status'
+        onClick={(e: React.MouseEvent<HTMLLIElement>) => {
+          handleClick(e as unknown as React.MouseEvent<HTMLButtonElement>);
+          setItemRow({ id, row });
+        }}
+        sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}
+      >
+        <ChangeCircleOutlinedIcon sx={{ color: 'green' }} />
+        <Typography
+          className={'!text-[14px] !font-[500] !leading-6 group-hover:!text-blue-800 group-hover:!font-semibold'}
+          variant={'body1'}
+          sx={{ width: '100%' }}
+        >
+          Thay đổi trạng thái
+        </Typography>
+      </MenuItem>
+    ];
+  }, []);
 
   const columns = useMemo((): GridColDef[] => {
     const formatDateBirth = (date: string) => {
@@ -178,7 +241,14 @@ const Content = ({ queryKey }: ContentProps) => {
         disableColumnMenu: true,
         sortable: false,
         display: 'flex',
-        flex: 1
+        flex: 1,
+        renderCell: (params: any) => {
+          return (
+            <Link href={`${APP_ROUTE.PHONG_HOC.EDIT}/${params.row.id}`} className='text-blue-600 hover:underline'>
+              {params.value}
+            </Link>
+          );
+        }
       },
       {
         field: 'toaNha',
@@ -247,7 +317,40 @@ const Content = ({ queryKey }: ContentProps) => {
   }, [data?.data]);
   return (
     <Box className='flex flex-col gap-4'>
-      <Box className='flex justify-start'>
+      <Popover
+        id={id}
+        open={open}
+        anchorEl={anchorEl}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'left'
+        }}
+        transformOrigin={{
+          vertical: 'bottom',
+          horizontal: 'right'
+        }}
+        slotProps={{
+          paper: {
+            className: '!bg-white flex flex-col gap-2 p-2 shadow-lg rounded-lg'
+          }
+        }}
+      >
+        {TrangThaiPhongHoc.map((item) => (
+          <button
+            key={item.id}
+            disabled={item.id === itemRow?.row?.trangThaiPhongHoc}
+            className='px-2 py-1 hover:bg-gray-100 rounded-lg flex items-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed'
+            onClick={() => {
+              handleChangeStatus(itemRow.id, item.id);
+              handleClose();
+            }}
+          >
+            <Typography>{item.name}</Typography>
+          </button>
+        ))}
+      </Popover>
+      <Box className='flex justify-start gap-4 border border-gray-200 rounded-lg p-4 shadow-sm'>
         <Button title={'Thêm mới'} onClick={() => router.push(APP_ROUTE.PHONG_HOC.ADD)} />
       </Box>
       <Table
@@ -263,6 +366,7 @@ const Content = ({ queryKey }: ContentProps) => {
         paginationModel={paginationModel}
         handleDeleteCallBack={handleDelete}
         customToolBar
+        moreActions={moreActions}
         urlNavigate='phong-hoc'
         placeholderSearch='Tìm kiếm phòng học...'
       />

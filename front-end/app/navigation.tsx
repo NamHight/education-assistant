@@ -13,6 +13,10 @@ import HotelClassIcon from '@mui/icons-material/HotelClass';
 import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
 import SquareFootIcon from '@mui/icons-material/SquareFoot';
 import GroupWorkIcon from '@mui/icons-material/GroupWork';
+import AddchartIcon from '@mui/icons-material/Addchart';
+import HouseIcon from '@mui/icons-material/House';
+import ScoreIcon from '@mui/icons-material/Score';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 export const NAVIGATION: Navigation = [
   {
     segment: '/',
@@ -21,10 +25,22 @@ export const NAVIGATION: Navigation = [
     pattern: `/:rest*`
   },
   {
+    segment: 'nhap-diem',
+    title: 'Nhập điểm',
+    icon: <ScoreIcon />,
+    pattern: `nhap-diem/:rest*`
+  },
+  {
     segment: 'phan-cong',
     title: 'Phân công',
     icon: <GroupWorkIcon />,
     pattern: `phan-cong/:rest*`
+  },
+  {
+    segment: 'lich-cong-tac-tuan',
+    title: 'Lịch công tác tuần',
+    icon: <CalendarMonthIcon />,
+    pattern: `lich-cong-tac-tuan/:rest*`
   },
   {
     segment: 'giang-vien',
@@ -81,15 +97,21 @@ export const NAVIGATION: Navigation = [
     pattern: `chuong-trinh-dao-tao/:rest*`
   },
   {
+    segment: 'chi-tiet-chuong-trinh-dao-tao',
+    title: 'Chi tiết chương trình đào tạo',
+    icon: <AddchartIcon />,
+    pattern: `chi-tiet-chuong-trinh-dao-tao/:rest*`
+  },
+  {
     segment: 'phong-hoc',
     title: 'Phòng học',
     icon: <HotelClassIcon />,
     pattern: `phong-hoc/:rest*`
   },
   {
-    segment: 'truong',
-    title: 'Trường',
-    icon: <SchoolIcon />,
-    pattern: `truong/:rest*`
+    segment: 'lop-hoc',
+    title: 'Lớp học',
+    icon: <HouseIcon />,
+    pattern: `lop-hoc/:rest*`
   }
 ];

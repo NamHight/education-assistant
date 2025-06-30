@@ -12,6 +12,7 @@ import { AuthenticateService } from '@/services/AuthenticateService';
 import { useAuthStore } from '@/stores/authStore';
 import { useNotifications } from '@toolpad/core';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 interface LoginData {
   email: string;
@@ -44,8 +45,7 @@ const Content = () => {
       router.push('/');
     },
     onError: (error: any) => {
-      console.error('Login error:', error);
-      notification.show(error, {
+      notification.show(error?.Message, {
         severity: 'error',
         autoHideDuration: 4000
       });
@@ -70,9 +70,9 @@ const Content = () => {
           error={errors.password?.message}
           options={
             <div className='text-sm'>
-              <a href='#' className='font-semibold text-blue-600 hover:text-blue-500'>
+              <Link href='/quen-mat-khau' className='font-semibold text-blue-600 hover:text-blue-500'>
                 Quên mật khẩu?
-              </a>
+              </Link>
             </div>
           }
         />

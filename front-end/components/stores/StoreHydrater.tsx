@@ -10,7 +10,7 @@ import React, { useEffect } from 'react';
 
 interface StoreHydraterProps {
   auth: {
-    user: GiangVien | null;
+    user: GiangVien | undefined;
   };
   setting: {
     theme: 'light' | 'dark';
@@ -18,28 +18,30 @@ interface StoreHydraterProps {
 }
 
 const StoreHydrater = ({ auth, setting }: StoreHydraterProps) => {
-  const data = usePrefetchQuery({
+  const hasUser = !!auth?.user;
+  const { data: user } = useQuery({
     queryKey: ['user'],
     queryFn: async () => {
       const response = await AuthenticateService.getMe();
       return response;
     },
-    initialData: auth,
+    ...(hasUser ? { initialData: auth.user } : {}),
+    enabled: !hasUser,
     gcTime: Infinity,
     staleTime: Infinity
   });
   useEffect(() => {
-    if (auth) {
-      useAuthStore.setState({
-        user: auth.user
-      });
+    if (auth?.user) {
+      useAuthStore.setState({ user: auth.user });
+    } else if (user) {
+      useAuthStore.setState({ user });
     }
     if (setting) {
       useAppStore.setState({
         theme: setting.theme
       });
     }
-  }, [auth, setting]);
+  }, [auth?.user, user, setting]);
   return null;
 };
 

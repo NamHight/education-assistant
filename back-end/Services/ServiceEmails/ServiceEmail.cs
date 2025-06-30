@@ -1,30 +1,25 @@
-using System;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 using Education_assistant.Contracts.LoggerServices;
 using Education_assistant.Exceptions.ThrowError.GiangVienExceptions;
 using Education_assistant.Repositories.RepositoryMaster;
-using Education_assistant.Services.ServiceEmails.DTOs.Request;
 using Education_assistant.Services.ServiceEmails.DTOs.Response;
 using Education_assistant.Services.ServiceMaster;
 using MailKit.Net.Smtp;
 using MailKit.Security;
-using Microsoft.IdentityModel.Tokens;
 using MimeKit;
-using NuGet.Common;
 
 namespace Education_assistant.Services.ServiceEmails;
 
 public class ServiceEmail : IServiceEmail
 {
     private const string templatePath = @"Templates/{0}.html";
-    private readonly IRepositoryMaster _repositoryMaster;
-    private readonly ILoggerService _loggerService;
     private readonly IConfiguration _config;
     private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly ILoggerService _loggerService;
+    private readonly IRepositoryMaster _repositoryMaster;
     private readonly IServiceMaster _serviceMaster;
-    public ServiceEmail(IRepositoryMaster repositoryMaster, ILoggerService loggerService, IConfiguration config, IHttpContextAccessor httpContextAccessor, IServiceMaster serviceMaster)
+
+    public ServiceEmail(IRepositoryMaster repositoryMaster, ILoggerService loggerService, IConfiguration config,
+        IHttpContextAccessor httpContextAccessor, IServiceMaster serviceMaster)
     {
         _repositoryMaster = repositoryMaster;
         _loggerService = loggerService;
@@ -36,10 +31,7 @@ public class ServiceEmail : IServiceEmail
     public async Task SendEmailForgotPassword(string email)
     {
         var taiKhoan = await _repositoryMaster.TaiKhoan.GetTaiKhoanByEmailAsync(email, false);
-        if (taiKhoan is null)
-        {
-            throw new GiangVienBadRequestException("Email không được để trống!.");
-        }
+        if (taiKhoan is null) throw new GiangVienBadRequestException("Email không được để trống!.");
         taiKhoan.ResetPassword = _serviceMaster.Authenticate.GenerateToken(taiKhoan);
         taiKhoan.ResetPasswordExpires = DateTime.Now.AddMinutes(5);
         await _repositoryMaster.ExecuteInTransactionAsync(async () =>
@@ -49,29 +41,27 @@ public class ServiceEmail : IServiceEmail
         });
         _loggerService.LogInfo("Update resetpassword thành công!");
 
-        
+
         try
         {
             var giangVien = await _repositoryMaster.GiangVien.GetGiangVienByEmailAsync(email, false);
             var temp = string.Empty;
             if (giangVien is not null)
-            {
                 temp = giangVien.HoTen;
-            }
             else
-            {
                 temp = taiKhoan.Email;
-            }
             var context = _httpContextAccessor.HttpContext;
-            var url = $"{context!.Request.Scheme}://{context.Request.Host}/Authenticate/forgot-password-confirm/?email={email}&token={taiKhoan.ResetPassword}";
-
+            var url =
+                $"{context!.Request.Scheme}://{context.Request.Host}/api/Authenticate/forgot-password-confirm/?email={email}&token={taiKhoan.ResetPassword}";
+            Console.WriteLine("Link: " + url);
+            Console.WriteLine("Name: " + temp);
             var responseEmail = new ResponseEmailDto
             {
                 Recipient = taiKhoan.Email,
                 Attachments = new List<KeyValuePair<string, string>>
                 {
-                    new KeyValuePair<string, string>("{{Link}}", url),
-                    new KeyValuePair<string, string>("{{Name}}", temp!)
+                    new("{{Link}}", url),
+                    new("{{Name}}", temp!)
                 }
             };
             await SendEmailAsyncWithTemplate("Cập nhật mật khẩu", responseEmail, "ConfirmTemplate");
@@ -102,7 +92,8 @@ public class ServiceEmail : IServiceEmail
         email.Body = builder.ToMessageBody();
 
         using var smtp = new SmtpClient();
-        await smtp.ConnectAsync(_config["EmailSetting:SmtpServer"], int.Parse(_config["EmailSetting:Port"]!), SecureSocketOptions.StartTls);
+        await smtp.ConnectAsync(_config["EmailSetting:SmtpServer"], int.Parse(_config["EmailSetting:Port"]!),
+            SecureSocketOptions.StartTls);
         await smtp.AuthenticateAsync(_config["EmailSetting:Username"], _config["EmailSetting:Password"]);
         await smtp.SendAsync(email);
         await smtp.DisconnectAsync(true);
@@ -111,15 +102,10 @@ public class ServiceEmail : IServiceEmail
     private string UpdatePlaceHolder(string text, List<KeyValuePair<string, string>>? placeHolder)
     {
         if (!string.IsNullOrWhiteSpace(text) && placeHolder is not null)
-        {
             foreach (var item in placeHolder)
-            {
                 if (text.Contains(item.Key))
-                {
                     text = text.Replace(item.Key, item.Value);
-                }
-            }
-        }
+
         return text;
     }
 

@@ -4,35 +4,33 @@ import { LopHocPhan } from "./LopHocPhan";
 import { MonHoc } from "./MonHoc";
 import { SinhVien } from "./SinhVien";
 
-export interface ChiTietLopHocPhan extends BaseEntity
-{
-    DiemChuyenCan?: number;
-    DiemTrungBinh?: number;
-    DiemThi1?: number;
-    DiemThi2?: number;
-    DiemTongKet1?: number;
-    DiemTongKet2?: number;
-    NgayLuuDiem?: Date;
-    NgayNopDiem?: Date;
+export interface ChiTietLopHocPhan extends BaseEntity {
+    diemChuyenCan?: number;
+    diemTrungBinh?: number;
+    diemThi1?: number;
+    diemThi2?: number;
+    diemTongKet1?: number;
+    diemTongKet2?: number;
+    ngayLuuDiem?: Date;
+    ngayNopDiem?: Date;
 
-    HocKy?: number;
-    GhiChu?: string;
+    hocKy?: number;
+    ghiChu?: string;
 
-    TrangThai?: number;
+    trangThai?: number;
 
-    SinhVienId?: string;
-    SinhVien?: SinhVien;
-    MonHocId?: string;
-    MonHoc?: MonHoc;
-    GiangVienId?: string;
-    GiangVien?: GiangVien;
-    LopHocPhanId?: string;
-    LopHocPhan?: LopHocPhan;
+    sinhVienId?: string;
+    sinhVien?: SinhVien;
+    monHocId?: string;
+    monHoc?: MonHoc;
+    giangVienId?: string;
+    giangVien?: GiangVien;
+    lopHocPhanId?: string;
+    lopHocPhan?: LopHocPhan;
 }
 
 
-export enum TrangThaiChiTietLopHocPhanEnum
-{
+export enum TrangThaiChiTietLopHocPhanEnum {
     DANG_HOAT_DONG = 1,
     KHONG_HOAT_DONG = 2
 }

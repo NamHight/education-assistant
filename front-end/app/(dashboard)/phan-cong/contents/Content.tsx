@@ -2,17 +2,23 @@
 import { handleTextSearch } from '@/lib/string';
 import { LopHocPhanService } from '@/services/LopHocPhanService';
 import { IParamChuongTrinhDaoTao, IParamLopHocPhan } from '@/types/params';
-import { Box, Typography } from '@mui/material';
+import { Box, MenuItem, Select, Typography } from '@mui/material';
 import { GridColDef, GridFilterModel } from '@mui/x-data-grid';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-import React, { memo, useEffect, useMemo, useRef, useState } from 'react';
+import React, { Fragment, memo, ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { GiangVienService } from '@/services/GiangVienService';
 import SelectEditCell from '../selects/SelectEditCell';
 import dynamic from 'next/dynamic';
 import { ChuongTrinhDaoTaoService } from '@/services/ChuongTrinhDaoTaoService';
 import { LoaiMonHocEnum } from '@/models/MonHoc';
+import moment from 'moment';
+import { useNotifications } from '@toolpad/core';
+import { LoaiLopHocPhan, TrangThaiLopHocPhanEnum } from '@/types/options';
+import InputSelect2 from '@/components/selects/InputSelect2';
+import { usePopoverLock } from '@/hooks/context/PopoverLock';
+import { set } from 'lodash';
 
 const TableEdit = dynamic(() => import('@/components/tables/TableEdit'), {
   ssr: false
@@ -24,7 +30,10 @@ interface IContentProps {
 }
 
 const Content = ({ queryKey, ctdtServer }: IContentProps) => {
+  const notification = useNotifications();
+  const queryClient = useQueryClient();
   const [giangVienOptions, setGiangVienOptions] = useState<{ [khoaId: string]: any[] }>({});
+  // const [loaiLopHocPhan, setloaiLopHocPhan] = useState<number | null>(null);
   const [filter, setfilter] = useState<{
     hocKy: number;
     loaiChuongTrinh: number;
@@ -38,22 +47,19 @@ const Content = ({ queryKey, ctdtServer }: IContentProps) => {
   const [filterModel, setFilterModel] = useState<GridFilterModel>({
     items: []
   });
+  const [isOpenPopover, setisOpenPopover] = useState<boolean>(false);
   const { data, isLoading } = useQuery({
     queryKey: [queryKey, sortModel, filterModel, filter],
     queryFn: async () => {
       const searchKeyWord = handleTextSearch(filterModel?.quickFilterValues as any[]);
-      if (!filter?.chuongTrinh || !filter?.khoa || !filter?.hocKy || !filter?.loaiChuongTrinh) {
-        return [];
-      }
       let params: IParamLopHocPhan = {
-        sortBy: 'createdat',
-        sortByOrder: 'desc',
-        chuongTrinhDaoTaoId: filter.chuongTrinh,
-        hocKy: filter.hocKy,
-        khoa: filter.khoa,
-        loaiChuongTrinhDaoTao: filter.loaiChuongTrinh
+        trangThai: TrangThaiLopHocPhanEnum.DANG_HOAT_DONG,
+        chuongTrinhDaoTaoId: filter?.chuongTrinh,
+        hocKy: filter?.hocKy,
+        khoa: filter?.khoa,
+        loaiChuongTrinhDaoTao: filter?.loaiChuongTrinh,
+        limit: 99999999999999
       };
-
       if (sortModel.field && sortModel.sort) {
         params.sortBy = sortModel.field;
         params.sortByOrder = sortModel.sort === 'asc' ? 'asc' : 'desc';
@@ -67,8 +73,10 @@ const Content = ({ queryKey, ctdtServer }: IContentProps) => {
       const result = await LopHocPhanService.getAllLopHocPhan(params);
       return result;
     },
+    enabled: !!filter?.chuongTrinh && !!filter?.khoa && !!filter?.hocKy && !!filter?.loaiChuongTrinh,
     placeholderData: (prev) => prev,
-    refetchOnWindowFocus: false
+    refetchOnWindowFocus: false,
+    gcTime: 0
   });
   const { data: ctdt, isLoading: isLoadingCtdt } = useQuery({
     queryKey: ['ctdt-list'],
@@ -96,11 +104,21 @@ const Content = ({ queryKey, ctdtServer }: IContentProps) => {
       const result = await LopHocPhanService.phanCongLopHocPhan(data);
       return result;
     },
-    onSuccess: (data) => {
-      console.log('Phân công thành công:', data);
+    onSuccess: async (data) => {
+      notification.show('Phân công thành công', {
+        severity: 'success',
+        autoHideDuration: 5000
+      });
+      await queryClient.invalidateQueries({
+        queryKey: [queryKey],
+        exact: false
+      });
     },
     onError: (error) => {
-      console.error('Lỗi phân công:', error);
+      notification.show('Phân công thất bại', {
+        severity: 'error',
+        autoHideDuration: 5000
+      });
     }
   });
   const fetchGiangVienByKhoaId = async (khoaId: string) => {
@@ -148,7 +166,7 @@ const Content = ({ queryKey, ctdtServer }: IContentProps) => {
         headerName: 'Mã học phần',
         type: 'string',
         headerAlign: 'left',
-        minWidth: 200,
+        minWidth: 100,
         flex: 1,
         sortable: false,
         display: 'flex',
@@ -156,13 +174,12 @@ const Content = ({ queryKey, ctdtServer }: IContentProps) => {
         editable: false,
         disableColumnMenu: true,
         renderCell: (params) => {
-          return <Typography variant='body2'>{`${params.value} - ${params.row?.monHoc?.tenMonHoc}`}</Typography>;
+          return <Typography variant='body2'>{`${params.value}`}</Typography>;
         }
       },
       {
         field: 'monHoc',
-        headerName: 'Loại',
-        type: 'string',
+        headerName: 'Môn học',
         headerAlign: 'left',
         minWidth: 200,
         flex: 1,
@@ -172,12 +189,28 @@ const Content = ({ queryKey, ctdtServer }: IContentProps) => {
         editable: false,
         disableColumnMenu: true,
         renderCell: (params) => {
-          return params.value ? formatType(params.value?.chiTietChuongTrinhDaoTao?.loaiMonHoc) : null;
+          return params.value ? <Typography>{`${params.value?.tenMonHoc}`}</Typography> : null;
+        }
+      },
+      {
+        field: 'loai',
+        headerName: 'Loại',
+        type: 'string',
+        headerAlign: 'left',
+        minWidth: 100,
+        flex: 1,
+        sortable: false,
+        display: 'flex',
+        align: 'left',
+        editable: false,
+        disableColumnMenu: true,
+        renderCell: (params) => {
+          return params.row?.monHoc ? formatType(params.row?.monHoc?.chiTietChuongTrinhDaoTao?.loaiMonHoc) : null;
         }
       },
       {
         field: 'giangVienId',
-        headerName: 'Tên giản viên',
+        headerName: 'Giảng viên',
         headerAlign: 'left',
         minWidth: 140,
         sortable: false,
@@ -212,8 +245,41 @@ const Content = ({ queryKey, ctdtServer }: IContentProps) => {
       }
     ];
   }, [data?.data, giangVienOptions]);
+  const handleOpenPopover = () => {
+    setisOpenPopover(true);
+  };
+  const handleClosePopover = () => {
+    setisOpenPopover(false);
+  };
+  // const handleShowFilter = useMemo((): ReactNode => {
+  //   return (
+  //     <Fragment>
+  //       <Select
+  //         fullWidth
+  //         displayEmpty
+  //         value={loaiLopHocPhan ?? ''}
+  //         onChange={(e) => {
+  //           setloaiLopHocPhan(Number(e.target.value) || null);
+  //         }}
+  //         renderValue={(selected) => {
+  //           if (!selected) return <em>Chọn loại lớp học phần</em>;
+  //           const selectedOption = (LoaiLopHocPhan ?? []).find((option) => option.id === Number(selected));
+  //           return selectedOption ? selectedOption.name : '';
+  //         }}
+  //       >
+  //         <MenuItem value=''>
+  //           <em>Chọn loại lớp học phần</em>
+  //         </MenuItem>
+  //         {(LoaiLopHocPhan ?? []).map((option) => (
+  //           <MenuItem key={option.id} value={option.id}>
+  //             {option.name}
+  //           </MenuItem>
+  //         ))}
+  //       </Select>
+  //     </Fragment>
+  //   );
+  // }, [loaiLopHocPhan]);
   const handleSave = (item: any) => {
-    console.log('Saving item:', item);
     if (item && item.length === 0) return;
     const convertData = item?.map((item: any) => ({
       id: item.id,
@@ -221,16 +287,15 @@ const Content = ({ queryKey, ctdtServer }: IContentProps) => {
       siSo: item.siSo,
       trangThai: item.trangThai,
       monHocId: item.monHoc?.id,
-      giangVienId: item?.giangVienId
+      giangVienId: item?.giangVienId,
+      createdAt: moment().format('YYYY-MM-DD HH:mm:ss')
     }));
-    const form = new FormData();
-    form.append('listRequest', JSON.stringify(convertData));
     mutateSaving.mutate(convertData);
   };
   return (
     <Box className='flex flex-col gap-4'>
       <TableEdit
-        truongTrinhDaoTao={ctdt}
+        chuongTrinhDaotao={ctdt}
         isLoadingCtdt={isLoadingCtdt}
         setSortModel={setSortModel}
         setFilterModel={setFilterModel}
@@ -239,6 +304,10 @@ const Content = ({ queryKey, ctdtServer }: IContentProps) => {
         columns={columns}
         isLoading={isLoading}
         setfilter={setfilter}
+        // contentPopover={handleShowFilter}
+        // isOpen={isOpenPopover}
+        // handleClick={handleOpenPopover}
+        // onClose={handleClosePopover}
       />
     </Box>
   );

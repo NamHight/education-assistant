@@ -14,17 +14,20 @@ interface IPageProps {
 
 const page = async ({ params }: IPageProps) => {
   const { id } = await params;
-  const monHoc = MonHocService.getMonHocByIdServer(id);
-  const khoa = KhoaService.getAllKhoaServer();
+  const monHoc = MonHocService.getMonHocByIdServer(id).catch(() => undefined);
+  const khoa = KhoaService.getAllKhoaServer({
+    limit: 99999999999,
+    sortBy: 'createdAt',
+    sortByOrder: 'desc'
+  }).catch(() => ({ data: [] }));
   const [monHocData, khoaData] = await Promise.all([monHoc, khoa]);
-  console.log('khoa asds ', monHocData, khoaData);
   return (
     <div>
       <Content
         id={id}
         initialData={monHocData}
         anotherData={{
-          khoas: khoaData?.data
+          khoas: khoaData?.data?.length > 0 ? khoaData?.data : undefined
         }}
       />
     </div>

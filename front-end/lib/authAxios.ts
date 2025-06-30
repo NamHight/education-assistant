@@ -4,7 +4,7 @@ import { API, REFRESH_TOKEN, TOKEN_ACCESS } from '@/types/general';
 import axiosAuthRefresh from 'axios-auth-refresh'
 const authApi = axios.create({
     baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api',
-    withCredentials: true 
+    withCredentials: true
 })
 const getAccessToken = async () => {
     return cookieStorage.get(TOKEN_ACCESS);
@@ -14,7 +14,7 @@ const getRefreshToken = async () => {
 }
 authApi.interceptors.request.use(async (config) => {
     const token = await getAccessToken();
-    if(token) {
+    if (token) {
         config.headers['Authorization'] = `Bearer ${token}`;
     }
     return config;
@@ -31,7 +31,7 @@ authApi.interceptors.response.use(
                     `${process.env.NEXT_PUBLIC_API_URL}${API.AUTH.REFRESH_TOKEN}`,
                     { refreshToken }
                 );
-                const { accessToken,refreshToken: refreshTokenNew} = response?.data;
+                const { accessToken, refreshToken: refreshTokenNew } = response?.data;
                 cookieStorage.set(TOKEN_ACCESS, accessToken);
                 cookieStorage.set(REFRESH_TOKEN, refreshTokenNew);
                 originalRequest.headers.Authorization = `Bearer ${accessToken}`;

@@ -11,13 +11,15 @@ namespace Education_assistant.Modules.ModuleAuthenticate;
 [ApiController]
 public class AuthenticateController : ControllerBase
 {
+    private readonly IConfiguration _config;
     private readonly IServiceEmail _serviceEmail;
     private readonly IServiceMaster _serviceMaster;
 
-    public AuthenticateController(IServiceMaster serviceMaster, IServiceEmail serviceEmail)
+    public AuthenticateController(IServiceMaster serviceMaster, IServiceEmail serviceEmail, IConfiguration config)
     {
         _serviceMaster = serviceMaster;
         _serviceEmail = serviceEmail;
+        _config = config;
     }
 
     [HttpPost("login")]
@@ -32,7 +34,6 @@ public class AuthenticateController : ControllerBase
     [HttpPost("refresh-token")]
     public async Task<IActionResult> RefreshToken([FromBody] RequestRefreshTokenDto requestRefreshTokenDto)
     {
-        Console.WriteLine($"9999999999 refreshToken {requestRefreshTokenDto.refreshToken}");
         if (string.IsNullOrEmpty(requestRefreshTokenDto.refreshToken))
             return Unauthorized(new { message = "Invalid tokens." });
         var result = await _serviceMaster.Authenticate.refresh(requestRefreshTokenDto.refreshToken);
@@ -53,20 +54,27 @@ public class AuthenticateController : ControllerBase
     [HttpPost("forgot-password")]
     public async Task<IActionResult> ForgotPassword([FromBody] string email)
     {
+        Console.WriteLine("Email nhận được: " + email);
         if (email is null) return BadRequest("Email không được bỏ trống!");
         await _serviceEmail.SendEmailForgotPassword(email);
-        return Ok("Send email successfully");
+        return Ok(
+            new
+            {
+                message = "Vui lòng kiểm tra email để đặt lại mật khẩu.", email
+            });
     }
 
     [HttpGet("forgot-password-confirm")]
     public async Task<IActionResult> ForgotPasswordConfirm([FromQuery] ParamForgotPasswordDto request)
     {
-        await _serviceMaster.Authenticate.ForgotPasswordConfirm(request);
-        return Redirect($"http://localhost:3000/reset-password?email={request.Email}&token={request.Token}");
+        var baseUrl = _config["AppSettings:ClientBaseUrl"];
+        var result = await _serviceMaster.Authenticate.ForgotPasswordConfirm(request);
+        if (result) return Redirect($"{baseUrl}/quen-mat-khau/thay-doi?email={request.Email}&token={request.Token}");
+        return Redirect($"{baseUrl}/quen-mat-khau/that-bai?email={request.Email}&token={request.Token}");
     }
 
     [HttpPost("reset-password")]
-    public async Task<IActionResult> ResetPassword([FromBody] RequestForgotPasswordDto request)
+    public async Task<IActionResult> ResetPassword([FromForm] RequestForgotPasswordDto request)
     {
         await _serviceMaster.Authenticate.ResetPassword(request);
         return Ok("Thay đổi mật thành công");
