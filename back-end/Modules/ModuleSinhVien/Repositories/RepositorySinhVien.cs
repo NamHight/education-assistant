@@ -76,7 +76,7 @@ public class RepositorySinhVien : RepositoryBase<SinhVien>, IRepositorySinhVien
                     .AsQueryable();
         if (lopHocId.HasValue && lopHocId != Guid.Empty)
         {
-            query = query.Where(item => item.LopHocId == lopHocId);
+            query = query.Where(item => item.LopHocId == lopHocId); 
         }
         return await query.CountAsync();
     }

@@ -43,7 +43,6 @@ public class ResponseSinhVienSummaryDto
     public int SoDangHoc { get; set; }
     public int SoDaTotNghiep { get; set; }
     public int SoTamNghi { get; set; }
-    public IEnumerable<ResponseSinhVienTinhTrangHocTapDto>? DanhSachSinhVien { get; set; }
 }
 public class ResponseSinhVienTinhTrangHocTapDto
 {

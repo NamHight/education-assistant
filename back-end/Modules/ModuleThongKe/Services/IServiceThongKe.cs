@@ -8,4 +8,6 @@ public interface IServiceThongKe
 {
     Task<ResponsePassFailPointClassDto?> GetPassFailDiemSoAsync(ParamCountPointThongKeDto paramCountPointThongKeDto);
     Task<List<ResponseTopStudentRawDto>> GetTopSinhVienLopHocPhanAsync(ParamTopStudentByClassThongKeDDto paramTopStudentByClassThongKeDDto);
+    Task<Dictionary<string, double>> ThongKetTinhTrangHocTap();
+
 }
