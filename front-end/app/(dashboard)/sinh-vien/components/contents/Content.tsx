@@ -41,6 +41,7 @@ import {
 } from 'lucide-react';
 import InputSelect2 from '@/components/selects/InputSelect2';
 import { LopHocService } from '@/services/LopHocService';
+import { saveAs } from 'file-saver';
 const Table = dynamic(() => import('@/components/tables/Table'), {
   ssr: false
 });
@@ -86,9 +87,14 @@ const Content = ({ queryKey, lopHocServers, tinhTrangHocTapServer }: ContentProp
     field: '',
     sort: ''
   });
-  const [filterOption, setFilterOption] = useState<{ tinhTrang: number | null; lopId: number | null }>({
+  const [filterOption, setFilterOption] = useState<{
+    tinhTrang: number | null;
+    lopId: number | null;
+    lopName: string | null;
+  }>({
     tinhTrang: null,
-    lopId: null
+    lopId: null,
+    lopName: null
   });
   const [filterModel, setFilterModel] = useState<GridFilterModel>({
     items: []
@@ -221,7 +227,25 @@ const Content = ({ queryKey, lopHocServers, tinhTrangHocTapServer }: ContentProp
   const handleRestore = (id: string | number | null) => {
     mutationRestore.mutate(id);
   };
-
+  const mutationExportFile = useMutation({
+    mutationFn: async (data: { lopId: string }) => {
+      const response = await SinhVienService.exportSinhVien(data.lopId);
+      return response;
+    },
+    onSuccess: async (data) => {
+      await saveAs(data, `danh_sach_sinh_vien_${filterOption?.lopName}_${moment().format('DDMMYY')}.xlsx`);
+      notification.show('Xuất file thành công!', {
+        severity: 'success',
+        autoHideDuration: 4000
+      });
+    },
+    onError: (error: any) => {
+      notification.show(error?.Message || 'Đã xảy ra lỗi khi xuất file.', {
+        severity: 'error',
+        autoHideDuration: 4000
+      });
+    }
+  });
   const mutationImport = useMutation({
     mutationFn: async (data: FormData) => {
       const response = await SinhVienService.importSinhVien(data);
@@ -254,6 +278,16 @@ const Content = ({ queryKey, lopHocServers, tinhTrangHocTapServer }: ContentProp
       formData.append('file', data?.File);
     }
     mutationImport.mutate(formData);
+  };
+  const handleExportFile = () => {
+    if (!filterOption?.lopId) {
+      notification.show('Vui lòng chọn lớp học để xuất file.', {
+        severity: 'warning',
+        autoHideDuration: 4000
+      });
+      return;
+    }
+    mutationExportFile.mutate({ lopId: String(filterOption?.lopId) });
   };
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!event.target.files || event.target.files.length === 0 || !filterOption?.lopId) {
@@ -665,7 +699,8 @@ const Content = ({ queryKey, lopHocServers, tinhTrangHocTapServer }: ContentProp
                 getOnChangeValue={(value: any) => {
                   setFilterOption((prev) => ({
                     ...prev,
-                    lopId: value?.id || null
+                    lopId: value?.id || null,
+                    lopName: value?.name || null
                   }));
                 }}
               />
@@ -678,7 +713,7 @@ const Content = ({ queryKey, lopHocServers, tinhTrangHocTapServer }: ContentProp
               className='flex items-center gap-3'
               icon={<Import className='h-5 w-5 text-white' />}
               title={'Export'}
-              onClick={() => {}}
+              onClick={() => handleExportFile()}
             />
           </Box>
           <Box>

@@ -52,6 +52,7 @@ export const API = {
         RESTORE: "/SinhVien/:id/restore",
         TINH_TRANG_HOC_TAP: "/SinhVien/all-tinh-trang-hoc-tap",
         IMPORT: "/SinhVien/import",
+        EXPORT: "/SinhVien/:id/export",
     },
     GIANG_VIEN: {
         GET_ALL: "/giangviens",

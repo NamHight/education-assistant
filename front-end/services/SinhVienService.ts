@@ -90,4 +90,14 @@ export class SinhVienService {
             throw error.response?.data;
         }
     }
+    static async exportSinhVien(id: string | number | null) {
+        try {
+            const result = await authApi.get(`${API.SINH_VIEN.EXPORT}`.replace(':id', `${id}`), {
+                responseType: 'blob'
+            });
+            return result.data;
+        } catch (error: any) {
+            throw error.response?.data;
+        }
+    }
 }
