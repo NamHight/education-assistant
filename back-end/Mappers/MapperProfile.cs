@@ -92,6 +92,7 @@ public class MapperProfile : Profile
         CreateMap<RequestAddSinhVienDto, SinhVien>();
         CreateMap<RequestUpdateSinhVienDto, SinhVien>();
         CreateMap<SinhVien, ResponseSinhVienDto>();
+        CreateMap<SinhVien, ResponseSinhVienTinhTrangHocTapDto>();
 
         //map ngành
         CreateMap<RequestAddNganhDto, Nganh>();
