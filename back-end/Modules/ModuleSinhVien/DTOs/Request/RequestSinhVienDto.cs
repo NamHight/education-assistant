@@ -88,3 +88,20 @@ public class RequestUpdateSinhVienDto
     public IFormFile? File { get; set; }
     public DateTime? CreatedAt { get; set; }
 }
+
+public class RequestImportFileSinhVienDto
+{
+    [Required(ErrorMessage = "Id lớp học được bỏ trống")]
+    public Guid lopHocId { get; set; }
+    [Required(ErrorMessage = "File không được bỏ trống")]
+    public IFormFile? File { get; set; }
+}
+public class ImportFileSinhVienDto
+{
+    public int STT { get; set; }
+    public string MSSV { get; set; } = string.Empty;
+    public string CCCD { get; set; } = string.Empty;
+    public string HoTen { get; set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
+    public string MyProperty { get; set; }
+}

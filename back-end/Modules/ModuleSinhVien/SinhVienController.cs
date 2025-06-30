@@ -61,5 +61,12 @@ namespace Education_assistant.Modules.ModuleSinhVien
             await _serviceMaster.SinhVien.DeleteAsync(id);
             return NoContent();
         }
+        [HttpPost("import")]
+        [ServiceFilter(typeof(ValidationFilter))]
+        public async Task<ActionResult> ImportAsync([FromForm] RequestImportFileSinhVienDto model)
+        {
+            await _serviceMaster.SinhVien.ImportFileExcelAsync(model);
+            return Ok("Import file cập nhật điểm số thành công.");
+        }
     }
 }

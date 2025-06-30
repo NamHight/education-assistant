@@ -132,6 +132,22 @@ public class RepositoryChiTietLopHocPhan : RepositoryBase<ChiTietLopHocPhan>, IR
                             .Include(item => item.LopHocPhan).FirstOrDefaultAsync();
     }
 
+    public async Task<int> TinhPhanTramChuyenCanAsync(Guid sinhVienId)
+    {
+        var chiTietLopHocPhans = await _context.ChiTietLopHocPhans
+                    .AsNoTracking()
+                    .Where(item => item.SinhVienId == sinhVienId && item.DiemChuyenCan != null)
+                    .ToListAsync();
+        if (!chiTietLopHocPhans.Any()) return 0;
+        var tongDiemChuyenCan = chiTietLopHocPhans.Sum(ct => ct.DiemChuyenCan ?? 0);
+        var soMon = chiTietLopHocPhans.Count();
+        var soDiemToiDa = soMon * 10;
+
+        var phanTram = (tongDiemChuyenCan / soDiemToiDa) * 100;
+
+        return (int)Math.Round(phanTram, MidpointRounding.AwayFromZero);
+        
+    }
 
     public void UpdateChiTietLopHocPhan(ChiTietLopHocPhan chiTietLopHocPhan)
     {

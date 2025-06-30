@@ -188,6 +188,41 @@ public class ServiceHocBa : IServiceHocBa
         {
             await _repositoryMaster.BulkUpdateEntityAsync<HocBa>(updateHocBas);
         });
+
+        foreach (var hocBa in updateHocBas)
+        {
+            var sinhVien = await _repositoryMaster.SinhVien.GetSinhVienByIdAsync(hocBa.SinhVienId.Value, true);
+            if (sinhVien != null)
+            {
+                var gpa = await _repositoryMaster.HocBa.TinhGPAAsync(hocBa.SinhVienId.Value);
+
+                await _repositoryMaster.ExecuteInTransactionAsync(async () =>
+                {
+                    if (gpa >= 9)
+                    {
+                        sinhVien!.TinhTrangHocTap = (int)TinhTrangHocTapSinhVienEnum.XUAT_SAC;
+                    }
+                    else if (gpa >= 8)
+                    {
+                        sinhVien!.TinhTrangHocTap = (int)TinhTrangHocTapSinhVienEnum.GIOI;
+                    }
+                    else if (gpa >= 7)
+                    {
+                        sinhVien!.TinhTrangHocTap = (int)TinhTrangHocTapSinhVienEnum.KHA;
+                    }
+                    else if (gpa >= 5)
+                    {
+                        sinhVien!.TinhTrangHocTap = (int)TinhTrangHocTapSinhVienEnum.TRUNG_BINH;
+                    }
+                    else if (gpa < 5)
+                    {
+                        sinhVien!.TinhTrangHocTap = (int)TinhTrangHocTapSinhVienEnum.YEU;
+                    }
+                    await Task.CompletedTask;
+                });
+            }
+        }
+
         try
         {
             await _repositoryMaster.ExecuteInTransactionAsync(async () =>

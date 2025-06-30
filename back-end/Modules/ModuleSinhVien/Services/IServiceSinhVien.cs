@@ -9,11 +9,12 @@ namespace Education_assistant.Modules.ModuleSinhVien.Services;
 
 public interface IServiceSinhVien
 {
-    Task<(IEnumerable<ResponseSinhVienDto> data, PageInfo page)> GetAllSinhVienAsync(ParamSinhVienDto paramSinhVienDto);
+    Task<(ResponseSinhVienSummaryDto data, PageInfo page)> GetAllSinhVienAsync(ParamSinhVienDto paramSinhVienDto);
     // Task<(IEnumerable<ResponseSinhVienDto> data, PageInfo page)> GetAllSinhVienByLopIdAsync(ParamSinhVienByLopDto paramBaseDto);
     Task<ResponseSinhVienDto> GetSinhVienByIdAsync(Guid id, bool trackChanges);
     Task<ResponseSinhVienDto> CreateAsync(RequestAddSinhVienDto request);
     Task<ResponseSinhVienDto> ReStoreSinhVienAsync(Guid id);
+    Task ImportFileExcelAsync(RequestImportFileSinhVienDto request);
     Task UpdateAsync(Guid id, RequestUpdateSinhVienDto request);
     Task DeleteAsync(Guid id);
 }
