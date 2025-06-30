@@ -14,4 +14,6 @@ public interface IServiceMonHoc
     Task<ResponseMonHocDto> CreateAsync(RequestAddMonHocDto request);
     Task UpdateAsync(Guid id, RequestUpdateMonHocDto request);
     Task DeleteAsync(Guid id);
+    Task<List<ResponseMonHocDto>> GetMonHocByKhoaIdAsync(Guid khoaId, bool trackChanges);
+
 }

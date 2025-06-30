@@ -127,4 +127,15 @@ public class ServiceMonHoc : IServiceMonHoc
             throw new Exception($"Lỗi hệ thống!: {ex.Message}");   
         }
     }
+
+    public async Task<List<ResponseMonHocDto>> GetMonHocByKhoaIdAsync(Guid khoaId, bool trackChanges)
+    {
+        var monHoc = await _repositoryMaster.MonHoc.GetMonHocByKhoaIdAsync(khoaId, false);
+        if (monHoc is null)
+        {
+            throw new MonHocNotFoundException(khoaId);
+        }
+        var monHocDto = _mapper.Map<List<ResponseMonHocDto>>(monHoc);
+        return monHocDto;
+    }
 }

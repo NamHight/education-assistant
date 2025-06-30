@@ -44,4 +44,11 @@ public class RepositoryBoMon : RepositoryBase<BoMon>, IRepositoryBoMon
     {
         Update(boMon);
     }
+
+    public async Task<List<BoMon>> GetBoMonByKhoaIdAsync(Guid khoaId, bool trackChanges)
+    {
+        return await FindByCondition(item => item.KhoaId == khoaId, trackChanges)
+        .Include(item => item.Khoa)
+        .ToListAsync();
+    }
 }

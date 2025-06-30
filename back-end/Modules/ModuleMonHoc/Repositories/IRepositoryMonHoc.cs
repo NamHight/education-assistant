@@ -11,4 +11,6 @@ public interface IRepositoryMonHoc
     Task CreateAsync(MonHoc monHoc);
     void UpdateMonHoc(MonHoc monHoc);
     void DeleteMonHoc(MonHoc monHoc);
+    Task<List<MonHoc>> GetMonHocByKhoaIdAsync(Guid khoaId, bool trackChanges);
+
 }
