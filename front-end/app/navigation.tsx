@@ -16,6 +16,7 @@ import GroupWorkIcon from '@mui/icons-material/GroupWork';
 import AddchartIcon from '@mui/icons-material/Addchart';
 import HouseIcon from '@mui/icons-material/House';
 import ScoreIcon from '@mui/icons-material/Score';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 export const NAVIGATION: Navigation = [
   {
     segment: '/',
@@ -34,6 +35,12 @@ export const NAVIGATION: Navigation = [
     title: 'Phân công',
     icon: <GroupWorkIcon />,
     pattern: `phan-cong/:rest*`
+  },
+  {
+    segment: 'lich-cong-tac-tuan',
+    title: 'Lịch công tác tuần',
+    icon: <CalendarMonthIcon />,
+    pattern: `lich-cong-tac-tuan/:rest*`
   },
   {
     segment: 'giang-vien',

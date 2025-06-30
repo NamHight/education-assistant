@@ -150,6 +150,12 @@ export const yearOptions: IOption[] = years.map(year => ({
   id: year,
   name: year.toString()
 }));
+export const weekOptions: IOption[] = Array.from({ length: 52 }, (_, i) => {
+  return {
+    id: i + 1,
+    name: `${i + 1}`
+  };
+});
 
 export enum LoaiMonHocEnum {
   LY_THUYET = 1,

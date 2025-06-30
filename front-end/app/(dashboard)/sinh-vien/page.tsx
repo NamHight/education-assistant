@@ -8,6 +8,7 @@ import { GiangVienService } from '@/services/GiangVienService';
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
 import getQueryClient from '@/hooks/getQueryClient';
 import { SinhVienService } from '@/services/SinhVienService';
+import { LopHocService } from '@/services/LopHocService';
 
 export default async function Page() {
   const queryClient = getQueryClient();
@@ -24,9 +25,14 @@ export default async function Page() {
       return result?.data?.length > 0 ? result : undefined;
     }
   });
+  const lopHoc = await LopHocService.getAllLopHocServer({
+    limit: 9999999999,
+    sortBy: 'createdAt',
+    sortByOrder: 'desc'
+  }).catch(() => ({ data: [] }));
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <Content queryKey={queryKey} />
+      <Content queryKey={queryKey} lopHocServers={lopHoc?.data?.length > 0 ? lopHoc.data : undefined} />
     </HydrationBoundary>
   );
 }

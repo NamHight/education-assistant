@@ -1,7 +1,13 @@
 'use client';
 import { handleTextSearch } from '@/lib/string';
 import { LopHocPhanService } from '@/services/LopHocPhanService';
-import { IParamChiTietLopHocPhan, IParamChuongTrinhDaoTao, IParamLopHocPhan, IParamLopHocPhan2 } from '@/types/params';
+import {
+  IParamChiTietLopHocPhan,
+  IParamChuongTrinhDaoTao,
+  IParamGiangVien,
+  IParamLopHocPhan,
+  IParamLopHocPhan2
+} from '@/types/params';
 import { Box, MenuItem, Select, Typography } from '@mui/material';
 import { GridColDef, GridFilterModel, useGridApiRef } from '@mui/x-data-grid';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -33,9 +39,10 @@ const TableEdit = dynamic(() => import('./TableEdit'), {
 
 interface IContentProps {
   queryKey: string;
+  giangVienServer?: any[];
 }
 
-const Content = ({ queryKey }: IContentProps) => {
+const Content = ({ queryKey, giangVienServer }: IContentProps) => {
   const notification = useNotifications();
   const queryClient = useQueryClient();
   const user = useUser();
@@ -43,8 +50,8 @@ const Content = ({ queryKey }: IContentProps) => {
   const [giangVienOptions, setGiangVienOptions] = useState<{ [khoaId: string]: any[] }>({});
   // const [loaiLopHocPhan, setloaiLopHocPhan] = useState<number | null>(null);
   const [filter, setfilter] = useState<{
-    hocKy: number;
-    loaiChuongTrinh: number;
+    giangVienId: string;
+    namHoc: number;
     lopHocPhan: {
       id: string;
       name: string;
@@ -83,31 +90,31 @@ const Content = ({ queryKey }: IContentProps) => {
     refetchOnWindowFocus: false,
     gcTime: 0
   });
-  const { data: lhp, isLoading: isLoadingLHP } = useQuery({
-    queryKey: ['lhp-list', filter?.khoa, filter?.hocKy, filter?.loaiChuongTrinh, user?.id],
+  const { data: giangViens, isLoading: isLoadingGV } = useQuery({
+    queryKey: ['giang-vien-list', filter?.khoa, filter?.hocKy, filter?.loaiChuongTrinh, user?.id],
     queryFn: async () => {
-      let params: IParamLopHocPhan2 = {
-        khoa: filter?.khoa,
-        hocky: filter?.hocKy,
-        loaiChuongTrinhDaoTao: filter?.loaiChuongTrinh,
-        giangVienId: user?.id
+      let params: IParamGiangVien = {
+        sortBy: 'createdAt',
+        sortByOrder: 'desc',
+        limit: 99999999999,
+        active: true
       };
-      const result = await LopHocPhanService.getLopHocPhanByGiangVienId(params);
-      return result;
+      const result = await GiangVienService.danhSachGiangVien(params);
+      return result?.data;
     },
     select: (data) => {
       return data?.map((item: any) => ({
         id: item.id,
-        name: item.maHocPhan,
-        loaiMonHoc: item.monHoc?.chiTietChuongTrinhDaoTao?.loaiMonHoc,
-        monHocId: item.monHocId,
-        chuongTrinhDaoTaoId: item.monHoc?.chiTietChuongTrinhDaoTao?.chuongTrinhDaoTao?.id
+        name: item.hoTen,
+        boMon: { id: item.boMon?.id, name: item.boMon?.tenBoMon }
       }));
     },
+    initialData: giangVienServer,
     placeholderData: (prev) => prev,
     refetchOnWindowFocus: false,
     enabled: !!user && !!filter?.khoa && !!filter?.hocKy && !!filter?.loaiChuongTrinh
   });
+  console.log('giangViens', giangViens);
   useEffect(() => {
     filterRef.current = filter;
   }, [filter]);
@@ -587,8 +594,8 @@ const Content = ({ queryKey }: IContentProps) => {
       <TableEdit
         queryKey={queryKey}
         apiRef={apiRef}
-        lopHocPhan={lhp}
-        isLoadingLHP={isLoadingLHP}
+        giangViens={giangViens}
+        isLoadingGV={isLoadingGV}
         setFilterModel={setFilterModel}
         handleSave={handleSave}
         row={data}

@@ -23,16 +23,32 @@ import ClearIcon from '@mui/icons-material/Clear';
 import RestoreIcon from '@mui/icons-material/Restore';
 import { SinhVienService } from '@/services/SinhVienService';
 import Link from 'next/link';
-import { TrangThaiSinhVienEnum } from '@/types/options';
+import { TrangThaiSinhVien, TrangThaiSinhVienEnum } from '@/types/options';
 import { GioiTinhEnum } from '@/models/GiangVien';
+import PeopleAltOutlinedIcon from '@mui/icons-material/PeopleAltOutlined';
+import {
+  Book,
+  BookAlert,
+  BookCheck,
+  BookOpenCheck,
+  BookPlus,
+  Download,
+  Funnel,
+  GraduationCap,
+  Import,
+  TrendingUp
+} from 'lucide-react';
+import InputSelect2 from '@/components/selects/InputSelect2';
+import { LopHocService } from '@/services/LopHocService';
 const Table = dynamic(() => import('@/components/tables/Table'), {
   ssr: false
 });
 interface ContentProps {
   queryKey: string;
+  lopHocServers?: any[];
 }
 
-const Content = ({ queryKey }: ContentProps) => {
+const Content = ({ queryKey, lopHocServers }: ContentProps) => {
   const router = useRouter();
   const notification = useNotifications();
   const refTable = useRef<{ handleClose: () => void; handleOpenDelete: () => void; handleCloseDelete: () => void }>(
@@ -75,6 +91,25 @@ const Content = ({ queryKey }: ContentProps) => {
       return result;
     },
     placeholderData: (prev) => prev,
+    refetchOnWindowFocus: false
+  });
+  const { data: lopHocs, isLoading: isLoadingLopHoc } = useQuery({
+    queryKey: ['lop-hoc-list'],
+    queryFn: async () => {
+      const result = await LopHocService.getAllLopHoc({
+        limit: 9999999999,
+        sortBy: 'createdAt',
+        sortByOrder: 'desc'
+      });
+      return result?.data;
+    },
+    initialData: lopHocServers,
+    select: (data) => {
+      return data?.map((item: any) => ({
+        id: item.id,
+        name: item.maLopHoc
+      }));
+    },
     refetchOnWindowFocus: false
   });
   const rowCountRef = useRef(data?.meta?.TotalCount || 0);
@@ -398,8 +433,145 @@ const Content = ({ queryKey }: ContentProps) => {
   }, [data?.data]);
   return (
     <Box className='flex flex-col gap-4'>
-      <Box className='flex justify-start gap-4 border border-gray-200 rounded-lg p-4 shadow-sm'>
-        <Button title={'Thêm mới'} onClick={() => router.push(APP_ROUTE.SINH_VIEN.ADD)} />
+      <Box className='flex justify-start gap-4 '>
+        <Box className='grid grid-cols-1 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full'>
+          <Box className='flex flex-col border border-gray-200 rounded-lg p-4 shadow-sm gap-3 w-full'>
+            <Box className='flex items-center justify-between gap-5'>
+              <Typography className={'!font-semibold !text-gray-700 !leading-6 !text-lg'}>Tổng số sinh viên</Typography>
+              <PeopleAltOutlinedIcon />
+            </Box>
+            <Box>
+              <Typography className='text-blue-500 !font-bold !text-xl'>{rowCount}</Typography>
+            </Box>
+          </Box>
+          <Box className='flex flex-col border border-gray-200 rounded-lg p-4 shadow-sm gap-3 w-full'>
+            <Box className='flex items-center justify-between gap-5'>
+              <Typography className={'!font-semibold !text-gray-700 !leading-6 !text-lg'}>Xuất sắc</Typography>
+              <GraduationCap className='!text-green-500' />
+            </Box>
+            <Box>
+              <Typography className='text-blue-500 !font-bold !text-xl'>{rowCount}</Typography>
+            </Box>
+          </Box>
+          <Box className='flex flex-col border border-gray-200 rounded-lg p-4 shadow-sm gap-3 w-full'>
+            <Box className='flex items-center justify-between gap-5'>
+              <Typography className={'!font-semibold !text-gray-700 !leading-6 !text-lg'}>Giỏi</Typography>
+              <TrendingUp className={'!text-blue-500'} />
+            </Box>
+            <Box>
+              <Typography className='text-blue-500 !font-bold !text-xl'>{rowCount}</Typography>
+            </Box>
+          </Box>
+          <Box className='flex flex-col border border-gray-200 rounded-lg p-4 shadow-sm gap-3 w-full'>
+            <Box className='flex items-center justify-between gap-5'>
+              <Typography className={'!font-semibold !text-gray-700 !leading-6 !text-lg'}>Cần cải thiện</Typography>
+              <Book className={'!text-yellow-500'} />
+            </Box>
+            <Box>
+              <Typography className='text-blue-500 !font-bold !text-xl'>{rowCount}</Typography>
+            </Box>
+          </Box>
+          <Box className='flex flex-col border border-gray-200 rounded-lg p-4 shadow-sm gap-3 w-full relative'>
+            {/* Đường gạch chéo */}
+            <Box
+              className='absolute inset-0 flex items-center justify-center pointer-events-none'
+              sx={{
+                zIndex: 10
+              }}
+            >
+              <Box
+                sx={{
+                  width: '80%',
+                  height: '2px',
+                  background: 'linear-gradient(90deg, transparent 0%, #ccc 50%, transparent 100%)',
+                  transform: 'rotate(-20deg)'
+                }}
+              />
+            </Box>
+            {/* Nội dung bị gạch */}
+          </Box>
+          <Box className='flex flex-col border border-gray-200 rounded-lg p-4 shadow-sm gap-3 w-full'>
+            <Box className='flex items-center justify-between gap-5'>
+              <Typography className={'!font-semibold !text-gray-700 !leading-6 !text-lg'}>Đang học</Typography>
+              <BookCheck className={'!text-green-500'} />
+            </Box>
+            <Box>
+              <Typography className='text-blue-500 !font-bold !text-xl'>{rowCount}</Typography>
+            </Box>
+          </Box>
+          <Box className='flex flex-col border border-gray-200 rounded-lg p-4 shadow-sm gap-3 w-full'>
+            <Box className='flex items-center justify-between gap-5'>
+              <Typography className={'!font-semibold !text-gray-700 !leading-6 !text-lg'}>Đã tốt nghiệp</Typography>
+              <BookOpenCheck className={'!text-blue-500'} />
+            </Box>
+            <Box>
+              <Typography className='text-blue-500 !font-bold !text-xl'>{rowCount}</Typography>
+            </Box>
+          </Box>
+          <Box className='flex flex-col border border-gray-200 rounded-lg p-4 shadow-sm gap-3 w-full'>
+            <Box className='flex items-center justify-between gap-5'>
+              <Typography className={'!font-semibold !text-gray-700 !leading-6 !text-lg'}>Cảnh báo</Typography>
+              <BookAlert className={'!text-yellow-500'} />
+            </Box>
+            <Box>
+              <Typography className='text-blue-500 !font-bold !text-xl'>{rowCount}</Typography>
+            </Box>
+          </Box>
+        </Box>
+      </Box>
+      <Box className='grid grid-cols-12 gap-4 border border-gray-200 rounded-lg p-4 shadow-sm'>
+        <Box className='w-full flex flex-col gap-3 col-span-9'>
+          <Box className='flex gap-3 justify-start items-center'>
+            <Funnel className='w-4 h-4' />
+            <Typography className='!font-semibold !text-gray-700 !leading-6 !text-lg'>Lọc</Typography>
+          </Box>
+          <Box className='w-full flex items-center gap-3'>
+            <Box className='w-full'>
+              <Box className='w-full'>
+                <InputSelect2
+                  fullWidth
+                  name={'TrangThai'}
+                  placeholder={'Trạng thái'}
+                  data={TrangThaiSinhVien ?? []}
+                  getOptionKey={(option) => option.id}
+                  getOptionLabel={(option: any) => option.name}
+                />
+              </Box>
+            </Box>
+            <Box className='w-full'>
+              <InputSelect2
+                fullWidth
+                name={'LopHoc'}
+                isLoading={isLoadingLopHoc}
+                placeholder={'Lớp học'}
+                data={lopHocs ?? []}
+                getOptionKey={(option) => option.id}
+                getOptionLabel={(option: any) => option.name}
+              />
+            </Box>
+          </Box>
+        </Box>
+        <Box className='w-full flex justify-end gap-4 col-span-3 items-center'>
+          <Box>
+            <Button
+              className='flex items-center gap-3'
+              icon={<Import className='h-5 w-5 text-white' />}
+              title={'Export'}
+              onClick={() => {}}
+            />
+          </Box>
+          <Box>
+            <Button
+              className='flex items-center gap-3'
+              icon={<Download className='h-5 w-5 text-white' />}
+              title={'Import'}
+              onClick={() => {}}
+            />
+          </Box>
+          <Box>
+            <Button title={'Thêm mới'} onClick={() => router.push(APP_ROUTE.SINH_VIEN.ADD)} />
+          </Box>
+        </Box>
       </Box>
       <Table
         ref={refTable}

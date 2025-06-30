@@ -26,6 +26,7 @@ export const API = {
         GET_BY_LOP_HOC_PHAN_ID: "/ChiTietLopHocPhan/:id/by-lop-hoc-phan",
         UPDATE_POINT: "/ChiTietLopHocPhan/update-list",
         EXPORT_FILE: "/ChiTietLopHocPhan/:id/export",
+        IMPORT_FILE: "/ChiTietLopHocPhan/import",
     },
     HOC_BA: {
         GET_ALL: "/HocBa",
@@ -174,7 +175,7 @@ export const breadcrumbTranslations: { [key: string]: string } = {
     'them-moi': 'Thêm mới',
     'chinh-sua': 'Chỉnh sửa',
     'chi-tiet': 'Chi tiết',
-    'sinh-vien': 'Sinh viên',
+    'sinh-vien': 'Quản lý Sinh viên',
     'lop-hoc': 'Lớp học',
     'lop-hoc-phan': 'Lớp học phần',
     'khoa': 'Khoa',

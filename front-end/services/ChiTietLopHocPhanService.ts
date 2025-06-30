@@ -26,8 +26,10 @@ export class ChiTietLopHocPhanService {
             .catch(error => error.response?.data);
     }
 
-    static async getAllChiTietLopHocPhanByLopHocPhanId(id: string | number | null) {
-        return await authApi.get(`${API.CHI_TIET_LOP_HOC_PHAN.GET_BY_LOP_HOC_PHAN_ID}`.replace(':id', `${id}`))
+    static async getAllChiTietLopHocPhanByLopHocPhanId(id: string | number | null, params?: IParamChiTietLopHocPhan) {
+        return await authApi.get(`${API.CHI_TIET_LOP_HOC_PHAN.GET_BY_LOP_HOC_PHAN_ID}`.replace(':id', `${id}`), {
+            params: params
+        })
             .then(response => Promise.resolve(response.data))
             .catch(error => error.response?.data);
     }
@@ -57,4 +59,16 @@ export class ChiTietLopHocPhanService {
             throw error.response?.data;
         }
     }
+
+    static async importFile(data: FormData) {
+        try {
+            const response = await authApi.post(`${API.CHI_TIET_LOP_HOC_PHAN.IMPORT_FILE}`, data, {
+            });
+            return response.data;
+        } catch (error: any) {
+            throw error.response?.data;
+        }
+
+    }
+
 }

@@ -27,7 +27,7 @@ import { darken } from '@mui/material/styles';
 import { GridApiCommunity } from '@mui/x-data-grid/internals';
 import { motion } from 'motion/react';
 import { Box, Popover, Typography } from '@mui/material';
-import { HocKyLopHocPhan, LoaiChuongTrinhDaoTao, LoaiMonHoc, yearOptions } from '@/types/options';
+import { HocKyLopHocPhan, LoaiChuongTrinhDaoTao, LoaiMonHoc, weekOptions, yearOptions } from '@/types/options';
 import { ToolbarButton } from '@mui/x-data-grid';
 import SearchIcon from '@mui/icons-material/Search';
 import clsx from 'clsx';
@@ -208,8 +208,8 @@ interface ITableEditProps {
       khoa: number;
     } | null>
   >;
-  lopHocPhan?: any;
-  isLoadingLHP?: boolean;
+  giangViens?: any;
+  isLoadingGV?: boolean;
   contentPopover?: React.ReactNode;
   isOpen?: boolean;
   onClose?: () => void;
@@ -246,8 +246,8 @@ const TableEdit = forwardRef(
       isOpen,
       handleClick,
       onClose,
-      isLoadingLHP,
-      lopHocPhan,
+      isLoadingGV,
+      giangViens,
       filter,
       queryKey,
       handleNopDiem
@@ -391,17 +391,17 @@ const TableEdit = forwardRef(
         className='flex flex-col gap-4'
         style={{ height: 'calc(100vh - 200px)' }}
       >
-        <Box className='flex w-full gap-4'>
+        <Box className='flex w-full gap-4 '>
           <Box className='flex-1 gap-4 flex flex-col p-4 border border-gray-200 rounded-lg shadow-sm light:bg-white'>
             <Box className='flex gap-4 w-full'>
               <Box className='flex justify-center items-center gap-3 w-full'>
-                <Typography className='!text-[16px] !leading-6 !font-semibold'>Bậc</Typography>
+                <Typography className='!text-[16px] !leading-6 !font-semibold'>Khóa</Typography>
                 <Box className='flex-1'>
                   <InputSelect2
                     fullWidth
-                    name={'bac'}
-                    placeholder={'Chọn bậc'}
-                    data={LoaiChuongTrinhDaoTao ?? []}
+                    name={'Khoa'}
+                    placeholder={'Chọn khóa'}
+                    data={yearOptions ?? []}
                     getOptionKey={(option) => option.id}
                     getOptionLabel={(option: any) => option.name}
                     getOnChangeValue={(value) => {
@@ -414,13 +414,13 @@ const TableEdit = forwardRef(
                 </Box>
               </Box>
               <Box className='flex justify-center items-center gap-3 w-full'>
-                <Typography className='!text-[16px] !leading-6 !font-semibold'>Khóa</Typography>
+                <Typography className='!text-[16px] !leading-6 !font-semibold'>Tuần</Typography>
                 <Box className='flex-1'>
                   <InputSelect2
                     fullWidth
-                    name={'khoa'}
-                    placeholder={'Chọn Khoa'}
-                    data={yearOptions ?? []}
+                    name={'Tuan'}
+                    placeholder={'Chọn tuần'}
+                    data={weekOptions ?? []}
                     getOptionKey={(option) => option.id}
                     getOptionLabel={(option: any) => option.name}
                     getOnChangeValue={(value) => {
@@ -432,36 +432,17 @@ const TableEdit = forwardRef(
                   />
                 </Box>
               </Box>
-              <Box className='flex justify-center items-center gap-3 w-full'>
-                <Typography className='!text-[16px] !leading-6 !font-semibold'>Học kỳ</Typography>
-                <Box className='flex-1'>
-                  <InputSelect2
-                    fullWidth
-                    name={'hocKy'}
-                    placeholder={'Chọn học kỳ'}
-                    data={HocKyLopHocPhan ?? []}
-                    getOptionKey={(option) => option.id}
-                    getOptionLabel={(option: any) => option.name}
-                    getOnChangeValue={(value) => {
-                      setfilter((prev: any) => ({
-                        ...prev,
-                        hocKy: value?.id
-                      }));
-                    }}
-                  />
-                </Box>
-              </Box>
             </Box>
             <Box className='flex gap-4'>
               <Box className='flex justify-center items-center gap-3 w-full'>
-                <Typography className='!text-[16px] !leading-6 !font-semibold'>Lớp</Typography>
+                <Typography className='!text-[16px] !leading-6 !font-semibold'>Giảng viên</Typography>
                 <Box className='flex-1'>
                   <InputSelect2
                     fullWidth
-                    name={'LopHocPhan'}
-                    placeholder={'Chọn lớp'}
-                    data={lopHocPhan ?? []}
-                    isLoading={isLoadingLHP}
+                    name={'GiangVien'}
+                    placeholder={'Chọn giảng viên'}
+                    data={giangViens ?? []}
+                    isLoading={isLoadingGV}
                     getOptionKey={(option) => option.id}
                     getOptionLabel={(option: any) => option.name}
                     getOnChangeValue={(value) => {
@@ -481,7 +462,9 @@ const TableEdit = forwardRef(
                 </Box>
               </Box>
               <Box className='flex justify-start items-center gap-3 w-full'>
-                <Typography className='!text-[16px] !leading-6 !font-semibold'>Loại</Typography>
+                <Box>
+                  <Typography className='!text-[16px] !leading-6 !font-semibold'>Bộ môn</Typography>
+                </Box>
                 <Box
                   className='rounded bg-gray-100 px-3 py-2 border border-gray-200 text-[15px] text-gray-800 font-medium flex-1'
                   style={{ minHeight: 40, display: 'flex', alignItems: 'center' }}

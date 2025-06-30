@@ -78,7 +78,11 @@ export class HocBaService {
     }
     static async nopDiemHocBa(data: any) {
         try {
-            const response = await authApi.put(`${API.HOC_BA.NOP_DIEM}`, data);
+            const response = await authApi.put(`${API.HOC_BA.NOP_DIEM}`, data, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
             return response.data;
         } catch (error: any) {
             console.error('Error submitting Hoc Ba scores:', error);

@@ -471,8 +471,6 @@ const Table = React.forwardRef<any, TableProps>(function table(
             );
           }
         }}
-        showCellVerticalBorder
-        showColumnVerticalBorder
         filterDebounceMs={1000}
         onFilterModelChange={setFilterModel}
         slotProps={{
