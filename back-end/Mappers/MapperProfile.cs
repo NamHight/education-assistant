@@ -30,8 +30,6 @@ using Education_assistant.Modules.ModuleSinhVien.DTOs.Request;
 using Education_assistant.Modules.ModuleSinhVien.DTOs.Response;
 using Education_assistant.Modules.ModuleThongKe.DTOs.Response;
 using Education_assistant.Modules.ModuleThongKe.Record;
-using Education_assistant.Modules.ModuleTruong.DTOs.Request;
-using Education_assistant.Modules.ModuleTruong.DTOs.Response;
 using Education_assistant.Modules.ModuleTuan.DTOs.Request;
 using Education_assistant.Modules.ModuleTuan.DTOs.Response;
 
@@ -41,10 +39,6 @@ public class MapperProfile : Profile
 {
     public MapperProfile()
     {
-        //map truong
-        CreateMap<RequestAddTruongDto, Truong>();
-        CreateMap<RequestUpdateTruongDto, Truong>();
-        CreateMap<Truong, ResponseTruongDto>();
         //map khoa
         CreateMap<RequestAddKhoaDto, Khoa>();
         CreateMap<RequestUpdateKhoaDto, Khoa>();

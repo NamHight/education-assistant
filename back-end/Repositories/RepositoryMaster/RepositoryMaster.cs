@@ -18,7 +18,6 @@ using Education_assistant.Modules.ModuleNganh.Repositories;
 using Education_assistant.Modules.ModulePhongHoc.Repositories;
 using Education_assistant.Modules.ModuleSinhVien.Repositories;
 using Education_assistant.Modules.ModuleThongKe.Repositories;
-using Education_assistant.Modules.ModuleTruong.Repositories;
 using Education_assistant.Modules.ModuleTuan.Repositories;
 using EFCore.BulkExtensions;
 using Microsoft.EntityFrameworkCore;
@@ -47,7 +46,6 @@ public class RepositoryMaster : IRepositoryMaster
     private readonly Lazy<IRepositoryPhongHoc> _repositoryPhongHoc;
     private readonly Lazy<IRepositorySinhVien> _repositorySinhVien;
     private readonly Lazy<IRepositoryTaiKhoan> _repositoryTaiKhoan;
-    private readonly Lazy<IRepositoryTruong> _repositoryTruong;
     private readonly Lazy<IRepositoryTuan> _repositoryTuan;
     private readonly Lazy<IRepositoryThongKe> _repositoryThongKe;
 
@@ -76,7 +74,6 @@ public class RepositoryMaster : IRepositoryMaster
         _repositoryMonHoc = new Lazy<IRepositoryMonHoc>(() => new RepositoryMonHoc(repositoryContext));
         _repositorySinhVien = new Lazy<IRepositorySinhVien>(() => new RepositorySinhVien(repositoryContext));
         _repositoryTaiKhoan = new Lazy<IRepositoryTaiKhoan>(() => new RepositoryTaiKhoan(repositoryContext));
-        _repositoryTruong = new Lazy<IRepositoryTruong>(() => new RepositoryTruong(repositoryContext));
         _repositoryBoMon = new Lazy<IRepositoryBoMon>(() => new RepositoryBoMon(repositoryContext));
         _repositoryNganh = new Lazy<IRepositoryNganh>(() => new RepositoryNganh(repositoryContext));
         _repositoryPhongHoc = new Lazy<IRepositoryPhongHoc>(() => new RepositoryPhongHoc(repositoryContext));
@@ -111,8 +108,6 @@ public class RepositoryMaster : IRepositoryMaster
     public IRepositoryMonHoc MonHoc => _repositoryMonHoc.Value;
 
     public IRepositoryTaiKhoan TaiKhoan => _repositoryTaiKhoan.Value;
-
-    public IRepositoryTruong Truong => _repositoryTruong.Value;
 
     public IRepositoryBoMon BoMon => _repositoryBoMon.Value;
 
