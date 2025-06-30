@@ -3,6 +3,7 @@ import React, { FC } from 'react';
 import { Breadcrumb, PageHeader } from '@toolpad/core/PageContainer';
 import CustomPageToolBar from '../customs/CustomPageToolBar';
 import { motion } from 'motion/react';
+import { usePathname } from 'next/navigation';
 interface PageHeaderProps {
   breadcrumbs?: Breadcrumb[];
   title?: string;
@@ -10,6 +11,8 @@ interface PageHeaderProps {
 }
 
 const PageHeaderCustom: FC<PageHeaderProps> = ({ title, breadcrumbs }) => {
+  const pathName = usePathname();
+
   return (
     <motion.div
       initial={{ opacity: 0, y: -10 }}
@@ -20,7 +23,7 @@ const PageHeaderCustom: FC<PageHeaderProps> = ({ title, breadcrumbs }) => {
         breadcrumbs={breadcrumbs}
         title={title}
         slots={{
-          toolbar: () => <CustomPageToolBar />
+          toolbar: () => (pathName === '/' ? null : <CustomPageToolBar />)
         }}
       />
     </motion.div>
