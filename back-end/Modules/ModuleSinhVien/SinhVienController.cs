@@ -29,6 +29,12 @@ namespace Education_assistant.Modules.ModuleSinhVien
             Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(result.page));
             return Ok(result.data);
         }
+        [HttpGet("all-tinh-trang-hoc-tap")]
+        public async Task<ActionResult> GetAllSummaryAsync([FromQuery] Guid lopId)
+        {
+            var result = await _serviceMaster.SinhVien.GetALlSummaryAsync(lopId);
+            return Ok(result);
+        }
         [HttpGet("{id}")]
         public async Task<ActionResult> GetSinhVienByIdAsync(Guid id)
         {
@@ -60,6 +66,13 @@ namespace Education_assistant.Modules.ModuleSinhVien
         {
             await _serviceMaster.SinhVien.DeleteAsync(id);
             return NoContent();
+        }
+        [HttpPost("import")]
+        [ServiceFilter(typeof(ValidationFilter))]
+        public async Task<ActionResult> ImportAsync([FromForm] RequestImportFileSinhVienDto model)
+        {
+            await _serviceMaster.SinhVien.ImportFileExcelAsync(model);
+            return Ok("Import file cập nhật điểm số thành công.");
         }
     }
 }

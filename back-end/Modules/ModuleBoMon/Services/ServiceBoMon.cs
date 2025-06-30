@@ -114,4 +114,17 @@ public class ServiceBoMon : IServiceBoMon
         });
         _loggerService.LogInfo("Cập nhật bộ môn thành công.");
     }
+
+    public async Task<List<ResponseBoMonDto>> GetBoMonByKhoaIdAsync(Guid khoaId, bool trackChanges)
+    {
+        var boMonList = await _repositoryMaster.BoMon.GetBoMonByKhoaIdAsync(khoaId, trackChanges);
+
+        if (boMonList is null || !boMonList.Any())
+        {
+            throw new BoMonNotFoundException(khoaId);
+        }
+
+        var boMonDtoList = _mapper.Map<List<ResponseBoMonDto>>(boMonList);
+        return boMonDtoList;
+    }
 }

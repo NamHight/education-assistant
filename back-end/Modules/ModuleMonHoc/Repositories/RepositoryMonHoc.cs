@@ -40,8 +40,16 @@ public class RepositoryMonHoc : RepositoryBase<MonHoc>, IRepositoryMonHoc
         return await FindByCondition(item => item.Id == id, trackChanges).Include(item => item.Khoa).FirstOrDefaultAsync();
     }
 
+
     public void UpdateMonHoc(MonHoc monHoc)
     {
         Update(monHoc);
+    }
+
+    public async Task<List<MonHoc>> GetMonHocByKhoaIdAsync(Guid khoaId, bool trackChanges)
+    {
+        return await FindByCondition(item => item.KhoaId == khoaId, trackChanges)
+         .Include(item => item.Khoa)
+         .ToListAsync();
     }
 }

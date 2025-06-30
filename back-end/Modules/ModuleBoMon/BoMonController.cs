@@ -56,5 +56,12 @@ namespace Education_assistant.Modules.ModuleBoMon
             await _serviceMaster.BoMon.DeleteAsync(id);
             return NoContent();
         }
+
+        [HttpGet("by-khoa/{khoaId}")]
+        public async Task<ActionResult> GetBoMonByKhoaIdAsync(Guid khoaId)
+        {
+            var result = await _serviceMaster.BoMon.GetBoMonByKhoaIdAsync(khoaId, false);
+            return Ok(result);
+        }
     }
 }

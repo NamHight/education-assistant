@@ -7,4 +7,6 @@ public interface IRepositoryThongKe
 {
     Task<PassFailPointRaw?> GetPassFailDiemSoAsync(Guid lopHocPhanId);
     Task<List<TopStudentRaw>> GetTopSinhVienLopHocPhanAsync(int khoa, int hocKy);
+    Task<Dictionary<string, double>> ThongKetTinhTrangHocTap();
+
 }

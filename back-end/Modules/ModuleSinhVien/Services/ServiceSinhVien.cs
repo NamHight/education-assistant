@@ -1,8 +1,10 @@
 using AutoMapper;
 using Education_assistant.Contracts.LoggerServices;
 using Education_assistant.Exceptions.ThrowError.GiangVienExceptions;
+using Education_assistant.Exceptions.ThrowError.LopHocExceptions;
 using Education_assistant.Exceptions.ThrowError.SinhVienExceptions;
 using Education_assistant.Models;
+using Education_assistant.Models.Enums;
 using Education_assistant.Modules.ModuleSinhVien.DTOs.Param;
 using Education_assistant.Modules.ModuleSinhVien.DTOs.Request;
 using Education_assistant.Modules.ModuleSinhVien.DTOs.Response;
@@ -77,16 +79,50 @@ public class ServiceSinhVien : IServiceSinhVien
         _loggerService.LogInfo("Xóa sinh viên thành công.");
     }
 
-    public async Task<(IEnumerable<ResponseSinhVienDto> data, PageInfo page)> GetAllSinhVienAsync(
+    public async Task<(IEnumerable<ResponseSinhVienTinhTrangHocTapDto> data, PageInfo page)> GetAllSinhVienAsync(
         ParamSinhVienDto paramSinhVienDto)
     {
         var sinhViens = await _repositoryMaster.SinhVien.GetAllSinhVienAsync(paramSinhVienDto.page,
             paramSinhVienDto.limit, paramSinhVienDto.search, paramSinhVienDto.sortBy, paramSinhVienDto.sortByOrder,
-            paramSinhVienDto.lopId);
-        var sinhVienDtos = _mapper.Map<IEnumerable<ResponseSinhVienDto>>(sinhViens);
+            paramSinhVienDto.lopId, paramSinhVienDto.tinhTrangHocTap);
+        
+        var sinhVienDtos = _mapper.Map<IEnumerable<ResponseSinhVienTinhTrangHocTapDto>>(sinhViens);
+        foreach (var svDto in sinhVienDtos)
+        {
+            var gpa = await _repositoryMaster.HocBa.TinhGPAAsync(svDto.Id);
+            var diemDanh = await _repositoryMaster.ChiTietLopHocPhan.TinhPhanTramChuyenCanAsync(svDto.Id);
+
+            svDto.GPA = gpa ?? 0;
+            svDto.DiemDanh = diemDanh;
+        }
+
         return (data: sinhVienDtos, page: sinhViens!.PageInfo);
     }
 
+    public async Task<ResponseSinhVienSummaryDto> GetALlSummaryAsync(Guid lopHocId)
+    {
+        var tongSo = await _repositoryMaster.SinhVien.GetAllTongSoAsync(lopHocId);
+        var soXuatSac = await _repositoryMaster.SinhVien.GetAllSoXuatSacAsync(lopHocId);
+        var soKha = await _repositoryMaster.SinhVien.GetAllSoKhaAsync(lopHocId);
+        var SoCanCaiThien = await _repositoryMaster.SinhVien.GetAllSoCanCaiThienAsync(lopHocId);
+
+        var soDangHoc = await _repositoryMaster.SinhVien.GetAllSoDangHocAsync(lopHocId);
+        var soDaTotNghiep = await _repositoryMaster.SinhVien.GetAllSoDaTotNghiepAsync(lopHocId);
+        var SoTamNghi = await _repositoryMaster.SinhVien.GetAllSoTamNghiAsync(lopHocId);
+        var dataSinhVien = new ResponseSinhVienSummaryDto
+        {
+            TongSoSinhVien = tongSo,
+            SoXuatSac = soXuatSac,
+            SoKha = soKha,
+            SoCanCaiThien = SoCanCaiThien,
+
+            SoDangHoc = soDangHoc,
+            SoDaTotNghiep = soDaTotNghiep,
+            SoTamNghi = SoTamNghi,
+        };
+
+        return dataSinhVien;
+    }
 
     public async Task<ResponseSinhVienDto> GetSinhVienByIdAsync(Guid id, bool trackChanges)
     {
@@ -94,6 +130,26 @@ public class ServiceSinhVien : IServiceSinhVien
         if (sinhVien is null) throw new SinhVienNotFoundException(id);
         var sinhVienDto = _mapper.Map<ResponseSinhVienDto>(sinhVien);
         return sinhVienDto;
+    }
+
+    public async Task ImportFileExcelAsync(RequestImportFileSinhVienDto request)
+    {
+        var lopHoc = await _repositoryMaster.LopHoc.GetLopHocByIdAsync(request.lopHocId, false);
+        if (lopHoc is null)
+        {
+            throw new LopHocNotFoundException(request.lopHocId);
+        }
+        if (request.File == null || request.File.Length == 0)
+        {
+            throw new ArgumentException("File không được để trống hoặc rỗng.");
+        }
+        try
+        {
+            
+        }catch (Exception ex)
+        {
+            throw new Exception($"Lỗi hệ thống import file: {ex.Message}");
+        }
     }
 
     public async Task<ResponseSinhVienDto> ReStoreSinhVienAsync(Guid id)

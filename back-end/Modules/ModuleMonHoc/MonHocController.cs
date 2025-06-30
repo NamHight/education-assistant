@@ -55,5 +55,12 @@ namespace Education_assistant.Modules.ModuleMonHoc
             await _serviceMaster.MonHoc.DeleteAsync(id);
             return NoContent();
         }
+
+        [HttpGet("by-khoa/{khoaId}")]
+        public async Task<ActionResult> GetMonHocByKhoaIdAsync(Guid khoaId)
+        {
+            var result = await _serviceMaster.MonHoc.GetMonHocByKhoaIdAsync(khoaId, false);
+            return Ok(result);
+        }
     }
 }

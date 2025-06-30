@@ -32,11 +32,10 @@ public class RepositoryTuan : RepositoryBase<Tuan>, IRepositoryTuan
         var query = _context.Tuans!
                         .AsNoTracking()
                         .AsQueryable();
-        if (namHoc.HasValue && namHoc != 0)
-        {   
-            query = query.Where(t => t.NamHoc == namHoc);
-        }
-        return await PagedListAsync<Tuan>.ToPagedListAsync(_context.Tuans!.SearchBy(search, item => item.SoTuan.ToString())
+
+        query = query.Where(t => t.NamHoc == namHoc);
+        
+        return await PagedListAsync<Tuan>.ToPagedListAsync(query.SearchBy(search, item => item.SoTuan.ToString())
                                                                 .SortByOptions(sortBy, sortByOrder, new Dictionary<string, Expression<Func<Tuan, object>>>
                                                                 {
                                                                     ["createdat"] = item => item.CreatedAt,
