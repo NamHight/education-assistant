@@ -17,22 +17,16 @@ namespace Education_assistant.Modules.ModuleThongKe
         {
             _serviceMaster = serviceMaster;
         }
-        // [HttpGet("diem-lop-hoc-phan")]
-        // public async Task<ActionResult> GetAllKhoaAsync([FromQuery] ParamCountPointThongKeDto paramCountPointThongKeDto)
-        // {
-        //     var result = await _serviceMaster.ThongKe.GetPassFailDiemSoAsync(paramCountPointThongKeDto);
-        //     return Ok(result);
-        // }
-        // [HttpGet("dssvien-gioi-nhat")]
-        // public async Task<ActionResult> GetAllKhoaAsync([FromQuery] ParamTopStudentByClassThongKeDDto paramTopStudentByClassThongKeDDto)
-        // {
-        //     var result = await _serviceMaster.ThongKe.GetTopSinhVienLopHocPhanAsync(paramTopStudentByClassThongKeDDto);
-        //     return Ok(result);
-        // }
         [HttpGet("xep-loai-hoc-luc")]
         public async Task<ActionResult> GetThongKeTinhTrangHocTapAsync()
         {
             var result = await _serviceMaster.ThongKe.ThongKetTinhTrangHocTap();
+            return Ok(result);
+        }
+        [HttpGet("top-sinh-vien-gpa")]
+        public async Task<ActionResult> GetThongKeTopSinhVienGPAAsync()
+        {
+            var result = await _serviceMaster.ThongKe.ThongKeTopSinhVienGPAAsync();
             return Ok(result);
         }
     }

@@ -10,7 +10,6 @@ public class ResponseChuongTrinhDaoTaoDto
     public string TenChuongTrinh { get; set; } = string.Empty;
     public int LoaiChuonTrinhDaoTao { get; set; }
     public string ThoiGianDaoTao { get; set; } = string.Empty;
-    public decimal HocPhi { get; set; }
     public string? MoTa { get; set; }
     public int TongSoTinChi { get; set; }
     public int? Khoa { get; set; }
