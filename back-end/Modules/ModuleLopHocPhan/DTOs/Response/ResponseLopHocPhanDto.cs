@@ -24,4 +24,5 @@ public class LopHocPhanSimpleDto
     public string MaHocPhan { get; set; } = string.Empty;
     public int SiSo { get; set; }
     public MonHocSimpleDto? MonHoc { get; set; }
+    public GiangVienSimpleDto? GiangVien { get; set; }
 }

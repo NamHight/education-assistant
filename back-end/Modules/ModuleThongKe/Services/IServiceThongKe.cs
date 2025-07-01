@@ -6,8 +6,6 @@ namespace Education_assistant.Modules.ModuleThongKe.Services;
 
 public interface IServiceThongKe
 {
-    Task<ResponsePassFailPointClassDto?> GetPassFailDiemSoAsync(ParamCountPointThongKeDto paramCountPointThongKeDto);
-    Task<List<ResponseTopStudentRawDto>> GetTopSinhVienLopHocPhanAsync(ParamTopStudentByClassThongKeDDto paramTopStudentByClassThongKeDDto);
     Task<Dictionary<string, double>> ThongKetTinhTrangHocTap();
-
+    Task<List<ResponseThongKeTopSinhVienDto>> ThongKeTopSinhVienGPAAsync();
 }
