@@ -31,6 +31,7 @@ public class RepositoryTuan : RepositoryBase<Tuan>, IRepositoryTuan
     {
         var query = _context.Tuans!
                         .AsNoTracking()
+                        .OrderBy(item => item.SoTuan)
                         .AsQueryable();
 
         query = query.Where(t => t.NamHoc == namHoc);
