@@ -119,7 +119,7 @@ public class ServiceBoMon : IServiceBoMon
     {
         var boMonList = await _repositoryMaster.BoMon.GetBoMonByKhoaIdAsync(khoaId, trackChanges);
 
-        if (boMonList is null || !boMonList.Any())
+        if (boMonList is null)
         {
             throw new BoMonNotFoundException(khoaId);
         }
