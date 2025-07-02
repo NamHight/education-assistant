@@ -74,6 +74,39 @@ public class RepositoryTuan : RepositoryBase<Tuan>, IRepositoryTuan
         return await query.ToListAsync(); 
     }
 
+    public async Task<IEnumerable<Tuan>> GetTuanCopyAsync(int namHoc, Guid vaoTuanId, Guid denTuanId, Guid giangVienId)
+    {
+        var tuanBatDau = await _context.Tuans!
+                        .AsNoTracking()
+                        .Where(t => t.Id == vaoTuanId && t.NamHoc == namHoc)
+                        .Select(t => (int?)t.SoTuan)
+                        .FirstOrDefaultAsync();
+        var tuanKetThuc = await _context.Tuans!
+                        .AsNoTracking()
+                        .Where(t => t.Id == denTuanId && t.NamHoc == namHoc)
+                        .Select(t => (int?)t.SoTuan)
+                        .FirstOrDefaultAsync();
+        if (!tuanBatDau.HasValue || !tuanKetThuc.HasValue)
+        {
+            return Enumerable.Empty<Tuan>();
+        }
+
+        int tuanMin = Math.Min(tuanBatDau.Value, tuanKetThuc.Value);
+        int tuanMax = Math.Max(tuanBatDau.Value, tuanKetThuc.Value);
+
+        var query = _context.Tuans!
+                .AsNoTracking()
+                .Where(t => t.NamHoc == namHoc &&
+                            t.SoTuan >= tuanMin &&
+                            t.SoTuan <= tuanMax)
+                .Where(t => !_context.LichBieus!
+                            .AsNoTracking()
+                            .Any(lb => lb.TuanId == t.Id && lb.LopHocPhan.GiangVienId == giangVienId))
+                .OrderBy(t => t.SoTuan)
+                .AsQueryable();
+        return await query.ToListAsync();
+    }
+
     public async Task<bool> HasTuanForNamHocAsync(int namHoc)
     {
         return await _context.Tuans!.AnyAsync(item => item.NamHoc == namHoc);

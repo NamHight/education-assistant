@@ -107,7 +107,7 @@ public sealed class ServiceGiangVien : IServiceGiangVien
     {
         var giangViens = await _repositoryMaster.GiangVien.GetAllGiangVienAsync(paramGiangVienDto.page,
             paramGiangVienDto.limit, paramGiangVienDto.search, paramGiangVienDto.sortBy, paramGiangVienDto.sortByOrder,
-            paramGiangVienDto.KhoaId, paramGiangVienDto.BoMonId, paramGiangVienDto.active);
+            paramGiangVienDto.KhoaId, paramGiangVienDto.BoMonId, paramGiangVienDto.active, paramGiangVienDto.trangThai);
         var giangVienDtos = _mapper.Map<IEnumerable<ResponseGiangVienDto>>(giangViens);
         return (data: giangVienDtos, page: giangViens!.PageInfo);
     }

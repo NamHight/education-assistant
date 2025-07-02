@@ -69,6 +69,13 @@ public class ServiceKhoa : IServiceKhoa
         }
     }
 
+    public async Task<IEnumerable<ResponseKhoaDto>> GetAllKhoaNoPageAsync()
+    {
+        var khoas = await _repositoryMaster.Khoa.GetAllKhoaNoPageAsync(); 
+        var khoaDtos = _mapper.Map<IEnumerable<ResponseKhoaDto>>(khoas);
+        return khoaDtos;
+    }
+
     public async Task<(IEnumerable<ResponseKhoaDto> data, PageInfo page)> GetAllPaginationAndSearchAsync(
         ParamKhoaDto paramKhoaDto)
     {

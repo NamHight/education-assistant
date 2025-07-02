@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using DocumentFormat.OpenXml.Office.CustomUI;
 using Education_assistant.Context;
 using Education_assistant.Extensions;
 using Education_assistant.Models;
@@ -29,7 +30,7 @@ public class RepositoryGiangVien : RepositoryBase<GiangVien>, IRepositoryGiangVi
         Delete(giangVien);
     }
 
-    public async Task<PagedListAsync<GiangVien>?> GetAllGiangVienAsync(int page, int limit, string? search, string? sortBy, string? sortByOrder, Guid? khoaId, Guid? boMonId,bool? active = false)
+    public async Task<PagedListAsync<GiangVien>?> GetAllGiangVienAsync(int page, int limit, string? search, string? sortBy, string? sortByOrder, Guid? khoaId, Guid? boMonId, bool? active, int? trangThai)
     {
         var query = _context.GiangViens!
                     .AsNoTracking()
@@ -45,9 +46,16 @@ public class RepositoryGiangVien : RepositoryBase<GiangVien>, IRepositoryGiangVi
         {
             query = query.Where(item => item.BoMonId == boMonId);
         }
-        if(active.HasValue && active.Value)
+        if(active.HasValue)
         {
-            query = query.Where(item => item.DeletedAt == null);
+            if (active == true)
+            {
+                query = query.Where(item => item.DeletedAt == null);
+            } 
+        }
+        if (trangThai.HasValue && trangThai != 0)
+        {
+            query = query.Where(item => item.TrangThai == trangThai);
         }
         return await PagedListAsync<GiangVien>.ToPagedListAsync(query
             .SearchBy(search, item => item.HoTen!)
