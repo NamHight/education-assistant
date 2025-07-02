@@ -10,6 +10,8 @@ namespace Education_assistant.Modules.ModuleTuan.Services;
 public interface IServiceTuan
 {
     Task<(IEnumerable<ResponseTuanDto> data, PageInfo page)> GetAllTuanAsync(ParamTuanDto paramTuanDto);
+    Task<IEnumerable<ResponseTuanDto>> GetALLTuanByNamHocAsync(int namHoc);
+    Task CreateAutoTuanForNamHocAsnyc(RequestAddTuanSimpleDto request);
     Task<IEnumerable<ResponseTuanDto>> GetTuanComboBoxAsync(ParamTuanCopyDto paramTuanDto);
     Task<ResponseTuanDto> GetTuanByIdAsync(Guid id, bool trackChanges);
     Task<ResponseTuanDto> CreateAsync(RequestAddTuanDto request);

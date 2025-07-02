@@ -30,6 +30,12 @@ namespace Education_assistant.Modules.ModuleBoMon
             Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(result.page));
             return Ok(result.data);
         }
+        [HttpGet("no-page")]
+        public async Task<ActionResult> GetAllBoMonNoPageAsync()
+        {
+            var result = await _serviceMaster.BoMon.GetAllBoMonNoPageAsync();
+            return Ok(result);
+        }
         [HttpGet("{id}")]
         public async Task<ActionResult> GetBoMonByIdAsync(Guid id)
         {

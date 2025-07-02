@@ -176,4 +176,11 @@ public sealed class ServiceGiangVien : IServiceGiangVien
         });
         _loggerService.LogInfo("Cập nhật giảng viên thành công.");
     }
+
+    public async Task<IEnumerable<GiangVienSummaryDto>?> GetAllGiangVienByBoMonAsync(Guid boMonId)
+    {
+        var giangViens = await _repositoryMaster.GiangVien.GetAllGiangVienByBoMonAsync(boMonId);
+        var giangVienDtos = _mapper.Map<IEnumerable<GiangVienSummaryDto>>(giangViens);
+        return giangVienDtos;
+    }
 }

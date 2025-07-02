@@ -11,6 +11,7 @@ public interface IServiceGiangVien
         ParamGiangVienDto paramGiangVienDto);
 
     Task<IEnumerable<ResponseGiangVienDto>?> GetAllGiangVienByKhoa(Guid khoaId);
+    Task<IEnumerable<GiangVienSummaryDto>?> GetAllGiangVienByBoMonAsync(Guid boMonId); 
     Task<ResponseGiangVienDto> GetGiangVienByIdAsync(Guid id, bool trackChanges);
     Task<ResponseGiangVienDto> ReStoreGiangVienAsync(Guid id);
     Task<ResponseGiangVienDto> CreateAsync(RequestAddGiangVienDto request);

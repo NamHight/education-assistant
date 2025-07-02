@@ -46,6 +46,11 @@ public class RepositoryTuan : RepositoryBase<Tuan>, IRepositoryTuan
                                                                 , page, limit);
     }
 
+    public async Task<IEnumerable<Tuan>> GetALLTuanByNamHocAsync(int namHoc)
+    {
+        return await _context.Tuans!.AsNoTracking().Where(item => item.NamHoc == namHoc).OrderBy(item => item.SoTuan).ToListAsync();
+    }
+
     public async Task<Tuan?> GetTuanByIdAsync(Guid id, bool trackChanges)
     {
         return await FindByCondition(item => item.Id == id, trackChanges).FirstOrDefaultAsync();
@@ -67,6 +72,11 @@ public class RepositoryTuan : RepositoryBase<Tuan>, IRepositoryTuan
             query = query.Where(item => item.SoTuan > tuanBatDau.Value);
         }
         return await query.ToListAsync(); 
+    }
+
+    public async Task<bool> HasTuanForNamHocAsync(int namHoc)
+    {
+        return await _context.Tuans!.AnyAsync(item => item.NamHoc == namHoc);
     }
 
     public void UpdateTuan(Tuan tuan)
