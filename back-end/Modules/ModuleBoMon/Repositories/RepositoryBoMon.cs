@@ -51,4 +51,9 @@ public class RepositoryBoMon : RepositoryBase<BoMon>, IRepositoryBoMon
         .Include(item => item.Khoa)
         .ToListAsync();
     }
+
+    public async Task<IEnumerable<BoMon>> GetAllBoMonNoPageAsync()
+    {
+        return await FindAll(false).Include(item => item.Khoa).ToListAsync();
+    }
 }

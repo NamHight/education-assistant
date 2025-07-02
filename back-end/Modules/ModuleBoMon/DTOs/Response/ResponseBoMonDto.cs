@@ -20,3 +20,12 @@ public class BoMonSimpleDto
     public Guid Id { get; set; }
     public string TenBoMon { get; set; } = string.Empty;
 }
+public class BoMonSummaryDto
+{
+    public Guid Id { get; set; }
+    public string TenBoMon { get; set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
+    public string SoDienThoai { get; set; } = string.Empty;
+    public Guid? KhoaId { get; set; }
+    public KhoaSimpleDto? Khoa { get; set; }
+}

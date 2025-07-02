@@ -28,6 +28,12 @@ namespace Education_assistant.Modules.ModuleTuan
             Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(result.page));
             return Ok(result.data);
         }
+        [HttpGet("by-nam-hoc")]
+        public async Task<ActionResult> GetAllTuanAsync([FromQuery] int namHoc)
+        {
+            var result = await _serviceMaster.Tuan.GetALLTuanByNamHocAsync(namHoc);
+            return Ok(result);
+        }
         [HttpGet("combobox-copy")]
         public async Task<ActionResult> GetTuanComboBoxAsync([FromQuery] ParamTuanCopyDto paramTuanDto)
         {
@@ -46,6 +52,13 @@ namespace Education_assistant.Modules.ModuleTuan
         {
             var result = await _serviceMaster.Tuan.CreateAsync(model);
             return Ok(result);
+        }
+        [HttpPost("tao-auto")]
+        [ServiceFilter(typeof(ValidationFilter))]
+        public async Task<ActionResult> AddCreateAutoTuanAsync([FromForm] RequestAddTuanSimpleDto model)
+        {
+            await _serviceMaster.Tuan.CreateAutoTuanForNamHocAsnyc(model);
+            return Ok("Tạo danh sách tuần theo năm học thành công");
         }
         [HttpPut("{id}")]
         [ServiceFilter(typeof(ValidationFilter))]

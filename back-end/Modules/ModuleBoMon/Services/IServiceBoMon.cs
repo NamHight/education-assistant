@@ -10,6 +10,7 @@ namespace Education_assistant.Modules.ModuleBoMon.Services;
 public interface IServiceBoMon
 {
     Task<(IEnumerable<ResponseBoMonDto> data, PageInfo page)> GetAllBoMonAsync(ParamBoMonDto paramBoMonDto);
+    Task<IEnumerable<BoMonSummaryDto>> GetAllBoMonNoPageAsync(); 
     Task<ResponseBoMonDto> GetBoMonByIdAsync(Guid id, bool trackChanges);
     Task<ResponseBoMonDto> CreateAsync(RequestAddBoMonDto request);
     Task UpdateAsync(Guid id, RequestUpdateBoMonDto request);
