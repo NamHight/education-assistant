@@ -429,10 +429,10 @@ const TableEdit = forwardRef(
               noRowsVariant: 'linear-progress'
             }
           }}
+          className='!border-gray-200 shadow-sm'
           sx={(theme) => ({
             height: '100%',
             overflowY: 'auto',
-            borderColor: theme.palette.grey[600],
             [`& .${gridClasses.columnHeaders}`]: {
               borderBottom: `1px solid ${theme.palette.grey[600]}`
             },

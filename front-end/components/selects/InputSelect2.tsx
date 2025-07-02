@@ -29,6 +29,7 @@ interface InputSelectProps {
   disablePortal?: boolean;
   onOpen?: () => void;
   onClose?: () => void;
+  defaultValue?: any;
   [key: string]: any;
 }
 
@@ -55,6 +56,7 @@ const InputSelect2 = (props: InputSelectProps) => {
     disablePortal,
     onOpen,
     onClose,
+    defaultValue,
     ...rest
   } = props;
 
@@ -173,7 +175,10 @@ const InputSelect2 = (props: InputSelectProps) => {
                 options={data ?? []}
                 getOptionLabel={getOptionLabel}
                 getOptionKey={getOptionKey}
-                isOptionEqualToValue={(option, value) => option.id === value.id}
+                isOptionEqualToValue={(option, value) => {
+                  if (!option || !value) return false;
+                  return option.id === value.id;
+                }}
                 renderInput={(params) => {
                   return <TextField {...params} placeholder={placeholder} />;
                 }}
@@ -242,6 +247,7 @@ const InputSelect2 = (props: InputSelectProps) => {
             freeSolo={freeSolo}
             multiple={multiple}
             fullWidth={fullWidth}
+            defaultValue={defaultValue}
             disabled={isDisabled}
             limitTags={limitShow}
             loading={isLoading}

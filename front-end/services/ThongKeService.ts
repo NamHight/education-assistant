@@ -13,4 +13,15 @@ export class ThongKeService {
             .then((response) => response.data)
             .catch((error) => error.response?.data);
     }
+
+    static async getXepHangSinhVien() {
+        return await authApi.get(`${API.THONG_KE.XEP_HANG_SINH_VIEN}`)
+            .then((response) => response.data)
+            .catch((error) => error.response?.data);
+    }
+    static async getXepHangSinhVienServer() {
+        return await authApiServer.get(`${API.THONG_KE.XEP_HANG_SINH_VIEN}`)
+            .then((response) => response.data)
+            .catch((error) => error.response?.data);
+    }
 }

@@ -1,5 +1,5 @@
 'use client';
-import React, { Dispatch, forwardRef, RefObject, useMemo, useState } from 'react';
+import React, { Dispatch, forwardRef, RefObject, useEffect, useMemo, useState } from 'react';
 import {
   DataGrid,
   GridRowId,
@@ -43,6 +43,12 @@ import { ChiTietLopHocPhanService } from '@/services/ChiTietLopHocPhanService';
 import { saveAs } from 'file-saver';
 import { useNotifications } from '@toolpad/core';
 import moment from 'moment';
+import { useUser } from '@/stores/selectors';
+import useCheckPermission from '@/helper/useCheckPermission';
+import { fi } from 'zod/v4/locales';
+import { Add } from '@mui/icons-material';
+import { CalendarFold } from 'lucide-react';
+import { LichBieuService } from '@/services/LichBieuService';
 function TextInput(props: React.InputHTMLAttributes<HTMLInputElement>) {
   return (
     <input
@@ -196,18 +202,28 @@ interface ITableEditProps {
   handleSave: (item: any) => void;
   setfilter: Dispatch<
     React.SetStateAction<{
-      hocKy: number;
-      loaiChuongTrinh: number;
-      lopHocPhan: {
+      khoa: number | string;
+      tuan: string;
+      boMon: {
         id: string;
         name: string;
-        loaiMonHoc: number;
-        monHocId: string;
-        chuongTrinhDaoTaoId: string;
       };
-      khoa: number;
+      giangVien: {
+        id: string;
+        name: string;
+      };
     } | null>
   >;
+  tuanDens?: any;
+  isLoadingTuanDen?: boolean;
+  setfilterWeek: Dispatch<
+    React.SetStateAction<{
+      tuanVao: string;
+      tuanDen: string;
+    } | null>
+  >;
+  tuans?: any;
+  isLoadingTuan?: boolean;
   giangViens?: any;
   isLoadingGV?: boolean;
   contentPopover?: React.ReactNode;
@@ -216,18 +232,26 @@ interface ITableEditProps {
   handleNopDiem?: () => void;
   handleClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   filter?: {
-    hocKy: number;
-    loaiChuongTrinh: number;
-    lopHocPhan: {
+    khoa: number | string;
+    tuan: string;
+    boMon: {
       id: string;
       name: string;
-      loaiMonHoc: number;
-      monHocId: string;
-      chuongTrinhDaoTaoId: string;
     };
-    khoa: number;
+    giangVien: {
+      id: string;
+      name: string;
+    };
   } | null;
   queryKey: string;
+  boMon?: any;
+  isLoadingBM?: boolean;
+  filterWeek: {
+    tuanVao: string;
+    tuanDen: string;
+  } | null;
+  handleCopy?: () => void;
+  handleOpenModal?: () => void;
 }
 
 const TableEdit = forwardRef(
@@ -246,17 +270,29 @@ const TableEdit = forwardRef(
       isOpen,
       handleClick,
       onClose,
+      setfilterWeek,
       isLoadingGV,
       giangViens,
       filter,
       queryKey,
-      handleNopDiem
+      handleCopy,
+      boMon,
+      isLoadingBM,
+      handleNopDiem,
+      isLoadingTuan,
+      tuans,
+      isLoadingTuanDen,
+      tuanDens,
+      handleOpenModal,
+      filterWeek
     }: ITableEditProps,
     ref
   ) => {
     const [file, setFile] = useState<File | null>(null);
     const [cellModesModel, setCellModesModel] = React.useState<GridCellModesModel>({});
     const notification = useNotifications();
+    const user = useUser();
+    const { isAdmin, isQuanLyKhoaBoMon, isGiangVien } = useCheckPermission();
     const unsavedChangesRef = React.useRef<{
       unsavedRows: Record<GridRowId, GridValidRowModel>;
       rowsBeforeChange: Record<GridRowId, GridValidRowModel>;
@@ -318,66 +354,21 @@ const TableEdit = forwardRef(
       };
     }, []);
 
-    const handleExportFile = useMutation({
-      mutationFn: async (data: { lopHocPhanId: string }) => {
-        const response = await ChiTietLopHocPhanService.exportFile(data.lopHocPhanId);
-        return response;
-      },
-      onSuccess: async (data) => {
-        await saveAs(data, `danh_sach_diem_lop_hoc_phan_${filter?.lopHocPhan?.name}_${moment().format('DDMMYY')}.xlsx`);
-        notification.show('Xuất file thành công!', {
-          severity: 'success',
-          autoHideDuration: 4000
-        });
-      },
-      onError: (error: any) => {
-        notification.show(error?.Message || 'Đã xảy ra lỗi khi xuất file.', {
-          severity: 'error',
-          autoHideDuration: 4000
-        });
+    useEffect(() => {
+      if (user) {
+        setfilter((prev: any) => ({
+          ...prev,
+          boMon: {
+            id: user?.boMon?.id,
+            name: user?.boMon?.tenBoMon
+          },
+          giangVien: {
+            id: user?.id,
+            name: user?.hoTen
+          }
+        }));
       }
-    });
-
-    const mutationImport = useMutation({
-      mutationFn: async (data: FormData) => {
-        const response = await ChiTietLopHocPhanService.importFile(data);
-        return response;
-      },
-      onSuccess: async (data) => {
-        notification.show('Import file thành công!', {
-          severity: 'success',
-          autoHideDuration: 4000
-        });
-        await queryClient.invalidateQueries({
-          queryKey: [queryKey],
-          exact: false
-        });
-      },
-      onError: (error: any) => {
-        notification.show(error?.Message || 'Đã xảy ra lỗi khi import file.', {
-          severity: 'error',
-          autoHideDuration: 4000
-        });
-      }
-    });
-    const handleImportFileClick = (data: ImportFileProps) => {
-      const formData = new FormData();
-      formData.append('lopHocPhanId', data.LopHocPhanId);
-      if (data.File && data.File instanceof File) {
-        formData.append('file', data.File);
-      }
-      mutationImport.mutate(formData);
-    };
-    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-      if (!event.target.files || event.target.files.length === 0 || !filter?.lopHocPhan?.id) {
-        return;
-      }
-      const fileList = event.target.files;
-      if (fileList && fileList.length > 0) {
-        setFile(fileList[0]);
-        handleImportFileClick({ LopHocPhanId: filter?.lopHocPhan?.id || '', File: fileList[0] });
-      }
-    };
+    }, [user]);
     return (
       <motion.div
         initial={{ opacity: 0 }}
@@ -390,7 +381,7 @@ const TableEdit = forwardRef(
         style={{ height: 'calc(100vh - 200px)' }}
       >
         <Box className='flex w-full gap-4 '>
-          <Box className='flex-1 gap-4 flex flex-col p-4 border border-gray-200 rounded-lg shadow-sm light:bg-white'>
+          <Box className='flex-1 gap-4 flex flex-col justify-center items-center p-4 border border-gray-200 rounded-lg shadow-sm light:bg-white'>
             <Box className='flex gap-4 w-full'>
               <Box className='flex justify-center items-center gap-3 w-full'>
                 <Typography className='!text-[16px] !leading-6 !font-semibold'>Khóa</Typography>
@@ -405,7 +396,7 @@ const TableEdit = forwardRef(
                     getOnChangeValue={(value) => {
                       setfilter((prev: any) => ({
                         ...prev,
-                        loaiChuongTrinh: value?.id
+                        khoa: value?.id
                       }));
                     }}
                   />
@@ -418,24 +409,56 @@ const TableEdit = forwardRef(
                     fullWidth
                     name={'Tuan'}
                     placeholder={'Chọn tuần'}
-                    data={weekOptions ?? []}
+                    data={tuans ?? []}
+                    isLoading={isLoadingTuan}
                     getOptionKey={(option) => option.id}
                     getOptionLabel={(option: any) => option.name}
                     getOnChangeValue={(value) => {
                       setfilter((prev: any) => ({
                         ...prev,
-                        khoa: value?.id
+                        tuan: value?.id
                       }));
                     }}
                   />
                 </Box>
               </Box>
             </Box>
-            <Box className='flex gap-4'>
+            <Box className='flex gap-4 w-full'>
+              <Box className='flex justify-start items-center gap-3 w-full'>
+                <Typography className='!text-[16px] !leading-6 !font-semibold'>Bộ môn</Typography>
+                <Box className='flex-1'>
+                  <InputSelect2
+                    fullWidth
+                    isDisabled={!isAdmin}
+                    name={'BoMon'}
+                    placeholder={'Chọn bộ môn'}
+                    data={boMon ?? []}
+                    isLoading={isLoadingBM}
+                    defaultValue={
+                      user && {
+                        id: user?.boMon?.id,
+                        name: user?.boMon?.tenBoMon
+                      }
+                    }
+                    getOptionKey={(option) => option.id}
+                    getOptionLabel={(option: any) => option.name}
+                    getOnChangeValue={(value) => {
+                      setfilter((prev: any) => ({
+                        ...prev,
+                        boMon: {
+                          id: value?.id,
+                          name: value?.name
+                        }
+                      }));
+                    }}
+                  />
+                </Box>
+              </Box>
               <Box className='flex justify-center items-center gap-3 w-full'>
                 <Typography className='!text-[16px] !leading-6 !font-semibold'>Giảng viên</Typography>
                 <Box className='flex-1'>
                   <InputSelect2
+                    key={`giang-vien-select-${filter?.boMon?.id}`}
                     fullWidth
                     name={'GiangVien'}
                     placeholder={'Chọn giảng viên'}
@@ -446,30 +469,80 @@ const TableEdit = forwardRef(
                     getOnChangeValue={(value) => {
                       setfilter((prev: any) => ({
                         ...prev,
-                        lopHocPhan: {
+                        giangVien: {
                           id: value?.id,
-                          name: value?.name,
-                          loaiMonHoc: value?.loaiMonHoc,
-                          monHocId: value?.monHocId,
-                          chuongTrinhDaoTaoId: value?.chuongTrinhDaoTaoId
+                          name: value?.name
                         }
                       }));
                     }}
+                    value={
+                      user && user?.boMon?.id === filter?.boMon?.id
+                        ? {
+                            id: user?.id,
+                            name: user?.hoTen
+                          }
+                        : null
+                    }
                   />
                 </Box>
               </Box>
-              <Box className='flex justify-start items-center gap-3 w-full'>
-                <Box>
-                  <Typography className='!text-[16px] !leading-6 !font-semibold'>Bộ môn</Typography>
+            </Box>
+          </Box>
+          <Box className='flex flex-col !max-w-[300px] w-full gap-4 p-4 border border-gray-200 rounded-lg shadow-sm light:bg-white justify-center items-center'>
+            <Box className='flex w-full items-center justify-start gap-2'>
+              <CalendarFold className='h-4 w-4 shadow' />
+              <Typography className='!font-semibold '>Sao chép lịch</Typography>
+            </Box>
+            <Box className='flex flex-[3] items-center justify-start w-full gap-3'>
+              <Box className='flex flex-col gap-2 flex-2 w-full'>
+                <Box className='flex justify-center items-center gap-3 w-full'>
+                  <Typography className='!text-[16px] !leading-6 !font-semibold'>Vào</Typography>
+                  <Box className='flex-1'>
+                    <InputSelect2
+                      fullWidth
+                      name={'TuanVao'}
+                      placeholder={'Chọn tuần vào'}
+                      data={tuans ?? []}
+                      isLoading={isLoadingTuan}
+                      getOptionKey={(option) => option.id}
+                      getOptionLabel={(option: any) => option.name}
+                      getOnChangeValue={(value) => {
+                        setfilterWeek((prev: any) => ({
+                          ...prev,
+                          tuanVao: value?.id
+                        }));
+                      }}
+                    />
+                  </Box>
                 </Box>
-                <Box
-                  className='rounded bg-gray-100 px-3 py-2 border border-gray-200 text-[15px] text-gray-800 font-medium flex-1'
-                  style={{ minHeight: 40, display: 'flex', alignItems: 'center' }}
+                <Box className='flex justify-center items-center gap-3 w-full'>
+                  <Typography className='!text-[16px] !leading-6 !font-semibold'>Đến</Typography>
+                  <Box className='flex-1'>
+                    <InputSelect2
+                      fullWidth
+                      name={'TuanDen'}
+                      placeholder={'Chọn tuần đến'}
+                      data={tuanDens ?? []}
+                      isLoading={isLoadingTuanDen}
+                      getOptionKey={(option) => option.id}
+                      getOptionLabel={(option: any) => option.name}
+                      getOnChangeValue={(value) => {
+                        setfilterWeek((prev: any) => ({
+                          ...prev,
+                          tuanDen: value?.id
+                        }));
+                      }}
+                    />
+                  </Box>
+                </Box>
+              </Box>
+              <Box className='flex-1 w-full min-md:flex'>
+                <Button
+                  onClick={() => handleCopy?.()}
+                  className='!border !border-gray-300 !rounded-md !bg-blue-500 !text-white hover:!bg-blue-600 transition-all !duration-200 !ease-in-out !shadow-sm !leading-6 hover:transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed'
                 >
-                  {filter?.lopHocPhan?.loaiMonHoc
-                    ? LoaiMonHoc.find((item) => item.id === filter.lopHocPhan?.loaiMonHoc)?.name
-                    : null}
-                </Box>
+                  Sao chép
+                </Button>
               </Box>
             </Box>
           </Box>
@@ -477,49 +550,12 @@ const TableEdit = forwardRef(
             <LoadingButton
               disabled={false}
               loading={false}
-              startIcon={<AddToPhotosIcon />}
+              startIcon={<Add />}
               loadingPosition='start'
-              onClick={() => handleNopDiem?.()}
+              onClick={() => handleOpenModal?.()}
               className='!bg-blue-500 !text-white !rounded-md !px-4 !py-2 hover:!bg-blue-600 transition-all !duration-200 !ease-in-out !shadow-sm !text-base !leading-6 hover:transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed'
             >
-              <Typography className='!text-[16px] !leading-6 !font-semibold'>Nộp</Typography>
-            </LoadingButton>
-            <LoadingButton
-              disabled={false}
-              loading={false}
-              startIcon={<SaveIcon />}
-              loadingPosition='start'
-              onClick={() => saveChanges()}
-              className='!bg-blue-500 !text-white !rounded-md !px-4 !py-2 hover:!bg-blue-600 transition-all !duration-200 !ease-in-out !shadow-sm !text-base !leading-6 hover:transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed'
-            >
-              <Typography className='!text-[16px] !leading-6 !font-semibold'>Lưu</Typography>
-            </LoadingButton>
-            <LoadingButton
-              disabled={!filter?.lopHocPhan?.id || !filter?.hocKy || !filter?.khoa}
-              loading={false}
-              startIcon={<GetAppIcon />}
-              loadingPosition='start'
-              onClick={() => handleExportFile.mutate({ lopHocPhanId: filter?.lopHocPhan?.id || '' })}
-              className='!bg-blue-500 !text-white !rounded-md !px-4 !py-2 hover:!bg-blue-600 transition-all !duration-200 !ease-in-out !shadow-sm !text-base !leading-6 hover:transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed'
-            >
-              <Typography className='!text-[16px] !leading-6 !font-semibold'>Export</Typography>
-            </LoadingButton>
-            <input
-              id='import-file'
-              accept='.xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel'
-              type='file'
-              className='hidden'
-              onChange={handleFileChange}
-            />
-            <LoadingButton
-              disabled={!filter?.lopHocPhan?.id || !filter?.hocKy || !filter?.khoa}
-              loading={false}
-              startIcon={<ImportExportIcon />}
-              loadingPosition='start'
-              onClick={() => document.getElementById('import-file')?.click()}
-              className='!bg-blue-500 !text-white !rounded-md !px-4 !py-2 hover:!bg-blue-600 transition-all !duration-200 !ease-in-out !shadow-sm !text-base !leading-6 hover:transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed'
-            >
-              <Typography className='!text-[16px] !leading-6 !font-semibold'>Import</Typography>
+              <Typography className='!text-[16px] !leading-6 !font-semibold'>Thêm mới</Typography>
             </LoadingButton>
           </Box>
         </Box>
@@ -537,6 +573,7 @@ const TableEdit = forwardRef(
           ignoreValueFormatterDuringExport
           filterDebounceMs={600}
           editMode='cell'
+          virtualizeColumnsWithAutoRowHeight
           onFilterModelChange={setFilterModel}
           slots={{
             toolbar: () => CustomToolbar({ contentPopover, isOpen, onClose, handleClick })
@@ -552,6 +589,7 @@ const TableEdit = forwardRef(
               );
             }
           }}
+          getRowHeight={() => 'auto'}
           sortingMode='server'
           filterMode='server'
           showCellVerticalBorder
@@ -567,12 +605,25 @@ const TableEdit = forwardRef(
               noRowsVariant: 'linear-progress'
             }
           }}
+          className='!border-gray-200 shadow-sm'
           sx={(theme) => ({
             height: '100%',
             overflowY: 'auto',
-            borderColor: theme.palette.grey[600],
             '& .MuiDataGrid-editInputCell': {
               margin: 0
+            },
+            '& .MuiDataGrid-cell': {
+              whiteSpace: 'normal',
+              wordBreak: 'break-word',
+              overflowWrap: 'break-word',
+              lineHeight: '1.5',
+              padding: '10px 8px',
+              display: '-webkit-box', // Sử dụng flexbox webkit
+              WebkitBoxOrient: 'vertical',
+              WebkitLineClamp: 3, // Giới hạn tối đa 3 dòng
+              overflow: 'hidden',
+              alignItems: 'flex-start',
+              '@media (min-width: 728px)': { fontSize: '14px' }
             },
             [`& .${gridClasses.columnHeaders}`]: {
               borderBottom: `1px solid ${theme.palette.grey[600]}`
