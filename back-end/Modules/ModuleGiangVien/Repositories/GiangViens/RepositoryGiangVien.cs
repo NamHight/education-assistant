@@ -91,4 +91,9 @@ public class RepositoryGiangVien : RepositoryBase<GiangVien>, IRepositoryGiangVi
     {
         return await FindByCondition(item => item.TaiKhoanId == taiKhoanId, false).Include(item => item.BoMon).Include(item => item.Khoa).Include(item => item.TaiKhoan).FirstOrDefaultAsync();
     }
+
+    public async Task<IEnumerable<GiangVien>?> GetAllGiangVienByBoMonAsync(Guid boMonId)
+    {
+        return await FindByCondition(item => item.BoMonId == boMonId && item.DeletedAt == null, false).Include(item => item.BoMon).IgnoreQueryFilters().ToListAsync();
+    }
 }

@@ -127,4 +127,11 @@ public class ServiceBoMon : IServiceBoMon
         var boMonDtoList = _mapper.Map<List<ResponseBoMonDto>>(boMonList);
         return boMonDtoList;
     }
+
+    public async Task<IEnumerable<BoMonSummaryDto>> GetAllBoMonNoPageAsync()
+    {
+        var boMons = await _repositoryMaster.BoMon.GetAllBoMonNoPageAsync();
+        var boMonDtos = _mapper.Map<IEnumerable<BoMonSummaryDto>>(boMons);
+        return boMonDtos;
+    }
 }

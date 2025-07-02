@@ -98,18 +98,21 @@ public class ServiceChuongTrinhDaoTao : IServiceChuongTrinhDaoTao
     public async Task UpdateAsync(Guid id, RequestUpdateChuongTrinhDaoTaoDto request)
     {
         try
-        {   
-            var ChuongTrinhDaoTao = await _repositoryMaster.ChuongTrinhDaoTao.GetChuongTrinhDaoTaoByKhoaAndNganhIdAsync(request.Khoa.Value, request.NganhId.Value);
-            if (ChuongTrinhDaoTao is not null)
-            {
-                throw new ChuongTrinhDaoTaoBadRequestException($"Đã có chương trình đào tạo theo khóa thuộc ngành này rồi");
-            }
+        {
             if (id != request.Id)
                 throw new ChuongTrinhDaoTaoBadRequestException(
                     $"Id: {id} và Id của chương trình đào tạo: {request.Id} không giống nhau!.");
             var ctDaoTaoExistting = await _repositoryMaster.ChuongTrinhDaoTao.GetChuongTrinhDaoTaoByIdAsync(id, false);
             if (ctDaoTaoExistting is null) throw new ChuongTrinhDaoTaoNotFoundException(id);
-
+            if (ctDaoTaoExistting.Khoa != request.Khoa)
+            {
+                var ChuongTrinhDaoTao = await _repositoryMaster.ChuongTrinhDaoTao.GetChuongTrinhDaoTaoByKhoaAndNganhIdAsync(request.Khoa.Value, request.NganhId.Value);
+                if (ChuongTrinhDaoTao is not null)
+                {
+                    throw new ChuongTrinhDaoTaoBadRequestException($"Đã có chương trình đào tạo theo khóa thuộc ngành này rồi");
+                }
+                ctDaoTaoExistting.Khoa = request.Khoa;
+            }
             ctDaoTaoExistting.MaChuongTrinh = request.MaChuongTrinh;
             ctDaoTaoExistting.TenChuongTrinh = request.TenChuongTrinh;
             ctDaoTaoExistting.LoaiChuonTrinhDaoTao = request.LoaiChuonTrinhDaoTao;

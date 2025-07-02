@@ -106,9 +106,16 @@ namespace Education_assistant.Modules.ModuleLichBieu.Services
 
         public async Task<(IEnumerable<ResponseLichBieuDto> data, PageInfo page)> GetAllLichBieuAsync(ParamLichBieuDto paramLichBieuDto)
         {
-            var lichBieus = await _repositoryMaster.LichBieu.GetAllLichBieuAsync(paramLichBieuDto.page, paramLichBieuDto.limit, paramLichBieuDto.search, paramLichBieuDto.sortBy, paramLichBieuDto.sortByOrder, paramLichBieuDto.namHoc, paramLichBieuDto.giangVienId, paramLichBieuDto.tuanId, paramLichBieuDto.boMonId);
+            var lichBieus = await _repositoryMaster.LichBieu.GetAllLichBieuAsync(paramLichBieuDto.page, paramLichBieuDto.limit, paramLichBieuDto.search, paramLichBieuDto.sortBy, paramLichBieuDto.sortByOrder, paramLichBieuDto.giangVienId, paramLichBieuDto.tuanId, paramLichBieuDto.boMonId);
             var lichBieuDto = _mapper.Map<IEnumerable<ResponseLichBieuDto>>(lichBieus);
             return (data: lichBieuDto, page: lichBieus!.PageInfo);
+        }
+
+        public async Task<IEnumerable<ResponseLichBieuDto>> GetAllLichBieuNoPageAsync(ParamLichBieuSimpleDto paramLichBieuSimpleDto)
+        {
+            var lichBieus = await _repositoryMaster.LichBieu.GetAllLichBieuNoPageAsync(paramLichBieuSimpleDto.search, paramLichBieuSimpleDto.sortBy, paramLichBieuSimpleDto.sortByOrder ,paramLichBieuSimpleDto.giangVienId, paramLichBieuSimpleDto.tuanId, paramLichBieuSimpleDto.boMonId);
+            var lichBieuDtos = _mapper.Map<IEnumerable<ResponseLichBieuDto>>(lichBieus);
+            return lichBieuDtos;
         }
 
         public async Task<ResponseLichBieuDto> GetLichBieuByIdAsync(Guid id, bool trackChanges)

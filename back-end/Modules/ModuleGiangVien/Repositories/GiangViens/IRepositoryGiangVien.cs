@@ -7,6 +7,7 @@ public interface IRepositoryGiangVien
 {
     Task<PagedListAsync<GiangVien>?> GetAllGiangVienAsync(int page, int limit, string? search, string? sortBy, string? sortByOrder, Guid? khoaId, Guid? boMonId,bool? active);
     Task<IEnumerable<GiangVien>?> GetAllGiangVienByKhoa(Guid khoaId); 
+    Task<IEnumerable<GiangVien>?> GetAllGiangVienByBoMonAsync(Guid boMonId); 
     Task<GiangVien?> GetGiangVienByIdAsync(Guid? id, bool trackChanges);
     Task<GiangVien?> GetGiangVienByEmailAsync(string email, bool trackChanges);
     Task<GiangVien?> GetGiangVienByTaiKhoanIdAsync(Guid taiKhoanId, bool trackChanges);

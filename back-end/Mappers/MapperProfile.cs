@@ -72,6 +72,7 @@ public class MapperProfile : Profile
         CreateMap<GiangVien, ResponseGiangVienDto>();
 
 
+
         //chi tiết lớp học phần
         CreateMap<RequestAddChiTietLopHocPhanDto, ChiTietLopHocPhan>();
         CreateMap<RequestUpdateChiTietLopHocPhanDto, ChiTietLopHocPhan>();
@@ -128,7 +129,9 @@ public class MapperProfile : Profile
             .ForMember(dest => dest.ChiTietChuongTrinhDaoTao, opt => opt.MapFrom(src => src.DanhSachChiTietChuongTrinhDaoTao!.FirstOrDefault()));
         CreateMap<Nganh, NganhSimpleDto>();
         CreateMap<PhongHoc, PhongHocSimpleDto>();
-        CreateMap<SinhVien, SinhVienSimpleDto>();
+        CreateMap<SinhVien, SinhVienSimpleDto>(); 
+        CreateMap<GiangVien, GiangVienSummaryDto>();
+        CreateMap<BoMon, BoMonSummaryDto>();
 
     }
 }

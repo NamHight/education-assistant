@@ -44,6 +44,45 @@ public class ServiceTuan : IServiceTuan
         }
     }
 
+    public async Task CreateAutoTuanForNamHocAsnyc(RequestAddTuanSimpleDto request)
+    {
+        if (request.NamHoc < 1900)
+        {
+            throw new TuanBadRequestException($"Năm học không hợp lệ : {request.NamHoc} phải lớn hơn 1900");
+        }
+        if (await _repositoryMaster.Tuan.HasTuanForNamHocAsync(request.NamHoc))
+        {
+            throw new TuanExistdException($"Năm học đã được tạo danh sách tuần rồi");
+        }
+        try
+        {
+            var tuans = new List<Tuan>();
+            var startDate = new DateTime(request.NamHoc, 1, 1);
+            for (int i = 1; i <= 52; i++)
+            {
+                var start = startDate.AddDays((i - 1) * 7);
+                var end = start.AddDays(6);
+                tuans.Add(new Tuan
+                {
+                    SoTuan = i,
+                    NamHoc = request.NamHoc,
+                    NgayBatDau = start,
+                    NgayKetThuc = end,
+                    CreatedAt = DateTime.UtcNow,
+                });
+            }
+            await _repositoryMaster.ExecuteInTransactionBulkEntityAsync(async () =>
+            {
+                await _repositoryMaster.BulkAddEntityAsync<Tuan>(tuans);
+            });
+        }
+        catch (Exception ex)
+        {
+            throw new Exception($"Lỗi hệ thống!: {ex.Message}");
+        }
+
+    }
+
     public async Task DeleteAsync(Guid id)
     {
         try
@@ -82,6 +121,13 @@ public class ServiceTuan : IServiceTuan
         var tuans = await _repositoryMaster.Tuan.GetAllTuanAsync(paramTuanDto.page, paramTuanDto.limit, paramTuanDto.search, paramTuanDto.sortBy, paramTuanDto.sortByOrder, paramTuanDto.namHoc);
         var tuanDtos = _mapper.Map<IEnumerable<ResponseTuanDto>>(tuans);
         return (data: tuanDtos, page: tuans!.PageInfo);
+    }
+
+    public async Task<IEnumerable<ResponseTuanDto>> GetALLTuanByNamHocAsync(int namHoc)
+    {
+        var tuans = await _repositoryMaster.Tuan.GetALLTuanByNamHocAsync(namHoc);
+        var tuanDtos = _mapper.Map<IEnumerable<ResponseTuanDto>>(tuans);
+        return tuanDtos;
     }
 
     public async Task<ResponseTuanDto> GetTuanByIdAsync(Guid id, bool trackChanges)
