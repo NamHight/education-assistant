@@ -593,6 +593,7 @@ const Table = React.forwardRef<any, TableProps>(function table(
             pageSize: model.pageSize
           })
         }
+        className='!border-gray-200 shadow-sm'
         sx={(theme) => ({
           '& .MuiDataGrid-actionsCell .MuiButtonBase-root': {
             background: '#f5f5f5',

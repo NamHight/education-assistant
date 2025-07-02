@@ -93,7 +93,18 @@ const Input2 = ({
             '&.Mui-focused fieldset': {
               borderColor: alpha(theme.palette.primary.main, 0.5)
             }
-          }
+          },
+          ...(type === 'number'
+            ? {
+                '& input[type=number]': {
+                  MozAppearance: 'textfield'
+                },
+                '& input[type=number]::-webkit-outer-spin-button, & input[type=number]::-webkit-inner-spin-button': {
+                  WebkitAppearance: 'none',
+                  margin: 0
+                }
+              }
+            : {})
         })}
         InputProps={{
           endAdornment: isPassword ? (

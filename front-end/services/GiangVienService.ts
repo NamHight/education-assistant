@@ -25,6 +25,13 @@ export class GiangVienService {
             }))
             .catch((error) => Promise.reject(error.response?.data));
     }
+
+    static async getGiangVienByBoMonId(boMonId: string | number | undefined) {
+        return authApi.get(`${API.GIANG_VIEN.GET_BY_BO_MON_ID}`.replace(':boMonId', `${boMonId}`))
+            .then((response) => Promise.resolve(response.data))
+            .catch((error) => Promise.reject(error.response?.data));
+    }
+
     static async getGiangVienByKhoaId(khoaId: string | number) {
         return authApi.get(`${API.GIANG_VIEN.GET_BY_KHOA_ID}`.replace(':khoaId', `${khoaId}`))
             .then((response) => Promise.resolve(response.data))

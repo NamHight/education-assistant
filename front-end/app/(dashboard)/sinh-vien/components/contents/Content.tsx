@@ -33,6 +33,7 @@ import {
   BookOpenCheck,
   BookPlus,
   BookX,
+  CirclePlus,
   Download,
   Funnel,
   GraduationCap,
@@ -340,11 +341,11 @@ const Content = ({ queryKey, lopHocServers, tinhTrangHocTapServer }: ContentProp
         case TrangThaiSinhVienEnum.DANG_HOC:
           return <ChipOption title='Đang học' color='info' />;
         case TrangThaiSinhVienEnum.TAM_NGHI:
-          return <ChipOption title='Nghỉ việc' color='warning' />;
+          return <ChipOption title='Tạm việc' color='warning' />;
         case TrangThaiSinhVienEnum.DA_TOT_NGHIEP:
-          return <ChipOption title='Nghỉ hưu' color='success' />;
+          return <ChipOption title='Đã tốt nghiệp' color='success' />;
         case TrangThaiSinhVienEnum.BO_HOC:
-          return <ChipOption title='Nghỉ phép' color='error' />;
+          return <ChipOption title='Bỏ học' color='error' />;
         case TrangThaiSinhVienEnum.BUOC_THOI_HOC:
           return <ChipOption title='Buộc thôi học' color='error' />;
         default:
@@ -552,7 +553,7 @@ const Content = ({ queryKey, lopHocServers, tinhTrangHocTapServer }: ContentProp
         field: 'trangThaiSinhVien',
         headerName: 'Trạng thái',
         type: 'string',
-        minWidth: 100,
+        minWidth: 120,
         disableColumnMenu: true,
         sortable: false,
         display: 'flex',
@@ -584,7 +585,7 @@ const Content = ({ queryKey, lopHocServers, tinhTrangHocTapServer }: ContentProp
   };
   return (
     <Box className='flex flex-col gap-4'>
-      <Box className='flex justify-start gap-4 '>
+      <Box className='flex justify-start gap-4  '>
         <Box className='grid grid-cols-1 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full'>
           <Box className='flex flex-col border border-gray-200 rounded-lg p-4 shadow-sm gap-3 w-full'>
             <Box className='flex items-center justify-between gap-5'>
@@ -662,13 +663,13 @@ const Content = ({ queryKey, lopHocServers, tinhTrangHocTapServer }: ContentProp
           </Box>
         </Box>
       </Box>
-      <Box className='grid grid-cols-12 gap-4 border border-gray-200 rounded-lg p-4 shadow-sm'>
-        <Box className='w-full flex flex-col gap-3 col-span-9'>
+      <Box className='flex flex-[3] flex-col lg:flex-row gap-5 sm:gap-4 border border-gray-200 rounded-lg p-4 shadow-sm'>
+        <Box className='w-full flex flex-col sm:flex-row gap-3 col-span-'>
           <Box className='flex gap-3 justify-start items-center'>
             <Funnel className='w-4 h-4' />
             <Typography className='!font-semibold !text-gray-700 !leading-6 !text-lg'>Lọc</Typography>
           </Box>
-          <Box className='w-full flex items-center gap-3'>
+          <Box className='w-full flex items-center gap-3 flex-col sm:flex-row'>
             <Box className='w-full'>
               <Box className='w-full'>
                 <InputSelect2
@@ -702,21 +703,25 @@ const Content = ({ queryKey, lopHocServers, tinhTrangHocTapServer }: ContentProp
                     lopId: value?.id || null,
                     lopName: value?.name || null
                   }));
+                  setPaginationModel({
+                    page: 0,
+                    pageSize: paginationModel.pageSize
+                  });
                 }}
               />
             </Box>
           </Box>
         </Box>
-        <Box className='w-full flex justify-end gap-4 col-span-3 items-center'>
-          <Box>
+        <Box className='w-full flex flex-col sm:flex-row justify-end gap-4 items-center flex-1'>
+          <Box className='w-full'>
             <Button
-              className='flex items-center gap-3'
+              className='flex items-center gap-3 w-full justify-center'
               icon={<Import className='h-5 w-5 text-white' />}
               title={'Export'}
               onClick={() => handleExportFile()}
             />
           </Box>
-          <Box>
+          <Box className='w-full'>
             <input
               id='import-file'
               accept='.xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel'
@@ -725,7 +730,7 @@ const Content = ({ queryKey, lopHocServers, tinhTrangHocTapServer }: ContentProp
               onChange={handleFileChange}
             />
             <Button
-              className='flex items-center gap-3'
+              className='flex items-center gap-3 w-full justify-center'
               icon={<Download className='h-5 w-5 text-white' />}
               title={'Import'}
               onClick={() => {
@@ -740,8 +745,13 @@ const Content = ({ queryKey, lopHocServers, tinhTrangHocTapServer }: ContentProp
               }}
             />
           </Box>
-          <Box>
-            <Button title={'Thêm mới'} onClick={() => router.push(APP_ROUTE.SINH_VIEN.ADD)} />
+          <Box className='w-full'>
+            <Button
+              title={'Thêm'}
+              icon={<CirclePlus className='h-5 w-5 text-white' />}
+              onClick={() => router.push(APP_ROUTE.SINH_VIEN.ADD)}
+              className='flex items-center gap-1 w-full justify-center'
+            />
           </Box>
         </Box>
       </Box>
