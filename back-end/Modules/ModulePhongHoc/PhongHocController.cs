@@ -28,6 +28,12 @@ namespace Education_assistant.Modules.ModulePhongHoc
             Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(result.page));
             return Ok(result.data);
         }
+        [HttpGet("no-page")]
+        public async Task<ActionResult> GetAllPhongHocNoPageAsync()
+        {
+            var result = await _serviceMaster.PhongHoc.GetAllPhongHocNoPageAsync();
+            return Ok(result);
+        }
 
         [HttpGet("{id}")]
         public async Task<ActionResult> GetPhongHocByIdAsync(Guid id)

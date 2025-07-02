@@ -167,6 +167,13 @@ public class ServiceLopHocPhan : IServiceLopHocPhan
         return lopHocPhanDtos;
     }
 
+    public async Task<IEnumerable<ResponseLopHocPhanDto>> GetAllLopHocPhanNoPageAsync()
+    {
+        var lopHocPhans = await _repositoryMaster.LopHocPhan.GetAllLopHocPhanNoPageAsync();
+        var lopHocPhanDtos = _mapper.Map<IEnumerable<ResponseLopHocPhanDto>>(lopHocPhans);
+        return lopHocPhanDtos;
+    }
+
     public async Task<ResponseLopHocPhanDto> GetLopHocPhanByIdAsync(Guid id, bool trackChanges)
     {
         var lopHocPhan = await _repositoryMaster.LopHocPhan.GetLopHocPhanByIdAsync(id, false);

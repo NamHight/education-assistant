@@ -2,6 +2,7 @@
 using Education_assistant.Context;
 using Education_assistant.Extensions;
 using Education_assistant.Models;
+using Education_assistant.Models.Enums;
 using Education_assistant.Repositories;
 using Education_assistant.Repositories.Paginations;
 using Microsoft.EntityFrameworkCore;
@@ -10,8 +11,6 @@ namespace Education_assistant.Modules.ModulePhongHoc.Repositories
 {
     public class RepositoryPhongHoc : RepositoryBase<PhongHoc>, IRepositoryPhongHoc
     {
-        private string? sortByOder;
-
         public RepositoryPhongHoc(RepositoryContext context) : base(context)
         {
         }
@@ -42,6 +41,11 @@ namespace Education_assistant.Modules.ModulePhongHoc.Repositories
                                                                      ["updatedat"] = item => item.UpdatedAt!,
                                                                  })
                                                                 , page, limit);
+        }
+
+        public async Task<IEnumerable<PhongHoc>> GetAllPhongHocNoPageAsync()
+        {
+            return await FindByCondition(item => item.TrangThaiPhongHoc == (int)TrangThaiPhongHocEnum.HOAT_DONG, false).ToListAsync();
         }
 
         public async Task<PhongHoc?> GetPhongHocByIdAsync(Guid id, bool trackChanges)
