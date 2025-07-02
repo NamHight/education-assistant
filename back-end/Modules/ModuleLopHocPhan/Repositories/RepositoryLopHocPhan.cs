@@ -206,6 +206,11 @@ public class RepositoryLopHocPhan : RepositoryBase<LopHocPhan>, IRepositoryLopHo
         return await query.ToListAsync();
     }
 
+    public async Task<IEnumerable<LopHocPhan>> GetAllLopHocPhanNoPageAsync()
+    {
+        return await FindByCondition(item => item.TrangThai == (int)TrangThaiLopHocPhanEnum.DANG_HOAT_DONG, false).ToListAsync();
+    }
+
     public async Task<LopHocPhan?> GetLopHocPhanByIdAsync(Guid id, bool trackChanges)
     {
         return await FindByCondition(item => item.Id == id, trackChanges).Include(lhp => lhp.MonHoc)

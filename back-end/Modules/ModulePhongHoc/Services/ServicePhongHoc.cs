@@ -80,6 +80,13 @@ public class ServicePhongHoc : IServicePhongHoc
         return (data: phongHocDto, page: phongHocs!.PageInfo);
     }
 
+    public async Task<IEnumerable<ResponsePhongHocDto>> GetAllPhongHocNoPageAsync()
+    {
+        var phongHocs = await _repositoryMaster.PhongHoc.GetAllPhongHocNoPageAsync();
+        var phongHocDtos = _mapper.Map<IEnumerable<ResponsePhongHocDto>>(phongHocs);
+        return phongHocDtos;
+    }
+
     public async Task<ResponsePhongHocDto> GetPhongHocByIdAsync(Guid id, bool trackChanges)
     {
         var phongHoc = await _repositoryMaster.PhongHoc.GetPhongHocByIdAsync(id, false);

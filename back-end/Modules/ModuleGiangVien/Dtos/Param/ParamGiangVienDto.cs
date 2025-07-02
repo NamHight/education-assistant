@@ -9,6 +9,6 @@ public class ParamGiangVienDto
     public string sortByOrder { get; set; } = string.Empty;
     public Guid? KhoaId { get; set; }
     public Guid? BoMonId { get; set; }
-
     public bool? active { get; set; }
+    public int trangThai { get; set; }
 }

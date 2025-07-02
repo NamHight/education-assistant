@@ -24,6 +24,11 @@ public class RepositoryKhoa : RepositoryBase<Khoa>, IRepositoryKhoa
         Delete(khoa);
     }
 
+    public async Task<IEnumerable<Khoa>> GetAllKhoaNoPageAsync()
+    {
+        return await FindAll(false).ToListAsync();
+    }
+
     public async Task<PagedListAsync<Khoa>?> GetAllPaginatedAndSearchOrSortAsync(int page, int limit, string search,
         string sortBy, string sortByOder)
     {
