@@ -98,7 +98,7 @@ public class ServiceChuongTrinhDaoTao : IServiceChuongTrinhDaoTao
     public async Task UpdateAsync(Guid id, RequestUpdateChuongTrinhDaoTaoDto request)
     {
         try
-        {
+        {   
             var ChuongTrinhDaoTao = await _repositoryMaster.ChuongTrinhDaoTao.GetChuongTrinhDaoTaoByKhoaAndNganhIdAsync(request.Khoa.Value, request.NganhId.Value);
             if (ChuongTrinhDaoTao is not null)
             {
