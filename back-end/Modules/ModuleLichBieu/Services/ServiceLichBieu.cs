@@ -113,7 +113,7 @@ namespace Education_assistant.Modules.ModuleLichBieu.Services
 
         public async Task<IEnumerable<ResponseLichBieuDto>> GetAllLichBieuNoPageAsync(ParamLichBieuSimpleDto paramLichBieuSimpleDto)
         {
-            var lichBieus = await _repositoryMaster.LichBieu.GetAllLichBieuNoPageAsync(paramLichBieuSimpleDto.giangVienId, paramLichBieuSimpleDto.tuanId, paramLichBieuSimpleDto.boMonId);
+            var lichBieus = await _repositoryMaster.LichBieu.GetAllLichBieuNoPageAsync(paramLichBieuSimpleDto.search, paramLichBieuSimpleDto.sortBy, paramLichBieuSimpleDto.sortByOrder ,paramLichBieuSimpleDto.giangVienId, paramLichBieuSimpleDto.tuanId, paramLichBieuSimpleDto.boMonId);
             var lichBieuDtos = _mapper.Map<IEnumerable<ResponseLichBieuDto>>(lichBieus);
             return lichBieuDtos;
         }

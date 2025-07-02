@@ -64,7 +64,7 @@ public class RepositoryLichBieu : RepositoryBase<LichBieu>, IRepositoryLichBieu
                                             , page, limit);
     }
 
-    public async Task<IEnumerable<LichBieu>> GetAllLichBieuNoPageAsync(Guid? giangvienId, Guid? tuanId, Guid? boMonId)
+    public async Task<IEnumerable<LichBieu>> GetAllLichBieuNoPageAsync(string? search, string? sortBy, string? sortByOrder, Guid? giangvienId, Guid? tuanId, Guid? boMonId)
     {
         var query = _context.LichBieus!
                     .AsNoTracking()
@@ -74,6 +74,17 @@ public class RepositoryLichBieu : RepositoryBase<LichBieu>, IRepositoryLichBieu
                     .Include(lb => lb.Tuan)
                     .AsQueryable();
         query = query.Where(item => item.TuanId == tuanId && item.LopHocPhan != null && item.LopHocPhan!.GiangVienId == giangvienId);
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            if (int.TryParse(search, out var thu))
+            {
+                query = query.SearchBy(thu.ToString(), item => item.Thu.ToString());
+            }
+            else
+            {
+                query = query.SearchBy(search, item => item.LopHocPhan.MaHocPhan);
+            }
+        }
         if (boMonId.HasValue && boMonId != Guid.Empty)
         {
             query = query.Where(item => item.LopHocPhan != null &&
@@ -82,7 +93,11 @@ public class RepositoryLichBieu : RepositoryBase<LichBieu>, IRepositoryLichBieu
                                         item.LopHocPhan.MonHoc.DanhSachChiTietChuongTrinhDaoTao.Any(ct => ct.BoMonId == boMonId));
         }
 
-        return await query.ToListAsync(); 
+        return await query.SortByOptions(sortBy, sortByOrder, new Dictionary<string, Expression<Func<LichBieu, object>>>
+                            {
+                                ["createdat"] = item => item.CreatedAt,
+                                ["updatedat"] = item => item.UpdatedAt!,
+                            }).ToListAsync(); 
     }
 
     public async Task<LichBieu?> GetLichBieuByIdAsync(Guid id, bool trackChanges)
