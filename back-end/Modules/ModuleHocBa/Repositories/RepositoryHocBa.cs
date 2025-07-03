@@ -71,6 +71,11 @@ public class RepositoryHocBa : RepositoryBase<HocBa>, IRepositoryHocBa
         return await FindByCondition(item => item.Id == id, trackChanges).Include(item => item.SinhVien).Include(item => item.LopHocPhan).Include(item => item.ChiTietChuongTrinhDaoTao).ThenInclude(item => item!.ChuongTrinhDaoTao).FirstOrDefaultAsync();
     }
 
+    public async Task<HocBa?> GetHocBaByLopHocPhanIdAsync(Guid lopHocPhanId)
+    {
+        return await FindByCondition(item => item.LopHocPhanId == lopHocPhanId, false).FirstOrDefaultAsync();
+    }
+
     public async Task<decimal?> TinhGPAAsync(Guid sinhVienId)
     {
         var hocBas = await _context.HocBas!
