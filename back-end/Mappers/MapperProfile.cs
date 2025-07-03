@@ -111,6 +111,9 @@ public class MapperProfile : Profile
         CreateMap<RequestUpdateHocbaDto, HocBa>();
         CreateMap<HocBa, ResponseHocBaDto>();
 
+        //map đăng ký môn học
+        CreateMap<DangKyMonHoc, ResponseSinhVienDangKyMonHocDto>();
+
         //map tuan
         CreateMap<RequestAddTuanDto, Tuan>();
         CreateMap<RequestUpdateTuanDto, Tuan>();

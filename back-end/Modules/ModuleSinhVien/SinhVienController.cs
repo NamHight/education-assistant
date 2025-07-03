@@ -29,10 +29,23 @@ namespace Education_assistant.Modules.ModuleSinhVien
             Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(result.page));
             return Ok(result.data);
         }
+        [HttpGet("by-lop-hoc-phan")]
+        public async Task<ActionResult> GetAllSinhVienByLopHocPhanAsync([FromQuery] ParamSinhVienByLopHocPhanDto paramSinhVienByLopHocPhanDto)
+        {
+            var result = await _serviceMaster.SinhVien.GetAllSinhVienByLopHocPhanIdAsync(paramSinhVienByLopHocPhanDto);
+            Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(result.page));
+            return Ok(result.data);
+        }
         [HttpGet("all-tinh-trang-hoc-tap")]
         public async Task<ActionResult> GetAllSummaryAsync([FromQuery] Guid lopId)
         {
             var result = await _serviceMaster.SinhVien.GetALlSummaryAsync(lopId);
+            return Ok(result);
+        }
+        [HttpGet("mssv")]
+        public async Task<ActionResult> GetSinhVienByMssvAsync([FromQuery] string mssv)
+        {
+            var result = await _serviceMaster.SinhVien.GetSinhVienByMssvAsync(mssv);
             return Ok(result);
         }
         [HttpGet("{id}")]
@@ -52,6 +65,13 @@ namespace Education_assistant.Modules.ModuleSinhVien
         public async Task<ActionResult> AddSinhVienAsync([FromForm] RequestAddSinhVienDto model)
         {
             var result = await _serviceMaster.SinhVien.CreateAsync(model);
+            return Ok(result);
+        }
+        [HttpPost("dang-ky-mon-hoc")]
+        [ServiceFilter(typeof(ValidationFilter))]
+        public async Task<ActionResult> AddSinhVienDangKyMonHocAsync([FromForm] RequestSinhVienDangKyMonHocDto model)
+        {
+            var result = await _serviceMaster.SinhVien.CreateSinhVienDangKyMonHocAsync(model);
             return Ok(result);
         }
         [HttpPut("{id}")]

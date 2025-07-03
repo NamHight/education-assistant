@@ -18,7 +18,9 @@ public interface IRepositorySinhVien
     Task<int> GetAllSoTamNghiAsync(Guid? lopHocId);
     Task<List<ResponseExportFileSinhVienDto>> GetAllSinhVienExportFileAsync(Guid lopHocId);
     Task<SinhVien?> GetSinhVienByIdAsync(Guid id, bool trackChanges);
+    Task<SinhVien?> GetSinhVienByMssvAsync(string mssv, bool trackChanges);
     Task<SinhVien?> GetSinhVienByMssvOrCccdAsync(string mssv, string cccd);
+    Task<PagedListAsync<SinhVien>> GetAllSinhVienByLopHocPhanIdAsync(int page, int limit, string? search, string? sortBy, string? sortByOrder, Guid lopHocPhanId);
     Task CreateAsync(SinhVien sinhVien);
     void UpdateSinhVien(SinhVien sinhVien);
     void DeleteSinhVien(SinhVien sinhVien);

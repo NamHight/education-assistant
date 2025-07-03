@@ -44,20 +44,20 @@ public class ServiceTuan : IServiceTuan
         }
     }
 
-    public async Task CreateAutoTuanForNamHocAsnyc(RequestAddTuanSimpleDto request)
+    public async Task CreateAutoTuanForNamHocAsnyc(int namHoc)
     {
-        if (request.NamHoc < 1900)
+        if (namHoc < 1900)
         {
-            throw new TuanBadRequestException($"Năm học không hợp lệ : {request.NamHoc} phải lớn hơn 1900");
+            return;
         }
-        if (await _repositoryMaster.Tuan.HasTuanForNamHocAsync(request.NamHoc))
+        if (await _repositoryMaster.Tuan.HasTuanForNamHocAsync(namHoc))
         {
-            throw new TuanExistdException($"Năm học đã được tạo danh sách tuần rồi");
+            return;
         }
         try
         {
             var tuans = new List<Tuan>();
-            var startDate = new DateTime(request.NamHoc, 1, 1);
+            var startDate = new DateTime(namHoc, 1, 1);
             for (int i = 1; i <= 52; i++)
             {
                 var start = startDate.AddDays((i - 1) * 7);
@@ -65,7 +65,7 @@ public class ServiceTuan : IServiceTuan
                 tuans.Add(new Tuan
                 {
                     SoTuan = i,
-                    NamHoc = request.NamHoc,
+                    NamHoc = namHoc,
                     NgayBatDau = start,
                     NgayKetThuc = end,
                     CreatedAt = DateTime.UtcNow,

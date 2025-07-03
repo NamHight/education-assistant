@@ -8,3 +8,9 @@ public class ParamSinhVienDto : BaseParam
     public Guid lopId { get; set; }
     public int tinhTrangHocTap { get; set; }
 }
+
+public class ParamSinhVienByLopHocPhanDto : BaseParam
+{
+    public Guid lopHocPhanId { get; set; }
+}
+
