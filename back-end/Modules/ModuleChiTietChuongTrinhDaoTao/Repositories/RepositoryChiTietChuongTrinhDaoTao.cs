@@ -25,7 +25,7 @@ public class RepositoryChiTietChuongTrinhDaoTao : RepositoryBase<ChiTietChuongTr
         Delete(chiTietChuongTrinhDaoTao);
     }
 
-    public async Task<PagedListAsync<ChiTietChuongTrinhDaoTao>?> GetAllChiTietChuongTrinhDaoTaoAsync(int page, int limit, string search, string sortBy, string sortByOrder)
+    public async Task<PagedListAsync<ChiTietChuongTrinhDaoTao>?> GetAllChiTietChuongTrinhDaoTaoAsync(int page, int limit, string search, string sortBy, string sortByOrder, Guid? chuongTrinhDaoTaoId)
     {
         var query = _context.ChiTietChuongTrinhDaoTaos!
                                 .AsNoTracking()
@@ -33,7 +33,12 @@ public class RepositoryChiTietChuongTrinhDaoTao : RepositoryBase<ChiTietChuongTr
                                 .Include(item => item.ChuongTrinhDaoTao)
                                 .Include(item => item.BoMon)
                                 .AsQueryable();
-        if (!string.IsNullOrWhiteSpace(search)) {
+        if (chuongTrinhDaoTaoId.HasValue && chuongTrinhDaoTaoId != Guid.Empty)
+        {
+            query = query.Where(item => item.ChuongTrinhDaoTaoId == chuongTrinhDaoTaoId);
+        }
+        if (!string.IsNullOrWhiteSpace(search))
+        {
             query = query.SearchBy(search, item => item.ChuongTrinhDaoTao!.TenChuongTrinh);
         }
         return await PagedListAsync<ChiTietChuongTrinhDaoTao>.ToPagedListAsync(query

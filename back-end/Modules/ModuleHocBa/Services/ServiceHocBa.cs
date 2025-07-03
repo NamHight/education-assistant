@@ -156,7 +156,7 @@ public class ServiceHocBa : IServiceHocBa
                 continue;
             }
 
-            var diemSoTong = _diemSoHelper.ComparePoint(diemTongKetLopHocPhan, exsitingHocBa.DiemTongKet);
+            var diemSoTong = _diemSoHelper.ComparePoint(diemTongKetLopHocPhan, exsitingHocBa.DiemTongKet.Value);
             var hocBa = new HocBa
             {
                 Id = exsitingHocBa.Id,

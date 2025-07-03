@@ -87,9 +87,9 @@ public class ServiceChiTietChuongTrinhDaoTao : IServiceChiTietChuongTrinhDaoTao
 
     public async Task<(IEnumerable<ResponseChiTietChuongTrinhDaoTaoDto> data, PageInfo page)> GetAllChiTietChuongTrinhDaoTaoAsync(ParamChiTietChuongTrinhDaoTaoDto paramChiTietChuongTrinhDaoTaoDto)
     {
-        var ctctDaoTaos = await _repositoryMaster.ChiTietChuongTrinhDaoTao.GetAllChiTietChuongTrinhDaoTaoAsync(paramChiTietChuongTrinhDaoTaoDto.page, paramChiTietChuongTrinhDaoTaoDto.limit, paramChiTietChuongTrinhDaoTaoDto.search, paramChiTietChuongTrinhDaoTaoDto.sortBy, paramChiTietChuongTrinhDaoTaoDto.sortByOrder);
-        var ctctDaoTaoDto = _mapper.Map<IEnumerable<ResponseChiTietChuongTrinhDaoTaoDto>>(ctctDaoTaos);
-        return (data: ctctDaoTaoDto, page: ctctDaoTaos!.PageInfo);
+        var ctctDaoTaos = await _repositoryMaster.ChiTietChuongTrinhDaoTao.GetAllChiTietChuongTrinhDaoTaoAsync(paramChiTietChuongTrinhDaoTaoDto.page, paramChiTietChuongTrinhDaoTaoDto.limit, paramChiTietChuongTrinhDaoTaoDto.search, paramChiTietChuongTrinhDaoTaoDto.sortBy, paramChiTietChuongTrinhDaoTaoDto.sortByOrder, paramChiTietChuongTrinhDaoTaoDto.chuongTrinhDaoTaoId);
+        var ctctDaoTaoDtos = _mapper.Map<IEnumerable<ResponseChiTietChuongTrinhDaoTaoDto>>(ctctDaoTaos);
+        return (data: ctctDaoTaoDtos, page: ctctDaoTaos!.PageInfo);
     }
 
     public async Task<IEnumerable<ResponseChiTietChuongTrinhDaoTaoDto>?> GetAllCtctdtByCtdtIdAsync(Guid id, int? hocKy = null)

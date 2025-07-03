@@ -71,6 +71,16 @@ public class RepositoryHocBa : RepositoryBase<HocBa>, IRepositoryHocBa
         return await FindByCondition(item => item.Id == id, trackChanges).Include(item => item.SinhVien).Include(item => item.LopHocPhan).Include(item => item.ChiTietChuongTrinhDaoTao).ThenInclude(item => item!.ChuongTrinhDaoTao).FirstOrDefaultAsync();
     }
 
+    public async Task<HocBa?> GetHocBaByLopHocPhanIdAsync(Guid lopHocPhanId)
+    {
+        return await FindByCondition(item => item.LopHocPhanId == lopHocPhanId, false).FirstOrDefaultAsync();
+    }
+
+    public async Task<HocBa?> GetHocBaBySinhVienAndLopHocPhanAsync(Guid sinhVienId, Guid lopHocPhanId)
+    {
+        return await FindByCondition(item => item.SinhVienId == sinhVienId && item.LopHocPhanId == lopHocPhanId, false).FirstOrDefaultAsync();
+    }
+
     public async Task<decimal?> TinhGPAAsync(Guid sinhVienId)
     {
         var hocBas = await _context.HocBas!
@@ -93,7 +103,7 @@ public class RepositoryHocBa : RepositoryBase<HocBa>, IRepositoryHocBa
                 .Select(group => group.OrderByDescending(hb => hb.DiemTongKet).First())
                 .ToList();
         var DiemTongXTinChi = diemCaoNhat.Sum(hb => hb.DiemTongKet * hb.ChiTietChuongTrinhDaoTao!.SoTinChi);
-        return Math.Round(DiemTongXTinChi / tongTinChi, 2); 
+        return Math.Round(DiemTongXTinChi.Value / tongTinChi, 2); 
     }
 
     public void UpdateHocBa(HocBa hocBa)

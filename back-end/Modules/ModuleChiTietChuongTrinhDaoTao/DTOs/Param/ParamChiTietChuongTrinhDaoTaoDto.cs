@@ -5,5 +5,5 @@ namespace Education_assistant.Modules.ModuleChiTietChuongTrinhDaoTao.DTOs.Param;
 
 public class ParamChiTietChuongTrinhDaoTaoDto : BaseParam
 {
-
+    public Guid chuongTrinhDaoTaoId { get; set; }
 }

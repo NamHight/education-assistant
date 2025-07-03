@@ -9,9 +9,8 @@ namespace Education_assistant.Models;
 public class HocBa : BaseEntity
 {
     [Column("diem_tong_ket")]
-    [Required(ErrorMessage = "Điểm tổng kết không được để trống")]
     [Precision(4,2)] 
-    public decimal DiemTongKet { get; set; }
+    public decimal? DiemTongKet { get; set; }
     [Column("mo_ta")] public string? MoTa { get; set; }
     [Column("ket_qua")]
     [Range(1, 2, ErrorMessage ="Kết quả không hợp lệ")]
