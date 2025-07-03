@@ -31,7 +31,7 @@ namespace Education_assistant.Modules.ModuleLichBieu
         [HttpGet("no-page")]
         public async Task<ActionResult> GetAllLichBieuNoPageAsync([FromQuery] ParamLichBieuSimpleDto paramLichBieuSimpleDto)
         {
-            var result = await _serviceMaster.LichBieu.GetAllLichBieuNoPageAsync(paramLichBieuSimpleDto);
+            var result = await _serviceMaster.LichBieu.GetAllLichBieuNoPageAsync(paramLichBieuSimpleDto); 
             return Ok(result);
         }
         [HttpGet("{id}")]

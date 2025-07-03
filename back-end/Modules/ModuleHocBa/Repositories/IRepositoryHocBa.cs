@@ -8,6 +8,7 @@ public interface IRepositoryHocBa
 {
     Task<PagedListAsync<HocBa>> GetAllHocBaAsync(int page, int limit, string search, string sortBy, string sortByOrder, Guid? lopHocPhanId);
     Task<IEnumerable<HocBa>> GetAllHocBaByKeysAsync(List<Guid> sinhVienIds, Guid lopHocPhanId, Guid ctctdtId);
+    Task<HocBa?> GetHocBaBySinhVienAndLopHocPhanAsync(Guid sinhVienId, Guid lopHocPhanId);
     Task<decimal?> TinhGPAAsync(Guid sinhVienId);
     Task<HocBa?> GetHocBaByIdAsync(Guid id, bool trackChanges);
     Task<HocBa?> GetHocBaByLopHocPhanIdAsync(Guid lopHocPhanId);

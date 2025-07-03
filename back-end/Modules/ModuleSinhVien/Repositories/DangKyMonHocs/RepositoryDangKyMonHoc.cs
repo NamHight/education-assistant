@@ -17,12 +17,22 @@ public class RepositoryDangKyMonHoc : RepositoryBase<DangKyMonHoc>, IRepositoryD
         await Create(dangKyMonHoc);
     }
 
+    public void DeleteDangKyMonHoc(DangKyMonHoc dangKyMonHoc)
+    {
+        Delete(dangKyMonHoc);
+    }
+
     public async Task<int> GetCountSinhVienDangKyMonHocAsync(Guid lopHocPhanid)
     {
         return await _context.DangKyMonHocs!
                     .AsNoTracking()
                     .Where(item => item.LopHocPhanId == lopHocPhanid)
                     .CountAsync();
+    }
+
+    public async Task<DangKyMonHoc?> GetDangKyMonHocBySinhVienAndLopHocPhanAsync(Guid sinhVienId, Guid lopHocPhanId)
+    {
+        return await FindByCondition(item => item.SinhVienId == sinhVienId && item.LopHocPhanId == lopHocPhanId, false).FirstOrDefaultAsync();
     }
 
     public async Task<DangKyMonHoc?> GetDangKyMonHocBySinhVienIdAndLopHocPhanIdAsync(Guid sinhVienId, Guid lopHocPhanId)

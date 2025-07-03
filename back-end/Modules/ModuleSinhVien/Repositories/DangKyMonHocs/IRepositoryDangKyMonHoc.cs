@@ -7,5 +7,7 @@ public interface IRepositoryDangKyMonHoc
 {
     Task<DangKyMonHoc?> GetDangKyMonHocBySinhVienIdAndLopHocPhanIdAsync(Guid sinhVienId, Guid lopHocPhanId);
     Task<int> GetCountSinhVienDangKyMonHocAsync(Guid lopHocPhanid);
+    Task<DangKyMonHoc?> GetDangKyMonHocBySinhVienAndLopHocPhanAsync(Guid sinhVienId, Guid lopHocPhanId);
     Task CreateAsync(DangKyMonHoc dangKyMonHoc);
+    void DeleteDangKyMonHoc(DangKyMonHoc dangKyMonHoc);
 }

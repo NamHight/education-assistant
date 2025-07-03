@@ -137,6 +137,11 @@ public class RepositoryChiTietLopHocPhan : RepositoryBase<ChiTietLopHocPhan>, IR
         return await FindByCondition(item => item.LopHocPhanId == lopHocPhanId, false).FirstOrDefaultAsync();
     }
 
+    public async Task<ChiTietLopHocPhan?> GetChiTietLopHocPhanBySinhVienAndLopHocPhanAsync(Guid sinhVienId, Guid lopHocPhanId)
+    {
+        return await FindByCondition(item => item.SinhVienId == sinhVienId && item.LopHocPhanId == lopHocPhanId, false).FirstOrDefaultAsync();
+    }
+
     public async Task<int> TinhPhanTramChuyenCanAsync(Guid sinhVienId)
     {
         var chiTietLopHocPhans = await _context.ChiTietLopHocPhans

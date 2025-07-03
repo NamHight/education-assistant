@@ -2,6 +2,8 @@
 using Education_assistant.Contracts.LoggerServices;
 using Education_assistant.Exceptions.ThrowError.ChiTietChuongTrinhDaoTaoExceptions;
 using Education_assistant.Exceptions.ThrowError.LichBieuExceptions;
+using Education_assistant.Exceptions.ThrowError.LopHocExceptions;
+using Education_assistant.Exceptions.ThrowError.NganhExceptions;
 using Education_assistant.Exceptions.ThrowError.TuanExceptions;
 using Education_assistant.Models;
 using Education_assistant.Modules.ModuleChiTietChuongTrinhDaoTao.DTOs.Response;
@@ -111,9 +113,16 @@ namespace Education_assistant.Modules.ModuleLichBieu.Services
 
         public async Task<IEnumerable<ResponseLichBieuDto>> GetAllLichBieuNoPageAsync(ParamLichBieuSimpleDto paramLichBieuSimpleDto)
         {
-            var lichBieus = await _repositoryMaster.LichBieu.GetAllLichBieuNoPageAsync(paramLichBieuSimpleDto.search, paramLichBieuSimpleDto.sortBy, paramLichBieuSimpleDto.sortByOrder ,paramLichBieuSimpleDto.giangVienId, paramLichBieuSimpleDto.tuanId, paramLichBieuSimpleDto.boMonId);
-            var lichBieuDtos = _mapper.Map<IEnumerable<ResponseLichBieuDto>>(lichBieus);
-            return lichBieuDtos;
+            var lopHoc = await _repositoryMaster.LopHoc.GetLopHocByIdAsync(paramLichBieuSimpleDto.lopHocId, false);
+            if (lopHoc is null)
+            {
+                throw new LopHocNotFoundException(paramLichBieuSimpleDto.lopHocId);
+            }
+            var chuongTrinhDaoTao = await _repositoryMaster.ChuongTrinhDaoTao.GetChuongTrinhDaoTaoByKhoaAndNganhIdAsync(lopHoc.NamHoc, lopHoc.NganhId.Value);
+
+
+
+            return null;
         }
 
         public async Task<ResponseLichBieuDto> GetLichBieuByIdAsync(Guid id, bool trackChanges)

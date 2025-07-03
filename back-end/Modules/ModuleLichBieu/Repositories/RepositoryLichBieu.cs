@@ -100,6 +100,12 @@ public class RepositoryLichBieu : RepositoryBase<LichBieu>, IRepositoryLichBieu
                             }).ToListAsync(); 
     }
 
+    public Task<IEnumerable<LichBieu>> GetAllLichBieuNoPageLopHocIdAsync(string? search, string? sortBy, string? sortByOrder, int? namHoc, int? hocKy, Guid? lopHocId, Guid? tuanId)
+    {
+        throw new NotImplementedException();
+        
+    }
+
     public async Task<LichBieu?> GetLichBieuByIdAsync(Guid id, bool trackChanges)
     {
         return await FindByCondition(item => item.Id == id, trackChanges).Include(item => item.Tuan).Include(item => item.LopHocPhan).Include(item => item.PhongHoc).FirstOrDefaultAsync();

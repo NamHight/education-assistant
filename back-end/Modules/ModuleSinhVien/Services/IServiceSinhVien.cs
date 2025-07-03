@@ -21,5 +21,6 @@ public interface IServiceSinhVien
     Task ImportFileExcelAsync(RequestImportFileSinhVienDto request);
     Task<byte[]> ExportFileExcelAsync(Guid lopId);
     Task UpdateAsync(Guid id, RequestUpdateSinhVienDto request);
+    Task DeleteSinhVienKhoiLopHocPhanAsync(Guid sinhVienId, Guid lopHocPhanId);
     Task DeleteAsync(Guid id);
 }

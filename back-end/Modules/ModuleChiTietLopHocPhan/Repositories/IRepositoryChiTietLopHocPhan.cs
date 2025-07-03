@@ -12,6 +12,7 @@ public interface IRepositoryChiTietLopHocPhan
     Task<ChiTietLopHocPhan?> GetChiTietLopHocPhanByIdAsync(Guid id, bool trackChanges);
     Task<ChiTietLopHocPhan?> GetByMaSinhVienAndLopHocPhanIdAsync(string maSinhVien, Guid lopHocPhanId);
     Task<ChiTietLopHocPhan?> GetChiTietLopHocPhanByLopHocPhanIdAsync(Guid lopHocPhanId);
+    Task<ChiTietLopHocPhan?> GetChiTietLopHocPhanBySinhVienAndLopHocPhanAsync(Guid sinhVienId, Guid lopHocPhanId);
     Task<List<ResponseExportFileDiemSoDto>> GetAllDiemSoExportFileAsync(Guid lopHocPhanId);
     Task CreateAsync(ChiTietLopHocPhan chiTietLopHocPhan);
     void UpdateChiTietLopHocPhan(ChiTietLopHocPhan chiTietLopHocPhan);
