@@ -33,6 +33,11 @@ export class BoMonService {
             .catch(error => error.response?.data);
     }
 
+    static async getAllBoHocByKhoa(khoaId: number | string | null) {
+        return await authApi.get(`${API.BO_MON.GET_ALL_MON_HOC_BY_KHOA}`.replace(':khoaId', `${khoaId}`))
+            .then(response => response.data)
+            .catch(error => error.response?.data);
+    }
     static async getAllBoMonNoPageServer(params?: IParamBoMon) {
         return await authApiServer.get(`${API.BO_MON.GET_ALL_NO_PAGE}`, {
             params: params,

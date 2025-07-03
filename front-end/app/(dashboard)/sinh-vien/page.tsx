@@ -31,12 +31,13 @@ export default async function Page() {
     sortByOrder: 'desc'
   }).catch(() => ({ data: [] }));
   const tinhTrangHocTap = await SinhVienService.getAllTinhTrangHocTapServer().catch(() => undefined);
+  const [lopHocData, tinhTrangHocTapData] = await Promise.all([lopHoc, tinhTrangHocTap]);
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
       <Content
         queryKey={queryKey}
-        lopHocServers={lopHoc?.data?.length > 0 ? lopHoc.data : undefined}
-        tinhTrangHocTapServer={tinhTrangHocTap}
+        lopHocServers={lopHocData?.data?.length > 0 ? lopHocData.data : undefined}
+        tinhTrangHocTapServer={tinhTrangHocTapData}
       />
     </HydrationBoundary>
   );

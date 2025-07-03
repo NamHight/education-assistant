@@ -1,14 +1,17 @@
 import { NextRequest } from 'next/server';
 import {
     CopilotRuntime,
-    GroqAdapter,
+    GoogleGenerativeAIAdapter,
     copilotRuntimeNextJSAppRouterEndpoint
 } from '@copilotkit/runtime';
 import { DichVuCSDL, taoKetNoi } from '@/lib/mysql';
-import Groq from "groq-sdk";
-const groq = new Groq({
-    apiKey: process.env.OPENAI_API_KEY,
-});
+import { GoogleGenerativeAI } from '@google/generative-ai';
+const apiKey = process.env.GOOGLE_API_KEY;
+if (!apiKey) {
+    throw new Error('GOOGLE_API_KEY không được tìm thấy trong environment variables');
+}
+
+const google = new GoogleGenerativeAI(apiKey);
 
 const runtime = new CopilotRuntime({
     actions: [
@@ -54,37 +57,68 @@ const runtime = new CopilotRuntime({
         },
         {
             name: 'layThongTinBang',
-            description: 'Lấy thông tin về các bảng trong cơ sở dữ liệu và cấu trúc của chúng',
+            description: 'Lấy thông tin về bảng: cấu trúc hoặc dữ liệu thực tế',
             parameters: [
                 {
                     name: 'tenBang',
                     type: 'string',
-                    description: 'Tùy chọn: tên bảng cụ thể để lấy thông tin',
+                    description: 'Tên bảng cần xem (VD: bo_mon, sinh_vien, giang_vien)',
+                    required: false
+                },
+                {
+                    name: 'loaiThongTin',
+                    type: 'string',
+                    description: 'Loại thông tin: "cau_truc" (schema) hoặc "du_lieu" (data)',
+                    required: false
+                },
+                {
+                    name: 'soLuong',
+                    type: 'number',
+                    description: 'Số lượng bản ghi cần lấy (mặc định: 10)',
                     required: false
                 }
             ],
             handler: async (params: any) => {
                 try {
-                    // Xử lý trường hợp params null hoặc undefined
-                    const { tenBang } = params || {};
+                    const { tenBang, loaiThongTin = 'du_lieu', soLuong = 10 } = params || {};
 
-                    console.log("📋 layThongTinBang được gọi với params:", params);
-                    console.log("🔍 tenBang:", tenBang);
+                    console.log("📋 layThongTinBang được gọi:", { tenBang, loaiThongTin, soLuong });
 
                     if (tenBang) {
-                        const cauTruc = await DichVuCSDL.layCauTrucBang(tenBang);
-                        return {
-                            thanhCong: true,
-                            bang: tenBang,
-                            cauTruc: cauTruc,
-                            thongBao: `Đã lấy cấu trúc bảng: ${tenBang}`
-                        };
+                        if (loaiThongTin === 'cau_truc') {
+                            // Lấy cấu trúc bảng
+                            const cauTruc = await DichVuCSDL.layCauTrucBang(tenBang);
+                            return {
+                                thanhCong: true,
+                                bang: tenBang,
+                                loai: 'Cấu trúc bảng',
+                                cauTruc: cauTruc,
+                                thongBao: `📋 Cấu trúc bảng ${tenBang}`
+                            };
+                        } else {
+                            // Lấy dữ liệu từ bảng
+                            const truyVan = `SELECT * FROM ${tenBang} LIMIT ${soLuong}`;
+                            const duLieu = await DichVuCSDL.thucHienTruyVan(truyVan);
+
+                            return {
+                                thanhCong: true,
+                                bang: tenBang,
+                                loai: 'Dữ liệu thực tế',
+                                duLieu: duLieu,
+                                soLuong: Array.isArray(duLieu) ? duLieu.length : 0,
+                                thongBao: `📊 Dữ liệu từ bảng ${tenBang}: ${Array.isArray(duLieu) ? duLieu.length : 0} bản ghi`
+                            };
+                        }
                     } else {
+                        // Lấy danh sách tất cả bảng
                         const danhSachBang = await DichVuCSDL.layDanhSachBang();
                         return {
                             thanhCong: true,
+                            loai: 'Danh sách bảng',
                             danhSachBang: danhSachBang,
-                            thongBao: `Tìm thấy ${Array.isArray(danhSachBang) ? danhSachBang.length : 0} bảng trong cơ sở dữ liệu`
+                            soLuong: Array.isArray(danhSachBang) ? danhSachBang.length : 0,
+                            thongBao: `📋 Tìm thấy ${Array.isArray(danhSachBang) ? danhSachBang.length : 0} bảng trong database`,
+                            huongDan: 'Hỏi "dữ liệu bảng [tên_bảng]" để xem dữ liệu cụ thể'
                         };
                     }
                 } catch (loi: any) {
@@ -130,11 +164,10 @@ const runtime = new CopilotRuntime({
                     }
 
                     const truyVan = `
-                        SELECT sv.*, lh.ma_lop_hoc, k.ten_khoa 
+                        SELECT sv.*, lh.ma_lop_hoc 
                         FROM sinh_vien sv 
-                        LEFT JOIN lop_hoc lh ON sv.lopId = lh.id 
-                        LEFT JOIN khoa k ON lh.khoaId = k.id
-                        WHERE sv.hoTen LIKE ? OR sv.mssv LIKE ? OR sv.email LIKE ?
+                        LEFT JOIN lop_hoc lh ON sv.lop_hoc_id = lh.id 
+                        WHERE sv.ho_ten LIKE ? OR sv.mssv LIKE ? OR sv.email LIKE ?
                         LIMIT ?
                     `;
                     const thamSo = [`%${tuKhoa}%`, `%${tuKhoa}%`, `%${tuKhoa}%`, gioiHan];
@@ -215,7 +248,9 @@ const runtime = new CopilotRuntime({
     ]
 });
 
-const serviceAdapter = new GroqAdapter();
+const serviceAdapter = new GoogleGenerativeAIAdapter({
+    model: "gemini-1.5-flash"
+});
 
 export const POST = async (req: NextRequest) => {
     const { handleRequest } = copilotRuntimeNextJSAppRouterEndpoint({
@@ -233,7 +268,21 @@ async function taoSQLTuTiengViet(yeuCau: string, bang?: string): Promise<string>
     const lenhHeThong = `
     Bạn là trình tạo câu truy vấn SQL cho cơ sở dữ liệu MySQL giáo dục.
     Chuyển đổi yêu cầu bằng tiếng Việt thành câu truy vấn SQL an toàn.
+    
+    MAPPING TỪ TIẾNG VIỆT SANG TÊN BẢNG:
+    - "sinh viên", "sinhviên", "student" → sinh_vien
+    - "giảng viên", "giangvien", "thầy", "cô", "teacher" → giang_vien
+    - "môn học", "monhoc", "môn", "subject" → mon_hoc
+    - "lớp học", "lophoc", "lớp", "class" → lop_hoc
+    - "bộ môn", "bomon", "department" → bo_mon (BoMon)
+    - "khoa", "faculty" → khoa (Khoa)
+    - "phòng học", "phonghoc", "phòng", "room" → phong_hoc (PhongHoc)
+    - "lịch biểu", "lichbieu", "lịch", "schedule" → lich_bieu (LichBieu)
+    - "điểm", "diem", "grade" → diem (Diem)
+    - "thông báo", "thongbao", "tin tức", "announcement" → thong_bao (ThongBao)
+    - "tài khoản", "taikhoan", "account" → tai_khoan (TaiKhoan)
 
+    
     CẤU TRÚC DATABASE THỰC TẾ:
 
     1. BẢNG SINH VIÊN:
@@ -278,17 +327,14 @@ async function taoSQLTuTiengViet(yeuCau: string, bang?: string): Promise<string>
     try {
         console.log("🤖 Đang tạo SQL từ yêu cầu:", yeuCau);
 
-        const phanHoi = await groq.chat.completions.create({
-            model: "llama3-70b-8192",
-            messages: [
-                { role: "system", content: lenhHeThong },
-                { role: "user", content: yeuCau }
-            ],
-            temperature: 0.1,
-            max_tokens: 200
-        });
+        // SỬ DỤNG GOOGLE GENERATIVE AI ĐÚNG CÁCH
+        const model = google.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-        let sql = phanHoi.choices[0]?.message?.content?.trim() || '';
+        const prompt = `${lenhHeThong}\n\nYêu cầu của người dùng: ${yeuCau}`;
+
+        const result = await model.generateContent(prompt);
+        const response = await result.response;
+        let sql = response.text().trim();
 
         // Dọn dẹp SQL
         sql = sql.replace(/```sql\n?/g, '').replace(/```\n?/g, '').replace(/;$/g, '').trim();
@@ -297,22 +343,22 @@ async function taoSQLTuTiengViet(yeuCau: string, bang?: string): Promise<string>
         return sql;
 
     } catch (loi) {
-        console.error('❌ Lỗi tạo SQL với Groq, sử dụng fallback:', loi);
+        console.error('❌ Lỗi tạo SQL với Google Generative AI, sử dụng fallback:', loi);
 
         // Fallback với predefined queries
         const yeuCauLower = yeuCau.toLowerCase();
 
         if (yeuCauLower.includes('sinh viên') || yeuCauLower.includes('sinhvien')) {
-            return 'SELECT * FROM sinh_vien LIMIT 10';
+            return 'SELECT * FROM sinh_vien WHERE deleted_at IS NULL LIMIT 10';
         }
         if (yeuCauLower.includes('giảng viên') || yeuCauLower.includes('giangvien')) {
-            return 'SELECT * FROM giang_vien LIMIT 10';
+            return 'SELECT * FROM giang_vien WHERE deleted_at IS NULL LIMIT 10';
         }
         if (yeuCauLower.includes('bảng') || yeuCauLower.includes('table')) {
             return 'SHOW TABLES';
         }
         if (yeuCauLower.includes('môn học') || yeuCauLower.includes('monhoc')) {
-            return 'SELECT * FROM mon_hoc LIMIT 10';
+            return 'SELECT * FROM mon_hoc WHERE deleted_at IS NULL LIMIT 10';
         }
 
         // Default fallback

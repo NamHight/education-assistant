@@ -19,10 +19,7 @@ const LayoutContainer = ({ children }: { children: React.ReactNode }) => {
           })
       }}
     >
-      <CopilotKit runtimeUrl='/api/copilotkit'>
-        {children}
-        <Copilot />
-      </CopilotKit>
+      {children}
     </PageContainer>
   );
 };

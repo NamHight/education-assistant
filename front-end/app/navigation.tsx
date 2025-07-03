@@ -37,10 +37,10 @@ export const NAVIGATION: Navigation = [
     pattern: `phan-cong/:rest*`
   },
   {
-    segment: 'lich-cong-tac-tuan',
-    title: 'Lịch công tác tuần',
+    segment: 'lich-lop-hoc',
+    title: 'Lịch lớp học',
     icon: <CalendarMonthIcon />,
-    pattern: `lich-cong-tac-tuan/:rest*`
+    pattern: `lich-lop-hoc/:rest*`
   },
   {
     segment: 'giang-vien',
