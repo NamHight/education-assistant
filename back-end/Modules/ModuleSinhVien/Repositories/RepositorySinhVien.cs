@@ -78,8 +78,9 @@ public class RepositorySinhVien : RepositoryBase<SinhVien>, IRepositorySinhVien
                     .Where(item => item.SinhVien != null &&
                                     item.SinhVien.DeletedAt == null &&
                                     item.SinhVien.TrangThaiSinhVien == (int)TrangThaiSinhVienEnum.DANG_HOC)
+                    .Include(item => item.SinhVien)
+                    .ThenInclude(item => item.LopHoc)
                     .Select(item => item.SinhVien!)
-                    .Include(sv => sv.LopHoc)
                     .AsQueryable();
         if (!string.IsNullOrWhiteSpace(search))
         {

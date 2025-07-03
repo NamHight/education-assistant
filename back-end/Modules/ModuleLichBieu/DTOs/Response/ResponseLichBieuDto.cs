@@ -23,4 +23,21 @@ namespace Education_assistant.Modules.ModuleLichBieu.DTOs.Response
         public DateTime? CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
     }
+    public class ResponseLichBieuSummaryDto
+    {
+        public Guid Id { get; set; }
+        public int TietBatDau { get; set; }
+        public int TietKetThuc { get; set; }
+        public int Thu { get; set; }
+        public int SoTietLyThuyet { get; set; }
+        public int SoTietThucHanh { get; set; }
+        public Guid TuanId { get; set; }
+        public ResponseTuanDto? Tuan { get; set; }
+        public Guid LopHocPhanId { get; set; }
+        public LopHocPhanSimpleDto? LopHocPhan { get; set; }
+        public Guid PhongHocId { get; set; }
+        public PhongHocSimpleDto? PhongHoc { get; set; }
+        public DateTime? CreatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
+    }
 }
