@@ -28,6 +28,12 @@ namespace Education_assistant.Modules.ModuleKhoa
             Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(result.page));
             return Ok(result.data);
         }
+        [HttpGet("no-page")]
+        public async Task<ActionResult> GetAllKhoaNoPageAsync()
+        {
+            var result = await _serviceMaster.Khoa.GetAllKhoaNoPageAsync();
+            return Ok(result);
+        }
         [HttpGet("{id}")]
         public async Task<ActionResult> GetKhoaByIdAsync(Guid id)
         {

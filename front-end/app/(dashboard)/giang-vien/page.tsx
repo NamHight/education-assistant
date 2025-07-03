@@ -8,12 +8,14 @@ import { GiangVienService } from '@/services/GiangVienService';
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
 import getQueryClient from '@/hooks/getQueryClient';
 import ButtonRedirect from './components/buttons/ButtonRedirect';
+import { KhoaService } from '@/services/KhoaService';
+import { BoMonService } from '@/services/BoMonService';
 
 export default async function Page() {
   const queryClient = getQueryClient();
   const queryKey = 'giang-vien-list';
   await queryClient.prefetchQuery({
-    queryKey: [queryKey, { page: 0, pageSize: 10 }, { field: '', sort: '' }, { items: [] }],
+    queryKey: [queryKey, { page: 0, pageSize: 10 }, { field: '', sort: '' }, { items: [] }, null],
     queryFn: async () => {
       const result = await GiangVienService.danhSachGiangVienServer({
         page: 1,
@@ -24,13 +26,18 @@ export default async function Page() {
       return result?.data?.length > 0 ? result : undefined;
     }
   });
+  const khoas = KhoaService.getAllKhoaServer({
+    sortBy: 'createdAt',
+    sortByOrder: 'desc',
+    limit: 99999999999
+  }).catch(() => ({ data: [] }));
+  const boMons = BoMonService.getAllBoMonNoPageServer().catch(() => []);
+
+  const [khoaData, boMonData] = await Promise.all([khoas, boMons]);
   return (
     <Box className='flex flex-col gap-3'>
-      <Box className={cn('flex border border-gray-200 rounded-lg p-4 shadow-sm')}>
-        <ButtonRedirect />
-      </Box>
       <HydrationBoundary state={dehydrate(queryClient)}>
-        <Content queryKey={queryKey} />
+        <Content queryKey={queryKey} khoaData={khoaData} boMonData={boMonData} />
       </HydrationBoundary>
     </Box>
   );

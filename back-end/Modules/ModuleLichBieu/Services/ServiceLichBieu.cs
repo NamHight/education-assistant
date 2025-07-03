@@ -33,24 +33,22 @@ namespace Education_assistant.Modules.ModuleLichBieu.Services
             {
                 throw new LichBieuBadRequestException("Danh sách lịch biểu không bỏ trống!.");
             }
-            if (request.ListTuanId is null || request.ListTuanId.Count() == 0)
-            {
-                throw new TuanBadRequestException("Danh sách tuần không được bỏ trống!.");
-            }
+            var tuans = await _repositoryMaster.Tuan.GetTuanCopyAsync(request.NamHoc, request.VaoTuanId, request.DenTuanId, request.GiangVienId);
+
             var listLichBieu = new List<LichBieu>();
-            foreach (var tuanid in request.ListTuanId!)
+            foreach (var tuan in tuans)
             {
                 foreach (var lichBieuDto in request.LichBieus!)
                 {
-                    var lichBieu = _mapper.Map<LichBieu>(request);
-                    lichBieu.Id = Guid.NewGuid();
-                    lichBieu.TietBatDau = lichBieuDto.TietBatDau;
-                    lichBieu.TietKetThuc = lichBieuDto.TietKetThuc;
-                    lichBieu.Thu = lichBieuDto.Thu;
-                    lichBieu.TuanId = tuanid;
-                    lichBieu.LopHocPhanId = lichBieuDto.LopHocPhanId;
-                    lichBieu.PhongHocId = lichBieuDto.PhongHocId;
-                    listLichBieu.Add(lichBieu);
+                    listLichBieu.Add(new LichBieu
+                    {
+                        TietBatDau = lichBieuDto.TietBatDau,
+                        TietKetThuc = lichBieuDto.TietKetThuc,
+                        Thu = lichBieuDto.Thu,
+                        TuanId = tuan.Id,
+                        LopHocPhanId = lichBieuDto.LopHocPhanId,
+                        PhongHocId = lichBieuDto.PhongHocId,
+                    });
                 }
             }
             await _repositoryMaster.ExecuteInTransactionBulkEntityAsync(async () =>

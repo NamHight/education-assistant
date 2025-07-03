@@ -10,6 +10,7 @@ namespace Education_assistant.Modules.ModuleKhoa.Services;
 public interface IServiceKhoa
 {
     Task<(IEnumerable<ResponseKhoaDto> data, PageInfo page)> GetAllPaginationAndSearchAsync(ParamKhoaDto paramKhoaDto);
+    Task<IEnumerable<ResponseKhoaDto>> GetAllKhoaNoPageAsync();
     Task<ResponseKhoaDto> GetKhoaByIdAsync(Guid id, bool trackChanges);
     Task<ResponseKhoaDto> CreateAsync(RequestAddKhoaDto request);
     Task UpdateAsync(Guid id, RequestUpdateKhoaDto request);

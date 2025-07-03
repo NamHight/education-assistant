@@ -54,7 +54,15 @@ namespace Education_assistant.Modules.ModuleLichBieu.DTOs.Request
     }
     public class RequestAddLichBieuListTuanDto
     {
+        [Required(ErrorMessage = "Danh sách lịch biểu không được để trống")]
         public List<RequestUpdateLichBieuDto>? LichBieus { get; set; }
-        public List<Guid>? ListTuanId { get; set; }
+        [Required(ErrorMessage = "Năm học không được để trống")]
+        public int NamHoc { get; set; }
+        [Required(ErrorMessage = "Id vào tuần không được để trống")]
+        public Guid VaoTuanId { get; set; }
+        [Required(ErrorMessage = "Id đến tuần không được để trống")]
+        public Guid DenTuanId { get; set; }
+        [Required(ErrorMessage = "Id giảng viên không được để trống")]
+        public Guid GiangVienId { get; set; }
     }
 }

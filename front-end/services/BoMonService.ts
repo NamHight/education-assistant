@@ -25,8 +25,18 @@ export class BoMonService {
             .catch(error => error.response?.data);
     }
 
-    static async getAllBoMonByKhoaId(khoaId: number | string | null) {
-        return await authApi.get(`${API.BO_MON.GET_ALL_BY_KHOA_ID}`.replace(':khoaId', `${khoaId}`))
+    static async getAllBoMonNoPage(params?: IParamBoMon) {
+        return await authApi.get(`${API.BO_MON.GET_ALL_NO_PAGE}`, {
+            params: params,
+        })
+            .then(response => response.data)
+            .catch(error => error.response?.data);
+    }
+
+    static async getAllBoMonNoPageServer(params?: IParamBoMon) {
+        return await authApiServer.get(`${API.BO_MON.GET_ALL_NO_PAGE}`, {
+            params: params,
+        })
             .then(response => response.data)
             .catch(error => error.response?.data);
     }

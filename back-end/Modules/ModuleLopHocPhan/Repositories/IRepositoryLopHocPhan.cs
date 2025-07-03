@@ -18,6 +18,7 @@ public interface IRepositoryLopHocPhan
         int HocKy);
 
     Task<bool> KiemTraLopHocPhanDaTonTaiAsync(Guid nganhId, int hocKy, int khoa, Guid monHocId);
+    Task<IEnumerable<LopHocPhan>> GetAllLopHocPhanNoPageAsync();
     Task CreateAsync(LopHocPhan lopHocPhan);
     void UpdateLopHocPhan(LopHocPhan lopHocPhan);
     void DeleteLopHocPhan(LopHocPhan lopHocPhan);
