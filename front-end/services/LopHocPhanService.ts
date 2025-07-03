@@ -25,6 +25,7 @@ export class LopHocPhanService {
             }))
             .catch(error => error.response?.data);
     }
+
     static async getLopHocPhanByGiangVienId(params: IParamLopHocPhan2) {
         return await authApi.get(`${API.LOP_HOC_PHAN.GET_BY_GIANG_VIEN_ID}`, {
             params: params

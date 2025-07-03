@@ -1,3 +1,5 @@
+import { GET } from "@/app/api/copilotkit/route";
+
 export const TOKEN_ACCESS: string = "access_token";
 export const REFRESH_TOKEN: string = "refresh_token";
 export const THEME_LIGHT: string = "light";
@@ -65,6 +67,9 @@ export const API = {
         TINH_TRANG_HOC_TAP: "/SinhVien/all-tinh-trang-hoc-tap",
         IMPORT: "/SinhVien/import",
         EXPORT: "/SinhVien/:id/export",
+        GET_BY_LOP_HOC_PHAN: "/SinhVien/by-lop-hoc-phan",
+        GET_BY_MSSV: "/SinhVien/mssv",
+        DANG_KY_MON_HOC: "/SinhVien/dang-ky-mon-hoc"
     },
     GIANG_VIEN: {
         GET_ALL: "/giangviens",
@@ -84,6 +89,7 @@ export const API = {
         GET_BY_ID: "/BoMon/:id",
         GET_ALL_BY_KHOA_ID: "/BoMon/by-khoa/:khoaId",
         GET_ALL_NO_PAGE: "/BoMon/no-page",
+        GET_ALL_MON_HOC_BY_KHOA: "/BoMon/by-khoa/:khoaId",
     },
     LOP_HOC_PHAN: {
         GET_ALL: "/LopHocPhan",

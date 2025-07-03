@@ -39,6 +39,7 @@ export interface IParamChuongTrinhDaoTao extends IBaseParams {
 export interface IParamSinhVien extends IBaseParams {
     lopId?: number;
     tinhTrangHocTap?: number;
+    lopHocPhanId?: string;
 }
 
 export interface IParamKhoa extends IBaseParams {

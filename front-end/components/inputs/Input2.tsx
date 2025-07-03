@@ -15,6 +15,7 @@ interface IInput2Props {
   editAble?: boolean;
   onClickEdit?: () => void;
   isEditAble?: boolean;
+  isDisableMessError?: boolean;
   [key: string]: any;
 }
 
@@ -28,6 +29,7 @@ const Input2 = ({
   onClickEdit,
   editAble,
   isEditAble,
+  isDisableMessError,
   ...rest
 }: IInput2Props) => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -79,7 +81,7 @@ const Input2 = ({
         sx={(theme) => ({
           '& .MuiOutlinedInput-input.Mui-disabled': {
             color: '#222',
-            '-webkit-text-fill-color': '#222'
+            WebkitTextFillColor: '#222'
           },
           '& .MuiOutlinedInput-root': {
             backgroundColor: isDisabled ? theme.palette.grey[100] : theme.palette.common.white,
@@ -125,7 +127,7 @@ const Input2 = ({
           ) : undefined
         }}
       />
-      {error && <MessageError message={error} />}
+      {!isDisableMessError && error && <MessageError message={error} />}
     </Fragment>
   );
 };

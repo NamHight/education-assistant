@@ -390,12 +390,6 @@ const Content = ({ queryKey, lopHocServers, tinhTrangHocTapServer }: ContentProp
               Đình chỉ
             </Typography>
           );
-        case GioiTinhEnum.KHAC:
-          return (
-            <Typography className='!px-3 !py-1 !rounded-full !border !border-gray-400 !bg-gray-100 !text-gray-700 !font-semibold !text-xs !shadow-sm'>
-              Khác
-            </Typography>
-          );
         default:
           return '';
       }
