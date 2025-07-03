@@ -45,6 +45,12 @@ export class LopHocPhanService {
             .catch(error => error.response?.data);
     }
 
+    static async getLopHocPhanNoPage() {
+        return await authApi.get(`${API.LOP_HOC_PHAN.GET_ALL_NO_PAGE}`)
+            .then(response => response.data)
+            .catch(error => error.response?.data);
+    }
+
     static async createLopHocPhan(data: any) {
         try {
             const result = await authApi.post(`${API.LOP_HOC_PHAN.GET_ALL}`, data);

@@ -10,6 +10,16 @@ export const USER: string = "user";
 
 export const API = {
     BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000/api",
+    TUAN: {
+        GET_ALL_BY_NAM_HOC: "/Tuan/by-nam-hoc",
+        GET_ALL_DEN_BY_TUAN_VAO: "/Tuan/combobox-copy",
+    },
+    LICH_BIEU: {
+        GET_ALL: "/LichBieu",
+        GET_BY_ID: "/LichBieu/:id",
+        COPY: "/LichBieu/copy",
+        GET_ALL_BY_NO_PAGE: "/LichBieu/no-page",
+    },
     AUTH: {
         LOGIN: "/Authenticate/login",
         LOGOUT: "/Authenticate/logout",
@@ -36,11 +46,13 @@ export const API = {
     },
     THONG_KE: {
         GET_XEP_LOAI_HOC_LUC: "/ThongKe/xep-loai-hoc-luc",
+        XEP_HANG_SINH_VIEN: "/ThongKe/top-sinh-vien-gpa",
     },
     PHONG_HOC: {
         GET_ALL: "/PhongHoc",
         GET_BY_ID: "/PhongHoc/:id",
         CHANGE_STATUS: "/PhongHoc/:id/update-trang-thai",
+        GET_ALL_NO_PAGE: "/PhongHoc/no-page",
     },
     NGANH: {
         GET_ALL: "/Nganh",
@@ -61,6 +73,7 @@ export const API = {
         GET_BY_KHOA_ID: "/giangviens/:khoaId/by-khoa",
         CHANGE_PASSWORD: "/giangviens/change_password",
         UPDATE_PROFILE: "/giangviens/:id/update-giang-vien",
+        GET_BY_BO_MON_ID: "/giangviens/:boMonId/by-bomon",
     },
     KHOA: {
         GET_ALL: "/khoa",
@@ -70,6 +83,7 @@ export const API = {
         GET_ALL: "/BoMon",
         GET_BY_ID: "/BoMon/:id",
         GET_ALL_BY_KHOA_ID: "/BoMon/by-khoa/:khoaId",
+        GET_ALL_NO_PAGE: "/BoMon/no-page",
     },
     LOP_HOC_PHAN: {
         GET_ALL: "/LopHocPhan",
@@ -79,6 +93,7 @@ export const API = {
         CHANGE_STATUS: "/LopHocPhan/:id/update-trang-thai",
         ADD_AUTO: "/LopHocPhan/them-auto",
         GET_BY_GIANG_VIEN_ID: "/LopHocPhan/by-giang-vien",
+        GET_ALL_NO_PAGE: "/LopHocPhan/no-page",
     },
     MON_HOC: {
         GET_ALL: "/MonHoc",

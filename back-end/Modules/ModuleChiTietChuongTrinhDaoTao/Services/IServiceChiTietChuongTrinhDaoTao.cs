@@ -12,8 +12,9 @@ public interface IServiceChiTietChuongTrinhDaoTao
 {
     Task<(IEnumerable<ResponseChiTietChuongTrinhDaoTaoDto> data, PageInfo page)> GetAllChiTietChuongTrinhDaoTaoAsync(ParamChiTietChuongTrinhDaoTaoDto paramChiTietChuongTrinhDaoTaoDto);
     Task<ResponseChiTietChuongTrinhDaoTaoDto> GetChiTietChuongTrinhDaoTaoByIdAsync(Guid id, bool trackChanges);
-    Task<IEnumerable<ResponseChiTietChuongTrinhDaoTaoDto>?> GetAllCtctdtByCtdtIdAsync(Guid id, int hocKy);
+    Task<IEnumerable<ResponseChiTietChuongTrinhDaoTaoDto>?> GetAllCtctdtByCtdtIdAsync(Guid id, int? hocKy = null);
     Task<ResponseChiTietChuongTrinhDaoTaoDto> CreateAsync(RequestAddChiTietChuongTrinhDaoTaoDto request);
     Task UpdateAsync(Guid id, RequestUpdateChiTietChuongTrinhDaoTaoDto request);
     Task DeleteAsync(Guid id);
+
 }

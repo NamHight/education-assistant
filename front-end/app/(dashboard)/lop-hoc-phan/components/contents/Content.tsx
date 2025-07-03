@@ -263,7 +263,7 @@ const Content = ({ queryKey }: ContentProps) => {
       },
       {
         field: 'giangVien',
-        headerName: 'Tên giản viên',
+        headerName: 'Tên giảng viên',
         headerAlign: 'left',
         minWidth: 140,
         sortable: false,

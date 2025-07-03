@@ -22,14 +22,23 @@ import { useNotifications } from '@toolpad/core';
 import ClearIcon from '@mui/icons-material/Clear';
 import RestoreIcon from '@mui/icons-material/Restore';
 import Link from 'next/link';
+import ButtonRedirect from '../buttons/ButtonRedirect';
+import { clsx as cn } from 'clsx';
+import InputSelect2 from '@/components/selects/InputSelect2';
+import { KhoaService } from '@/services/KhoaService';
+import { BoMonService } from '@/services/BoMonService';
+import { Funnel } from 'lucide-react';
+import { TrangThaiGiangVien } from '@/types/options';
 const Table = dynamic(() => import('@/components/tables/Table'), {
   ssr: false
 });
 interface ContentProps {
   queryKey: string;
+  khoaData: any;
+  boMonData: any;
 }
 
-const Content = ({ queryKey }: ContentProps) => {
+const Content = ({ queryKey, khoaData, boMonData }: ContentProps) => {
   const router = useRouter();
   const notification = useNotifications();
   const refTable = useRef<{ handleClose: () => void; handleOpenDelete: () => void; handleCloseDelete: () => void }>(
@@ -46,9 +55,13 @@ const Content = ({ queryKey }: ContentProps) => {
   const [filterModel, setFilterModel] = useState<GridFilterModel>({
     items: []
   });
+  const [filterOption, setFilterOption] = useState<{
+    khoa?: { id: string; name: string };
+    trangThai?: { id: string; name: string };
+  } | null>(null);
   const queryClient = useQueryClient();
   const { data, isLoading, isFetching } = useQuery({
-    queryKey: [queryKey, paginationModel, sortModel, filterModel],
+    queryKey: [queryKey, paginationModel, sortModel, filterModel, filterOption],
     queryFn: async () => {
       const searchKeyWord = handleTextSearch(filterModel?.quickFilterValues as any[]);
       let params: IParamGiangVien = {
@@ -57,7 +70,18 @@ const Content = ({ queryKey }: ContentProps) => {
         sortBy: 'createdAt',
         sortByOrder: 'desc'
       };
-
+      if (filterOption?.khoa) {
+        params = {
+          ...params,
+          khoaId: filterOption?.khoa?.id
+        };
+      }
+      if (filterOption?.trangThai) {
+        params = {
+          ...params,
+          trangThai: Number(filterOption?.trangThai?.id)
+        };
+      }
       if (sortModel.field && sortModel.sort) {
         params.sortBy = sortModel.field;
         params.sortByOrder = sortModel.sort === 'asc' ? 'asc' : 'desc';
@@ -71,6 +95,42 @@ const Content = ({ queryKey }: ContentProps) => {
       const result = await GiangVienService.danhSachGiangVien(params);
       return result;
     },
+    placeholderData: (prev) => prev,
+    refetchOnWindowFocus: false
+  });
+  const { data: khoas, isLoading: isLoadingKhoa } = useQuery({
+    queryKey: ['khoa-list'],
+    queryFn: async () => {
+      const result = await KhoaService.getAllKhoa({
+        sortBy: 'createdAt',
+        sortByOrder: 'desc',
+        limit: 99999999999
+      });
+      return result?.data;
+    },
+    select: (data) => {
+      return data?.map((item: any) => ({
+        id: item.id,
+        name: item.tenKhoa
+      }));
+    },
+    initialData: khoaData,
+    placeholderData: (prev) => prev,
+    refetchOnWindowFocus: false
+  });
+  const { data: boMons, isLoading: isLoadingBoMon } = useQuery({
+    queryKey: ['bo-mon-list'],
+    queryFn: async () => {
+      const result = await BoMonService.getAllBoMonNoPage();
+      return result;
+    },
+    select: (data) => {
+      return data?.map((item: any) => ({
+        id: item.id,
+        name: item.tenBoMon
+      }));
+    },
+    initialData: khoaData,
     placeholderData: (prev) => prev,
     refetchOnWindowFocus: false
   });
@@ -335,6 +395,62 @@ const Content = ({ queryKey }: ContentProps) => {
   }, [data?.data]);
   return (
     <Box className='flex flex-col gap-4'>
+      <Box className='flex gap-4'>
+        <Box className={cn('flex flex-[5] border border-gray-200 rounded-lg p-4 shadow-sm gap-4 ')}>
+          <Box>
+            <ButtonRedirect />
+          </Box>
+        </Box>
+        <Box className={cn('flex flex-col flex-[5] border border-gray-200 rounded-lg p-4 shadow-sm gap-4 ')}>
+          <Box className='flex items-center gap-2'>
+            <Funnel className='h-5 w-5' />
+            <Typography className='!text-[16px] !font-semibold'>Lọc </Typography>
+          </Box>
+          <Box className='flex gap-3'>
+            <Box className='flex-2 gap-1 flex flex-col'>
+              <Typography className='!font-semibold'>Khoa</Typography>
+              <InputSelect2
+                fullWidth
+                name={'khoas'}
+                placeholder={'Chọn khóa'}
+                data={khoas ?? []}
+                isLoading={isLoadingKhoa}
+                getOptionKey={(option) => option.id}
+                getOptionLabel={(option: any) => option.name}
+                getOnChangeValue={(value) => {
+                  setFilterOption((prev: any) => ({
+                    ...prev,
+                    khoa: {
+                      id: value?.id,
+                      name: value?.name
+                    }
+                  }));
+                }}
+              />
+            </Box>
+            <Box className='flex-2 gap-1 flex flex-col'>
+              <Typography className='!font-semibold'>Trạng thái</Typography>
+              <InputSelect2
+                fullWidth
+                name={'trangThai'}
+                placeholder={'Chọn trạng thái'}
+                data={TrangThaiGiangVien ?? []}
+                getOptionKey={(option) => option.id}
+                getOptionLabel={(option: any) => option.name}
+                getOnChangeValue={(value) => {
+                  setFilterOption((prev: any) => ({
+                    ...prev,
+                    trangThai: {
+                      id: value?.id,
+                      name: value?.name
+                    }
+                  }));
+                }}
+              />
+            </Box>
+          </Box>
+        </Box>
+      </Box>
       <Table
         ref={refTable}
         moreActions={moreActions}

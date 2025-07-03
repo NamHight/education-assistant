@@ -1,3 +1,4 @@
+import { GiangVien } from './../models/GiangVien';
 import { giangVien } from './validate/login';
 interface IBaseParams {
     page?: number;
@@ -10,6 +11,8 @@ interface IBaseParams {
 
 export interface IParamGiangVien extends IBaseParams {
     active?: boolean;
+    trangThai?: number;
+    khoaId?: string;
 }
 
 export interface IParamLopHocPhan extends IBaseParams {
@@ -66,4 +69,16 @@ export interface IParamLopHocPhan2 {
     hocky?: number;
     giangVienId?: string;
     lopHocPhanid?: string;
+}
+
+export interface IParamLichBieu extends IBaseParams {
+    giangVienId: string;
+    boMonId: string;
+    tuanId: string;
+}
+
+export interface IParamTuan extends IBaseParams {
+    namHoc?: number | string;
+    TuanBatDauId?: string;
+    GiangVienId?: string;
 }

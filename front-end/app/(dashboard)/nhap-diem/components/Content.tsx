@@ -567,9 +567,9 @@ const Content = ({ queryKey }: IContentProps) => {
       return;
     }
     const currentFilter = filterRef.current;
-    const rowIds = apiRef.current?.getAllRowIds();
-    const allRows = rowIds?.map((id) => apiRef.current?.getRow(id));
-    const convertData = allRows?.map((item: ChiTietLopHocPhan) => ({
+    const rowIds = apiRef.current?.getRowModels();
+    const allRows = Array.from(rowIds?.values() || []);
+    const convertData = allRows?.map((item) => ({
       diemTongKet1: item?.diemTongKet1,
       diemTongKet2: item?.diemTongKet2,
       sinhVienId: item?.sinhVienId
