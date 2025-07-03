@@ -110,3 +110,11 @@ public class ImportFileSinhVienDto
     public DateTime? NgayNhapHoc { get; set; }
     public DateTime? NgayTotNghiep { get; set; }
 }
+
+public class RequestSinhVienDangKyMonHocDto
+{
+    [Required(ErrorMessage = "Id sinh viên không được bỏ trống")]
+    public Guid SinhVienId { get; set; }
+    [Required(ErrorMessage = "Id lớp học phần không được bỏ trống")]
+    public Guid LopHocPhanId { get; set; }
+}

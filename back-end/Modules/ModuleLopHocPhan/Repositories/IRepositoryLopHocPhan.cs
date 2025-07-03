@@ -16,7 +16,7 @@ public interface IRepositoryLopHocPhan
 
     Task<int> CreateSinhVienLopHocPhanHocBa(Guid maLop, Guid maLhp, Guid? maGiangVien, Guid maMonHoc, Guid maCtctdt,
         int HocKy);
-
+    
     Task<bool> KiemTraLopHocPhanDaTonTaiAsync(Guid nganhId, int hocKy, int khoa, Guid monHocId);
     Task<IEnumerable<LopHocPhan>> GetAllLopHocPhanNoPageAsync();
     Task CreateAsync(LopHocPhan lopHocPhan);

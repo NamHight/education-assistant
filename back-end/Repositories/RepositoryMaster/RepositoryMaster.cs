@@ -17,6 +17,7 @@ using Education_assistant.Modules.ModuleMonHoc.Repositories;
 using Education_assistant.Modules.ModuleNganh.Repositories;
 using Education_assistant.Modules.ModulePhongHoc.Repositories;
 using Education_assistant.Modules.ModuleSinhVien.Repositories;
+using Education_assistant.Modules.ModuleSinhVien.Repositories.DangKyMonHocs;
 using Education_assistant.Modules.ModuleThongKe.Repositories;
 using Education_assistant.Modules.ModuleTuan.Repositories;
 using EFCore.BulkExtensions;
@@ -48,6 +49,7 @@ public class RepositoryMaster : IRepositoryMaster
     private readonly Lazy<IRepositoryTaiKhoan> _repositoryTaiKhoan;
     private readonly Lazy<IRepositoryTuan> _repositoryTuan;
     private readonly Lazy<IRepositoryThongKe> _repositoryThongKe;
+    private readonly Lazy<IRepositoryDangKyMonHoc> _repositoryDangKyMonHoc;
 
     private bool _disposed;
     private IDbContextTransaction? _transaction;
@@ -79,6 +81,7 @@ public class RepositoryMaster : IRepositoryMaster
         _repositoryPhongHoc = new Lazy<IRepositoryPhongHoc>(() => new RepositoryPhongHoc(repositoryContext));
         _repositoryTuan = new Lazy<IRepositoryTuan>(() => new RepositoryTuan(repositoryContext));
         _repositoryThongKe = new Lazy<IRepositoryThongKe>(() => new RepositoryThongKe(repositoryContext));
+        _repositoryDangKyMonHoc = new Lazy<IRepositoryDangKyMonHoc>(() => new RepositoryDangKyMonHoc(repositoryContext));
         _repositoryAuthenticate =
             new Lazy<IRepositoryAuthenticate>(() => new RepositoryAuthenticate(repositoryContext));
         _loggerService = loggerService;
@@ -117,6 +120,8 @@ public class RepositoryMaster : IRepositoryMaster
     public IRepositoryTuan Tuan => _repositoryTuan.Value;
 
     public IRepositoryThongKe ThongKe => _repositoryThongKe.Value;
+
+    public IRepositoryDangKyMonHoc DangKyMonHoc => _repositoryDangKyMonHoc.Value;
 
     public async Task BeginTransactionAsync()
     {

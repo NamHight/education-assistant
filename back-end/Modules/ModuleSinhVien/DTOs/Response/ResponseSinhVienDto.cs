@@ -85,3 +85,14 @@ public class ResponseExportFileSinhVienDto
     public DateTime? NgayTotNghiep { get; set; }
     public string TenLop { get; set; } = string.Empty;
 }
+
+public class ResponseSinhVienDangKyMonHocDto
+{
+    public Guid Id { get; set; }
+    public DateTime? NgayDangKyHoc { get; set; }
+    public string? GhiChu { get; set; }
+    public int? TrangThai { get; set; }
+    public Guid? SinhVienId { get; set; }
+    public Guid? LopHocPhanId { get; set; }
+    public DateTime? CreatedAt { get; set; }
+}
