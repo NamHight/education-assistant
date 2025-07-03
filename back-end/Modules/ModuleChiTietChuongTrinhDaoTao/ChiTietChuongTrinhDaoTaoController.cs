@@ -54,5 +54,19 @@ namespace Education_assistant.Modules.ModuleChiTietChuongTrinhDaoTao
             await _serviceMaster.ChiTietChuongTrinhDaoTao.DeleteAsync(id);
             return NoContent();
         }
+
+        [HttpGet("ChuongTrinhDaoTao/{id}")]
+        public async Task<ActionResult> GetChiTietChuongTrinhDaoTaoByCTDTIdAsync(Guid id, [FromQuery] int? hocKy = null)
+        {
+           
+            if (hocKy == null)
+            {
+                var resultWithoutHocKy = await _serviceMaster.ChiTietChuongTrinhDaoTao.GetAllCtctdtByCtdtIdAsync(id);
+                return Ok(resultWithoutHocKy);
+            }
+            var result = await _serviceMaster.ChiTietChuongTrinhDaoTao.GetAllCtctdtByCtdtIdAsync(id, hocKy);
+            return Ok(result);
+
+        }
     }
 }

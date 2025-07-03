@@ -11,7 +11,7 @@ public interface IRepositoryChiTietChuongTrinhDaoTao
     Task<ChiTietChuongTrinhDaoTao?> GetCtctdtByCtctAndMonHocAsync(Guid chuongTrinhId, Guid monHocId);
     Task<IEnumerable<ChiTietChuongTrinhDaoTao>> GetChiTietChuongTrinhDaoTaoByHocKyAndChuongTrinhId(int hocKy, Guid chuongTrinhId);
     Task<ChiTietChuongTrinhDaoTao?> GetChiTietChuongTrinhDaoTaoByMonHocIdAndChuongTrinhId(Guid monHocId, Guid chuongTrinhDaoTaoId);
-    Task<IEnumerable<ChiTietChuongTrinhDaoTao>?> GetAllCtctdtByCtdtIdAsync(Guid id, int hocKy);
+    Task<IEnumerable<ChiTietChuongTrinhDaoTao>?> GetAllCtctdtByCtdtIdAsync(Guid id, int? hocKy = null);
     Task CreateAsync(ChiTietChuongTrinhDaoTao chiTietChuongTrinhDaoTao);
     void UpdateChiTietChuongTrinhDaoTao(ChiTietChuongTrinhDaoTao chiTietChuongTrinhDaoTao);
     void DeleteChiTietChuongTrinhDaoTao(ChiTietChuongTrinhDaoTao chiTietChuongTrinhDaoTao);
