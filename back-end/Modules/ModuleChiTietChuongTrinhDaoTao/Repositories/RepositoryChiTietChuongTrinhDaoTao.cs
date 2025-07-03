@@ -47,9 +47,23 @@ public class RepositoryChiTietChuongTrinhDaoTao : RepositoryBase<ChiTietChuongTr
                                  }).AsNoTracking(), page, limit);
     }
 
-    public async Task<IEnumerable<ChiTietChuongTrinhDaoTao>?> GetAllCtctdtByCtdtIdAsync(Guid id, int hocKy)
+    public async Task<IEnumerable<ChiTietChuongTrinhDaoTao>?> GetAllCtctdtByCtdtIdAsync(Guid id, int? hocKy = null)
     {
-        return await _context.ChiTietChuongTrinhDaoTaos?.Where(item => item.ChuongTrinhDaoTaoId == id && item.HocKy == hocKy).AsNoTracking().ToListAsync()!;
+        if (hocKy == null)
+        {
+            return await _context.ChiTietChuongTrinhDaoTaos?.Where(item => item.ChuongTrinhDaoTaoId == id)
+                .Include(item => item.MonHoc)
+                .Include(item => item.ChuongTrinhDaoTao)
+                .Include(item => item.BoMon)
+                .AsNoTracking()
+                .ToListAsync()!;
+        }
+        return await _context.ChiTietChuongTrinhDaoTaos?.Where(item => item.ChuongTrinhDaoTaoId == id && item.HocKy == hocKy)
+            .Include(item => item.MonHoc)
+            .Include(item => item.ChuongTrinhDaoTao)
+            .Include(item => item.BoMon)
+            .AsNoTracking()
+            .ToListAsync()!;
     }
 
     public async Task<IEnumerable<ChiTietChuongTrinhDaoTao>> GetChiTietChuongTrinhDaoTaoByHocKyAndChuongTrinhId(int hocKy, Guid chuongTrinhId)
