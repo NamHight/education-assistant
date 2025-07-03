@@ -12,6 +12,7 @@ public class ParamLichBieuDto : BaseParam
 
 public class ParamLichBieuSimpleDto
 {
+    public int namHoc { get; set; }
     public int hocKy { get; set; }
     public Guid lopHocId { get; set; }
     public Guid tuanId { get; set; }

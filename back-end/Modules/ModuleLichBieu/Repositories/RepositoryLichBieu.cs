@@ -84,7 +84,7 @@ public class RepositoryLichBieu : RepositoryBase<LichBieu>, IRepositoryLichBieu
             {
                 query = query.SearchBy(search, item => item.LopHocPhan.MaHocPhan);
             }
-        }
+        } 
         if (boMonId.HasValue && boMonId != Guid.Empty)
         {
             query = query.Where(item => item.LopHocPhan != null &&
@@ -100,10 +100,35 @@ public class RepositoryLichBieu : RepositoryBase<LichBieu>, IRepositoryLichBieu
                             }).ToListAsync(); 
     }
 
-    public Task<IEnumerable<LichBieu>> GetAllLichBieuNoPageLopHocIdAsync(string? search, string? sortBy, string? sortByOrder, int? namHoc, int? hocKy, Guid? lopHocId, Guid? tuanId)
+    public async Task<IEnumerable<LichBieu>> GetAllLichBieuNoPageLopHocAsync(int hocKy, string maLop, Guid chuongTrinhDaoTaoId, Guid tuanId, string? search, string? sortBy, string? sortByOrder, int? namHoc)
     {
-        throw new NotImplementedException();
-        
+        var query = _context.LichBieus!
+                    .AsNoTracking()
+                    .Include(lb => lb.PhongHoc)
+                    .Include(lb => lb.LopHocPhan)!.ThenInclude(lhp => lhp!.GiangVien)
+                    .Include(lb => lb.LopHocPhan)!.ThenInclude(lhb => lhb!.MonHoc).ThenInclude(m => m!.DanhSachChiTietChuongTrinhDaoTao)
+                    .Include(lb => lb.Tuan)
+                    .Where(lb => lb.TuanId == tuanId && lb.Tuan.NamHoc == namHoc &&
+                        lb.LopHocPhan != null &&
+                        lb.LopHocPhan.MaHocPhan.StartsWith(maLop) &&
+                        lb.LopHocPhan.MonHoc!.DanhSachChiTietChuongTrinhDaoTao!.Any(ct => ct.HocKy == hocKy && ct.ChuongTrinhDaoTaoId == chuongTrinhDaoTaoId))
+                    .AsQueryable();
+         if (!string.IsNullOrWhiteSpace(search))
+        {
+            if (int.TryParse(search, out var thu))
+            {
+                query = query.SearchBy(thu.ToString(), item => item.Thu.ToString());
+            }
+            else
+            {
+                query = query.SearchBy(search, item => item.LopHocPhan.MaHocPhan);
+            }
+        } 
+        return await query.SortByOptions(sortBy, sortByOrder, new Dictionary<string, Expression<Func<LichBieu, object>>>
+                            {
+                                ["createdat"] = item => item.CreatedAt,
+                                ["updatedat"] = item => item.UpdatedAt!,
+                            }).ToListAsync();
     }
 
     public async Task<LichBieu?> GetLichBieuByIdAsync(Guid id, bool trackChanges)

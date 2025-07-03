@@ -10,7 +10,7 @@ public interface IRepositoryLichBieu
 {
     Task<PagedListAsync<LichBieu>> GetAllLichBieuAsync(int page, int limit, string? search, string? sortBy, string? sortByOrder, Guid? giangvienId, Guid? tuanId, Guid? boMonId);
     Task<IEnumerable<LichBieu>> GetAllLichBieuNoPageAsync(string? search, string? sortBy, string? sortByOrder, Guid? giangvienId, Guid? tuanId, Guid? boMonId);
-    Task<IEnumerable<LichBieu>> GetAllLichBieuNoPageLopHocIdAsync(string? search, string? sortBy, string? sortByOrder,int? namHoc, int? hocKy, Guid? lopHocId, Guid? tuanId);
+    Task<IEnumerable<LichBieu>> GetAllLichBieuNoPageLopHocAsync(int hocKy, string maLop, Guid chuongTrinhDaoTaoId, Guid tuanId,string? search, string? sortBy, string? sortByOrder,int? namHoc);
     Task<LichBieu?> GetLichBieuByIdAsync(Guid id, bool trackChanges);
     Task CreateAsync(LichBieu lichBieu);
     void UpdateLichBieu(LichBieu lichBieu);
