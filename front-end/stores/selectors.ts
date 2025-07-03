@@ -7,3 +7,6 @@ export const useUserActions = () => useAuthStore(state => state.actions);
 export const useRefreshToken = () => useAuthStore(state => state.refreshToken);
 export const useToken = () => useAuthStore(state => state.token);
 export const useTheme = () => useAppStore(state => state.theme);
+//Option
+export const useOpenLHP = () => useAppStore(state => state.openLHP);
+export const useOptionActions = () => useAppStore(state => state.actions);

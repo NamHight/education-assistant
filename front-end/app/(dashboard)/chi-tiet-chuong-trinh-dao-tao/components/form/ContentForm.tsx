@@ -117,7 +117,7 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
     queryKey: ['boMons', khoa?.id],
     queryFn: async () => {
       if (!khoa?.id) return [];
-      const response = await BoMonService.getAllBoMonByKhoaId(khoa?.id).catch(() => []);
+      const response = await BoMonService.getAllBoHocByKhoa(khoa?.id).catch(() => []);
       return response;
     },
     select: (data: any) => {
@@ -227,6 +227,20 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
     <FormControl fullWidth component={'form'} onSubmit={handleSubmit(handleSubmitForm)} className='flex flex-col gap-4'>
       <Grid container spacing={2} rowSpacing={1}>
         <Grid size={{ xs: 12, sm: 6, md: 6, lg: 6 }}>
+          <InputSelect2
+            control={control}
+            fullWidth
+            name={'ChuongTrinhDaoTao'}
+            placeholder={'Chọn chương trình đào tạo'}
+            isLoading={isLoadingChuongTrinh}
+            title={'Chương trình đào tạo'}
+            data={chuongTrinhDaoTaos ?? []}
+            getOptionKey={(option) => option.id}
+            getOptionLabel={(option: any) => option.name}
+            error={(errors.ChuongTrinhDaoTao as any)?.message}
+          />
+        </Grid>
+        <Grid size={{ xs: 12, sm: 6, md: 6, lg: 6 }}>
           <Input2
             {...register('SoTinChi')}
             title='Số tín chỉ'
@@ -285,20 +299,7 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
             error={(errors.MonHoc as any)?.message}
           />
         </Grid>
-        <Grid size={{ xs: 12, sm: 6, md: 6, lg: 6 }}>
-          <InputSelect2
-            control={control}
-            fullWidth
-            name={'ChuongTrinhDaoTao'}
-            placeholder={'Chọn chương trình đào tạo'}
-            isLoading={isLoadingChuongTrinh}
-            title={'Chương trình đào tạo'}
-            data={chuongTrinhDaoTaos ?? []}
-            getOptionKey={(option) => option.id}
-            getOptionLabel={(option: any) => option.name}
-            error={(errors.ChuongTrinhDaoTao as any)?.message}
-          />
-        </Grid>
+
         <Grid size={{ xs: 12, sm: 6, md: 6, lg: 6 }}>
           <InputSelect2
             control={control}

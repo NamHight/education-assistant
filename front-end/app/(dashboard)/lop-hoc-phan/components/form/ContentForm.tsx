@@ -43,6 +43,8 @@ import { MonHocService } from '@/services/MonHocService';
 import { GiangVienService } from '@/services/GiangVienService';
 import { LopHocService } from '@/services/LopHocService';
 import { ChuongTrinhDaoTaoService } from '@/services/ChuongTrinhDaoTaoService';
+import Table from '@/components/tables/Table';
+import { SinhVienService } from '@/services/SinhVienService';
 
 export interface IFormData {
   // maHocPhan?: string;
