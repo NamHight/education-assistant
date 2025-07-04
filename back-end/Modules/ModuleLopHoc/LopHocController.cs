@@ -28,6 +28,12 @@ namespace Education_assistant.Modules.ModuleLopHoc
             Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(result.page));
             return Ok(result.data);
         }
+        [HttpGet("no-page")]
+        public async Task<ActionResult> GetAllLopHocNoPageAsync()
+        {
+            var result = await _serviceMaster.LopHoc.GetAllLopHocNoPageAsync();
+            return Ok(result);
+        }
 
         [HttpGet("{id}")]
         public async Task<ActionResult> GetLopHocByIdAsync(Guid id)

@@ -86,6 +86,13 @@ namespace Education_assistant.Modules.ModuleLopHoc.Services
             return (data: lopHocDto, page: lopHocs!.PageInfo);
         }
 
+        public async Task<IEnumerable<ResponseLopHocDto>> GetAllLopHocNoPageAsync()
+        {
+            var lopHocs = await _repositoryMaster.LopHoc.GetAllLopHocNoPageAsync();
+            var lopHocDtos = _mapper.Map<IEnumerable<ResponseLopHocDto>>(lopHocs);
+            return lopHocDtos;
+        }
+
         public async Task<ResponseLopHocDto> GetLopHocByIdAsync(Guid id, bool trackChanges)
         {
             var lopHoc = await _repositoryMaster.LopHoc.GetLopHocByIdAsync(id, false);

@@ -6,7 +6,8 @@ namespace Education_assistant.Modules.ModuleLopHoc.Repositories;
 
 public interface IRepositoryLopHoc
 {
-    Task<PagedListAsync<LopHoc>> GetAllLopHocAsync(int page, int limit, string search, string sortBy, string sortByOrder);  
+    Task<PagedListAsync<LopHoc>> GetAllLopHocAsync(int page, int limit, string search, string sortBy, string sortByOrder);
+    Task<IEnumerable<LopHoc>> GetAllLopHocNoPageAsync();    
     Task<LopHoc?> GetLopHocByIdAsync(Guid id, bool trackChanges);
     Task<IEnumerable<LopHoc>> GetLopHocByKhoaAndNganhIdAsync(int khoa, Guid nganhId);
     Task CreateAsync(LopHoc lopHoc);
