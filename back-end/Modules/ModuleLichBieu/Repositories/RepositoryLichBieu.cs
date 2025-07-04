@@ -131,6 +131,11 @@ public class RepositoryLichBieu : RepositoryBase<LichBieu>, IRepositoryLichBieu
                             }).ToListAsync();
     }
 
+    public async Task<IEnumerable<LichBieu>?> GetCheckLichBieuByLopHocPhanIdAsync(Guid tuanId, List<Guid> lopHocPhanIds)
+    {
+        return await FindByCondition(item => item.TuanId == tuanId && lopHocPhanIds.Contains(item.LopHocPhanId.Value), false).ToListAsync();
+    }
+
     public async Task<LichBieu?> GetLichBieuByIdAsync(Guid id, bool trackChanges)
     {
         return await FindByCondition(item => item.Id == id, trackChanges).Include(item => item.Tuan).Include(item => item.LopHocPhan).Include(item => item.PhongHoc).FirstOrDefaultAsync();

@@ -62,7 +62,5 @@ namespace Education_assistant.Modules.ModuleLichBieu.DTOs.Request
         public Guid VaoTuanId { get; set; }
         [Required(ErrorMessage = "Id đến tuần không được để trống")]
         public Guid DenTuanId { get; set; }
-        [Required(ErrorMessage = "Id giảng viên không được để trống")]
-        public Guid GiangVienId { get; set; }
     }
 }

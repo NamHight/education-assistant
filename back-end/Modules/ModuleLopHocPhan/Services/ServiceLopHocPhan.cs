@@ -118,9 +118,11 @@ public class ServiceLopHocPhan : IServiceLopHocPhan
                 throw new LopHocPhanBadRequestException($"Lớp học phần với id: {id} không được bỏ trống!");
             var lopHocPhan = await _repositoryMaster.LopHocPhan.GetLopHocPhanByIdAsync(id, false);
             if (lopHocPhan is null) throw new LopHocPhanNotFoundException(id);
+
+            lopHocPhan.DeletedAt = DateTime.Now;
             await _repositoryMaster.ExecuteInTransactionAsync(async () =>
             {
-                _repositoryMaster.LopHocPhan.DeleteLopHocPhan(lopHocPhan);
+                _repositoryMaster.LopHocPhan.UpdateLopHocPhan(lopHocPhan);
                 await Task.CompletedTask;
             });
             _loggerService.LogInfo("Xóa lớp học phần thành công.");
@@ -163,6 +165,25 @@ public class ServiceLopHocPhan : IServiceLopHocPhan
                                                                                             paramLopHocPhanSimpleDto.khoa,
                                                                                             paramLopHocPhanSimpleDto.hocKy,
                                                                                             paramLopHocPhanSimpleDto.giangVienId);
+        var lopHocPhanDtos = _mapper.Map<IEnumerable<ResponseLopHocPhanDto>>(lopHocPhans);
+        return lopHocPhanDtos;
+    }
+
+    public async Task<IEnumerable<ResponseLopHocPhanDto>> GetAllLopHocPhanByLopHocAndHocKyAsync(ParamLopHocPhanForLichBieuDto param)
+    {
+        string? maLopHoc = null;
+        Guid? chuongTrinhDaoTaoId = Guid.Empty;
+        var lopHoc = await _repositoryMaster.LopHoc.GetLopHocByIdAsync(param.lopHocId, false);
+        if (lopHoc is not null)
+        {
+            maLopHoc = lopHoc.MaLopHoc;
+            var chuongTrinhDaoTao = await _repositoryMaster.ChuongTrinhDaoTao.GetChuongTrinhDaoTaoByKhoaAndNganhIdAsync(lopHoc.NamHoc, lopHoc.NganhId.Value);
+            if (chuongTrinhDaoTao is not null)
+            {
+                chuongTrinhDaoTaoId = chuongTrinhDaoTao.Id;
+            }
+        }
+        var lopHocPhans = await _repositoryMaster.LopHocPhan.GetAllLopHocPhanByLopHocAndHocKyAsync(param.hocKy, maLopHoc, chuongTrinhDaoTaoId);
         var lopHocPhanDtos = _mapper.Map<IEnumerable<ResponseLopHocPhanDto>>(lopHocPhans);
         return lopHocPhanDtos;
     }

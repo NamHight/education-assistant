@@ -61,3 +61,15 @@ public class GiangVienSummaryDto
     public Guid? TaiKhoanId { get; set; }
     public BoMonSimpleDto? BoMon { get; set; }
 }
+
+public class ResponseGiangVienSummaryDto
+{
+    public int TongSoGiangVien { get; set; }
+    public int DangCongTac { get; set; }
+    public int NghiViec { get; set; }
+    public int NghiHuu { get; set; }
+    public int ChucVuGiangVien { get; set; }
+    public int ChucVuGiangVienChinh { get; set; }
+    public int ChucVuTruongBoMon { get; set; }
+    public int ChucVuTruongKhoa { get; set; }
+}
