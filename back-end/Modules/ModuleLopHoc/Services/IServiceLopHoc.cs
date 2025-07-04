@@ -11,6 +11,7 @@ namespace Education_assistant.Modules.ModuleLopHoc.Services
     public interface IServiceLopHoc
     {
         Task<(IEnumerable<ResponseLopHocDto> data, PageInfo page)> GetAllLopHocAsync(ParamLopHocDto paramLopHocDto);
+        Task<IEnumerable<ResponseLopHocDto>> GetAllLopHocNoPageAsync();
         Task<ResponseLopHocDto> GetLopHocByIdAsync(Guid id, bool trackChanges);
         Task<ResponseLopHocDto> CreateAsync(RequestAddLopHocDto request);
         Task UpdateAsync(Guid id, RequestUpdateLopHocDto request);

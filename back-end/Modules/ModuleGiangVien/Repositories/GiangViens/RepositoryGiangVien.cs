@@ -3,6 +3,7 @@ using DocumentFormat.OpenXml.Office.CustomUI;
 using Education_assistant.Context;
 using Education_assistant.Extensions;
 using Education_assistant.Models;
+using Education_assistant.Models.Enums;
 using Education_assistant.Repositories;
 using Education_assistant.Repositories.Paginations;
 using Microsoft.EntityFrameworkCore;
@@ -103,5 +104,10 @@ public class RepositoryGiangVien : RepositoryBase<GiangVien>, IRepositoryGiangVi
     public async Task<IEnumerable<GiangVien>?> GetAllGiangVienByBoMonAsync(Guid boMonId)
     {
         return await FindByCondition(item => item.BoMonId == boMonId && item.DeletedAt == null, false).Include(item => item.BoMon).IgnoreQueryFilters().ToListAsync();
+    }
+
+    public async Task<IEnumerable<GiangVien>?> GetAllGiangVienNoPageAsync()
+    {
+        return await FindByCondition(item => item.TrangThai == (int)TrangThaiGiangVienEnum.DANG_CONG_TAC && item.DeletedAt == null, false).IgnoreQueryFilters().ToListAsync();
     }
 }

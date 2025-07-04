@@ -36,6 +36,11 @@ public class RepositoryLopHoc : RepositoryBase<LopHoc>, IRepositoryLopHoc
                                                                 }).AsNoTracking(), page, limit);
     }
 
+    public async Task<IEnumerable<LopHoc>> GetAllLopHocNoPageAsync()
+    {
+        return await FindAll(false).ToListAsync();
+    }
+
     public async Task<LopHoc?> GetLopHocByIdAsync(Guid id, bool trackChanges)
     {
         return await FindByCondition(item => item.Id == id, trackChanges).Include(item => item.GiangVien).Include(item => item.Nganh).FirstOrDefaultAsync();

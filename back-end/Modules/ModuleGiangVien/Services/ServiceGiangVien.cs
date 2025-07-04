@@ -183,4 +183,11 @@ public sealed class ServiceGiangVien : IServiceGiangVien
         var giangVienDtos = _mapper.Map<IEnumerable<GiangVienSummaryDto>>(giangViens);
         return giangVienDtos;
     }
+
+    public async Task<IEnumerable<ResponseGiangVienDto>?> GetAllGiangVienNoPageAsync()
+    {
+        var giangViens = await _repositoryMaster.GiangVien.GetAllGiangVienNoPageAsync();
+        var giangVienDtos = _mapper.Map<IEnumerable<ResponseGiangVienDto>>(giangViens);
+        return giangVienDtos;
+    }
 }

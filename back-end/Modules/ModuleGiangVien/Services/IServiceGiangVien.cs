@@ -9,7 +9,7 @@ public interface IServiceGiangVien
 {
     Task<(IEnumerable<ResponseGiangVienDto> data, PageInfo page)> GetAllGiangVienAsync(
         ParamGiangVienDto paramGiangVienDto);
-
+    Task<IEnumerable<ResponseGiangVienDto>?> GetAllGiangVienNoPageAsync();
     Task<IEnumerable<ResponseGiangVienDto>?> GetAllGiangVienByKhoa(Guid khoaId);
     Task<IEnumerable<GiangVienSummaryDto>?> GetAllGiangVienByBoMonAsync(Guid boMonId); 
     Task<ResponseGiangVienDto> GetGiangVienByIdAsync(Guid id, bool trackChanges);
