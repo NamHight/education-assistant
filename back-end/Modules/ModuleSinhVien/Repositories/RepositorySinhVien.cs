@@ -130,6 +130,7 @@ public class RepositorySinhVien : RepositoryBase<SinhVien>, IRepositorySinhVien
         var query = _context.SinhViens!
                     .AsNoTracking()
                     .Where(sv => sv.TinhTrangHocTap == (int)TinhTrangHocTapSinhVienEnum.YEU || sv.TinhTrangHocTap == (int)TinhTrangHocTapSinhVienEnum.TRUNG_BINH)
+                    .IgnoreQueryFilters()
                     .AsQueryable();
         if (lopHocId.HasValue && lopHocId != Guid.Empty)
         {
@@ -143,6 +144,7 @@ public class RepositorySinhVien : RepositoryBase<SinhVien>, IRepositorySinhVien
         var query = _context.SinhViens!
                     .AsNoTracking()
                     .Where(sv => sv.TrangThaiSinhVien == (int)TrangThaiSinhVienEnum.DANG_HOC)
+                    .IgnoreQueryFilters()
                     .AsQueryable();
         if (lopHocId.HasValue && lopHocId != Guid.Empty)
         {
@@ -156,6 +158,7 @@ public class RepositorySinhVien : RepositoryBase<SinhVien>, IRepositorySinhVien
         var query = _context.SinhViens!
                     .AsNoTracking()
                     .Where(sv => sv.TrangThaiSinhVien == (int)TrangThaiSinhVienEnum.DA_TOT_NGHIEP)
+                    .IgnoreQueryFilters()
                     .AsQueryable();
         if (lopHocId.HasValue && lopHocId != Guid.Empty)
         {
@@ -169,6 +172,7 @@ public class RepositorySinhVien : RepositoryBase<SinhVien>, IRepositorySinhVien
         var query = _context.SinhViens!
                     .AsNoTracking()
                     .Where(sv => sv.TinhTrangHocTap == (int)TinhTrangHocTapSinhVienEnum.KHA)
+                    .IgnoreQueryFilters()
                     .AsQueryable();
         if (lopHocId.HasValue && lopHocId != Guid.Empty)
         {
@@ -182,6 +186,7 @@ public class RepositorySinhVien : RepositoryBase<SinhVien>, IRepositorySinhVien
         var query = _context.SinhViens!
                     .AsNoTracking()
                     .Where(sv => sv.TrangThaiSinhVien == (int)TrangThaiSinhVienEnum.TAM_NGHI)
+                    .IgnoreQueryFilters()
                     .AsQueryable();
         if (lopHocId.HasValue && lopHocId != Guid.Empty)
         {
@@ -195,6 +200,7 @@ public class RepositorySinhVien : RepositoryBase<SinhVien>, IRepositorySinhVien
         var query = _context.SinhViens!
                     .AsNoTracking()
                     .Where(sv => sv.TinhTrangHocTap == (int)TinhTrangHocTapSinhVienEnum.XUAT_SAC)
+                    .IgnoreQueryFilters()
                     .AsQueryable();
         if (lopHocId.HasValue && lopHocId != Guid.Empty)
         {
@@ -207,6 +213,7 @@ public class RepositorySinhVien : RepositoryBase<SinhVien>, IRepositorySinhVien
     {
         var query = _context.SinhViens!
                     .AsNoTracking()
+                    .IgnoreQueryFilters()
                     .AsQueryable();
         if (lopHocId.HasValue && lopHocId != Guid.Empty)
         {

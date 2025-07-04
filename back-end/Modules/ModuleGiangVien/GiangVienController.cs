@@ -33,6 +33,12 @@ public class GiangVienController : ControllerBase
         var result = await _serviceMaster.GiangVien.GetAllGiangVienNoPageAsync();
         return Ok(result);
     }
+    [HttpGet("all-tinh-trang-lam-viec")]
+    public async Task<ActionResult> GetAllGiangViensummaryAsync([FromQuery] Guid khoaId)
+    {
+        var result = await _serviceMaster.GiangVien.GetAllGiangVienSummaryAsync(khoaId);
+        return Ok(result);
+    }
 
     [HttpGet("{id}/by-khoa")]
     public async Task<ActionResult> GetAllGiangVienByAsync(Guid id)

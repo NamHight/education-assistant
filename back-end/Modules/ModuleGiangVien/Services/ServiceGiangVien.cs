@@ -190,4 +190,31 @@ public sealed class ServiceGiangVien : IServiceGiangVien
         var giangVienDtos = _mapper.Map<IEnumerable<ResponseGiangVienDto>>(giangViens);
         return giangVienDtos;
     }
+
+    public async Task<ResponseGiangVienSummaryDto> GetAllGiangVienSummaryAsync(Guid khoaId)
+    {
+        var tongSoGiangVien = await _repositoryMaster.GiangVien.GetAllTongSoLuongGiangVienAsync(khoaId);
+        var dangCongTac = await _repositoryMaster.GiangVien.GetAllTrangThainDangCongTacAsync(khoaId);
+        var nghiViec = await _repositoryMaster.GiangVien.GetAllTrangThaiNghiViecAsync(khoaId);
+        var nghiHuu = await _repositoryMaster.GiangVien.GetAllTrangThaiNghiViecAsync(khoaId);
+
+        var chucVuGiangVien = await _repositoryMaster.GiangVien.GetAllChucVuGiangVienAsync(khoaId);
+        var chucVuGiangVienChinh = await _repositoryMaster.GiangVien.GetAllChucVuGiangVienChinhAsync(khoaId);
+        var chucVuTruongBoMon = await _repositoryMaster.GiangVien.GetAllChucVuTruongBoMonAsync(khoaId);
+        var chucVuTruongKhoa = await _repositoryMaster.GiangVien.GetAllChucVuTruongKhoaAsync(khoaId);
+
+        var dataGiangVien = new ResponseGiangVienSummaryDto
+        {
+            TongSoGiangVien = tongSoGiangVien,
+            DangCongTac = dangCongTac,
+            NghiViec = nghiViec,
+            NghiHuu = nghiHuu,
+
+            ChucVuGiangVien = chucVuGiangVien,
+            ChucVuGiangVienChinh = chucVuGiangVienChinh,
+            ChucVuTruongBoMon = chucVuTruongBoMon,
+            ChucVuTruongKhoa = chucVuTruongKhoa
+        };
+        return dataGiangVien;
+    }
 }

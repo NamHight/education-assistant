@@ -60,6 +60,8 @@ public class RepositoryLopHocPhan : RepositoryBase<LopHocPhan>, IRepositoryLopHo
     {
         var query = _context.LopHocPhans!
             .AsNoTracking()
+            .IgnoreQueryFilters()
+            .Where(item => item.DeletedAt == null)
             .Include(x => x.MonHoc)
             .ThenInclude(mh => mh.Khoa)
             .Include(x => x.MonHoc)
@@ -176,6 +178,8 @@ public class RepositoryLopHocPhan : RepositoryBase<LopHocPhan>, IRepositoryLopHo
 
         var query = _context.LopHocPhans!
             .AsNoTracking()
+            .IgnoreQueryFilters()
+            .Where(item => item.DeletedAt == null)
             .Include(lhp => lhp.MonHoc)
             .ThenInclude(mh => mh!.DanhSachChiTietChuongTrinhDaoTao!
                 .Where(ct => ct.ChuongTrinhDaoTao != null
@@ -206,14 +210,40 @@ public class RepositoryLopHocPhan : RepositoryBase<LopHocPhan>, IRepositoryLopHo
         return await query.ToListAsync();
     }
 
+    public async Task<IEnumerable<LopHocPhan>> GetAllLopHocPhanByLopHocAndHocKyAsync(int? hocKy, string? maLopHoc, Guid? chuongTrinhDaoTaoId)
+    {
+        var query = _context.ChiTietChuongTrinhDaoTaos!
+                    .AsNoTracking()
+                    .Include(item => item.MonHoc)
+                        .ThenInclude(item => item.DanhSachLopHocPhan)
+                    .AsQueryable();
+        if (hocKy.HasValue)
+        {
+            query = query.Where(item => item.HocKy == hocKy);
+        }
+        if (chuongTrinhDaoTaoId.HasValue && chuongTrinhDaoTaoId != Guid.Empty)
+        {
+            query = query.Where(item => item.ChuongTrinhDaoTaoId == chuongTrinhDaoTaoId);
+        }
+        var result = query.SelectMany(ct => ct.MonHoc.DanhSachLopHocPhan)
+                        .AsQueryable();
+        if (!string.IsNullOrEmpty(maLopHoc))
+        {
+            result = result.Where(lhp => lhp.MaHocPhan.StartsWith(maLopHoc));
+        }
+        return await result.Where(item => item.Loai == (int)LoaiLopHocEnum.LOP_HOC_PHAN).ToListAsync();
+    }
+
     public async Task<IEnumerable<LopHocPhan>> GetAllLopHocPhanNoPageAsync()
     {
-        return await FindByCondition(item => item.TrangThai == (int)TrangThaiLopHocPhanEnum.DANG_HOAT_DONG, false).ToListAsync();
+        return await FindByCondition(item => item.TrangThai == (int)TrangThaiLopHocPhanEnum.DANG_HOAT_DONG && item.DeletedAt == null, false)
+                        .IgnoreQueryFilters()
+                        .ToListAsync();
     }
 
     public async Task<LopHocPhan?> GetLopHocPhanByIdAsync(Guid id, bool trackChanges)
     {
-        return await FindByCondition(item => item.Id == id, trackChanges).Include(lhp => lhp.MonHoc)
+        return await FindByCondition(item => item.Id == id && item.DeletedAt == null, trackChanges).IgnoreQueryFilters().Include(lhp => lhp.MonHoc)
             .Include(lhp => lhp.GiangVien).FirstOrDefaultAsync();
     }
 

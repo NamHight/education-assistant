@@ -35,11 +35,17 @@ namespace Education_assistant.Modules.ModuleLichBieu.Services
             {
                 throw new LichBieuBadRequestException("Danh sách lịch biểu không bỏ trống!.");
             }
-            var tuans = await _repositoryMaster.Tuan.GetTuanCopyAsync(request.NamHoc, request.VaoTuanId, request.DenTuanId, request.GiangVienId);
-
+            var lopHocPhanIds = request.LichBieus.Select(x => x.LopHocPhanId).Distinct().ToList();
+            
+            var tuans = await _repositoryMaster.Tuan.GetTuanCopyByLopHocPhanIdAsync(request.NamHoc, request.VaoTuanId, request.DenTuanId, lopHocPhanIds);
             var listLichBieu = new List<LichBieu>();
             foreach (var tuan in tuans)
             {
+                var lichBieuExisting = await _repositoryMaster.LichBieu.GetCheckLichBieuByLopHocPhanIdAsync(tuan.Id, lopHocPhanIds);
+                if (lichBieuExisting != null && lichBieuExisting.Any()) 
+                {
+                    continue;
+                }
                 foreach (var lichBieuDto in request.LichBieus!)
                 {
                     listLichBieu.Add(new LichBieu
@@ -148,20 +154,20 @@ namespace Education_assistant.Modules.ModuleLichBieu.Services
                 {
                     throw new LichBieuBadRequestException($"Id request và Id lịch biểu không giống nhau!");
                 }
-                var lichBieu = await _repositoryMaster.LichBieu.GetLichBieuByIdAsync(id, false);
+                var lichBieu = await _repositoryMaster.LichBieu.GetLichBieuByIdAsync(id, true);
                 if (lichBieu is null)
                 {
                     throw new LichBieuNotFoundException(id);
                 }
-                lichBieu.TietBatDau = request.TietBatDau;
-                lichBieu.TietKetThuc = request.TietKetThuc;
-                lichBieu.Thu = request.Thu;
-                lichBieu.LopHocPhanId = request.LopHocPhanId;
-                lichBieu.PhongHocId = request.PhongHocId;
-                lichBieu.UpdatedAt = DateTime.Now;
                 await _repositoryMaster.ExecuteInTransactionAsync(async () =>
                 {
-                    _repositoryMaster.LichBieu.UpdateLichBieu(lichBieu);
+                    lichBieu.TietBatDau = request.TietBatDau;
+                    lichBieu.TietKetThuc = request.TietKetThuc;
+                    lichBieu.Thu = request.Thu;
+                    lichBieu.TuanId = request.TuanId;
+                    lichBieu.LopHocPhanId = request.LopHocPhanId;
+                    lichBieu.PhongHocId = request.PhongHocId;
+                    lichBieu.UpdatedAt = DateTime.Now;
                     await Task.CompletedTask;
                 });
                 _loggerService.LogInfo($"Cập nhật lịch biểu có id = {id} thành công.");

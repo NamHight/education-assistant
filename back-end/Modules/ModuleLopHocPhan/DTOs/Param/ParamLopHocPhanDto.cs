@@ -20,3 +20,9 @@ public class ParamLopHocPhanSimpleDto
     public int hocKy { get; set; }
     public Guid giangVienId { get; set; }
 }
+
+public class ParamLopHocPhanForLichBieuDto
+{
+    public int hocKy { get; set; }
+    public Guid lopHocId { get; set; }
+}

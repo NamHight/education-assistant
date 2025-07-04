@@ -149,7 +149,7 @@ public class ServiceTuan : IServiceTuan
         {
             tuanBatDau = tuan.SoTuan;
         }
-        var tuans = await _repositoryMaster.Tuan.GetTuanComboBoxAsync(paramTuanDto.NamHoc, tuanBatDau, paramTuanDto.GiangVienId);
+        var tuans = await _repositoryMaster.Tuan.GetTuanComboBoxAsync(paramTuanDto.NamHoc, tuanBatDau);
         var tuanDto = _mapper.Map<IEnumerable<ResponseTuanDto>>(tuans);
         return tuanDto;
     }

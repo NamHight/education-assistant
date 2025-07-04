@@ -110,4 +110,115 @@ public class RepositoryGiangVien : RepositoryBase<GiangVien>, IRepositoryGiangVi
     {
         return await FindByCondition(item => item.TrangThai == (int)TrangThaiGiangVienEnum.DANG_CONG_TAC && item.DeletedAt == null, false).IgnoreQueryFilters().ToListAsync();
     }
+
+    public async Task<int> GetAllTrangThainDangCongTacAsync(Guid? khoaId)
+    {
+        var query = _context.GiangViens!
+                    .AsNoTracking()
+                    .Where(gv => gv.TrangThai == (int)TrangThaiGiangVienEnum.DANG_CONG_TAC)
+                    .IgnoreQueryFilters()
+                    .AsQueryable();
+        if (khoaId.HasValue && khoaId != Guid.Empty)
+        {
+            query = query.Where(item => item.KhoaId == khoaId);
+        }
+        return await query.CountAsync();
+    }
+
+    public async Task<int> GetAllTrangThaiNghiViecAsync(Guid? khoaId)
+    {
+        var query = _context.GiangViens!
+                    .AsNoTracking()
+                    .Where(gv => gv.TrangThai == (int)TrangThaiGiangVienEnum.NGHI_VIEC)
+                    .IgnoreQueryFilters()
+                    .AsQueryable();
+        if (khoaId.HasValue && khoaId != Guid.Empty)
+        {
+            query = query.Where(item => item.KhoaId == khoaId);
+        }
+        return await query.CountAsync();
+    }
+
+    public async Task<int> GetAllChucVuGiangVienAsync(Guid? khoaId)
+    {
+        var query = _context.GiangViens!
+                    .AsNoTracking()
+                    .Where(gv => gv.ChucVu == (int)ChucVuGiangVienEnum.GIANG_VIEN)
+                    .IgnoreQueryFilters()
+                    .AsQueryable();
+        if (khoaId.HasValue && khoaId != Guid.Empty)
+        {
+            query = query.Where(item => item.KhoaId == khoaId);
+        }
+        return await query.CountAsync();
+    }
+
+    public async Task<int> GetAllChucVuTruongBoMonAsync(Guid? khoaId)
+    {
+        var query = _context.GiangViens!
+                    .AsNoTracking()
+                    .Where(gv => gv.ChucVu == (int)ChucVuGiangVienEnum.TRUONG_BO_MON)
+                    .IgnoreQueryFilters()
+                    .AsQueryable();
+        if (khoaId.HasValue && khoaId != Guid.Empty)
+        {
+            query = query.Where(item => item.KhoaId == khoaId);
+        }
+        return await query.CountAsync();
+    }
+
+    public async Task<int> GetAllChucVuTruongKhoaAsync(Guid? khoaId)
+    {
+        var query = _context.GiangViens!
+                    .AsNoTracking()
+                    .Where(gv => gv.ChucVu == (int)ChucVuGiangVienEnum.TRUONG_KHOA)
+                    .IgnoreQueryFilters()
+                    .AsQueryable();
+        if (khoaId.HasValue && khoaId != Guid.Empty)
+        {
+            query = query.Where(item => item.KhoaId == khoaId);
+        }
+        return await query.CountAsync();
+    }
+
+    public async Task<int> GetAllChucVuGiangVienChinhAsync(Guid? khoaId)
+    {
+        var query = _context.GiangViens!
+                    .AsNoTracking()
+                    .Where(gv => gv.ChucVu == (int)ChucVuGiangVienEnum.GIANG_VIEN_CHINH)
+                    .IgnoreQueryFilters()
+                    .AsQueryable();
+        if (khoaId.HasValue && khoaId != Guid.Empty)
+        {
+            query = query.Where(item => item.KhoaId == khoaId);
+        }
+        return await query.CountAsync();
+    }
+
+    public async Task<int> GetAllTongSoLuongGiangVienAsync(Guid? khoaId)
+    {
+        var query = _context.GiangViens!
+                    .AsNoTracking()
+                    .IgnoreQueryFilters()
+                    .AsQueryable();
+        if (khoaId.HasValue && khoaId != Guid.Empty)
+        {
+            query = query.Where(item => item.KhoaId == khoaId);
+        }
+        return await query.CountAsync();
+    }
+
+    public async Task<int> GetAllTrangThaiNghiHuuAsync(Guid? khoaId)
+    {
+         var query = _context.GiangViens!
+                    .AsNoTracking()
+                    .Where(gv => gv.TrangThai == (int)TrangThaiGiangVienEnum.NGHI_HUU)
+                    .IgnoreQueryFilters()
+                    .AsQueryable();
+        if (khoaId.HasValue && khoaId != Guid.Empty)
+        {
+            query = query.Where(item => item.KhoaId == khoaId);
+        }
+        return await query.CountAsync();
+    }
 }

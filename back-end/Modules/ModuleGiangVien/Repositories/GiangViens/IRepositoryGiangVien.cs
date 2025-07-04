@@ -12,6 +12,14 @@ public interface IRepositoryGiangVien
     Task<GiangVien?> GetGiangVienByIdAsync(Guid? id, bool trackChanges);
     Task<GiangVien?> GetGiangVienByEmailAsync(string email, bool trackChanges);
     Task<GiangVien?> GetGiangVienByTaiKhoanIdAsync(Guid taiKhoanId, bool trackChanges);
+    Task<int> GetAllTongSoLuongGiangVienAsync(Guid? khoaId);
+    Task<int> GetAllTrangThainDangCongTacAsync(Guid? khoaId);
+    Task<int> GetAllTrangThaiNghiViecAsync(Guid? khoaId);
+    Task<int> GetAllTrangThaiNghiHuuAsync(Guid? khoaId);
+    Task<int> GetAllChucVuGiangVienAsync(Guid? khoaId);
+    Task<int> GetAllChucVuGiangVienChinhAsync(Guid? khoaId);
+    Task<int> GetAllChucVuTruongBoMonAsync(Guid? khoaId);
+    Task<int> GetAllChucVuTruongKhoaAsync(Guid? khoaId);
     Task CreateAsync(GiangVien giangVien);
     void UpdateGiangVien(GiangVien giangVien);
     void DeleteGiangVien(GiangVien giangVien);

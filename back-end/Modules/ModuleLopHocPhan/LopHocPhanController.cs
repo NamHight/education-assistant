@@ -34,6 +34,12 @@ namespace Education_assistant.Modules.ModuleLopHocPhan
             var result = await _serviceMaster.LopHocPhan.GetAllLopHocPhanByGiangVienAsync(paramLopHocPhanSimpleDto);
             return Ok(result);
         }
+        [HttpGet("by-lop-hoc-and-hoc-ky")]
+        public async Task<ActionResult> GetAllLopHocPhanByLopHocAndHocKyAsync([FromQuery] ParamLopHocPhanForLichBieuDto paramLopHocPhanForLichBieuDto)
+        {
+            var result = await _serviceMaster.LopHocPhan.GetAllLopHocPhanByLopHocAndHocKyAsync(paramLopHocPhanForLichBieuDto);
+            return Ok(result);
+        }
         [HttpGet("no-page")]
         public async Task<ActionResult> GetAllLopHocPhanNoPageAsync()
         {
