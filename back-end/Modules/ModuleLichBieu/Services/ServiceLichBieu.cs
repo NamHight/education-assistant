@@ -154,20 +154,20 @@ namespace Education_assistant.Modules.ModuleLichBieu.Services
                 {
                     throw new LichBieuBadRequestException($"Id request và Id lịch biểu không giống nhau!");
                 }
-                var lichBieu = await _repositoryMaster.LichBieu.GetLichBieuByIdAsync(id, false);
+                var lichBieu = await _repositoryMaster.LichBieu.GetLichBieuByIdAsync(id, true);
                 if (lichBieu is null)
                 {
                     throw new LichBieuNotFoundException(id);
                 }
-                lichBieu.TietBatDau = request.TietBatDau;
-                lichBieu.TietKetThuc = request.TietKetThuc;
-                lichBieu.Thu = request.Thu;
-                lichBieu.LopHocPhanId = request.LopHocPhanId;
-                lichBieu.PhongHocId = request.PhongHocId;
-                lichBieu.UpdatedAt = DateTime.Now;
                 await _repositoryMaster.ExecuteInTransactionAsync(async () =>
                 {
-                    _repositoryMaster.LichBieu.UpdateLichBieu(lichBieu);
+                    lichBieu.TietBatDau = request.TietBatDau;
+                    lichBieu.TietKetThuc = request.TietKetThuc;
+                    lichBieu.Thu = request.Thu;
+                    lichBieu.TuanId = request.TuanId;
+                    lichBieu.LopHocPhanId = request.LopHocPhanId;
+                    lichBieu.PhongHocId = request.PhongHocId;
+                    lichBieu.UpdatedAt = DateTime.Now;
                     await Task.CompletedTask;
                 });
                 _loggerService.LogInfo($"Cập nhật lịch biểu có id = {id} thành công.");

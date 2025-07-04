@@ -58,9 +58,10 @@ namespace Education_assistant.Modules.ModuleLopHoc.Services
                 {
                     throw new LopHocNotFoundException(id);
                 }
+                lopHoc.DeletedAt = DateTime.Now;
                 await _repositoryMaster.ExecuteInTransactionAsync(async () =>
                 {
-                    _repositoryMaster.LopHoc.DeleteLopHoc(lopHoc);
+                    _repositoryMaster.LopHoc.UpdateLopHoc(lopHoc);
                     await Task.CompletedTask;
                 });
                 _loggerService.LogInfo("Xóa lớp học thành công.");
