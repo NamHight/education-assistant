@@ -231,7 +231,7 @@ public class RepositoryLopHocPhan : RepositoryBase<LopHocPhan>, IRepositoryLopHo
         {
             result = result.Where(lhp => lhp.MaHocPhan.StartsWith(maLopHoc));
         }
-        return await result.Where(item => item.Loai == (int)LoaiLopHocEnum.LOP_HOC_PHAN).ToListAsync();
+        return await result.Where(item => item.Loai == (int)LoaiLopHocEnum.LOP_HOC_PHAN && item.TrangThai == (int)TrangThaiLopHocPhanEnum.DANG_HOAT_DONG).ToListAsync();
     }
 
     public async Task<IEnumerable<LopHocPhan>> GetAllLopHocPhanNoPageAsync()

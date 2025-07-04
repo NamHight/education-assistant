@@ -56,9 +56,10 @@ public class ServiceNganh : IServiceNganh
             {
                 throw new NganhNotFoundException(id);
             }
+            nganh.DeletedAt = DateTime.Now;
             await _repositoryMaster.ExecuteInTransactionAsync(async () =>
             {
-                _repositoryMaster.Nganh.DeleteNganh(nganh);
+                _repositoryMaster.Nganh.UpdateNganh(nganh);
                 await Task.CompletedTask;
             });
             _loggerService.LogInfo("Xóa ngành thành công.");

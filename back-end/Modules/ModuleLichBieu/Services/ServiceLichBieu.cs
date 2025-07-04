@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using Education_assistant.Contracts.LoggerServices;
+using Education_assistant.Exceptions.ThrowError;
 using Education_assistant.Exceptions.ThrowError.ChiTietChuongTrinhDaoTaoExceptions;
+using Education_assistant.Exceptions.ThrowError.ChuongTrinhDaoTaoExceptions;
 using Education_assistant.Exceptions.ThrowError.LichBieuExceptions;
 using Education_assistant.Exceptions.ThrowError.LopHocExceptions;
 using Education_assistant.Exceptions.ThrowError.NganhExceptions;
@@ -31,12 +33,25 @@ namespace Education_assistant.Modules.ModuleLichBieu.Services
 
         public async Task CopyTuanLichBieuAsync(RequestAddLichBieuListTuanDto request)
         {
-            if (request.LichBieus is null || request.LichBieus.Count() == 0)
+            var lopHoc = await _repositoryMaster.LopHoc.GetLopHocByIdAsync(request.lopHocId, false);
+            if (lopHoc is null)
             {
-                throw new LichBieuBadRequestException("Danh sách lịch biểu không bỏ trống!.");
+                throw new LopHocNotFoundException(request.lopHocId);
             }
-            var lopHocPhanIds = request.LichBieus.Select(x => x.LopHocPhanId).Distinct().ToList();
-            
+            var chuongTrinhDaoTao = await _repositoryMaster.ChuongTrinhDaoTao.GetChuongTrinhDaoTaoByKhoaAndNganhIdAsync(lopHoc.NamHoc, lopHoc.NganhId.Value);
+            if (chuongTrinhDaoTao is null)
+            {
+                throw new ChuongTrinhDaoTaoBadRequestException($"Lớp học này không có lịch biểu. vui lòng chọn lớp học khác");
+            }
+
+            var lichBieus = await _repositoryMaster.LichBieu.GetAllLichBieuByLopHocAndHocKyForCopyLichBieuAsync(request.HocKy, lopHoc.MaLopHoc, chuongTrinhDaoTao.Id, request.VaoTuanId, request.NamHoc);
+            if (!lichBieus.Any())
+            {
+                throw new GenericNotFoundException($"Lớp học chưa có lịch biểu ở tuần vào");
+            }
+
+            var lopHocPhanIds = lichBieus.Where(item => item.LopHocPhanId.HasValue).Select(item => item.LopHocPhanId!.Value).Distinct().ToList();
+
             var tuans = await _repositoryMaster.Tuan.GetTuanCopyByLopHocPhanIdAsync(request.NamHoc, request.VaoTuanId, request.DenTuanId, lopHocPhanIds);
             var listLichBieu = new List<LichBieu>();
             foreach (var tuan in tuans)
@@ -46,7 +61,7 @@ namespace Education_assistant.Modules.ModuleLichBieu.Services
                 {
                     continue;
                 }
-                foreach (var lichBieuDto in request.LichBieus!)
+                foreach (var lichBieuDto in lichBieus)
                 {
                     listLichBieu.Add(new LichBieu
                     {

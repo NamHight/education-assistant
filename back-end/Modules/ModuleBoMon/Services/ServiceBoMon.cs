@@ -47,14 +47,15 @@ public class ServiceBoMon : IServiceBoMon
     {
         try
         {
-             var boMon = await _repositoryMaster.BoMon.GetBoMonByIdAsync(id, false);
+            var boMon = await _repositoryMaster.BoMon.GetBoMonByIdAsync(id, false);
             if (boMon is null)
             {
                 throw new BoMonNotFoundException(id);
             }
+            boMon.DeletedAt = DateTime.Now;
             await _repositoryMaster.ExecuteInTransactionAsync(async () =>
             {
-                _repositoryMaster.BoMon.DeleteBoMon(boMon);
+                _repositoryMaster.BoMon.UpdateBoMon(boMon);
                 await Task.CompletedTask;
             });
             _loggerService.LogInfo("Xóa bộ môn thành công.");
