@@ -50,9 +50,10 @@ public class ServiceKhoa : IServiceKhoa
             if (id == Guid.Empty) throw new KhoaBadRequestException($"Khoa với {id} không được bỏ trống!");
             var khoa = await _repositoryMaster.Khoa.GetKhoaByIdAsync(id, false);
             if (khoa is null) throw new KhoaNotFoundException(id);
+            khoa.DeletedAt = DateTime.Now;
             await _repositoryMaster.ExecuteInTransactionAsync(async () =>
             {
-                _repositoryMaster.Khoa.DeleteKhoa(khoa);
+                _repositoryMaster.Khoa.UpdateKhoa(khoa);
                 await Task.CompletedTask;
             });
             _loggerService.LogInfo("Xóa khoa thành công.");
