@@ -41,13 +41,13 @@ namespace Education_assistant.Modules.ModuleLichBieu.Services
             var chuongTrinhDaoTao = await _repositoryMaster.ChuongTrinhDaoTao.GetChuongTrinhDaoTaoByKhoaAndNganhIdAsync(lopHoc.NamHoc, lopHoc.NganhId.Value);
             if (chuongTrinhDaoTao is null)
             {
-                throw new ChuongTrinhDaoTaoBadRequestException($"Lớp học này không có lịch biểu. vui lòng chọn lớp học khác");
+                throw new ChuongTrinhDaoTaoBadRequestException($"Lớp học này không có trong lịch lớp học vui lòng chọn lớp học khác");
             }
 
             var lichBieus = await _repositoryMaster.LichBieu.GetAllLichBieuByLopHocAndHocKyForCopyLichBieuAsync(request.HocKy, lopHoc.MaLopHoc, chuongTrinhDaoTao.Id, request.VaoTuanId, request.NamHoc);
             if (!lichBieus.Any())
             {
-                throw new GenericNotFoundException($"Lớp học chưa có lịch biểu ở tuần vào");
+                throw new GenericNotFoundException($"Lớp học chưa có trong lịch lớp học ở tuần vào");
             }
 
             var lopHocPhanIds = lichBieus.Where(item => item.LopHocPhanId.HasValue).Select(item => item.LopHocPhanId!.Value).Distinct().ToList();
@@ -73,6 +73,10 @@ namespace Education_assistant.Modules.ModuleLichBieu.Services
                         PhongHocId = lichBieuDto.PhongHocId,
                     });
                 }
+            }
+            if (!listLichBieu.Any())
+            {
+                throw new LichBieuExistdException($"Lịch lớp học trong các tuần đã được tạo trước đó rồi");
             }
             await _repositoryMaster.ExecuteInTransactionBulkEntityAsync(async () =>
             {
