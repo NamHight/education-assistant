@@ -35,6 +35,9 @@ public class TaiKhoan : BaseEntity
     [Range(1, 3, ErrorMessage = "Loại tài khoản không hợp lệ")]
     public int? LoaiTaiKhoan { get; set; }
 
+    public string? OtpCode { get; set; }
+    public DateTime? OtpExpires { get; set; }
+
     [NotMapped]
     public LoaiTaiKhoaEnum? LoaiTaiKhoaEnum
     {

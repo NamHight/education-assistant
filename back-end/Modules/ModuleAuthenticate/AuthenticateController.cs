@@ -87,4 +87,51 @@ public class AuthenticateController : ControllerBase
         var result = await _serviceMaster.Authenticate.GetMeAsync();
         return Ok(result);
     }
+
+    [HttpPost("send-otp-forgot-password")]
+    public async Task<IActionResult> SendOTPForgotPassword([FromBody] SendOTPRequestDto request)
+    {
+        try
+        {
+            await _serviceEmail.SendOTPForgotPassword(request.Email);
+            return Ok(new { message = "OTP đã được gửi đến email của bạn" });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+    }
+
+    [HttpPost("verify-otp")]
+    public async Task<IActionResult> VerifyOTP([FromBody] VerifyOTPRequestDto request)
+    {
+        try
+        {
+            var isValid = await _serviceEmail.VerifyOTP(request.Email, request.OtpCode);
+            if (isValid)
+            {
+                return Ok(new { message = "OTP hợp lệ" });
+            }
+            return BadRequest(new { message = "OTP không hợp lệ hoặc đã hết hạn" });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+    }
+
+    [HttpPost("reset-password-with-otp")]
+    public async Task<IActionResult> ResetPasswordWithOTP([FromBody] ResetPasswordOTPRequestDto request)
+    {
+        try
+        {
+            await _serviceEmail.ResetPasswordWithOTP(request.Email, request.OtpCode, request.NewPassword);
+            return Ok(new { message = "Đổi mật khẩu thành công" });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+    }
+
 }
