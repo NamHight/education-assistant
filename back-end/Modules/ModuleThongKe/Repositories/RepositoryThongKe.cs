@@ -44,6 +44,71 @@ public class RepositoryThongKe : IRepositoryThongKe
         return result;
     }
 
+    public async Task<List<ResponseThongKeTrongNamDto>> ThongKetQuaMonTrongNam()
+    {
+        var result = new List<ResponseThongKeTrongNamDto>();
+        using var conn = _context.Database.GetDbConnection();
+
+        await conn.OpenAsync();
+        using var cmd = conn.CreateCommand();
+
+        cmd.CommandText = "CALL ThongKe_QuaMon";
+        cmd.CommandType = CommandType.Text;
+
+        using var reader = await cmd.ExecuteReaderAsync();
+
+        int key = 1;
+        while (await reader.ReadAsync())
+        {
+            result.Add(new ResponseThongKeTrongNamDto
+            {
+                Key = key++,
+                Value = reader.GetDouble(0),
+                Label = "Qua môn"
+            });
+            result.Add(new ResponseThongKeTrongNamDto
+            {
+                Key = key++,
+                Value = reader.GetDouble(1),
+                Label = "Không qua môn"
+            });
+        }
+        return result;
+    }
+
+    public async Task<List<ResponseThongKeTrongNamDto>> ThongKetThiLaiTrongNam()
+    {
+        var result = new List<ResponseThongKeTrongNamDto>();
+
+        using var conn = _context.Database.GetDbConnection();
+
+        await conn.OpenAsync();
+        using var cmd = conn.CreateCommand();
+
+        cmd.CommandText = "CALL ThongKe_ThiLai";
+        cmd.CommandType = CommandType.Text;
+
+        int key = 1;
+        using var reader = await cmd.ExecuteReaderAsync();
+        while (await reader.ReadAsync())
+        {
+            
+            result.Add(new ResponseThongKeTrongNamDto
+                {
+                    Key = key++,
+                    Value = reader.GetDouble(0),
+                    Label = "Không thi lại"
+                });
+            result.Add(new ResponseThongKeTrongNamDto
+                {
+                    Key = key++,
+                    Value = reader.GetDouble(1),
+                    Label = "Thi lại"
+                });
+        }
+        return result;
+    }
+
     // public async Task<List<TopStudentRaw>> GetTopSinhVienLopHocPhanAsync(int khoa, int hocKy)
     // {
     //     var result = new List<TopStudentRaw>();

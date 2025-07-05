@@ -46,18 +46,18 @@ public class ServiceMaster : IServiceMaster
 
     public ServiceMaster(IRepositoryMaster repositoryMaster, ILoggerService loggerService, IMapper mapper,
         IPasswordHash password, IHttpContextAccessor httpContextAccessor, IServiceFIle serviceFIle,
-        IConfiguration configuration, IDiemSoHelper diemSoHelper)
+        IConfiguration configuration, IDiemSoHelper diemSoHelper, ILayKyTuHelper layKyTuHelper)
     {
         _giangVien = new Lazy<IServiceGiangVien>(() =>
             new ServiceGiangVien(repositoryMaster, loggerService, mapper, password, httpContextAccessor, serviceFIle));
         _khoa = new Lazy<IServiceKhoa>(() => new ServiceKhoa(repositoryMaster, loggerService, mapper));
-        _monHoc = new Lazy<IServiceMonHoc>(() => new ServiceMonHoc(repositoryMaster, loggerService, mapper));
+        _monHoc = new Lazy<IServiceMonHoc>(() => new ServiceMonHoc(repositoryMaster, loggerService, mapper, layKyTuHelper));
         _chuongTrinhDaoTao =
             new Lazy<IServiceChuongTrinhDaoTao>(() =>
-                new ServiceChuongTrinhDaoTao(repositoryMaster, loggerService, mapper));
+                new ServiceChuongTrinhDaoTao(repositoryMaster, loggerService, mapper, layKyTuHelper));
         _chiTietChuongTrinhDaoTao = new Lazy<IServiceChiTietChuongTrinhDaoTao>(() =>
             new ServiceChiTietChuongTrinhDaoTao(repositoryMaster, loggerService, mapper));
-        _boMon = new Lazy<IServiceBoMon>(() => new ServiceBoMon(repositoryMaster, loggerService, mapper));
+        _boMon = new Lazy<IServiceBoMon>(() => new ServiceBoMon(repositoryMaster, loggerService, mapper, layKyTuHelper));
         _lopHocPhan =
             new Lazy<IServiceLopHocPhan>(() => new ServiceLopHocPhan(repositoryMaster, loggerService, mapper));
         _chiTietLopHocPhan =
@@ -65,7 +65,7 @@ public class ServiceMaster : IServiceMaster
                 new ServiceChiTietLopHocPhan(repositoryMaster, loggerService, mapper));
         _sinhVien = new Lazy<IServiceSinhVien>(() =>
             new ServiceSinhVien(repositoryMaster, loggerService, mapper, httpContextAccessor, serviceFIle));
-        _nganh = new Lazy<IServiceNganh>(() => new ServiceNganh(repositoryMaster, loggerService, mapper));
+        _nganh = new Lazy<IServiceNganh>(() => new ServiceNganh(repositoryMaster, loggerService, mapper, layKyTuHelper));
         _hocBa = new Lazy<IServiceHocBa>(() => new ServiceHocBa(repositoryMaster, loggerService, mapper, diemSoHelper));
         _lopHoc = new Lazy<IServiceLopHoc>(() => new ServiceLopHoc(repositoryMaster, loggerService, mapper));
         _lichBieu = new Lazy<IServiceLichBieu>(() => new ServiceLichBieu(repositoryMaster, loggerService, mapper));

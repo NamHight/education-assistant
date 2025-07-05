@@ -2,6 +2,7 @@ using System;
 using AutoMapper;
 using Education_assistant.Contracts.LoggerServices;
 using Education_assistant.Exceptions.ThrowError.BoMonExceptions;
+using Education_assistant.helpers.implements;
 using Education_assistant.Models;
 using Education_assistant.Modules.ModuleBoMon.DTOs.Param;
 using Education_assistant.Modules.ModuleBoMon.DTOs.Request;
@@ -18,17 +19,20 @@ public class ServiceBoMon : IServiceBoMon
     private readonly ILoggerService _loggerService;
     private readonly IRepositoryMaster _repositoryMaster;
     private readonly IMapper _mapper;
-    public ServiceBoMon(IRepositoryMaster repositoryMaster, ILoggerService loggerService, IMapper mapper)
+    private readonly ILayKyTuHelper _layKyTuHelper;
+    public ServiceBoMon(IRepositoryMaster repositoryMaster, ILoggerService loggerService, IMapper mapper, ILayKyTuHelper layKyTuHelper)
     {
         _repositoryMaster = repositoryMaster;
         _loggerService = loggerService;
         _mapper = mapper;
+        _layKyTuHelper = layKyTuHelper;
     }
     public async Task<ResponseBoMonDto> CreateAsync(RequestAddBoMonDto request)
     {
         try
         {
             var newBoMon = _mapper.Map<BoMon>(request);
+            newBoMon.MaBoMon = _layKyTuHelper.LayKyTuDau(request.TenBoMon);
             await _repositoryMaster.ExecuteInTransactionAsync(async () =>
             {
                 await _repositoryMaster.BoMon.CreateAsync(newBoMon);
@@ -98,19 +102,19 @@ public class ServiceBoMon : IServiceBoMon
         {
             throw new BoMonBadRequestException($"Id: {id} và Id: {request.Id} của bộ môn không giống nhau!");
         }
-         var boMonExsitting = await _repositoryMaster.BoMon.GetBoMonByIdAsync(id, false);
+         var boMonExsitting = await _repositoryMaster.BoMon.GetBoMonByIdAsync(id, true);
         if (boMonExsitting is null)
         {
             throw new BoMonNotFoundException(id);
         }
-        boMonExsitting.TenBoMon = request.TenBoMon;
-        boMonExsitting.Email = request.Email;
-        boMonExsitting.SoDienThoai = request.SoDienThoai;
-        boMonExsitting.KhoaId = request.KhoaId;
-        boMonExsitting.UpdatedAt = DateTime.Now;
         await _repositoryMaster.ExecuteInTransactionAsync(async () =>
         {
-            _repositoryMaster.BoMon.UpdateBoMon(boMonExsitting);
+            boMonExsitting.MaBoMon = _layKyTuHelper.LayKyTuDau(request.TenBoMon);
+            boMonExsitting.TenBoMon = request.TenBoMon;
+            boMonExsitting.Email = request.Email;
+            boMonExsitting.SoDienThoai = request.SoDienThoai;
+            boMonExsitting.KhoaId = request.KhoaId;
+            boMonExsitting.UpdatedAt = DateTime.Now;
             await Task.CompletedTask;
         });
         _loggerService.LogInfo("Cập nhật bộ môn thành công.");

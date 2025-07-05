@@ -29,5 +29,17 @@ namespace Education_assistant.Modules.ModuleThongKe
             var result = await _serviceMaster.ThongKe.ThongKeTopSinhVienGPAAsync();
             return Ok(result);
         }
+        [HttpGet("thi-lai-trong-nam")]
+        public async Task<ActionResult> GetThongKeThiLaiTrongNamAsync()
+        {
+            var result = await _serviceMaster.ThongKe.ThongKetThiLaiTrongNam();
+            return Ok(result);
+        }
+        [HttpGet("qua-mon-trong-nam")]
+        public async Task<ActionResult> GetThongKeQuaMonTrongNamAsync()
+        {
+            var result = await _serviceMaster.ThongKe.ThongKetQuaMonTrongNam();
+            return Ok(result);
+        }
     }
 }

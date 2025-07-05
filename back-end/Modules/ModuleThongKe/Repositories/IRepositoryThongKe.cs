@@ -5,5 +5,7 @@ namespace Education_assistant.Modules.ModuleThongKe.Repositories;
 public interface IRepositoryThongKe
 {
     Task<Dictionary<string, double>> ThongKetTinhTrangHocTap();
+    Task<List<ResponseThongKeTrongNamDto>> ThongKetThiLaiTrongNam();
+    Task<List<ResponseThongKeTrongNamDto>> ThongKetQuaMonTrongNam();
     Task<List<ResponseThongKeTopSinhVienDto>> ThongKeTopSinhVienGPAAsync();
 }
