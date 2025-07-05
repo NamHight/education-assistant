@@ -5,7 +5,7 @@ import {
   inputsCustomizations,
   dataDisplayCustomizations,
   feedbackCustomizations,
-  navigationCustomizations,
+  navigationCustomizations
 } from './customizations';
 
 export default function getMPTheme(mode: PaletteMode): ThemeOptions {
@@ -15,7 +15,7 @@ export default function getMPTheme(mode: PaletteMode): ThemeOptions {
       ...inputsCustomizations,
       ...dataDisplayCustomizations,
       ...feedbackCustomizations,
-      ...navigationCustomizations,
-    },
+      ...navigationCustomizations
+    }
   };
 }

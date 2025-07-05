@@ -11,14 +11,34 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, Typography } from '@mui/material';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNotifications } from '@toolpad/core';
+import { set } from 'lodash';
 import { TriangleAlert } from 'lucide-react';
-import React, { useMemo, useState } from 'react';
+import React, { forwardRef, useEffect, useImperativeHandle, useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import * as yup from 'yup';
 interface ModalAddProps {
   open: boolean;
   handleClose: () => void;
   queryKey?: string;
+  filter?: {
+    namHoc: {
+      id: string | number;
+      name: string;
+    };
+    tuan: {
+      id: string;
+      name: string;
+    };
+    giangVien: {
+      id: string;
+      name: string;
+    };
+    hocKy: number | string;
+    lopHoc: {
+      id: string;
+      name: string;
+    };
+  } | null;
 }
 export interface IFormData {
   TietBatDau: number;
@@ -28,11 +48,11 @@ export interface IFormData {
   LopHocPhan?: IOption;
   PhongHoc?: IOption;
 }
-const ModalAdd = ({ open, handleClose, queryKey }: ModalAddProps) => {
+const ModalAdd = forwardRef(({ open, handleClose, queryKey, filter }: ModalAddProps, ref) => {
   const notification = useNotifications();
   const queryClient = useQueryClient();
   const [filterAdd, setFilterAdd] = useState<{
-    khoa: number | string;
+    namHoc: number | string;
   } | null>(null);
   const schema = useMemo(() => {
     return yup.object().shape({
@@ -49,7 +69,8 @@ const ModalAdd = ({ open, handleClose, queryKey }: ModalAddProps) => {
     handleSubmit,
     formState: { errors },
     reset,
-    control
+    control,
+    setValue
   } = useForm<IFormData | any>({
     mode: 'onChange',
     resolver: yupResolver(schema),
@@ -57,10 +78,10 @@ const ModalAdd = ({ open, handleClose, queryKey }: ModalAddProps) => {
   });
 
   const { data: tuans, isLoading: isLoadingTuan } = useQuery({
-    queryKey: ['tuan-list', filterAdd?.khoa],
+    queryKey: ['tuan-list', filterAdd?.namHoc],
     queryFn: async () => {
       const params: IParamTuan = {
-        namHoc: filterAdd?.khoa
+        namHoc: filterAdd?.namHoc
       };
       const result = await TuanService.getAllTuanByNamHoc(params);
       return result;
@@ -73,12 +94,15 @@ const ModalAdd = ({ open, handleClose, queryKey }: ModalAddProps) => {
     },
     placeholderData: (prev) => prev,
     refetchOnWindowFocus: false,
-    enabled: !!filterAdd?.khoa
+    enabled: !!filterAdd?.namHoc
   });
   const { data: lopHocPhans, isLoading: isLoadingLHP } = useQuery({
-    queryKey: ['lop-hoc-phan-list'],
+    queryKey: ['lop-hoc-phan-list', filter?.lopHoc?.id, filter?.hocKy],
     queryFn: async () => {
-      const result = await LopHocPhanService.getLopHocPhanNoPage();
+      const result = await LopHocPhanService.getLopHocPhanByLopHocAndHocKy({
+        lopHocId: filter?.lopHoc?.id,
+        hocKy: filter?.hocKy
+      });
       return result;
     },
     select: (data) => {
@@ -92,7 +116,7 @@ const ModalAdd = ({ open, handleClose, queryKey }: ModalAddProps) => {
     enabled: open
   });
   const { data: phongHocs, isLoading: isLoadingPhongHoc } = useQuery({
-    queryKey: ['phong-hoc-list', filterAdd?.khoa],
+    queryKey: ['phong-hoc-list'],
     queryFn: async () => {
       const result = await PhongHocService.getPhongHocNoPage();
       return result;
@@ -142,6 +166,27 @@ const ModalAdd = ({ open, handleClose, queryKey }: ModalAddProps) => {
     formData.append('PhongHocId', data.PhongHoc?.id.toString() || '');
     mutationAdd.mutate(formData);
   };
+  useEffect(() => {
+    if (filter?.namHoc && filter?.tuan?.id) {
+      reset({
+        namHoc: filter.namHoc,
+        Tuan: filter.tuan
+      });
+    } else {
+      reset({
+        TietBatDau: '',
+        TietKetThuc: '',
+        Thu: null,
+        Tuan: null,
+        LopHocPhan: null,
+        PhongHoc: null,
+        namHoc: null
+      });
+    }
+  }, [filter, reset, open]);
+  useImperativeHandle(ref, () => ({
+    reset: () => reset()
+  }));
   return (
     <Dialog
       open={open}
@@ -158,10 +203,10 @@ const ModalAdd = ({ open, handleClose, queryKey }: ModalAddProps) => {
     >
       <DialogTitle id='alert-dialog-title' component={'div'}>
         <Typography variant='h5' fontWeight='bold' color='primary.main'>
-          Thêm mới lịch công tác tuần
+          Thêm mới lịch học
         </Typography>
         <Typography variant='subtitle1' color='text.secondary' className='!text-[13px]'>
-          Vui lòng nhập đầy đủ thông tin bên dưới để thêm lịch công tác
+          Vui lòng nhập đầy đủ thông tin bên dưới để thêm lịch học
         </Typography>
       </DialogTitle>
       <DialogContent>
@@ -203,18 +248,19 @@ const ModalAdd = ({ open, handleClose, queryKey }: ModalAddProps) => {
             <InputSelect2
               control={control}
               fullWidth
-              name={'khoa'}
-              placeholder={'Chọn khoá'}
-              title={'Khoá'}
+              name={'namHoc'}
+              placeholder={'Chọn năm học'}
+              title={'Năm học'}
               data={yearOptions ?? []}
               getOptionKey={(option) => option.id}
               getOptionLabel={(option: any) => option.name}
-              error={(errors.khoa as any)?.message}
+              error={(errors.namHoc as any)?.message}
               getOnChangeValue={(value: any) => {
                 setFilterAdd((prev) => ({
                   ...prev,
-                  khoa: value?.id
+                  namHoc: value?.id
                 }));
+                setValue('Tuan', null);
               }}
             />
           </Grid>
@@ -233,7 +279,7 @@ const ModalAdd = ({ open, handleClose, queryKey }: ModalAddProps) => {
             />
             <Typography color='warning.main' variant='caption' display='flex' alignItems='center' gap={0.5}>
               <TriangleAlert className='h-4 w-4' />
-              Vui lòng chọn khoá trước khi chọn tuần
+              Vui lòng chọn năm trước khi chọn tuần
             </Typography>
           </Grid>
           <Grid size={{ xs: 12, sm: 6, md: 6, lg: 6 }}>
@@ -276,6 +322,6 @@ const ModalAdd = ({ open, handleClose, queryKey }: ModalAddProps) => {
       </DialogActions>
     </Dialog>
   );
-};
+});
 
 export default ModalAdd;

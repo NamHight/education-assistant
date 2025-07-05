@@ -8,25 +8,20 @@ import { ChuongTrinhDaoTaoService } from '@/services/ChuongTrinhDaoTaoService';
 import { ChiTietLopHocPhanService } from '@/services/ChiTietLopHocPhanService';
 import Content from './components/Content';
 import { BoMonService } from '@/services/BoMonService';
+import { LopHocService } from '@/services/LopHocService';
+import { PopoverLockProvider } from '@/hooks/context/PopoverLock';
 
 const page = async () => {
   const queryKey = 'lich-cong-tac-tuan-list';
-  // const giangViens = GiangVienService.danhSachGiangVienServer({
-  //   sortBy: 'createdAt',
-  //   sortByOrder: 'desc',
-  //   limit: 99999999999,
-  //   active: true
-  // }).catch((error) => ({ data: [] }));
-  const boMons = await BoMonService.getAllBoMonNoPageServer();
-  const [boMonData] = await Promise.all([boMons]);
+  const lopHocs = LopHocService.getLopHocNoPageServer().catch(() => []);
+
+  const [lopHocData] = await Promise.all([lopHocs]);
   return (
     <Box>
-      <Content
-        queryKey={queryKey}
-        //giangVienServer={giangVienData?.data.length > 0 ? giangVienData.data : undefined}
-        boMonServer={boMonData?.length > 0 ? boMonData : undefined}
-      />
-    </Box>
+    <PopoverLockProvider>
+      <Content queryKey={queryKey} lopHocServer={lopHocData?.length > 0 ? lopHocData : undefined} />
+    </PopoverLockProvider>
+     </Box>
   );
 };
 

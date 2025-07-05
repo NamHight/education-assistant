@@ -27,13 +27,15 @@ public class GiangVienController : ControllerBase
         Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(result.page));
         return Ok(result.data);
     }
+
     [HttpGet("no-page")]
     public async Task<ActionResult> GetAllGiangVienNoPageAsync()
     {
         var result = await _serviceMaster.GiangVien.GetAllGiangVienNoPageAsync();
         return Ok(result);
     }
-    [HttpGet("all-tinh-trang-lam-viec")]
+
+    [HttpGet("tinh-trang-lam-viec")]
     public async Task<ActionResult> GetAllGiangViensummaryAsync([FromQuery] Guid khoaId)
     {
         var result = await _serviceMaster.GiangVien.GetAllGiangVienSummaryAsync(khoaId);
@@ -46,6 +48,7 @@ public class GiangVienController : ControllerBase
         var result = await _serviceMaster.GiangVien.GetAllGiangVienByKhoa(id);
         return Ok(result);
     }
+
     [HttpGet("{boMonId}/by-bomon")]
     public async Task<ActionResult> GetAllGiangVienByBoMonAsync(Guid boMonId)
     {

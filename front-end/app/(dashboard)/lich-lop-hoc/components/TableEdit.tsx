@@ -1,5 +1,5 @@
 'use client';
-import React, { Dispatch, forwardRef, RefObject, useEffect, useMemo, useState } from 'react';
+import React, { Dispatch, forwardRef, RefObject, useEffect, useMemo, useRef, useState } from 'react';
 import {
   DataGrid,
   GridRowId,
@@ -187,6 +187,35 @@ const CustomToolbar = ({
     </>
   );
 };
+const noRowsOverlay = () => (
+  <Box
+    sx={{
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      height: '80%',
+      width: '100%',
+      color: '#888',
+      background: '#f9fafb',
+      mt: 2
+    }}
+  >
+    <img
+      src='https://cdn-icons-png.flaticon.com/512/4076/4076549.png'
+      alt='No data'
+      width={64}
+      height={64}
+      style={{ marginBottom: 16, opacity: 0.7 }}
+    />
+    <Typography variant='h6' sx={{ fontWeight: 500 }}>
+      Không có dữ liệu
+    </Typography>
+    <Typography variant='body2' sx={{ color: '#aaa', mt: 1 }}>
+      Không tìm thấy bản ghi nào phù hợp.
+    </Typography>
+  </Box>
+);
 interface ImportFileProps {
   LopHocPhanId: string;
   File: File | null;
@@ -199,16 +228,23 @@ interface ITableEditProps {
   isLoading?: boolean;
   setFilterModel?: (data: any) => void;
   setSortModel?: ({ field, sort }: { field: string; sort: string | null | undefined }) => void;
-  handleSave: (item: any) => void;
+  handleSave?: (item: any) => void;
   setfilter: Dispatch<
     React.SetStateAction<{
-      khoa: number | string;
-      tuan: string;
-      boMon: {
+      namHoc: {
+        id: number | string;
+        name: string;
+      };
+      tuan: {
         id: string;
         name: string;
       };
       giangVien: {
+        id: string;
+        name: string;
+      };
+      hocKy: number | string;
+      lopHoc: {
         id: string;
         name: string;
       };
@@ -224,17 +260,19 @@ interface ITableEditProps {
   >;
   tuans?: any;
   isLoadingTuan?: boolean;
-  giangViens?: any;
-  isLoadingGV?: boolean;
+  lophocs?: any;
+  isLoadingLH?: boolean;
   contentPopover?: React.ReactNode;
   isOpen?: boolean;
   onClose?: () => void;
   handleNopDiem?: () => void;
   handleClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   filter?: {
-    khoa: number | string;
-    tuan: string;
-    boMon: {
+    namHoc: {
+      id: number | string;
+      name: string;
+    };
+    tuan: {
       id: string;
       name: string;
     };
@@ -242,10 +280,15 @@ interface ITableEditProps {
       id: string;
       name: string;
     };
+    hocKy: number | string;
+    lopHoc: {
+      id: string;
+      name: string;
+    };
   } | null;
   queryKey: string;
-  boMon?: any;
-  isLoadingBM?: boolean;
+  giangVien?: any;
+  isLoadingGV?: boolean;
   filterWeek: {
     tuanVao: string;
     tuanDen: string;
@@ -271,13 +314,13 @@ const TableEdit = forwardRef(
       handleClick,
       onClose,
       setfilterWeek,
-      isLoadingGV,
-      giangViens,
+      lophocs,
+      isLoadingLH,
       filter,
       queryKey,
       handleCopy,
-      boMon,
-      isLoadingBM,
+      giangVien,
+      isLoadingGV,
       handleNopDiem,
       isLoadingTuan,
       tuans,
@@ -291,6 +334,7 @@ const TableEdit = forwardRef(
     const [file, setFile] = useState<File | null>(null);
     const [cellModesModel, setCellModesModel] = React.useState<GridCellModesModel>({});
     const notification = useNotifications();
+
     const user = useUser();
     const { isAdmin, isQuanLyKhoaBoMon, isGiangVien } = useCheckPermission();
     const unsavedChangesRef = React.useRef<{
@@ -345,14 +389,6 @@ const TableEdit = forwardRef(
     const handleCellModesModelChange = React.useCallback((newModel: GridCellModesModel) => {
       setCellModesModel(newModel);
     }, []);
-    const saveChanges = React.useCallback(async () => {
-      const updatedRows = Object.values(unsavedChangesRef.current.unsavedRows);
-      handleSave(updatedRows);
-      unsavedChangesRef.current = {
-        unsavedRows: {},
-        rowsBeforeChange: {}
-      };
-    }, []);
 
     useEffect(() => {
       if (user) {
@@ -369,6 +405,7 @@ const TableEdit = forwardRef(
         }));
       }
     }, [user]);
+
     return (
       <motion.div
         initial={{ opacity: 0 }}
@@ -381,113 +418,117 @@ const TableEdit = forwardRef(
         style={{ height: 'calc(100vh - 200px)' }}
       >
         <Box className='flex w-full gap-4 '>
-          <Box className='flex-1 gap-4 flex flex-col justify-center items-center p-4 border border-gray-200 rounded-lg shadow-sm light:bg-white'>
-            <Box className='flex gap-4 w-full'>
-              <Box className='flex justify-center items-center gap-3 w-full'>
-                <Typography className='!text-[16px] !leading-6 !font-semibold'>Khóa</Typography>
-                <Box className='flex-1'>
-                  <InputSelect2
-                    fullWidth
-                    name={'Khoa'}
-                    placeholder={'Chọn khóa'}
-                    data={yearOptions ?? []}
-                    getOptionKey={(option) => option.id}
-                    getOptionLabel={(option: any) => option.name}
-                    getOnChangeValue={(value) => {
-                      setfilter((prev: any) => ({
-                        ...prev,
-                        khoa: value?.id
-                      }));
-                    }}
-                  />
+          <Box className='flex-1 gap-4 flex justify-center items-center p-4 border border-gray-200 rounded-lg shadow-sm light:bg-white'>
+            <Box className='flex flex-col gap-4 w-full'>
+              <Box className='flex gap-4 w-full'>
+                <Box className='flex justify-center items-center gap-3 w-full'>
+                  <Typography className='!text-[16px] !leading-6 !font-semibold'>Năm học</Typography>
+                  <Box className='flex-1'>
+                    <InputSelect2
+                      fullWidth
+                      name={'Năm'}
+                      placeholder={'Chọn năm học'}
+                      data={yearOptions ?? []}
+                      getOptionKey={(option) => option.id}
+                      getOptionLabel={(option: any) => option.name}
+                      getOnChangeValue={(value) => {
+                        setfilter((prev: any) => ({
+                          ...prev,
+                          namHoc: {
+                            id: value?.id,
+                            name: value?.name
+                          }
+                        }));
+                      }}
+                    />
+                  </Box>
+                </Box>
+                <Box className='flex justify-center items-center gap-3 w-full'>
+                  <Typography className='!text-[16px] !leading-6 !font-semibold'>Tuần</Typography>
+                  <Box className='flex-1'>
+                    <InputSelect2
+                      fullWidth
+                      name={'Tuan'}
+                      placeholder={'Chọn tuần'}
+                      data={tuans ?? []}
+                      isLoading={isLoadingTuan}
+                      getOptionKey={(option) => option.id}
+                      getOptionLabel={(option: any) => option.name}
+                      getOnChangeValue={(value) => {
+                        setfilter((prev: any) => ({
+                          ...prev,
+                          tuan: {
+                            id: value?.id,
+                            name: value?.name
+                          }
+                        }));
+                      }}
+                    />
+                  </Box>
                 </Box>
               </Box>
-              <Box className='flex justify-center items-center gap-3 w-full'>
-                <Typography className='!text-[16px] !leading-6 !font-semibold'>Tuần</Typography>
-                <Box className='flex-1'>
-                  <InputSelect2
-                    fullWidth
-                    name={'Tuan'}
-                    placeholder={'Chọn tuần'}
-                    data={tuans ?? []}
-                    isLoading={isLoadingTuan}
-                    getOptionKey={(option) => option.id}
-                    getOptionLabel={(option: any) => option.name}
-                    getOnChangeValue={(value) => {
-                      setfilter((prev: any) => ({
-                        ...prev,
-                        tuan: value?.id
-                      }));
-                    }}
-                  />
+              <Box className='flex gap-4 w-full'>
+                <Box className='flex justify-start items-center gap-3 w-full'>
+                  <Typography className='!text-[16px] !leading-6 !font-semibold'>Học kỳ</Typography>
+                  <Box className='flex-1'>
+                    <InputSelect2
+                      fullWidth
+                      isDisabled={!isAdmin}
+                      name={'HocKy'}
+                      placeholder={'Chọn học kỳ'}
+                      data={HocKyLopHocPhan ?? []}
+                      getOptionKey={(option) => option.id}
+                      getOptionLabel={(option: any) => option.name}
+                      getOnChangeValue={(value) => {
+                        setfilter((prev: any) => ({
+                          ...prev,
+                          hocKy: value?.id
+                        }));
+                      }}
+                    />
+                  </Box>
+                </Box>
+                <Box className='flex justify-center items-center gap-3 w-full'>
+                  <Typography className='!text-[16px] !leading-6 !font-semibold'>Lớp học</Typography>
+                  <Box className='flex-1'>
+                    <InputSelect2
+                      fullWidth
+                      name={'LopHoc'}
+                      placeholder={'Chọn lớp học'}
+                      data={lophocs ?? []}
+                      isLoading={isLoadingLH}
+                      getOptionKey={(option) => option.id}
+                      getOptionLabel={(option: any) => option.name}
+                      getOnChangeValue={(value) => {
+                        setfilter((prev: any) => ({
+                          ...prev,
+                          lopHoc: {
+                            id: value?.id,
+                            name: value?.name
+                          }
+                        }));
+                      }}
+                    />
+                  </Box>
                 </Box>
               </Box>
             </Box>
-            <Box className='flex gap-4 w-full'>
-              <Box className='flex justify-start items-center gap-3 w-full'>
-                <Typography className='!text-[16px] !leading-6 !font-semibold'>Bộ môn</Typography>
-                <Box className='flex-1'>
-                  <InputSelect2
-                    fullWidth
-                    isDisabled={!isAdmin}
-                    name={'BoMon'}
-                    placeholder={'Chọn bộ môn'}
-                    data={boMon ?? []}
-                    isLoading={isLoadingBM}
-                    defaultValue={
-                      user && {
-                        id: user?.boMon?.id,
-                        name: user?.boMon?.tenBoMon
-                      }
-                    }
-                    getOptionKey={(option) => option.id}
-                    getOptionLabel={(option: any) => option.name}
-                    getOnChangeValue={(value) => {
-                      setfilter((prev: any) => ({
-                        ...prev,
-                        boMon: {
-                          id: value?.id,
-                          name: value?.name
-                        }
-                      }));
-                    }}
-                  />
-                </Box>
-              </Box>
-              <Box className='flex justify-center items-center gap-3 w-full'>
-                <Typography className='!text-[16px] !leading-6 !font-semibold'>Giảng viên</Typography>
-                <Box className='flex-1'>
-                  <InputSelect2
-                    key={`giang-vien-select-${filter?.boMon?.id}`}
-                    fullWidth
-                    name={'GiangVien'}
-                    placeholder={'Chọn giảng viên'}
-                    data={giangViens ?? []}
-                    isLoading={isLoadingGV}
-                    getOptionKey={(option) => option.id}
-                    getOptionLabel={(option: any) => option.name}
-                    getOnChangeValue={(value) => {
-                      setfilter((prev: any) => ({
-                        ...prev,
-                        giangVien: {
-                          id: value?.id,
-                          name: value?.name
-                        }
-                      }));
-                    }}
-                    value={
-                      user && user?.boMon?.id === filter?.boMon?.id
-                        ? {
-                            id: user?.id,
-                            name: user?.hoTen
-                          }
-                        : null
-                    }
-                  />
-                </Box>
-              </Box>
+            <Box className='flex flex-col gap-4 items-center h-full justify-start'>
+              <Box></Box>
+              <LoadingButton
+                disabled={false}
+                loading={false}
+                startIcon={<Add />}
+                loadingPosition='start'
+                onClick={() => handleOpenModal?.()}
+                className='!bg-blue-500 !text-white !rounded-md !px-4 !py-2 hover:!bg-blue-600 transition-all !duration-200 !ease-in-out !shadow-sm !text-base !leading-6 hover:transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed'
+              >
+                <Typography className='!text-[16px] !leading-6 !font-semibold'>Thêm</Typography>
+              </LoadingButton>
+              <Box></Box>
             </Box>
           </Box>
+
           <Box className='flex flex-col !max-w-[300px] w-full gap-4 p-4 border border-gray-200 rounded-lg shadow-sm light:bg-white justify-center items-center'>
             <Box className='flex w-full items-center justify-start gap-2'>
               <CalendarFold className='h-4 w-4 shadow' />
@@ -546,18 +587,6 @@ const TableEdit = forwardRef(
               </Box>
             </Box>
           </Box>
-          <Box className='grid grid-cols-2 gap-4 p-4 border border-gray-200 rounded-lg shadow-sm light:bg-white'>
-            <LoadingButton
-              disabled={false}
-              loading={false}
-              startIcon={<Add />}
-              loadingPosition='start'
-              onClick={() => handleOpenModal?.()}
-              className='!bg-blue-500 !text-white !rounded-md !px-4 !py-2 hover:!bg-blue-600 transition-all !duration-200 !ease-in-out !shadow-sm !text-base !leading-6 hover:transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed'
-            >
-              <Typography className='!text-[16px] !leading-6 !font-semibold'>Thêm mới</Typography>
-            </LoadingButton>
-          </Box>
         </Box>
 
         <DataGrid
@@ -576,7 +605,8 @@ const TableEdit = forwardRef(
           virtualizeColumnsWithAutoRowHeight
           onFilterModelChange={setFilterModel}
           slots={{
-            toolbar: () => CustomToolbar({ contentPopover, isOpen, onClose, handleClick })
+            toolbar: () => CustomToolbar({ contentPopover, isOpen, onClose, handleClick }),
+            noRowsOverlay: noRowsOverlay
           }}
           onSortModelChange={(model) => {
             if (model.length > 0) {
@@ -611,6 +641,18 @@ const TableEdit = forwardRef(
             overflowY: 'auto',
             '& .MuiDataGrid-editInputCell': {
               margin: 0
+            },
+            '& .MuiDataGrid-cell.actions-cell': {
+              backgroundColor: '#fafafa',
+              '&:focus, &:focus-within': {
+                outline: 'none !important',
+                border: 'none !important',
+                backgroundColor: '#fafafa !important'
+              },
+              '&.Mui-selected': {
+                backgroundColor: '#fafafa !important',
+                border: 'none !important'
+              }
             },
             '& .MuiDataGrid-cell': {
               whiteSpace: 'normal',

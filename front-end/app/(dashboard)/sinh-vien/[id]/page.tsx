@@ -12,17 +12,13 @@ interface IPageProps {
 
 const page = async ({ params }: IPageProps) => {
   const { id } = await params;
-  const lopHoc = LopHocService.getAllLopHocServer({
-    limit: 99999999999,
-    sortBy: 'createdAt',
-    sortByOrder: 'desc'
-  }).catch(() => ({ data: [] }));
+  const lopHoc = LopHocService.getLopHocNoPageServer().catch(() => ( [] ));
   const sinhVien = SinhVienService.getSinhVienByIdServer(id).catch(() => ({ data: undefined }));
   const [lopHocData, sinhVienData] = await Promise.all([lopHoc, sinhVien]);
   return (
     <div>
       <Content
-        anotherData={{ lopHocs: lopHocData?.data?.length > 0 ? lopHocData?.data : undefined }}
+        anotherData={{ lopHocs: lopHocData?.length > 0 ? lopHocData : undefined }}
         id={id}
         initialData={sinhVienData}
       />

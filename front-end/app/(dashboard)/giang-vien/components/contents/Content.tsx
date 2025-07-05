@@ -1,9 +1,8 @@
 'use client';
-
 import ToolTipImage from '@/components/tooltips/ToolTipImage';
 import { Box, MenuItem, Typography } from '@mui/material';
 import { GridActionsCellItem, GridColDef, GridFilterModel } from '@mui/x-data-grid';
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { motion } from 'motion/react';
 import Image from 'next/image';
 import moment from 'moment';
@@ -16,7 +15,7 @@ import { IParamGiangVien } from '@/types/params';
 import dynamic from 'next/dynamic';
 import { handleTextSearch } from '@/lib/string';
 import { useRouter } from 'next/navigation';
-import { APP_ROUTE } from '@/types/general';
+import { API, APP_ROUTE } from '@/types/general';
 import EditIcon from '@mui/icons-material/Edit';
 import { useNotifications } from '@toolpad/core';
 import ClearIcon from '@mui/icons-material/Clear';
@@ -27,18 +26,32 @@ import { clsx as cn } from 'clsx';
 import InputSelect2 from '@/components/selects/InputSelect2';
 import { KhoaService } from '@/services/KhoaService';
 import { BoMonService } from '@/services/BoMonService';
-import { Funnel } from 'lucide-react';
+import {
+  Book,
+  BookAlert,
+  BookCheck,
+  BookOpenCheck,
+  BookX,
+  Funnel,
+  GraduationCap,
+  LampDesk,
+  TrendingUp,
+  Unplug
+} from 'lucide-react';
 import { TrangThaiGiangVien } from '@/types/options';
+import { PeopleAltTwoTone } from '@mui/icons-material';
+import authApi from '@/lib/authAxios';
+import { filter } from 'lodash';
 const Table = dynamic(() => import('@/components/tables/Table'), {
   ssr: false
 });
 interface ContentProps {
   queryKey: string;
   khoaData: any;
-  boMonData: any;
+  tinhTrangServer?: any;
 }
 
-const Content = ({ queryKey, khoaData, boMonData }: ContentProps) => {
+const Content = ({ queryKey, khoaData, tinhTrangServer }: ContentProps) => {
   const router = useRouter();
   const notification = useNotifications();
   const refTable = useRef<{ handleClose: () => void; handleOpenDelete: () => void; handleCloseDelete: () => void }>(
@@ -60,6 +73,7 @@ const Content = ({ queryKey, khoaData, boMonData }: ContentProps) => {
     trangThai?: { id: string; name: string };
   } | null>(null);
   const queryClient = useQueryClient();
+ 
   const { data, isLoading, isFetching } = useQuery({
     queryKey: [queryKey, paginationModel, sortModel, filterModel, filterOption],
     queryFn: async () => {
@@ -98,36 +112,30 @@ const Content = ({ queryKey, khoaData, boMonData }: ContentProps) => {
     placeholderData: (prev) => prev,
     refetchOnWindowFocus: false
   });
+   const { data: tinhTrangs } = useQuery({
+    queryKey: ['tinh-trang-giang-vien', filterOption?.khoa?.id],
+    queryFn: async () => {
+      let params: IParamGiangVien = {}
+      if (filterOption?.khoa?.id) {
+        params.khoaId = filterOption?.khoa?.id;
+      }
+      const result = await GiangVienService.getGiangVienTinhTrang(params);
+      console.log('tinh trang giang vien:', result);
+      return result;
+    },
+    initialData: filterOption?.khoa?.id ? undefined : tinhTrangServer,
+    refetchOnWindowFocus: false,
+  });
   const { data: khoas, isLoading: isLoadingKhoa } = useQuery({
     queryKey: ['khoa-list'],
     queryFn: async () => {
-      const result = await KhoaService.getAllKhoa({
-        sortBy: 'createdAt',
-        sortByOrder: 'desc',
-        limit: 99999999999
-      });
-      return result?.data;
-    },
-    select: (data) => {
-      return data?.map((item: any) => ({
-        id: item.id,
-        name: item.tenKhoa
-      }));
-    },
-    initialData: khoaData,
-    placeholderData: (prev) => prev,
-    refetchOnWindowFocus: false
-  });
-  const { data: boMons, isLoading: isLoadingBoMon } = useQuery({
-    queryKey: ['bo-mon-list'],
-    queryFn: async () => {
-      const result = await BoMonService.getAllBoMonNoPage();
+      const result = await KhoaService.getKhoaNoPage();
       return result;
     },
     select: (data) => {
       return data?.map((item: any) => ({
         id: item.id,
-        name: item.tenBoMon
+        name: item.tenKhoa
       }));
     },
     initialData: khoaData,
@@ -395,16 +403,49 @@ const Content = ({ queryKey, khoaData, boMonData }: ContentProps) => {
   }, [data?.data]);
   return (
     <Box className='flex flex-col gap-4'>
-      <Box className='flex gap-4'>
-        <Box className={cn('flex flex-[5] border border-gray-200 rounded-lg p-4 shadow-sm gap-4 ')}>
-          <Box>
-            <ButtonRedirect />
+      <Box className='flex justify-start gap-4  '>
+        <Box className='grid grid-cols-1 sm:grid-cols-3 md:grid-cols-3 gap-4 w-full'>
+          <Box className='flex flex-col border border-gray-200 rounded-lg p-4 shadow-sm gap-3 w-full'>
+            <Box className='flex items-center justify-between gap-5'>
+              <Typography className={'!font-semibold !text-gray-700 !leading-6 !text-lg'}>
+                Tổng số giảng viên
+              </Typography>
+              <PeopleAltTwoTone />
+            </Box>
+            <Box>
+              <Typography className='text-blue-500 !font-bold !text-xl'>{rowCount}</Typography>
+            </Box>
+          </Box>
+          <Box className='flex flex-col border border-gray-200 rounded-lg p-4 shadow-sm gap-3 w-full'>
+            <Box className='flex items-center justify-between gap-5'>
+              <Typography className={'!font-semibold !text-gray-700 !leading-6 !text-lg'}>Đang công tác</Typography>
+              <LampDesk className='!text-green-500' />
+            </Box>
+            <Box>
+              <Typography className='text-blue-500 !font-bold !text-xl'>
+                {tinhTrangs?.dangCongTac || 0}
+              </Typography>
+            </Box>
+          </Box>
+          <Box className='flex flex-col border border-gray-200 rounded-lg p-4 shadow-sm gap-3 w-full'>
+            <Box className='flex items-center justify-between gap-5'>
+              <Typography className={'!font-semibold !text-gray-700 !leading-6 !text-lg'}>Nghỉ việc</Typography>
+              <Unplug className={'!text-blue-500'} />
+            </Box>
+            <Box>
+              <Typography className='text-blue-500 !font-bold !text-xl'>{tinhTrangs?.nghiViec || 0}</Typography>
+            </Box>
           </Box>
         </Box>
+      </Box>
+      <Box className='flex gap-4'>
         <Box className={cn('flex flex-col flex-[5] border border-gray-200 rounded-lg p-4 shadow-sm gap-4 ')}>
-          <Box className='flex items-center gap-2'>
-            <Funnel className='h-5 w-5' />
-            <Typography className='!text-[16px] !font-semibold'>Lọc </Typography>
+          <Box className='flex items-center justify-between'>
+            <Box className='flex items-center gap-2'>
+              <Funnel className='h-5 w-5' />
+              <Typography className='!text-[16px] !font-semibold'>Lọc </Typography>
+            </Box>
+            <ButtonRedirect />
           </Box>
           <Box className='flex gap-3'>
             <Box className='flex-2 gap-1 flex flex-col'>

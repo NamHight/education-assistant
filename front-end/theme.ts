@@ -9,7 +9,7 @@ const celendarTheme = createTheme(themeCalendar);
 const theme = {
   light: lightTheme,
   dark: darkTheme,
-  celendar: celendarTheme,
+  celendar: celendarTheme
 };
 
 export default theme;

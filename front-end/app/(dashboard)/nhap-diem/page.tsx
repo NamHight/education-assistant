@@ -7,12 +7,15 @@ import { Box } from '@mui/material';
 import { ChuongTrinhDaoTaoService } from '@/services/ChuongTrinhDaoTaoService';
 import { ChiTietLopHocPhanService } from '@/services/ChiTietLopHocPhanService';
 import Content from './components/Content';
+import { PopoverLockProvider } from '@/hooks/context/PopoverLock';
 
 const page = async () => {
   const queryKey = 'nhap-diem-list';
   return (
     <Box>
+       <PopoverLockProvider>
       <Content queryKey={queryKey} />
+      </PopoverLockProvider>
     </Box>
   );
 };
