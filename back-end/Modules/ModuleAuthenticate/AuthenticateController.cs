@@ -89,7 +89,7 @@ public class AuthenticateController : ControllerBase
     }
 
     [HttpPost("send-otp-forgot-password")]
-    public async Task<IActionResult> SendOTPForgotPassword([FromBody] SendOTPRequestDto request)
+    public async Task<IActionResult> SendOTPForgotPassword([FromBody] SendOTPRequestMobileDto request)
     {
         try
         {
@@ -103,7 +103,7 @@ public class AuthenticateController : ControllerBase
     }
 
     [HttpPost("verify-otp")]
-    public async Task<IActionResult> VerifyOTP([FromBody] VerifyOTPRequestDto request)
+    public async Task<IActionResult> VerifyOTP([FromBody] VerifyOTPRequestMobileDto request)
     {
         try
         {
@@ -121,7 +121,7 @@ public class AuthenticateController : ControllerBase
     }
 
     [HttpPost("reset-password-with-otp")]
-    public async Task<IActionResult> ResetPasswordWithOTP([FromBody] ResetPasswordOTPRequestDto request)
+    public async Task<IActionResult> ResetPasswordWithOTP([FromBody] ResetPasswordOTPRequestMobileDto request)
     {
         try
         {

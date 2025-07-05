@@ -151,19 +151,19 @@ public class ServiceEmail : IServiceEmail
             throw;
         }
     }
-    private string GenerateOTP()
+    private string GenerateOTP_Mobile()
     {
         var random = new Random();
         return random.Next(100000, 999999).ToString(); // OTP 6 chữ số
     }
 
-    public async Task SendOTPForgotPassword(string email)
+    public async Task SendOTPForgotPassword_Mobile(string email)
     {
         var taiKhoan = await _repositoryMaster.TaiKhoan.GetTaiKhoanByEmailAsync(email, false);
         if (taiKhoan is null)
             throw new GiangVienBadRequestException($"Không tìm thấy tài khoản có email là {email}");
 
-        taiKhoan.OtpCode = GenerateOTP();
+        taiKhoan.OtpCode = GenerateOTP_Mobile();
         taiKhoan.OtpExpires = DateTime.Now.AddMinutes(5); // OTP hết hạn sau 5 phút
 
         await _repositoryMaster.ExecuteInTransactionAsync(async () =>
@@ -182,9 +182,6 @@ public class ServiceEmail : IServiceEmail
                 temp = giangVien.HoTen;
             else
                 temp = taiKhoan.Email;
-
-            Console.WriteLine("OTP: " + taiKhoan.OtpCode);
-            Console.WriteLine("Name: " + temp);
 
             var responseEmail = new ResponseEmailDto
             {
@@ -206,7 +203,7 @@ public class ServiceEmail : IServiceEmail
         }
     }
 
-    public async Task<bool> VerifyOTP(string email, string otpCode)
+    public async Task<bool> VerifyOTP_Mobile(string email, string otpCode)
     {
         var taiKhoan = await _repositoryMaster.TaiKhoan.GetTaiKhoanByEmailAsync(email, false);
         if (taiKhoan is null)
@@ -224,13 +221,13 @@ public class ServiceEmail : IServiceEmail
         return true;
     }
 
-    public async Task ResetPasswordWithOTP(string email, string otpCode, string newPassword)
+    public async Task ResetPasswordWithOTP_Mobile(string email, string otpCode, string newPassword)
     {
         var taiKhoan = await _repositoryMaster.TaiKhoan.GetTaiKhoanByEmailAsync(email, false);
         if (taiKhoan is null)
             throw new GiangVienBadRequestException($"Không tìm thấy tài khoản có email là {email}");
 
-        if (!await VerifyOTP(email, otpCode))
+        if (!await VerifyOTP_Mobile(email, otpCode))
         {
             throw new GiangVienBadRequestException("OTP không hợp lệ hoặc đã hết hạn");
         }
