@@ -38,7 +38,7 @@ public class RepositoryNganh : RepositoryBase<Nganh>, IRepositoryNganh
 
     public async Task<Nganh?> GetNganhByIdAsync(Guid id, bool trackChanges)
     {
-         return await FindByCondition(item => item.Id == id, trackChanges).Include(item => item.Khoa).FirstOrDefaultAsync();
+        return await FindByCondition(item => item.Id == id, trackChanges).Include(item => item.Khoa).FirstOrDefaultAsync();
     }
 
     public void UpdateNganh(Nganh nganh)

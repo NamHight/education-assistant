@@ -37,6 +37,7 @@ public static class DependenceExtensions
         services.AddScoped<IServiceMaster, ServiceMaster>();
         services.AddScoped<IServiceFIle, ServiceFile>();
         services.AddScoped<IDiemSoHelper, DiemSoHelper>();
+        services.AddScoped<ILayKyTuHelper, LayKyTuHelper>();
         services.AddScoped<IServiceEmail, ServiceEmail>();
         
         return services;

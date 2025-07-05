@@ -4,6 +4,7 @@ using Education_assistant.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Education_assistant.Migrations
 {
     [DbContext(typeof(RepositoryContext))]
-    partial class RepositoryContextModelSnapshot : ModelSnapshot
+    [Migration("20250705080426_AddMaMonHocForBoMon")]
+    partial class AddMaMonHocForBoMon
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1023,14 +1026,6 @@ namespace Education_assistant.Migrations
                     b.Property<int?>("LockTime")
                         .HasColumnType("int")
                         .HasColumnName("khoa_dang_nhap");
-
-                    b.Property<string>("OtpCode")
-                        .HasColumnType("longtext")
-                        .HasColumnName("otp-code");
-
-                    b.Property<DateTime?>("OtpExpires")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("otp-expires");
 
                     b.Property<string>("Password")
                         .IsRequired()

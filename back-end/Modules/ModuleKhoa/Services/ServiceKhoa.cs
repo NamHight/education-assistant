@@ -101,17 +101,17 @@ public class ServiceKhoa : IServiceKhoa
         {
             if (id != request.Id)
                 throw new KhoaBadRequestException($"Id: {id} và Id: {request.Id} của khoa không giống nhau!");
-            var khoa = await _repositoryMaster.Khoa.GetKhoaByIdAsync(id, false);
+            var khoa = await _repositoryMaster.Khoa.GetKhoaByIdAsync(id, true);
             if (khoa is null) throw new KhoaNotFoundException(id);
-            khoa.TenKhoa = request.TenKhoa;
-            khoa.SoDienThoai = request.SoDienThoai;
-            khoa.Email = request.Email;
-            khoa.ViTriPhong = request.ViTriPhong;
-            khoa.Website = request.Website;
-            khoa.UpdatedAt = DateTime.Now;
+            
             await _repositoryMaster.ExecuteInTransactionAsync(async () =>
             {
-                _repositoryMaster.Khoa.UpdateKhoa(khoa);
+                khoa.TenKhoa = request.TenKhoa;
+                khoa.SoDienThoai = request.SoDienThoai;
+                khoa.Email = request.Email;
+                khoa.ViTriPhong = request.ViTriPhong;
+                khoa.Website = request.Website;
+                khoa.UpdatedAt = DateTime.Now;
                 await Task.CompletedTask;
             });
             _loggerService.LogInfo("Cập nhật khoa thành công.");

@@ -2,6 +2,7 @@ using System;
 using AutoMapper;
 using Education_assistant.Contracts.LoggerServices;
 using Education_assistant.Exceptions.ThrowError.NganhExceptions;
+using Education_assistant.helpers.implements;
 using Education_assistant.Models;
 using Education_assistant.Modules.ModuleNganh.DTOs.Param;
 using Education_assistant.Modules.ModuleNganh.DTOs.Request;
@@ -18,18 +19,21 @@ public class ServiceNganh : IServiceNganh
     private readonly ILoggerService _loggerService;
     private readonly IRepositoryMaster _repositoryMaster;
     private readonly IMapper _mapper;
-    
-    public ServiceNganh(IRepositoryMaster repositoryMaster, ILoggerService loggerService, IMapper mapper)
+    private readonly ILayKyTuHelper _layKyTuHelper;
+
+    public ServiceNganh(IRepositoryMaster repositoryMaster, ILoggerService loggerService, IMapper mapper, ILayKyTuHelper layKyTuHelper)
     {
         _repositoryMaster = repositoryMaster;
         _loggerService = loggerService;
         _mapper = mapper;
+        _layKyTuHelper = layKyTuHelper;
     }
     public async Task<ResponseNganhDto> CreateAsync(RequestAddNganhDto request)
     {
         try
         {
             var newNganh = _mapper.Map<Nganh>(request);
+            newNganh.MaNganh = _layKyTuHelper.LayKyTuDau(newNganh.TenNganh);
             await _repositoryMaster.ExecuteInTransactionAsync(async () =>
             {
                 await _repositoryMaster.Nganh.CreateAsync(newNganh);
@@ -104,19 +108,19 @@ public class ServiceNganh : IServiceNganh
             {
                 throw new NganhBadRequestException($"Id: {id} và Id: {request.Id} của ngành không giống nhau!");
             }
-            var nganh = await _repositoryMaster.Nganh.GetNganhByIdAsync(id, false);
+            var nganh = await _repositoryMaster.Nganh.GetNganhByIdAsync(id, true);
             if (nganh is null)
             {
                 throw new NganhNotFoundException(id);
             }
-            nganh.MaNganh = request.MaNganh;
-            nganh.TenNganh = request.TenNganh;
-            nganh.MoTa = request.MoTa;
-            nganh.KhoaId = request.KhoaId;
-            nganh.UpdatedAt = DateTime.Now;
+            
             await _repositoryMaster.ExecuteInTransactionAsync(async () =>
             {
-                _repositoryMaster.Nganh.UpdateNganh(nganh);
+                nganh.MaNganh = _layKyTuHelper.LayKyTuDau(request.TenNganh);
+                nganh.TenNganh = request.TenNganh;
+                nganh.MoTa = request.MoTa;
+                nganh.KhoaId = request.KhoaId;
+                nganh.UpdatedAt = DateTime.Now;
                 await Task.CompletedTask;
             });
             _loggerService.LogInfo("Cập nhật ngành thành công.");

@@ -2,6 +2,7 @@ using System;
 using AutoMapper;
 using Education_assistant.Contracts.LoggerServices;
 using Education_assistant.Exceptions.ThrowError.MonHocExceptions;
+using Education_assistant.helpers.implements;
 using Education_assistant.Models;
 using Education_assistant.Modules.ModuleMonHoc.DTOs.Param;
 using Education_assistant.Modules.ModuleMonHoc.DTOs.Request;
@@ -18,11 +19,13 @@ public class ServiceMonHoc : IServiceMonHoc
     private readonly ILoggerService _loggerService;
     private readonly IRepositoryMaster _repositoryMaster;
     private readonly IMapper _mapper;
-    public ServiceMonHoc(IRepositoryMaster repositoryMaster, ILoggerService loggerService, IMapper mapper)
+    private readonly ILayKyTuHelper _layKyTuHelper;
+    public ServiceMonHoc(IRepositoryMaster repositoryMaster, ILoggerService loggerService, IMapper mapper, ILayKyTuHelper layKyTuHelper)
     {
         _repositoryMaster = repositoryMaster;
         _loggerService = loggerService;
         _mapper = mapper;
+        _layKyTuHelper = layKyTuHelper;
     }
     public async Task<ResponseMonHocDto> CreateAsync(RequestAddMonHocDto request)
     {
@@ -33,6 +36,7 @@ public class ServiceMonHoc : IServiceMonHoc
                 throw new MonHocBadRequestException("Thông tin bộ môn đầu vào không đủ thông tin!");
             }
             var newMonHoc = _mapper.Map<MonHoc>(request);
+            newMonHoc.MaMonHoc = _layKyTuHelper.LayKyTuDau(request.TenMonHoc);
             await _repositoryMaster.ExecuteInTransactionAsync(async () =>
             {
                 await _repositoryMaster.MonHoc.CreateAsync(newMonHoc);
@@ -59,9 +63,10 @@ public class ServiceMonHoc : IServiceMonHoc
             {
                 throw new MonHocNotFoundException(id);
             }
+            monHoc.DeletedAt = DateTime.Now;
             await _repositoryMaster.ExecuteInTransactionAsync(async () =>
             {
-                _repositoryMaster.MonHoc.DeleteMonHoc(monHoc);
+                _repositoryMaster.MonHoc.UpdateMonHoc(monHoc);
                 await Task.CompletedTask;
             });
             _loggerService.LogInfo("Xóa môn học thành công.");
@@ -106,19 +111,18 @@ public class ServiceMonHoc : IServiceMonHoc
             {
                 throw new MonHocBadRequestException($"Id và Id của môn học không giống nhau!");
             }
-            var monHoc = await _repositoryMaster.MonHoc.GetMonHocByIdAsync(id, false);
+            var monHoc = await _repositoryMaster.MonHoc.GetMonHocByIdAsync(id, true);
             if (monHoc is null)
             {
                 throw new MonHocNotFoundException(id);
             }
-            monHoc.MaMonHoc = request.MaMonHoc;
-            monHoc.TenMonHoc = request.TenMonHoc;
-            monHoc.MoTa = request.MoTa;
-            monHoc.KhoaId = request.KhoaId;
-            monHoc.UpdatedAt = DateTime.Now;
             await _repositoryMaster.ExecuteInTransactionAsync(async () =>
             {
-                _repositoryMaster.MonHoc.UpdateMonHoc(monHoc);
+                monHoc.MaMonHoc = _layKyTuHelper.LayKyTuDau(request.TenMonHoc);
+                monHoc.TenMonHoc = request.TenMonHoc;
+                monHoc.MoTa = request.MoTa;
+                monHoc.KhoaId = request.KhoaId;
+                monHoc.UpdatedAt = DateTime.Now;
                 await Task.CompletedTask;
             });
             _loggerService.LogInfo("Cập nhật môn học thành công.");

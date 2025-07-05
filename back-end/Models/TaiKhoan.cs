@@ -31,6 +31,9 @@ public class TaiKhoan : BaseEntity
     [Column("reset-password")] public string? ResetPassword { get; set; }
     [Column("reset-password-expires")] public DateTime? ResetPasswordExpires { get; set; }
     [Column("trang_thai")][Required] public bool Status { get; set; } = true;
+    [Column("otp-code")] public string? OtpCode { get; set; }
+    [Column("otp-expires")] public DateTime? OtpExpires { get; set; }       
+
     [Column("loai_tai_khoan")]
     [Range(1, 3, ErrorMessage = "Loại tài khoản không hợp lệ")]
     public int? LoaiTaiKhoan { get; set; }

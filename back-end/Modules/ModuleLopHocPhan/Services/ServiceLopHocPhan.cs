@@ -209,15 +209,14 @@ public class ServiceLopHocPhan : IServiceLopHocPhan
         {
             if (id != request.Id)
                 throw new LopHocPhanBadRequestException($"Id: {id} và Lớp học phần id: {request.Id} không giống nhau!");
-            var lopHocPhan = await _repositoryMaster.LopHocPhan.GetLopHocPhanByIdAsync(id, false);
+            var lopHocPhan = await _repositoryMaster.LopHocPhan.GetLopHocPhanByIdAsync(id, true);
             if (lopHocPhan is null) throw new LopHocPhanNotFoundException(id);
 
-            lopHocPhan.SiSo = request.SiSo;
-            lopHocPhan.TrangThai = request.TrangThai;
-            lopHocPhan.UpdatedAt = DateTime.Now;
             await _repositoryMaster.ExecuteInTransactionAsync(async () =>
             {
-                _repositoryMaster.LopHocPhan.UpdateLopHocPhan(lopHocPhan);
+                lopHocPhan.SiSo = request.SiSo;
+                lopHocPhan.TrangThai = request.TrangThai;
+                lopHocPhan.UpdatedAt = DateTime.Now;
                 await Task.CompletedTask;
             });
             _loggerService.LogInfo("Cập nhật lớp học phần thành công.");
