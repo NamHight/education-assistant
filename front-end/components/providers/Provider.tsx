@@ -15,7 +15,7 @@ function makeQueryClient() {
   return new QueryClient({
     defaultOptions: {
       queries: {
-        staleTime: 60 * 1000,
+        staleTime: 1000 * 60 * 5, // 5 minutes
         retry: (failureCount, error: any) => error.response?.status !== 400 && failureCount < 3
       }
     }
@@ -44,7 +44,7 @@ const Provider = ({ children }: ProviderProps) => {
             }
           }}
         >
-          <PopoverLockProvider>{children}</PopoverLockProvider>
+          {children}
         </NotificationsProvider>
       </LocalizationProvider>
       <ReactQueryDevtools />

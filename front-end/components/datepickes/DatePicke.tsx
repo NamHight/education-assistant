@@ -51,7 +51,7 @@ const DatePicke = ({
             (editAble ? (
               <Typography
                 component={'span'}
-                className={'text-blue-500 cursor-pointer hover:underline'}
+                className={'text-blue-500 cursor-pointer hover:underline !text-[12px] ml-1'}
                 onClick={onClickEdit}
               >
                 Chỉnh sửa
@@ -61,7 +61,7 @@ const DatePicke = ({
                 type='submit'
                 onClick={onClickEdit}
                 component={'button'}
-                className={'text-blue-500 cursor-pointer hover:underline'}
+                className={'text-blue-500 cursor-pointer hover:underline  !text-[12px] ml-1'}
               >
                 Cập nhật
               </Typography>

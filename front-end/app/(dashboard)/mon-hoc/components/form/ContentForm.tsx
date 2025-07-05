@@ -68,8 +68,8 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
   const { data: khoas, isLoading: isLoadingKhoa } = useQuery({
     queryKey: ['khoas'],
     queryFn: async () => {
-      const response = await KhoaService.getAllKhoa();
-      return response?.data;
+      const response = await KhoaService.getKhoaNoPage();
+      return response;
     },
     initialData: initialData?.khoas,
     select: (data) => {

@@ -81,7 +81,7 @@ const Content = ({ queryKey, ctdtServer }: IContentProps) => {
   const { data: ctdt, isLoading: isLoadingCtdt } = useQuery({
     queryKey: ['ctdt-list'],
     queryFn: async () => {
-      let params: IParamChuongTrinhDaoTao = {
+      const params: IParamChuongTrinhDaoTao = {
         limit: 99999999999999,
         sortBy: 'createdat',
         sortByOrder: 'desc'

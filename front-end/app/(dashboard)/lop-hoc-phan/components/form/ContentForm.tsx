@@ -98,13 +98,8 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
   const { data: giangViens, isLoading: isLoadingGiangVien } = useQuery({
     queryKey: ['giangViens'],
     queryFn: async () => {
-      const response = await GiangVienService.danhSachGiangVien({
-        active: true,
-        limit: 99999999999,
-        sortBy: 'createdAt',
-        sortByOrder: 'desc'
-      });
-      return response?.data;
+      const response = await GiangVienService.getGiangVienNoPage();
+      return response;
     },
     initialData: initialData?.giangViens,
     select: (data) => {

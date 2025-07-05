@@ -19,9 +19,9 @@ interface IPageProps {
 
 const page = async ({ params }: IPageProps) => {
   const { id } = await params;
-  const chiTietChuongTrinhDaoTao = await ChitietChuongTrinhDaoTaoService.getChiTietChuongTrinhDaoTaoByIdServer(
-    id
-  ).catch(() => undefined);
+  const chiTietChuongTrinhDaoTao = ChitietChuongTrinhDaoTaoService.getChiTietChuongTrinhDaoTaoByIdServer(id).catch(
+    () => undefined
+  );
   const boMon = authApiServer
     .get(`${API.BO_MON.GET_ALL}`, {
       params: {
@@ -47,6 +47,7 @@ const page = async ({ params }: IPageProps) => {
     monHoc,
     chiTietChuongTrinhDaoTao
   ]);
+  console.log('Chi tiết chương trình đào tạo:', chiTietChuongTrinhDaoTaoData);
   return (
     <div>
       <Content

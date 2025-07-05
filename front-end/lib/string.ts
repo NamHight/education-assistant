@@ -1,3 +1,3 @@
 export const handleTextSearch = (data: string[]) => {
-    return data?.join(' ');
-  }
+  return data?.join(' ');
+};

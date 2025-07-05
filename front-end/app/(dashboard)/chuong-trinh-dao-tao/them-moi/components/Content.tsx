@@ -40,8 +40,8 @@ const Content: FC<ContentProps> = ({ initialData, anotherData }) => {
       });
       router.push('/chuong-trinh-dao-tao');
     },
-    onError: (error) => {
-      notification.show('Thêm thất bại', {
+    onError: (error:any) => {
+      notification.show(error?.Message || 'Thêm thất bại', {
         severity: 'error',
         autoHideDuration: 5000
       });

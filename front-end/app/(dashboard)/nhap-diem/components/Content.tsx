@@ -86,7 +86,7 @@ const Content = ({ queryKey }: IContentProps) => {
   const { data: lhp, isLoading: isLoadingLHP } = useQuery({
     queryKey: ['lhp-list', filter?.khoa, filter?.hocKy, filter?.loaiChuongTrinh, user?.id],
     queryFn: async () => {
-      let params: IParamLopHocPhan2 = {
+      const params: IParamLopHocPhan2 = {
         khoa: filter?.khoa,
         hocky: filter?.hocKy,
         loaiChuongTrinhDaoTao: filter?.loaiChuongTrinh,

@@ -1,4 +1,4 @@
-import moment from "moment";
+import moment from 'moment';
 
 export interface IOption {
   id: number;
@@ -75,7 +75,7 @@ export const TrangThaiGiangVien: IOption[] = [
   { id: TrangThaiEnum.NGHI_VIEC, name: 'Nghỉ việc' },
   { id: TrangThaiEnum.NGHI_HUU, name: 'Nghỉ hưu' },
   { id: TrangThaiEnum.NGHI_PHEP, name: 'Nghỉ phép' }
-]
+];
 
 export enum TrangThaiLopHocPhanEnum {
   DANG_HOAT_DONG = 1,
@@ -92,8 +92,8 @@ export const HocKyLopHocPhan: IOption[] = [
   { id: 3, name: 'Học kỳ 3' },
   { id: 4, name: 'Học kỳ 4' },
   { id: 5, name: 'Học kỳ 5' },
-  { id: 6, name: 'Học kỳ 6' },
-]
+  { id: 6, name: 'Học kỳ 6' }
+];
 
 export enum TrangThaiSinhVienEnum {
   DANG_HOC = 1,
@@ -146,7 +146,7 @@ export const LoaiChuongTrinhDaoTao: IOption[] = [
 ];
 const currentYear = moment().year();
 const years = Array.from({ length: 15 }, (_, i) => currentYear - 14 + i);
-export const yearOptions: IOption[] = years.map(year => ({
+export const yearOptions: IOption[] = years.map((year) => ({
   id: year,
   name: year.toString()
 }));
@@ -183,7 +183,6 @@ export const LoaiMonHoc: IOption[] = [
   { id: LoaiMonHocEnum.CHUC_CHUNG_CHI, name: 'Chứng chỉ' }
 ];
 
-
 export enum LoaiLopHocEnum {
   LOP_HOC_PHAN = 1,
   LOP_HOC_KY_PHU = 2
@@ -192,7 +191,6 @@ export const LoaiLopHocPhan: IOption[] = [
   { id: LoaiLopHocEnum.LOP_HOC_PHAN, name: 'Lớp học phần' },
   { id: LoaiLopHocEnum.LOP_HOC_KY_PHU, name: 'Lớp học kỳ phụ' }
 ];
-
 
 export enum KetQuaHocBaEnum {
   DAT = 1,

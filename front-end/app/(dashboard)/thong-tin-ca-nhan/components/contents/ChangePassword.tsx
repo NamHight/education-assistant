@@ -71,7 +71,7 @@ const ChangePassword = () => {
       });
     },
     onError: (error: any) => {
-      notification.show(error.Message || 'Thay đổi mật khẩu thất bại', {
+      notification.show('Mật khẩu cũ không chính xác', {
         severity: 'error',
         autoHideDuration: 5000
       });

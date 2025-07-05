@@ -104,11 +104,8 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
   const { data: lopHocs, isLoading: isLoadingLopHoc } = useQuery({
     queryKey: ['lophocs'],
     queryFn: async () => {
-      const response = await LopHocService.getAllLopHoc({
-        sortBy: 'createdAt',
-        sortByOrder: 'desc'
-      });
-      return response?.data;
+      const response = await LopHocService.getLopHocNoPage();
+      return response;
     },
     initialData: initialData?.lopHocs,
     select: (data) => {

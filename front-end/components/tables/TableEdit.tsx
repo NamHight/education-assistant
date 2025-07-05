@@ -173,7 +173,37 @@ const CustomToolbar = ({
     </>
   );
 };
-
+const noRowsOverlay = () => (
+  <Box
+    sx={{
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      height: 200,
+      width: '100%',
+      color: '#888',
+      background: '#f9fafb',
+      borderRadius: 2,
+      border: '1px dashed #e0e0e0',
+      mt: 2
+    }}
+  >
+    <img
+      src='https://cdn-icons-png.flaticon.com/512/4076/4076549.png'
+      alt='No data'
+      width={64}
+      height={64}
+      style={{ marginBottom: 16, opacity: 0.7 }}
+    />
+    <Typography variant='h6' sx={{ fontWeight: 500 }}>
+      Không có dữ liệu
+    </Typography>
+    <Typography variant='body2' sx={{ color: '#aaa', mt: 1 }}>
+      Không tìm thấy bản ghi nào phù hợp.
+    </Typography>
+  </Box>
+);
 interface ITableEditProps {
   row: any[];
   columns: GridColDef[];
@@ -401,7 +431,8 @@ const TableEdit = forwardRef(
           editMode='cell'
           onFilterModelChange={setFilterModel}
           slots={{
-            toolbar: () => CustomToolbar({ contentPopover, isOpen, onClose, handleClick })
+            toolbar: () => CustomToolbar({ contentPopover, isOpen, onClose, handleClick }),
+            noRowsOverlay: noRowsOverlay
           }}
           onSortModelChange={(model) => {
             if (model.length > 0) {

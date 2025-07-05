@@ -11,12 +11,22 @@ import {
   IParamLopHocPhan2,
   IParamTuan
 } from '@/types/params';
-import { Box, MenuItem, Select, Typography } from '@mui/material';
-import { GridColDef, GridFilterModel, useGridApiRef } from '@mui/x-data-grid';
+import {
+  Box,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  MenuItem,
+  Select,
+  Typography
+} from '@mui/material';
+import { GridActionsCellItem, GridColDef, GridFilterModel, useGridApiRef } from '@mui/x-data-grid';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import React, { Fragment, memo, ReactNode, use, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import { GiangVienService } from '@/services/GiangVienService';
 import SelectEditCell from '../selects/SelectEditCell';
 import dynamic from 'next/dynamic';
@@ -40,23 +50,29 @@ import { LichBieuService } from '@/services/LichBieuService';
 import { BoMonService } from '@/services/BoMonService';
 import { TuanService } from '@/services/TuanService';
 import ModalAdd from './ModalAdd';
+import { LopHocService } from '@/services/LopHocService';
+import { Delete, Edit, Trash2 } from 'lucide-react';
+import { motion } from 'motion/react';
+import ModalEdit from './ModalEdit';
 const TableEdit = dynamic(() => import('./TableEdit'), {
   ssr: false
 });
 
 interface IContentProps {
   queryKey: string;
-  giangVienServer?: any[];
+  lopHocServer?: any[];
   boMonServer?: any[];
 }
 
-const Content = ({ queryKey, giangVienServer, boMonServer }: IContentProps) => {
+const Content = ({ queryKey, lopHocServer, boMonServer }: IContentProps) => {
   const notification = useNotifications();
   const queryClient = useQueryClient();
   const user = useUser();
   const apiRef = useGridApiRef();
+  const [anchorElConfirmDelete, setAnchorElConfirmDelete] = useState<boolean>(false);
   const [giangVienOptions, setGiangVienOptions] = useState<{ [khoaId: string]: any[] }>({});
-
+  const refModal = useRef<{ reset: () => void }>(null);
+  const refModalEdit = useRef<{ reset: (data: any) => void }>(null);
   const [sortModel, setSortModel] = useState<Record<string, string | null | undefined>>({
     field: '',
     sort: ''
@@ -66,13 +82,20 @@ const Content = ({ queryKey, giangVienServer, boMonServer }: IContentProps) => {
     tuanDen: string;
   } | null>(null);
   const [filter, setfilter] = useState<{
-    khoa: number | string;
-    tuan: string;
-    boMon: {
+    namHoc: {
+      id: number | string;
+      name: string;
+    };
+    tuan: {
       id: string;
       name: string;
     };
     giangVien: {
+      id: string;
+      name: string;
+    };
+    hocKy: number | string;
+    lopHoc: {
       id: string;
       name: string;
     };
@@ -83,25 +106,40 @@ const Content = ({ queryKey, giangVienServer, boMonServer }: IContentProps) => {
   });
   const [isOpenPopover, setisOpenPopover] = useState<boolean>(false);
   const [open, setOpen] = React.useState(false);
-
+  const [openEdit, setOpenEdit] = React.useState(false);
+  const [itemId, setItemId] = useState<any>(null);
   const handleClickOpen = () => {
     setOpen(true);
   };
-
+  const handleClickOpenEdit = (id: string | number | null) => {
+    setItemId(id);
+    setOpenEdit(true);
+  };
+  const handleCloseEdit = () => {
+    setOpenEdit(false);
+  };
+  const handleCloseDelete = () => {
+    setAnchorElConfirmDelete(false);
+  };
+  const handleOpenDelete = () => {
+    setAnchorElConfirmDelete(true);
+  };
   const handleClose = () => {
-    setOpen(false);
+    refModal.current?.reset();
+    console.log('close modal', refModal.current?.reset());
   };
   const { data, isLoading } = useQuery({
     queryKey: [queryKey, filterModel, filter, sortModel],
     queryFn: async () => {
-      if (!filter?.boMon?.id || !filter?.tuan || !filter?.giangVien?.id) {
+      if (!filter?.tuan?.id || !filter?.lopHoc?.id || !filter?.hocKy || !filter?.namHoc?.id) {
         return [];
       }
       const searchKeyWord = handleTextSearch(filterModel?.quickFilterValues as any[]);
       let params: IParamLichBieu = {
-        boMonId: filter.boMon.id,
-        giangVienId: filter.giangVien.id,
-        tuanId: filter.tuan
+        lopHocId: filter.lopHoc.id,
+        tuanId: filter.tuan?.id,
+        hocKy: filter.hocKy,
+        namHoc: filter.namHoc?.id
       };
       if (sortModel?.field && sortModel?.sort) {
         params = {
@@ -119,50 +157,32 @@ const Content = ({ queryKey, giangVienServer, boMonServer }: IContentProps) => {
       const result = await LichBieuService.getLichBieuByKhoa(params);
       return result;
     },
-    enabled: !!filter?.boMon?.id && !!filter?.tuan && !!filter?.giangVien?.id,
+    enabled: !!filter?.tuan && !!filter?.lopHoc?.id && !!filter?.hocKy && !!filter?.namHoc,
     placeholderData: (prev) => prev,
     refetchOnWindowFocus: false,
     gcTime: 0
   });
-  const { data: giangViens, isLoading: isLoadingGV } = useQuery({
-    queryKey: ['giang-vien-list', filter?.boMon?.id],
+  const { data: lopHocs, isLoading: isLoadingLH } = useQuery({
+    queryKey: ['lop-hoc-list'],
     queryFn: async () => {
-      const result = await GiangVienService.getGiangVienByBoMonId(filter?.boMon?.id);
+      const result = await LopHocService.getLopHocNoPage();
       return result;
     },
     select: (data) => {
       return data?.map((item: any) => ({
         id: item.id,
-        name: item.hoTen,
-        boMon: { id: item.boMon?.id, name: item.boMon?.tenBoMon }
+        name: item.maLopHoc
       }));
     },
+    initialData: lopHocServer,
     placeholderData: (prev) => prev,
-    refetchOnWindowFocus: false,
-    enabled: !!user && !!filter?.boMon?.id
-  });
-  const { data: boMon, isLoading: isLoadingBM } = useQuery({
-    queryKey: ['bo-mon-list'],
-    queryFn: async () => {
-      const result = await BoMonService.getAllBoMonNoPage();
-      return result;
-    },
-    initialData: boMonServer,
-    select: (data) => {
-      return data?.map((item: any) => ({
-        id: item.id,
-        name: item.tenBoMon
-      }));
-    },
-    placeholderData: (prev) => prev,
-    refetchOnWindowFocus: false,
-    enabled: !!user
+    refetchOnWindowFocus: false
   });
   const { data: tuans, isLoading: isLoadingTuan } = useQuery({
-    queryKey: ['tuan-list', filter?.khoa],
+    queryKey: ['tuan-list', filter?.namHoc],
     queryFn: async () => {
       const params: IParamTuan = {
-        namHoc: filter?.khoa
+        namHoc: filter?.namHoc?.id
       };
       const result = await TuanService.getAllTuanByNamHoc(params);
       return result;
@@ -175,14 +195,13 @@ const Content = ({ queryKey, giangVienServer, boMonServer }: IContentProps) => {
     },
     placeholderData: (prev) => prev,
     refetchOnWindowFocus: false,
-    enabled: !!filter?.khoa
+    enabled: !!filter?.namHoc
   });
   const { data: tuanDens, isLoading: isLoadingTuanDen } = useQuery({
     queryKey: ['tuan-den-list', filterWeek?.tuanVao],
     queryFn: async () => {
       const params: IParamTuan = {
-        namHoc: filter?.khoa,
-        GiangVienId: filter?.giangVien?.id,
+        namHoc: filter?.namHoc?.id,
         TuanBatDauId: filterWeek?.tuanVao
       };
       const result = await TuanService.getAllTuanDenByTuanVao(params);
@@ -196,7 +215,7 @@ const Content = ({ queryKey, giangVienServer, boMonServer }: IContentProps) => {
     },
     placeholderData: (prev) => prev,
     refetchOnWindowFocus: false,
-    enabled: !!user && !!filterWeek?.tuanVao && !!filter?.khoa && !!filter?.giangVien?.id
+    enabled: !!user && !!filterWeek?.tuanVao && !!filter?.namHoc && !!filter?.giangVien?.id
   });
   const mutationCopy = useMutation({
     mutationFn: async (data: any) => {
@@ -223,46 +242,28 @@ const Content = ({ queryKey, giangVienServer, boMonServer }: IContentProps) => {
   useEffect(() => {
     filterRef.current = filter;
   }, [filter]);
-  const mutateSaving = useMutation({
-    mutationFn: async (data: any) => {
-      const result = await ChiTietLopHocPhanService.nhapDiemLopHocPhan(data);
+  const mutationDelete = useMutation({
+    mutationFn: async (id: string | number | null) => {
+      const result = await LichBieuService.deleteLichBieu(id);
       return result;
     },
-    onSuccess: async (data) => {
-      notification.show('Sửa điểm thành công', {
+    onSuccess: () => {
+      notification.show('Xoá lịch thành công', {
         severity: 'success',
-        autoHideDuration: 5000
+        autoHideDuration: 4000
       });
-      await queryClient.invalidateQueries({
-        queryKey: [queryKey],
-        exact: false
-      });
+      queryClient.invalidateQueries({ queryKey: [queryKey], exact: false });
     },
-    onError: (error) => {
-      notification.show('Sửa điểm thất bại', {
+    onError: (error: any) => {
+      notification.show(error?.Message || 'Xoá lịch thất bại', {
         severity: 'error',
-        autoHideDuration: 5000
+        autoHideDuration: 4000
       });
     }
   });
-  const mutationNopDiem = useMutation({
-    mutationFn: async (data: any) => {
-      const result = await HocBaService.nopDiemHocBa(data);
-      return result;
-    },
-    onSuccess: async (data) => {
-      notification.show('Nộp điểm thành công ', {
-        severity: 'success',
-        autoHideDuration: 5000
-      });
-    },
-    onError: (error) => {
-      notification.show('Nộp điểm thất bại', {
-        severity: 'error',
-        autoHideDuration: 5000
-      });
-    }
-  });
+  const handleDelete = (id: string | number | null) => {
+    mutationDelete.mutate(id);
+  };
   const columns = useMemo((): GridColDef[] => {
     const formatDateBirth = (date: string) => {
       return moment(date).format('DD/MM/YYYY');
@@ -511,27 +512,47 @@ const Content = ({ queryKey, giangVienServer, boMonServer }: IContentProps) => {
       {
         field: 'actions',
         headerName: 'Hành động',
-        type: 'string',
-        headerAlign: 'left',
-        minWidth: 80,
+        type: 'actions',
+        headerAlign: 'center',
+        minWidth: 100,
         flex: 1,
         sortable: false,
         display: 'flex',
-        align: 'left',
+        align: 'center',
         editable: false,
+        filterable: false,
+        hideSortIcons: true,
+        disableReorder: true,
+        cellClassName: 'actions-cell',
         disableColumnMenu: true,
-        renderCell: (params) => {
-          return null;
+        getActions: ({ id, row }) => {
+          return [
+            <GridActionsCellItem
+              key={id}
+              icon={<Edit className='text-blue-500 h-4 w-4' />}
+              label='Edit'
+              onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
+                event.stopPropagation();
+                handleClickOpenEdit(id as string | number);
+              }}
+              color='inherit'
+            />,
+            <GridActionsCellItem
+              key={`${id}-delete`}
+              icon={<Trash2 className='text-red-500 h-4 w-4' />}
+              label='Delete'
+              onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
+                event.stopPropagation();
+                handleOpenDelete();
+                setItemId(id);
+              }}
+              color='inherit'
+            />
+          ];
         }
       }
     ];
   }, [data?.data, giangVienOptions]);
-  const handleOpenPopover = () => {
-    setisOpenPopover(true);
-  };
-  const handleClosePopover = () => {
-    setisOpenPopover(false);
-  };
   // const handleShowFilter = useMemo((): ReactNode => {
   //   return (
   //     <Fragment>
@@ -560,67 +581,80 @@ const Content = ({ queryKey, giangVienServer, boMonServer }: IContentProps) => {
   //     </Fragment>
   //   );
   // }, [loaiLopHocPhan]);
-  const handleSave = (item: any) => {
-    if (item && item.length === 0) {
-      notification.show('Không có dữ liệu để lưu', {
-        severity: 'warning',
-        autoHideDuration: 5000
-      });
-      return;
-    }
-    const currentFilter = filterRef.current;
-    const convertData = item?.map((item: any) => ({
-      id: item.id,
-      diemChuyenCan: item.diemChuyenCan,
-      diemTrungBinh: item.diemTrungBinh,
-      diemThi1: item.diemThi1,
-      diemThi2: item.diemThi2,
-      diemTongKet1: item.diemTongKet1,
-      diemTongKet2: item.diemTongKet2,
-      ghiChu: item?.ghiChu || ''
-    }));
-    return;
-    mutateSaving.mutate({});
-  };
   const handleCopy = () => {
-    if (!user || !filterWeek?.tuanVao || !filterWeek?.tuanDen || !filter?.giangVien?.id || !filter?.khoa) {
+    if (!user || !filterWeek?.tuanVao || !filterWeek?.tuanDen || !filter?.giangVien?.id || !filter?.namHoc) {
       notification.show('Vui lòng chọn đầy đủ thông tin để sao chép lịch', {
         severity: 'warning',
         autoHideDuration: 6000
       });
       return;
     }
-    const allRowValues = Array.from(apiRef.current?.getRowModels().values() || []);
-    const lichBieus = allRowValues.map((item) => ({
-      id: item?.id,
-      tietBatDau: item?.tietBatDau || 0,
-      tietKetThuc: item?.tietKetThuc || 0,
-      thu: item?.thu || 0,
-      tuanId: item?.tuanId || null,
-      lopHocPhanId: item?.lopHocPhanId || null,
-      phongHocId: item?.phongHocId || null
-    }));
     const finalResult = {
-      lichBieus: lichBieus,
-      namHoc: filter?.khoa,
+      namHoc: filter?.namHoc?.id,
       vaoTuanId: filterWeek?.tuanVao,
       denTuanId: filterWeek?.tuanDen,
-      giangVienId: filter?.giangVien?.id
+      hocKy: filter?.hocKy,
+      lopHocId: filter?.lopHoc?.id
     };
-    console.log('finalResult', finalResult);
     mutationCopy.mutate(finalResult);
   };
   return (
     <Box className='flex flex-col gap-4'>
+      <Dialog
+        open={anchorElConfirmDelete}
+        onClose={handleCloseDelete}
+        aria-labelledby='alert-dialog-title'
+        aria-describedby='alert-dialog-description'
+      >
+        <DialogTitle
+          component={'div'}
+          id='alert-dialog-title'
+          className={'!px-6 !pt-4 !pb-0 flex items-center justify-start'}
+        >
+          <Typography variant={'h5'} className={'text-black flex items-center justify-start gap-3'}>
+            <DeleteForeverIcon className={'text-red-500 !w-8 !h-8 border border-solid border-red-600 rounded-md'} />
+            {'Bạn có chắc chắn muốn xóa?'}
+          </Typography>
+        </DialogTitle>
+        <DialogContent className={'!pt-4 !pb-6'}>
+          <DialogContentText id='alert-dialog-description' className={'!text-[16px] text-gray-700'}>
+            Hành động này không thể hoàn tác. Mục sẽ bị xóa vĩnh viễn khỏi hệ thống.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions className={'!px-6 !pb-4 !pt-0 flex items-center justify-end gap-3'}>
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.98 }}
+            className={
+              'bg-gray-600 px-4 py-2 rounded-md border-0 cursor-pointer text-[16px] hover:bg-gray-500 text-white'
+            }
+            onClick={() => handleCloseDelete()}
+          >
+            Hủy
+          </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.98 }}
+            className={
+              'bg-blue-700 px-4 py-2 rounded-md border-0 cursor-pointer text-[16px] hover:bg-blue-600 text-white'
+            }
+            onClick={() => {
+              handleDelete(itemId);
+              handleCloseDelete();
+              handleClose();
+            }}
+            autoFocus
+          >
+            Đồng ý
+          </motion.button>
+        </DialogActions>
+      </Dialog>
       <TableEdit
-        boMon={boMon}
-        isLoadingBM={isLoadingBM}
         queryKey={queryKey}
         apiRef={apiRef}
-        giangViens={giangViens}
-        isLoadingGV={isLoadingGV}
+        lophocs={lopHocs}
+        isLoadingLH={isLoadingLH}
         setFilterModel={setFilterModel}
-        handleSave={handleSave}
         row={data}
         columns={columns}
         isLoading={isLoading}
@@ -640,7 +674,15 @@ const Content = ({ queryKey, giangVienServer, boMonServer }: IContentProps) => {
         // handleClick={handleOpenPopover}
         // onClose={handleClosePopover}
       />
-      <ModalAdd open={open} handleClose={handleClose} queryKey={queryKey} />
+      <ModalAdd open={open} handleClose={handleClose} queryKey={queryKey} filter={filter} ref={refModal} />
+      <ModalEdit
+        open={openEdit}
+        handleClose={handleCloseEdit}
+        filter={filter}
+        id={itemId}
+        queryKey={queryKey}
+        ref={refModalEdit}
+      />
     </Box>
   );
 };
