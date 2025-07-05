@@ -151,21 +151,18 @@ public class ServiceEmail : IServiceEmail
             throw;
         }
     }
-    // 2. Tạo phương thức sinh OTP
     private string GenerateOTP()
     {
         var random = new Random();
         return random.Next(100000, 999999).ToString(); // OTP 6 chữ số
     }
 
-    // 3. Phương thức gửi OTP qua email
     public async Task SendOTPForgotPassword(string email)
     {
         var taiKhoan = await _repositoryMaster.TaiKhoan.GetTaiKhoanByEmailAsync(email, false);
         if (taiKhoan is null)
             throw new GiangVienBadRequestException($"Không tìm thấy tài khoản có email là {email}");
 
-        // Tạo OTP và set thời gian hết hạn
         taiKhoan.OtpCode = GenerateOTP();
         taiKhoan.OtpExpires = DateTime.Now.AddMinutes(5); // OTP hết hạn sau 5 phút
 
@@ -209,7 +206,6 @@ public class ServiceEmail : IServiceEmail
         }
     }
 
-    // 4. Phương thức xác thực OTP
     public async Task<bool> VerifyOTP(string email, string otpCode)
     {
         var taiKhoan = await _repositoryMaster.TaiKhoan.GetTaiKhoanByEmailAsync(email, false);
@@ -228,22 +224,19 @@ public class ServiceEmail : IServiceEmail
         return true;
     }
 
-    // 5. Phương thức reset password bằng OTP
     public async Task ResetPasswordWithOTP(string email, string otpCode, string newPassword)
     {
         var taiKhoan = await _repositoryMaster.TaiKhoan.GetTaiKhoanByEmailAsync(email, false);
         if (taiKhoan is null)
             throw new GiangVienBadRequestException($"Không tìm thấy tài khoản có email là {email}");
 
-        // Xác thực OTP
         if (!await VerifyOTP(email, otpCode))
         {
             throw new GiangVienBadRequestException("OTP không hợp lệ hoặc đã hết hạn");
         }
 
-        // Cập nhật password mới
-        taiKhoan.Password = _passwordHash.Hash(newPassword); // Implement hashing method
-        taiKhoan.OtpCode = null; // Xóa OTP sau khi sử dụng
+        taiKhoan.Password = _passwordHash.Hash(newPassword);
+        taiKhoan.OtpCode = null; 
         taiKhoan.OtpExpires = null;
 
         await _repositoryMaster.ExecuteInTransactionAsync(async () =>
