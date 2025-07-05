@@ -1,33 +1,31 @@
-"use server"
+'use server';
 import axios from 'axios';
 import { cookies } from 'next/headers';
 import cookieStorage from './cookie';
 import { API, REFRESH_TOKEN, TOKEN_ACCESS } from '@/types/general';
-import axiosAuthRefresh from 'axios-auth-refresh'
+import axiosAuthRefresh from 'axios-auth-refresh';
 import { redirect } from 'next/navigation';
 const authApiServer = axios.create({
-    baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api',
-    withCredentials: true 
-})
+  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api',
+  withCredentials: true
+});
 const getAccessToken = async () => {
-    const cookie = await cookies();
-    return await cookie.get(TOKEN_ACCESS)?.value || null;
-}
+  const cookie = await cookies();
+  return (await cookie.get(TOKEN_ACCESS)?.value) || null;
+};
 
 authApiServer.interceptors.request.use(async (config) => {
-    const token = await getAccessToken();
-    if(token) {
-        config.headers['Authorization'] = `Bearer ${token}`;
-    }
-    return config;
-})
+  const token = await getAccessToken();
+  if (token) {
+    config.headers['Authorization'] = `Bearer ${token}`;
+  }
+  return config;
+});
 authApiServer.interceptors.response.use(
-    (response) => response,
-    async (error) => {
-        return Promise.reject(error);
-    }
+  (response) => response,
+  async (error) => {
+    return Promise.reject(error);
+  }
 );
-
-
 
 export default authApiServer;

@@ -6,7 +6,7 @@ import { useAuthStore } from '@/stores/authStore';
 import { useAppStore } from '@/stores/store';
 import { API } from '@/types/general';
 import { usePrefetchQuery, useQuery, useQueryClient } from '@tanstack/react-query';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 interface StoreHydraterProps {
   auth: {
@@ -18,6 +18,10 @@ interface StoreHydraterProps {
 }
 
 const StoreHydrater = ({ auth, setting }: StoreHydraterProps) => {
+    const [isClient, setIsClient] = useState(false);
+     useEffect(() => {
+    setIsClient(true);
+  }, []);
   const hasUser = !!auth?.user;
   const { data: user } = useQuery({
     queryKey: ['user'],
@@ -28,9 +32,11 @@ const StoreHydrater = ({ auth, setting }: StoreHydraterProps) => {
     ...(hasUser ? { initialData: auth.user } : {}),
     enabled: !hasUser,
     gcTime: Infinity,
-    staleTime: Infinity
+    staleTime: Infinity,
+    retry: false,
   });
   useEffect(() => {
+    if (!isClient) return;
     if (auth?.user) {
       useAuthStore.setState({ user: auth.user });
     } else if (user) {

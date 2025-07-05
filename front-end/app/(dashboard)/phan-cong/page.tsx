@@ -6,6 +6,7 @@ import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
 import { GiangVienService } from '@/services/GiangVienService';
 import { Box } from '@mui/material';
 import { ChuongTrinhDaoTaoService } from '@/services/ChuongTrinhDaoTaoService';
+import { PopoverLockProvider } from '@/hooks/context/PopoverLock';
 
 const page = async () => {
   const queryKey = 'phan-cong-list';
@@ -20,9 +21,11 @@ const page = async () => {
     ctdt = { data: undefined };
   }
   return (
+       <PopoverLockProvider>
     <Box>
       <Content queryKey={queryKey} ctdtServer={ctdt?.data} />
     </Box>
+    </PopoverLockProvider>
   );
 };
 

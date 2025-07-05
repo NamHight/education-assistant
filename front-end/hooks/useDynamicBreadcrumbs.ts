@@ -1,14 +1,11 @@
-
-'use client'
+'use client';
 import { useEffect, useState } from 'react';
-import { useActivePage } from "@toolpad/core/useActivePage";
-import { Breadcrumb } from "@toolpad/core/PageContainer";
-import { useParams, usePathname } from "next/navigation";
+import { useActivePage } from '@toolpad/core/useActivePage';
+import { Breadcrumb } from '@toolpad/core/PageContainer';
+import { useParams, usePathname } from 'next/navigation';
 import { breadcrumbTranslations } from '@/types/general';
 
-const initBreadcrumbs: { title: string; path: string }[] = [
-  { title: 'Trang chủ', path: '/' },
-]
+const initBreadcrumbs: { title: string; path: string }[] = [{ title: 'Trang chủ', path: '/' }];
 const hrefNotInclude: {
   [key: string]: {
     title: string;
@@ -17,12 +14,9 @@ const hrefNotInclude: {
 } = {
   '/thong-tin-ca-nhan': {
     title: 'Thông tin cá nhân',
-    breadcrumbs: [
-      ...initBreadcrumbs,
-      { title: 'Thông tin cá nhân', path: '/thong-tin-ca-nhan' }
-    ]
+    breadcrumbs: [...initBreadcrumbs, { title: 'Thông tin cá nhân', path: '/thong-tin-ca-nhan' }]
   }
-}
+};
 
 export function useDynamicBreadcrumbs() {
   const [breadcrumbData, setBreadcrumbData] = useState<{
@@ -48,18 +42,17 @@ export function useDynamicBreadcrumbs() {
       ...activePage.breadcrumbs,
       ...relativePath
         .split('/')
-        .filter(segment => segment)
+        .filter((segment) => segment)
         .map((segment, index, segments) => ({
           title: breadcrumbTranslations[segment] || capitalizeFirstLetter(segment.replace(/-/g, ' ')),
           path: `${basePath}/${segments.slice(0, index + 1).join('/')}`
         }))
-    ].filter((item, index, arr) =>
-      index === 0 || item.path !== arr[index - 1].path
-    );
+    ].filter((item, index, arr) => index === 0 || item.path !== arr[index - 1].path);
     const lastSegment = relativePath.split('/').pop() || '';
-    const title = lastSegment === params.id
-      ? `Chỉnh sửa #${params.id}`
-      : breadcrumbTranslations[lastSegment] || capitalizeFirstLetter(lastSegment.replace(/-/g, ' '))
+    const title =
+      lastSegment === params.id
+        ? `Chỉnh sửa #${params.id}`
+        : breadcrumbTranslations[lastSegment] || capitalizeFirstLetter(lastSegment.replace(/-/g, ' '));
 
     setBreadcrumbData({
       title: title || activePage.title,
@@ -71,5 +64,5 @@ export function useDynamicBreadcrumbs() {
 }
 
 function capitalizeFirstLetter(str: string) {
-  return str ? str.charAt(0).toUpperCase() + str.slice(1) : "";
+  return str ? str.charAt(0).toUpperCase() + str.slice(1) : '';
 }

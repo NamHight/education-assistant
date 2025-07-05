@@ -1,3 +1,4 @@
+
 using System;
 
 namespace Education_assistant.Exceptions.ThrowError.LichBieuExceptions;

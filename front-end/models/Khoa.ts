@@ -1,21 +1,20 @@
-import { BaseEntity } from "./BaseEntity";
-import { GiangVien } from "./GiangVien";
-import { MonHoc } from "./MonHoc";
-import { Nganh } from "./Nganh";
+import { BaseEntity } from './BaseEntity';
+import { GiangVien } from './GiangVien';
+import { MonHoc } from './MonHoc';
+import { Nganh } from './Nganh';
 
-export interface Khoa extends BaseEntity
-{
-    id: string;
-    tenKhoa: string;
+export interface Khoa extends BaseEntity {
+  id: string;
+  tenKhoa: string;
 
-    soDienThoai: string;
+  soDienThoai: string;
 
-    email: string;
+  email: string;
 
-    viTriPhong: string;
+  viTriPhong: string;
 
-    website: string;
-    danhSachMonHoc?: MonHoc[] | null;
-    danhSachGiangVien?: GiangVien[] | null;
-    danhSachNganh?: Nganh[] | null;
+  website: string;
+  danhSachMonHoc?: MonHoc[] | null;
+  danhSachGiangVien?: GiangVien[] | null;
+  danhSachNganh?: Nganh[] | null;
 }

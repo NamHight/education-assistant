@@ -7,16 +7,12 @@ import { API } from '@/types/general';
 import { LopHocService } from '@/services/LopHocService';
 
 const page = async () => {
-  const lopHoc = await LopHocService.getAllLopHocServer({
-    limit: 99999999999,
-    sortBy: 'createdAt',
-    sortByOrder: 'desc'
-  }).catch(() => ({ data: [] }));
+  const lopHoc = await LopHocService.getLopHocNoPageServer().catch(() => ( [] ));
   return (
     <Box className='flex flex-col border border-gray-200 rounded-lg p-4 shadow-sm'>
       <Content
         anotherData={{
-          lopHocs: lopHoc?.data?.length > 0 ? lopHoc?.data : undefined
+          lopHocs: lopHoc?.length > 0 ? lopHoc : undefined
         }}
       />
     </Box>

@@ -1,6 +1,6 @@
-import { BaseEntity } from "./BaseEntity"
+import { BaseEntity } from './BaseEntity';
 
 export interface Truong extends BaseEntity {
-    key: string;
-    value: string;
+  key: string;
+  value: string;
 }

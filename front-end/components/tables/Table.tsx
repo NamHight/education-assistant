@@ -166,38 +166,35 @@ const StyledGridOverlay = styled('div')(({ theme }) => ({
   }
 }));
 
-function CustomNoRowsOverlay() {
-  return (
-    <StyledGridOverlay>
-      <svg
-        xmlns='http://www.w3.org/2000/svg'
-        fill='none'
-        width={96}
-        viewBox='0 0 452 257'
-        aria-hidden
-        focusable='false'
-      >
-        <path
-          className='no-rows-primary'
-          d='M348 69c-46.392 0-84 37.608-84 84s37.608 84 84 84 84-37.608 84-84-37.608-84-84-84Zm-104 84c0-57.438 46.562-104 104-104s104 46.562 104 104-46.562 104-104 104-104-46.562-104-104Z'
-        />
-        <path
-          className='no-rows-primary'
-          d='M308.929 113.929c3.905-3.905 10.237-3.905 14.142 0l63.64 63.64c3.905 3.905 3.905 10.236 0 14.142-3.906 3.905-10.237 3.905-14.142 0l-63.64-63.64c-3.905-3.905-3.905-10.237 0-14.142Z'
-        />
-        <path
-          className='no-rows-primary'
-          d='M308.929 191.711c-3.905-3.906-3.905-10.237 0-14.142l63.64-63.64c3.905-3.905 10.236-3.905 14.142 0 3.905 3.905 3.905 10.237 0 14.142l-63.64 63.64c-3.905 3.905-10.237 3.905-14.142 0Z'
-        />
-        <path
-          className='no-rows-secondary'
-          d='M0 10C0 4.477 4.477 0 10 0h380c5.523 0 10 4.477 10 10s-4.477 10-10 10H10C4.477 20 0 15.523 0 10ZM0 59c0-5.523 4.477-10 10-10h231c5.523 0 10 4.477 10 10s-4.477 10-10 10H10C4.477 69 0 64.523 0 59ZM0 106c0-5.523 4.477-10 10-10h203c5.523 0 10 4.477 10 10s-4.477 10-10 10H10c-5.523 0-10-4.477-10-10ZM0 153c0-5.523 4.477-10 10-10h195.5c5.523 0 10 4.477 10 10s-4.477 10-10 10H10c-5.523 0-10-4.477-10-10ZM0 200c0-5.523 4.477-10 10-10h203c5.523 0 10 4.477 10 10s-4.477 10-10 10H10c-5.523 0-10-4.477-10-10ZM0 247c0-5.523 4.477-10 10-10h231c5.523 0 10 4.477 10 10s-4.477 10-10 10H10c-5.523 0-10-4.477-10-10Z'
-        />
-      </svg>
-      <Box sx={{ mt: 2 }}>No rows</Box>
-    </StyledGridOverlay>
-  );
-}
+const noRowsOverlay = () => (
+  <Box
+    sx={{
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      height: '80%',
+      width: '100%',
+      color: '#888',
+      background: '#f9fafb',
+      mt: 'auto'
+    }}
+  >
+    <img
+      src='https://cdn-icons-png.flaticon.com/512/4076/4076549.png'
+      alt='No data'
+      width={64}
+      height={64}
+      style={{ marginBottom: 16, opacity: 0.7 }}
+    />
+    <Typography variant='h6' sx={{ fontWeight: 500 }}>
+      Không có dữ liệu
+    </Typography>
+    <Typography variant='body2' sx={{ color: '#aaa', mt: 1 }}>
+      Không tìm thấy bản ghi nào phù hợp.
+    </Typography>
+  </Box>
+);
 
 interface TableProps {
   rows: any[] | GridRowsProp;
@@ -396,6 +393,12 @@ const Table = React.forwardRef<any, TableProps>(function table(
         duration: 0.5,
         ease: [0.22, 1, 0.36, 1] // cubic-bezier for smoothness
       }}
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        minHeight: '400px',
+        overflow: 'hidden',
+      }}
     >
       <Menu
         id='basic-menu'
@@ -503,7 +506,7 @@ const Table = React.forwardRef<any, TableProps>(function table(
         rowSelection={false}
         slots={{
           toolbar: () => CustomToolbar(placeholderSearch),
-          noRowsOverlay: CustomNoRowsOverlay
+          noRowsOverlay: noRowsOverlay
         }}
         showToolbar
         autosizeOnMount={false}
@@ -520,7 +523,6 @@ const Table = React.forwardRef<any, TableProps>(function table(
         filterMode='server'
         paginationMode='server'
         columnHeaderHeight={48}
-        autoHeight
         getRowHeight={() => 'auto'}
         pageSizeOptions={[10, 25, 50]}
         paginationModel={paginationModel}
@@ -541,7 +543,7 @@ const Table = React.forwardRef<any, TableProps>(function table(
             );
           }
         }}
-        filterDebounceMs={1000}
+        filterDebounceMs={600}
         onFilterModelChange={setFilterModel}
         slotProps={{
           loadingOverlay: {

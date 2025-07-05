@@ -1,18 +1,11 @@
-import type { NextRequest } from "next/server";
-import { NextResponse } from "next/server";
-import { APP_ROUTE, REFRESH_TOKEN, TOKEN_ACCESS } from "./types/general";
-import { cookies } from "next/headers";
-import path from "path";
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+import { APP_ROUTE, REFRESH_TOKEN, TOKEN_ACCESS } from './types/general';
+import { cookies } from 'next/headers';
+import path from 'path';
 
-const routeBlock = [
-  '/',
-  '/giang-vien',
-  '/giang-vien/them-moi'
-]
-const routeHaveToken = [
-  '/dang-nhap',
-  '/quen-mat-khau',
-]
+const routeBlock = ['/', '/giang-vien', '/giang-vien/them-moi'];
+const routeHaveToken = ['/dang-nhap', '/quen-mat-khau'];
 export async function middleware(req: NextRequest) {
   const { pathname, searchParams } = req.nextUrl;
   const cookie = await cookies();
@@ -27,8 +20,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    '/:path*',
-    "/",
-  ],
+  matcher: ['/:path*', '/']
 };

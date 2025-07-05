@@ -9,10 +9,10 @@ export const feedbackCustomizations: Components<Theme> = {
         color: theme.palette.text.primary,
         border: `1px solid ${alpha(gray[300], 0.9)}`,
         ...theme.applyStyles('dark', {
-          border: `1px solid ${alpha(gray[700], 0.9)}`,
-        }),
-      }),
-    },
+          border: `1px solid ${alpha(gray[700], 0.9)}`
+        })
+      })
+    }
   },
   MuiDialog: {
     styleOverrides: {
@@ -20,10 +20,10 @@ export const feedbackCustomizations: Components<Theme> = {
         '& .MuiDialog-paper': {
           borderRadius: '10px',
           border: '1px solid',
-          borderColor: theme.palette.divider,
-        },
-      }),
-    },
+          borderColor: theme.palette.divider
+        }
+      })
+    }
   },
   MuiLinearProgress: {
     styleOverrides: {
@@ -32,9 +32,9 @@ export const feedbackCustomizations: Components<Theme> = {
         borderRadius: 8,
         backgroundColor: gray[200],
         ...theme.applyStyles('dark', {
-          backgroundColor: gray[800],
-        }),
-      }),
-    },
-  },
+          backgroundColor: gray[800]
+        })
+      })
+    }
+  }
 };

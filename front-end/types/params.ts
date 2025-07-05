@@ -1,85 +1,81 @@
 import { GiangVien } from './../models/GiangVien';
 import { giangVien } from './validate/login';
 interface IBaseParams {
-    page?: number;
-    limit?: number;
-    sortBy?: string;
-    sortByOrder?: 'asc' | 'desc';
-    search?: string;
+  page?: number;
+  limit?: number;
+  sortBy?: string;
+  sortByOrder?: 'asc' | 'desc';
+  search?: string;
 }
 
-
 export interface IParamGiangVien extends IBaseParams {
-    active?: boolean;
-    trangThai?: number;
-    khoaId?: string;
+  active?: boolean;
+  trangThai?: number;
+  khoaId?: string;
 }
 
 export interface IParamLopHocPhan extends IBaseParams {
-    khoa?: number;
-    loaiChuongTrinhDaoTao?: number;
-    chuongTrinhDaoTaoId?: string;
-    hocKy?: number;
-    trangThai?: number;
-    loaiLopHoc?: number;
-    giangVienId?: string;
+  khoa?: number;
+  loaiChuongTrinhDaoTao?: number;
+  chuongTrinhDaoTaoId?: string;
+  hocKy?: number;
+  trangThai?: number;
+  loaiLopHoc?: number;
+  giangVienId?: string;
 }
 
-export interface IParamMonHoc extends IBaseParams {
+export interface IParamMonHoc extends IBaseParams {}
 
-}
+export interface IParamLopHoc extends IBaseParams {}
 
-export interface IParamLopHoc extends IBaseParams {
-
-}
-
-export interface IParamChuongTrinhDaoTao extends IBaseParams {
-
-}
+export interface IParamChuongTrinhDaoTao extends IBaseParams {}
 export interface IParamSinhVien extends IBaseParams {
-    lopId?: number;
-    tinhTrangHocTap?: number;
-    lopHocPhanId?: string;
+  lopId?: number;
+  tinhTrangHocTap?: number;
+  lopHocPhanId?: string;
 }
 
-export interface IParamKhoa extends IBaseParams {
+export interface IParamKhoa extends IBaseParams {}
 
+export interface IParamNganh extends IBaseParams {}
+export interface IParamBoMon extends IBaseParams {}
+
+export interface IParamPhongHoc extends IBaseParams {}
+
+export interface IParamChiTietChuongTrinhDaoTao extends IBaseParams {
+  hocKy?: number;
+  chuongTrinhDaoTaoId?: string;
 }
-
-export interface IParamNganh extends IBaseParams {
-
-}
-export interface IParamBoMon extends IBaseParams { }
-
-export interface IParamPhongHoc extends IBaseParams { }
-
-export interface IParamChiTietChuongTrinhDaoTao extends IBaseParams { }
 
 export interface IParamHocBa extends IBaseParams {
-    lopHocPhanId?: string;
+  lopHocPhanId?: string;
 }
 
 export interface IParamChiTietLopHocPhan extends IBaseParams {
-    lopHocPhanId?: string;
-    ngayNopDiem?: boolean;
+  lopHocPhanId?: string;
+  ngayNopDiem?: boolean;
 }
 
 export interface IParamLopHocPhan2 {
-    loaiChuongTrinhDaoTao?: number;
-    khoa?: number;
-    hocky?: number;
-    giangVienId?: string;
-    lopHocPhanid?: string;
+  loaiChuongTrinhDaoTao?: number;
+  khoa?: number;
+  hocky?: number;
+  giangVienId?: string;
+  lopHocPhanid?: string;
+  lopHocId?: string;
+  hocKy?: number | string;
 }
 
 export interface IParamLichBieu extends IBaseParams {
-    giangVienId: string;
-    boMonId: string;
-    tuanId: string;
+  lopHocId: string;
+  boMonId?: string;
+  tuanId: string;
+  hocKy?: number | string;
+  namHoc?: number | string;
 }
 
 export interface IParamTuan extends IBaseParams {
-    namHoc?: number | string;
-    TuanBatDauId?: string;
-    GiangVienId?: string;
+  namHoc?: number | string;
+  TuanBatDauId?: string;
+  GiangVienId?: string;
 }

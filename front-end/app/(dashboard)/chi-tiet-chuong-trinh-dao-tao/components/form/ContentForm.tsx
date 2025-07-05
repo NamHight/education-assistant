@@ -1,10 +1,11 @@
 'use client';
-import React, { FC, memo, useEffect, useMemo, useState } from 'react';
+import React, { FC, forwardRef, memo, useEffect, useImperativeHandle, useMemo, useState } from 'react';
 import {
   alpha,
   Box,
   Button,
   Checkbox,
+  Divider,
   FormControl,
   FormControlLabel,
   Grid,
@@ -57,6 +58,7 @@ import { NganhService } from '@/services/NganhService';
 import { MonHocService } from '@/services/MonHocService';
 import { ChuongTrinhDaoTaoService } from '@/services/ChuongTrinhDaoTaoService';
 import { TriangleAlert } from 'lucide-react';
+import ListMonHoc from '../../them-moi/components/ListMonHoc';
 
 export interface IFormData {
   MonHoc: IOption;
@@ -73,13 +75,15 @@ interface IContentFormProps {
   data?: ChiTietChuongTrinhDaoTao;
   initialData?: any;
   onSubmit: (data: any) => void;
+  setKhoas?: any;
 }
 
-const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => {
+const ContentForm = forwardRef(({ onSubmit, data, initialData, setKhoas }: IContentFormProps, ref) => {
   const [khoa, setkhoa] = useState<{
     id: string | number | null;
     name: string;
   } | null>(null);
+
   const schema = useMemo(() => {
     return yup.object().shape({
       MonHoc: yup.object().required('Vui lòng chọn môn học'),
@@ -167,11 +171,17 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
     },
     refetchOnWindowFocus: false
   });
+  useEffect(() => {
+    if (setKhoas && khoas) {
+      setKhoas(khoas);
+    }
+  }, [setKhoas, khoas]);
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
+    setValue,
     control
   } = useForm<IFormData | any>({
     mode: 'onChange',
@@ -186,6 +196,14 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
       HocKy: null
     }
   });
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      handleResetForm: () => reset()
+    }),
+    [reset]
+  );
   const handleSubmitForm = (formData: IFormData) => {
     const form = new FormData();
 
@@ -215,6 +233,10 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
         BoMon: {
           id: data.boMon?.id || '',
           name: data.boMon?.tenBoMon || ''
+        },
+        Khoa: {
+          id: data.monHoc?.khoa?.id || '',
+          name: data.monHoc?.khoa?.tenKhoa || ''
         },
         SoTinChi: data.soTinChi || '',
         DiemTichLuy: data.diemTichLuy || false,
@@ -267,6 +289,8 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
             getOptionLabel={(option: any) => option.name}
             getOnChangeValue={(option) => {
               setkhoa(option);
+              setValue('BoMon', null);
+              setValue('MonHoc', null);
             }}
             error={(errors.Khoa as any)?.message}
           />
@@ -357,6 +381,6 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
       </Box>
     </FormControl>
   );
-};
+});
 
 export default memo(ContentForm);
