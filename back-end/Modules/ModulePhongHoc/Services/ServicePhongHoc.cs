@@ -49,9 +49,10 @@ public class ServicePhongHoc : IServicePhongHoc
         if (id == Guid.Empty) throw new PhongHocBadRequestException($"Phòng học với {id} không được bỏ trống!");
         var phongHoc = await _repositoryMaster.PhongHoc.GetPhongHocByIdAsync(id, false);
         if (phongHoc is null) throw new PhongHocNotFoundException(id);
+        phongHoc.DeletedAt = DateTime.Now;
         await _repositoryMaster.ExecuteInTransactionAsync(async () =>
         {
-            _repositoryMaster.PhongHoc.DeletePhongHoc(phongHoc);
+            _repositoryMaster.PhongHoc.UpdatePhongHoc(phongHoc);
             await Task.CompletedTask;
         });
         _loggerService.LogInfo($"Xóa phòng học có id = {id} thành công.");
@@ -101,17 +102,17 @@ public class ServicePhongHoc : IServicePhongHoc
         try
         {
             if (id != request.Id) throw new PhongHocBadRequestException("Id request và Id phòng học khác nhau!");
-            var phongHoc = await _repositoryMaster.PhongHoc.GetPhongHocByIdAsync(id, false);
+            var phongHoc = await _repositoryMaster.PhongHoc.GetPhongHocByIdAsync(id, true);
             if (phongHoc is null) throw new PhongHocNotFoundException(id);
-            phongHoc.TenPhong = request.TenPhong;
-            phongHoc.ToaNha = request.ToaNha;
-            phongHoc.SucChua = request.SucChua;
-            phongHoc.LoaiPhongHoc = request.LoaiPhongHoc;
-            phongHoc.TrangThaiPhongHoc = request.TrangThaiPhongHoc;
-            phongHoc.UpdatedAt = DateTime.Now;
+
             await _repositoryMaster.ExecuteInTransactionAsync(async () =>
             {
-                _repositoryMaster.PhongHoc.UpdatePhongHoc(phongHoc);
+                phongHoc.TenPhong = request.TenPhong;
+                phongHoc.ToaNha = request.ToaNha;
+                phongHoc.SucChua = request.SucChua;
+                phongHoc.LoaiPhongHoc = request.LoaiPhongHoc;
+                phongHoc.TrangThaiPhongHoc = request.TrangThaiPhongHoc;
+                phongHoc.UpdatedAt = DateTime.Now;
                 await Task.CompletedTask;
             });
             _loggerService.LogInfo($"Cập nhật phòng học có id = {id} thành công.");

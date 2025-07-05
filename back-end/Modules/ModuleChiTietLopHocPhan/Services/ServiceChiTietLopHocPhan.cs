@@ -266,24 +266,24 @@ public class ServiceChiTietLopHocPhan : IServiceChiTietLopHocPhan
             {
                 throw new ChiTietLopHocPhanBadRequestException($"Id: {id} và Id: {request.Id} của bộ môn không giống nhau!");
             }
-            var diemSoExstting = await _repositoryMaster.ChiTietLopHocPhan.GetChiTietLopHocPhanByIdAsync(id, false);
+            var diemSoExstting = await _repositoryMaster.ChiTietLopHocPhan.GetChiTietLopHocPhanByIdAsync(id, true);
             if (diemSoExstting is null)
             {
                 throw new ChiTietLopHocPhanNotFoundException(id);
             }
-            diemSoExstting.DiemChuyenCan = request.DiemChuyenCan;
-            diemSoExstting.DiemTrungBinh = request.DiemTrungBinh;
-            diemSoExstting.DiemThi1 = request.DiemThi1;
-            diemSoExstting.DiemThi2 = request.DiemThi2;
-            diemSoExstting.DiemTongKet1 = request.DiemTongKet1;
-            diemSoExstting.DiemTongKet2 = request.DiemTongKet2;
-            diemSoExstting.GhiChu = request.GhiChu;
-            diemSoExstting.TrangThai = request.TrangThai;
-            diemSoExstting.NgayLuuDiem = DateTime.Now;
-            diemSoExstting.UpdatedAt = DateTime.Now;
+
             await _repositoryMaster.ExecuteInTransactionAsync(async () =>
             {
-                _repositoryMaster.ChiTietLopHocPhan.UpdateChiTietLopHocPhan(diemSoExstting);
+                diemSoExstting.DiemChuyenCan = request.DiemChuyenCan;
+                diemSoExstting.DiemTrungBinh = request.DiemTrungBinh;
+                diemSoExstting.DiemThi1 = request.DiemThi1;
+                diemSoExstting.DiemThi2 = request.DiemThi2;
+                diemSoExstting.DiemTongKet1 = request.DiemTongKet1;
+                diemSoExstting.DiemTongKet2 = request.DiemTongKet2;
+                diemSoExstting.GhiChu = request.GhiChu;
+                diemSoExstting.TrangThai = request.TrangThai;
+                diemSoExstting.NgayLuuDiem = DateTime.Now;
+                diemSoExstting.UpdatedAt = DateTime.Now;
                 await Task.CompletedTask;
             });
             _loggerService.LogInfo("Cập nhật chi tiết lớp học phần thành công.");

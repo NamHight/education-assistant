@@ -16,11 +16,9 @@ public class ChiTietLopHocPhan : BaseEntity
     [Column("diem_tong_ket_2")] [Precision(4,2)] public decimal? DiemTongKet2 { get; set; }
     [Column("ngay_luu_diem")] public DateTime? NgayLuuDiem { get; set; }
     [Column("ngay_nop_diem")] public DateTime? NgayNopDiem { get; set; }
-
     [Column("hoc_ky")] public int HocKy { get; set; }
     [Column("ghi_chu")]
     public string? GhiChu { get; set; }
-
     [Column("trang_thai_diem")]
     [Range(1, 2, ErrorMessage = "Trạng thái không hợp lệ")]
     public int? TrangThai { get; set; }

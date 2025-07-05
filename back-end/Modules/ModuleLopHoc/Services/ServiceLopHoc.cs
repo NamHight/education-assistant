@@ -114,16 +114,19 @@ namespace Education_assistant.Modules.ModuleLopHoc.Services
                 {
                     throw new LopHocBadRequestException($"Id request và Id lớp học khác nhau!");
                 }
-                var lopHoc = await _repositoryMaster.LopHoc.GetLopHocByIdAsync(id, false);
+                var lopHoc = await _repositoryMaster.LopHoc.GetLopHocByIdAsync(id, true);
                 if (lopHoc is null)
                 {
                     throw new LopHocNotFoundException(id);
                 }
-                var lopHocUpdate = _mapper.Map<LopHoc>(request);
-                lopHocUpdate.UpdatedAt = DateTime.Now;
                 await _repositoryMaster.ExecuteInTransactionAsync(async () =>
                 {
-                    _repositoryMaster.LopHoc.UpdateLopHoc(lopHocUpdate);
+                    lopHoc.MaLopHoc = request.MaLopHoc;
+                    lopHoc.SiSo = request.SiSo;
+                    lopHoc.NamHoc = request.NamHoc;
+                    lopHoc.GiangVienId = request.GiangVienId;
+                    lopHoc.NganhId = request.NganhId;
+                    lopHoc.UpdatedAt = DateTime.Now;
                     await Task.CompletedTask;
                 });
                 _loggerService.LogInfo("Cập nhật lớp học thành công.");

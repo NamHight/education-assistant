@@ -12,8 +12,7 @@ public class RequestAddLopHocDto
     public int SiSo { get; set; }
 
     [Required(ErrorMessage = "Năm học không được để trống")]
-    [MaxLength(10, ErrorMessage = "Năm học không được quá 10 ký tự")]
-    public string NamHoc { get; set; }
+    public int NamHoc { get; set; }
 
     public Guid GiangVienId { get; set; }
     public Guid NganhId { get; set; }
@@ -32,10 +31,8 @@ public class RequestUpdateLopHocDto
     public int SiSo { get; set; }
 
     [Required(ErrorMessage = "Năm học không được để trống")]
-    [MaxLength(255, ErrorMessage = "Năm học không được quá 10 ký tự")]
-    public string NamHoc { get; set; }
-
+    public int NamHoc { get; set; }
+    
     public Guid GiangVienId { get; set; }
     public Guid NganhId { get; set; }
-    public DateTime? CreatedAt { get; set; }
 }

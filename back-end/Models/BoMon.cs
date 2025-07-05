@@ -7,9 +7,13 @@ namespace Education_assistant.Models;
 [Table("bo_mon")]
 public class BoMon : BaseEntity
 {
+    [Column("ma_bo_mon")]
+    [Required(ErrorMessage = "Mã bộ môn không được để trống")]
+    [MaxLength(255, ErrorMessage = "Mã bộ môn không được quá 255 ký tự")]
+    public string MaBoMon { get; set; } = string.Empty;
     [Column("ten_bo_mon")]
-    [Required(ErrorMessage = "Mã môn học không được để trống")]
-    [MaxLength(255, ErrorMessage = "Mã môn học không được quá 255 ký tự")]
+    [Required(ErrorMessage = "Tên bộ môn không được để trống")]
+    [MaxLength(255, ErrorMessage = "Tên bộ môn không được quá 255 ký tự")]
     public string TenBoMon { get; set; } = string.Empty;
     [Column("email")]
     [Required(ErrorMessage = "Email không được để trống")]

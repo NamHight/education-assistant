@@ -64,9 +64,10 @@ public class ServiceChiTietChuongTrinhDaoTao : IServiceChiTietChuongTrinhDaoTao
             {
                 throw new ChiTietChuongTrinhDaoTaoNotFoundException(id);
             }
+            ctctDaoTao.DeletedAt = DateTime.Now;
             await _repositoryMaster.ExecuteInTransactionAsync(async () =>
             {
-                _repositoryMaster.ChiTietChuongTrinhDaoTao.DeleteChiTietChuongTrinhDaoTao(ctctDaoTao);
+                _repositoryMaster.ChiTietChuongTrinhDaoTao.UpdateChiTietChuongTrinhDaoTao(ctctDaoTao);
                 await Task.CompletedTask;
             });
             _loggerService.LogInfo("Xóa chi tiết chương trình đào tạo thành công.");

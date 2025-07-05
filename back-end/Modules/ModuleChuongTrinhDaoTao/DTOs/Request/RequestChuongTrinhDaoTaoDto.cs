@@ -4,9 +4,6 @@ namespace Education_assistant.Modules.ModuleChuongTrinhDaoTao.DTOs.Request;
 
 public class RequestAddChuongTrinhDaoTaoDto
 {
-    [MaxLength(255, ErrorMessage = "Mã chương trình không được quá 255 ký tự")]
-    public string MaChuongTrinh { get; set; } = string.Empty;
-
     [Required(ErrorMessage = "Tên chương trình không được để trống")]
     [MaxLength(255, ErrorMessage = "Tên chương trình không được quá 255 ký tự")]
     public string TenChuongTrinh { get; set; } = string.Empty;
@@ -32,10 +29,6 @@ public class RequestUpdateChuongTrinhDaoTaoDto
 {
     [Required(ErrorMessage = "Id không được để trống")]
     public Guid Id { get; set; }
-
-    [Required(ErrorMessage = "Mã chương trình không được để trống")]
-    [MaxLength(255, ErrorMessage = "Mã chương trình không được quá 255 ký tự")]
-    public string MaChuongTrinh { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "Tên chương trình không được để trống")]
     [MaxLength(255, ErrorMessage = "Tên chương trình không được quá 255 ký tự")]
