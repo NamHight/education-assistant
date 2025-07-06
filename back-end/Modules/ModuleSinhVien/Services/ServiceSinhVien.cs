@@ -256,7 +256,7 @@ public class ServiceSinhVien : IServiceSinhVien
                 var exsitingSinhVien = await _repositoryMaster.SinhVien.GetSinhVienByMssvOrCccdAsync(item.MSSV, item.CCCD);
                 if (exsitingSinhVien is not null)
                 {
-                    throw new SinhVienBadRequestException($"Sinh viên có mssv: {item.MSSV} hoặc cccd: {item.CCCD} đã trùng trong dữ liệu");
+                    continue;
                 }
                 var sv = new SinhVien
                 {
@@ -375,7 +375,7 @@ public class ServiceSinhVien : IServiceSinhVien
         var sinhVien = await _repositoryMaster.SinhVien.GetSinhVienByMssvAsync(mssv, false);
         if (sinhVien is null)
         {
-
+            return new ResponseSinhVienDto();
         }
         var sinhVienDto = _mapper.Map<ResponseSinhVienDto>(sinhVien);
         return sinhVienDto;
@@ -469,17 +469,10 @@ public class ServiceSinhVien : IServiceSinhVien
             throw new LopHocPhanNotFoundException(lopHocPhanId);
         }
         var dangKyMonHoc = await _repositoryMaster.DangKyMonHoc.GetDangKyMonHocBySinhVienAndLopHocPhanAsync(sinhVienId, lopHocPhanId);
-        if (dangKyMonHoc is null)
-        {
-            throw new SinhVienNotFoundException(sinhVienId);
-        }
+        
         var chiTietLopHocPhan = await _repositoryMaster.ChiTietLopHocPhan.GetChiTietLopHocPhanBySinhVienAndLopHocPhanAsync(sinhVienId, lopHocPhanId);
-        if (chiTietLopHocPhan is null)
-        {
-            throw new SinhVienNotFoundException(sinhVienId);
-        }
         var hocBa = await _repositoryMaster.HocBa.GetHocBaBySinhVienAndLopHocPhanAsync(sinhVienId, lopHocPhanId);
-        if (hocBa is null)
+        if (dangKyMonHoc is null && chiTietLopHocPhan is null && hocBa is null)
         {
             throw new SinhVienNotFoundException(sinhVienId);
         }
@@ -487,9 +480,18 @@ public class ServiceSinhVien : IServiceSinhVien
         {
             await _repositoryMaster.ExecuteInTransactionAsync(async () =>
             {
-                _repositoryMaster.DangKyMonHoc.DeleteDangKyMonHoc(dangKyMonHoc);
-                _repositoryMaster.ChiTietLopHocPhan.DeleteChiTietLopHocPhan(chiTietLopHocPhan);
-                _repositoryMaster.HocBa.DeleteHocBa(hocBa);
+                if (dangKyMonHoc is not null)
+                {
+                    _repositoryMaster.DangKyMonHoc.DeleteDangKyMonHoc(dangKyMonHoc);
+                }
+                if (chiTietLopHocPhan is not null)
+                {
+                    _repositoryMaster.ChiTietLopHocPhan.DeleteChiTietLopHocPhan(chiTietLopHocPhan);
+                }
+                if (hocBa is not null)
+                {
+                    _repositoryMaster.HocBa.DeleteHocBa(hocBa);
+                }
                 await Task.CompletedTask;
             });
               
