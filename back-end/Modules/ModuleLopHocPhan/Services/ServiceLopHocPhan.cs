@@ -62,29 +62,29 @@ public class ServiceLopHocPhan : IServiceLopHocPhan
         var ctctdts =
             await _repositoryMaster.ChiTietChuongTrinhDaoTao.GetChiTietChuongTrinhDaoTaoByHocKyAndChuongTrinhId(
                 request.HocKy, ChuongTrinhDaoTao.Id);
-        if (ctctdts is null)
+        if (!ctctdts.Any())
             throw new ChiTietChuongTrinhDaoTaoBadRequestException("Môn học chưa được thêm chương trình đào tạo");
         var lopHocs = await _repositoryMaster.LopHoc.GetLopHocByKhoaAndNganhIdAsync(request.Khoa, request.NganhId);
-        if (lopHocs is null) throw new LopHocBadRequestException("Không tìm thấy lớp học trong ngành id");
+        if (!lopHocs.Any()) throw new LopHocBadRequestException("Không tìm thấy lớp học trong ngành id");
         var newLopHocPhans = new List<(LopHocPhan LopHocPhan, Guid LopHocId)>();
         foreach (var ctctdt in ctctdts)
-        foreach (var lopHoc in lopHocs)
-        {
-            var lopHocPhanExsiting = await _repositoryMaster.LopHocPhan.KiemTraLopHocPhanDaTonTaiAsync(request.NganhId,
-                request.HocKy, request.Khoa, ctctdt.MonHocId!.Value);
-            if (lopHocPhanExsiting) throw new LopHocPhanExistdException("Lớp học phần đã được tạo rồi");
-            var lopHocPhan = new LopHocPhan
+            foreach (var lopHoc in lopHocs)
             {
-                Id = Guid.NewGuid(),
-                MaHocPhan = $"{lopHoc.MaLopHoc}_{ctctdt.MonHoc!.TenMonHoc}",
-                MonHocId = ctctdt.MonHocId!.Value,
-                SiSo = lopHoc.SiSo,
-                TrangThai = 1,
-                Loai = (int)LoaiLopHocEnum.LOP_HOC_PHAN,
-                CreatedAt = DateTime.Now
-            };
-            newLopHocPhans.Add((lopHocPhan, lopHoc.Id));
-        }
+                var lopHocPhanExsiting = await _repositoryMaster.LopHocPhan.KiemTraLopHocPhanDaTonTaiAsync(request.NganhId,
+                    request.HocKy, request.Khoa, ctctdt.MonHocId!.Value);
+                if (lopHocPhanExsiting) continue;
+                var lopHocPhan = new LopHocPhan
+                {
+                    Id = Guid.NewGuid(),
+                    MaHocPhan = $"{lopHoc.MaLopHoc}_{ctctdt.MonHoc!.TenMonHoc}",
+                    MonHocId = ctctdt.MonHocId!.Value,
+                    SiSo = lopHoc.SiSo,
+                    TrangThai = 1,
+                    Loai = (int)LoaiLopHocEnum.LOP_HOC_PHAN,
+                    CreatedAt = DateTime.Now
+                };
+                newLopHocPhans.Add((lopHocPhan, lopHoc.Id));
+            }
 
         await _repositoryMaster.ExecuteInTransactionBulkEntityAsync(async () =>
         {
@@ -173,13 +173,17 @@ public class ServiceLopHocPhan : IServiceLopHocPhan
     {
         string? maLopHoc = null;
         Guid? chuongTrinhDaoTaoId = Guid.Empty;
-        var lopHoc = await _repositoryMaster.LopHoc.GetLopHocByIdAsync(param.lopHocId, false);
-        if (lopHoc is not null)
+        if (param.lopHocId != Guid.Empty && param.hocKy != 0 && param.hocKy != null && param.lopHocId != null)
         {
-            maLopHoc = lopHoc.MaLopHoc;
-            var chuongTrinhDaoTao = await _repositoryMaster.ChuongTrinhDaoTao.GetChuongTrinhDaoTaoByKhoaAndNganhIdAsync(lopHoc.NamHoc, lopHoc.NganhId.Value);
-            if (chuongTrinhDaoTao is not null)
+            var lopHoc = await _repositoryMaster.LopHoc.GetLopHocByIdAsync(param.lopHocId, false);
+            if (lopHoc is not null)
             {
+                maLopHoc = lopHoc.MaLopHoc;
+                var chuongTrinhDaoTao = await _repositoryMaster.ChuongTrinhDaoTao.GetChuongTrinhDaoTaoByKhoaAndNganhIdAsync(lopHoc.NamHoc, lopHoc.NganhId.Value);
+                if (chuongTrinhDaoTao is null)
+                {
+                    return Enumerable.Empty<ResponseLopHocPhanDto>();
+                }
                 chuongTrinhDaoTaoId = chuongTrinhDaoTao.Id;
             }
         }
