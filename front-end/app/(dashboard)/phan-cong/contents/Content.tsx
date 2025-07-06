@@ -280,7 +280,13 @@ const Content = ({ queryKey, ctdtServer }: IContentProps) => {
   //   );
   // }, [loaiLopHocPhan]);
   const handleSave = (item: any) => {
-    if (item && item.length === 0) return;
+    if (item && item.length === 0) {
+      notification.show('Không có dữ liệu để lưu', {
+        severity: 'warning',
+        autoHideDuration: 5000
+      });
+      return;
+    }
     const convertData = item?.map((item: any) => ({
       id: item.id,
       maHocPhan: item.maHocPhan,

@@ -149,7 +149,7 @@ const Content = ({ queryKey, lopHocPhanServer }: ContentProps) => {
   const handleDelete = (id: string | number | null) => {
     mutationDelete.mutate(id);
   };
-
+  console.log("data", data);
   const columns = useMemo((): GridColDef[] => {
     const formatKetQua = (status: number) => {
       switch (status) {
@@ -188,7 +188,7 @@ const Content = ({ queryKey, lopHocPhanServer }: ContentProps) => {
         display: 'flex',
         flex: 1,
         renderCell: (params: any) => {
-          return params.value ? <Typography>{params.row?.sinhVien?.mssv}</Typography> : null;
+          return params.row?.sinhVien?.mssv ? <Typography>{params.row?.sinhVien?.mssv}</Typography> : null;
         }
       },
       {

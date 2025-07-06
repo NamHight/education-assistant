@@ -125,8 +125,10 @@ const Content = ({ queryKey, lopHocServer, boMonServer }: IContentProps) => {
     setAnchorElConfirmDelete(true);
   };
   const handleClose = () => {
-    refModal.current?.reset();
-    console.log('close modal', refModal.current?.reset());
+    setOpen(false);
+    if (refModal.current) {
+      refModal.current.reset();
+    }
   };
   const { data, isLoading } = useQuery({
     queryKey: [queryKey, filterModel, filter, sortModel],

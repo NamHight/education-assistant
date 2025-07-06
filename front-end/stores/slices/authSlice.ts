@@ -1,4 +1,4 @@
-import { REFRESH_TOKEN, TOKEN_ACCESS } from './../../types/general';
+import { REFRESH_TOKEN, ROLE, TOKEN_ACCESS } from './../../types/general';
 import { createSlice } from '../utility';
 import cookieStorage from '@/lib/cookie';
 import { RootAuthState } from '../authStore';
@@ -25,6 +25,7 @@ export const createAuthSlice = createSlice<RootAuthState, IAuthState>((set) => (
         state.user = user;
         state.token = token;
         state.refreshToken = refreshToken;
+        cookieStorage.set(ROLE, String(user?.taiKhoan?.loaiTaiKhoan));
       }),
     logout: () =>
       set((state: IAuthState) => {
@@ -33,6 +34,7 @@ export const createAuthSlice = createSlice<RootAuthState, IAuthState>((set) => (
         state.refreshToken = null;
         cookieStorage.remove(TOKEN_ACCESS);
         cookieStorage.remove(REFRESH_TOKEN);
+        cookieStorage.remove(ROLE);
       }),
     updateUser: (partialUser) =>
       set((state: IAuthState) => {

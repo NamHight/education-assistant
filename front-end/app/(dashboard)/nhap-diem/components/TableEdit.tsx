@@ -393,6 +393,15 @@ const TableEdit = forwardRef(
       }
     });
     const handleImportFileClick = (data: ImportFileProps) => {
+    const rowIds = apiRef.current?.getRowModels();
+    const allRows = Array.from(rowIds?.values() || []);
+    if(allRows.length === 0) {
+      notification.show('Không có dữ liệu để import', {
+        severity: 'warning',
+        autoHideDuration: 5000
+      });
+      return;
+    }
       const formData = new FormData();
       formData.append('lopHocPhanId', data.LopHocPhanId);
       if (data.File && data.File instanceof File) {
@@ -401,7 +410,17 @@ const TableEdit = forwardRef(
       mutationImport.mutate(formData);
     };
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-      if (!event.target.files || event.target.files.length === 0 || !filter?.lopHocPhan?.id) {
+      if (!event.target.files || event.target.files.length === 0) {
+        return;
+      }
+      if(event.target.files[0].type !== 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+        notification.show('Vui lòng chọn file Excel (.xlsx)', {
+          severity: 'error',
+          autoHideDuration: 5000
+        });
+        return;
+      }
+      if (!filter?.lopHocPhan?.id) {
         return;
       }
       const fileList = event.target.files;

@@ -69,7 +69,7 @@ interface IContentFormProps {
 const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => {
   const schema = useMemo(() => {
     return yup.object().shape({
-      MaLopHoc: yup.string().required('Mã lớp học không được để trống'),
+      MaLopHoc: yup.string().required('Mã lớp học không được để trống').max(50, 'Mã lớp học không được vượt quá 50 ký tự'),
       SiSo: yup
         .number()
         .typeError('Sĩ số phải là số')
@@ -135,7 +135,7 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
     defaultValues: {
       MaLopHoc: '',
       SiSo: 0,
-      NamHoc: '',
+      NamHoc: null,
       GiangVien: null,
       Nganh: null
     }

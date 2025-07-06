@@ -17,7 +17,17 @@ import AddchartIcon from '@mui/icons-material/Addchart';
 import HouseIcon from '@mui/icons-material/House';
 import ScoreIcon from '@mui/icons-material/Score';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
-export const NAVIGATION: Navigation = [
+import useCheckPermission from '@/helper/useCheckPermission';
+import cookieStorage from '@/lib/cookie';
+import { ROLE } from '@/types/general';
+import { LoaiTaiKhoaEnum } from '@/models/TaiKhoan';
+
+
+
+export const NAVIGATION  = (role?: string) : Navigation => {
+  console.log('role', role);
+  const isAdmin = (Number(role) === LoaiTaiKhoaEnum.ADMIN) || (Number(role) === LoaiTaiKhoaEnum.QUAN_LY_KHOA_BO_MON);
+  const allNavigate = [
   {
     segment: '/',
     title: 'Trang chủ',
@@ -114,4 +124,17 @@ export const NAVIGATION: Navigation = [
     icon: <HouseIcon />,
     pattern: `lop-hoc/:rest*`
   }
-];
+]
+
+
+  return allNavigate.filter(item => {
+    const adminOnlyRoutes = ['giang-vien', 'sinh-vien', 'khoa', 'mon-hoc', 'nganh', 'bo-mon'];
+
+    if (!isAdmin && adminOnlyRoutes.includes(item.segment)) {
+      return false;
+    }
+
+    return true;
+  });
+
+} 

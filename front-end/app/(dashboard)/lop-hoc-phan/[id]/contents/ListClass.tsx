@@ -79,8 +79,8 @@ const ListClass = ({ id, queryKey }: IListtClassProps) => {
     return rowCountRef.current;
   }, [data?.meta?.TotalCount]);
   const mutationDelete = useMutation({
-    mutationFn: async (id: string | number | null) => {
-      const result = await SinhVienService.deleteSinhVien(id);
+    mutationFn: async (idSV: string | number | null) => {
+      const result = await SinhVienService.deleteSinhVienByLHP(idSV,{lopHocPhanId : id});
       return result;
     },
     onSuccess: () => {
@@ -255,7 +255,7 @@ const ListClass = ({ id, queryKey }: IListtClassProps) => {
         flex: 1,
         renderCell: (params: any) => {
           return !params.row?.deletedAt ? (
-            <Link href={`${APP_ROUTE.SINH_VIEN.EDIT(params.row?.id)}`} className='text-blue-500 hover:underline'>
+            <Link href={`${APP_ROUTE.SINH_VIEN.EDIT(params.row?.id)}`} className='!text-blue-500 hover:!underline'>
               {params.value}
             </Link>
           ) : (
@@ -275,7 +275,7 @@ const ListClass = ({ id, queryKey }: IListtClassProps) => {
         flex: 1,
         renderCell: (params: any) => {
           return params?.value ? (
-            <Link href={`/lop-hoc/${params.value?.id}`} className={'text-blue-500 hover:underline'}>
+            <Link href={`/lop-hoc/${params.value?.id}`} className={'!text-blue-500 hover:!underline'}>
               {params.value?.maLopHoc}
             </Link>
           ) : null;

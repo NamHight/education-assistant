@@ -1,10 +1,14 @@
 'use client';
 import { DashboardLayout, PageContainer } from '@toolpad/core';
 import React, { ReactNode } from 'react';
+import ToolBarAccount from '../customs/ToolBarAccount';
 
 const LayoutDashboard = ({ children }: { children: ReactNode }) => {
   return (
     <DashboardLayout
+    slots={{
+        toolbarActions: ToolBarAccount
+      }}
       sx={{
         '& .MuiContainer-root': {
           maxWidth: '100%',
@@ -12,7 +16,7 @@ const LayoutDashboard = ({ children }: { children: ReactNode }) => {
         }
       }}
     >
-      <PageContainer>{children}</PageContainer>
+      {children}
     </DashboardLayout>
   );
 };

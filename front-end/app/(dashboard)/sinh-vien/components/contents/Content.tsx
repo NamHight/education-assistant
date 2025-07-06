@@ -291,7 +291,17 @@ const Content = ({ queryKey, lopHocServers, tinhTrangHocTapServer }: ContentProp
     mutationExportFile.mutate({ lopId: String(filterOption?.lopId) });
   };
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (!event.target.files || event.target.files.length === 0 || !filterOption?.lopId) {
+    if (!event.target.files || event.target.files.length === 0) {
+      return;
+    }
+    if (event.target.files[0]?.type !== 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+      notification.show('Vui lòng chọn file Excel (.xlsx) để import.', {
+        severity: 'warning',
+        autoHideDuration: 4000
+      });
+      return;
+    }
+    if (!filterOption?.lopId) {
       return;
     }
     const fileList = event.target.files;
@@ -575,7 +585,6 @@ const Content = ({ queryKey, lopHocServers, tinhTrangHocTapServer }: ContentProp
   }, [data?.data]);
   const handleChooseRow = (id: string | number | null, row: any) => {
     setGetItem({ id: String(id), row });
-    handleOpen();
   };
   return (
     <Box className='flex flex-col gap-4'>

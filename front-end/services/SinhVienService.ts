@@ -124,6 +124,18 @@ export class SinhVienService {
       throw error.response?.data;
     }
   }
+  static async deleteSinhVienByLHP(id: string | number | null,data: any) {
+    try {
+      const result = await authApi.delete(`${API.SINH_VIEN.DELETE_LHP}`.replace(':id', `${id}`).replace(':lopHocPhanId', `${data.lopHocPhanId}`),{
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+      return result.data;
+    } catch (error: any) {
+      throw error.response?.data;
+    }
+  }
   static async restoreSinhVien(id: string | number | null) {
     try {
       const result = await authApi.put(`${API.SINH_VIEN.RESTORE}`.replace(':id', `${id}`));

@@ -340,6 +340,7 @@ const Table = React.forwardRef<any, TableProps>(function table(
                   }
                   label='More'
                   onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
+                    event.stopPropagation();
                     handleChooseRow?.(id, row);
                     isOpenOption?.();
                     setItem({
@@ -354,6 +355,7 @@ const Table = React.forwardRef<any, TableProps>(function table(
                   icon={<MoreVertIcon />}
                   label='Edit'
                   onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
+                    event.stopPropagation();
                     handleChooseRow?.(id, row);
                     handleClick(event);
                     setItem({
@@ -396,7 +398,9 @@ const Table = React.forwardRef<any, TableProps>(function table(
       style={{
         display: 'flex',
         flexDirection: 'column',
-        minHeight: '400px',
+        height: 'calc(100vh - 200px)', // ✅ Fix height calculation
+      minHeight: '500px', // ✅ Minimum height
+      maxHeight: '800px',
         overflow: 'hidden',
       }}
     >
@@ -597,6 +601,9 @@ const Table = React.forwardRef<any, TableProps>(function table(
         }
         className='!border-gray-200 shadow-sm'
         sx={(theme) => ({
+           flex: 1, // ✅ Take remaining space
+        height: '100%', // ✅ Fill container
+        minHeight: '400px',
           '& .MuiDataGrid-actionsCell .MuiButtonBase-root': {
             background: '#f5f5f5',
             color: '#1976d2',
@@ -633,11 +640,13 @@ const Table = React.forwardRef<any, TableProps>(function table(
             }
           },
           '& .MuiDataGrid-main': {
-            overflow: 'visible'
+            overflow: 'auto', // ✅ Enable scrolling
+          flex: 1
           },
           '& .MuiDataGrid-virtualScroller': {
-            minHeight: '100px'
-          },
+          minHeight: '300px', // ✅ Minimum content height
+          flex: 1
+        },
           borderColor: theme.palette.mode === 'dark' ? theme.palette.grey[700] : theme.palette.grey[200],
           '& .MuiDataGrid-cell': {
             whiteSpace: 'break-spaces',

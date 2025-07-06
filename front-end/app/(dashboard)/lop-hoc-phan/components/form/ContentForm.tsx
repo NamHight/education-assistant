@@ -72,7 +72,7 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
         .number()
         .required('Sỉ số là bắt buộc')
         .transform((value, originalValue) => (originalValue === '' ? null : value))
-        .min(0, 'Sỉ số không được nhỏ hơn 0'),
+        .min(1, 'Sỉ số không được nhỏ hơn 1'),
       trangThai: yup.object().required('Trạng thái là bắt buộc'),
       // chuongTrinhDaoTao: data ? yup.object().notRequired() : yup.object().required('Chương trình đào tạo là bắt buộc'),
       giangVien: yup.object().notRequired(),

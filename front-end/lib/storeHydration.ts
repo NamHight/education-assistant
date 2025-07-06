@@ -1,6 +1,6 @@
 import { GiangVien } from '@/models/GiangVien';
 import authApiServer from './authAxiosServer';
-import { API } from '@/types/general';
+import { API, ROLE } from '@/types/general';
 
 export interface IStoreHydration {
   auth: {
@@ -14,6 +14,7 @@ export const storeHydration = async (): Promise<IStoreHydration> => {
   try {
     const response: GiangVien = await authApiServer.get(`${API.AUTH.USER}`);
     const userServer = (response as any)?.data;
+    
     return {
       auth: {
         user: userServer

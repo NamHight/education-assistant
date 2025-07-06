@@ -1,3 +1,4 @@
+'use client'
 import { useUser } from '@/stores/selectors';
 import React from 'react';
 

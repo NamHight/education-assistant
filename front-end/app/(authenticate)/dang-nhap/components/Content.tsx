@@ -7,7 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import MessageError from '@/components/texts/MessageError';
 import Input from '@/components/inputs/Input';
 import { FormControl } from '@mui/material';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { AuthenticateService } from '@/services/AuthenticateService';
 import { useAuthStore } from '@/stores/authStore';
 import { useNotifications } from '@toolpad/core';
@@ -23,6 +23,7 @@ const Content = () => {
   const { actions } = useAuthStore();
   const router = useRouter();
   const notification = useNotifications();
+  const queryClient = useQueryClient();
   const {
     register,
     handleSubmit,
@@ -40,9 +41,11 @@ const Content = () => {
       const result = await AuthenticateService.login(data);
       return result;
     },
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       actions?.login(data.user, data.accessToken, data.refreshToken);
-      router.push('/');
+      queryClient.clear();
+      await queryClient.invalidateQueries({ queryKey: ['user'] });
+       window.location.href = '/';
     },
     onError: (error: any) => {
       notification.show(error?.Message, {

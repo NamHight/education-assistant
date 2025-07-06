@@ -525,6 +525,21 @@ const Content = ({ queryKey }: IContentProps) => {
   //   );
   // }, [loaiLopHocPhan]);
   const handleSave = (item: any) => {
+     if (
+      !filter?.lopHocPhan?.id ||
+      !filter?.khoa ||
+      !filter?.hocKy ||
+      !filter?.loaiChuongTrinh ||
+      !filter?.lopHocPhan?.monHocId ||
+      !filter?.lopHocPhan?.chuongTrinhDaoTaoId ||
+      (data && data?.data?.length === 0)
+    ) {
+      notification.show('Vui lòng chọn đầy đủ thông tin trước khi nộp điểm', {
+        severity: 'warning',
+        autoHideDuration: 5000
+      });
+      return;
+    }
     if (item && item.length === 0) {
       notification.show('Không có dữ liệu để lưu', {
         severity: 'warning',
@@ -574,6 +589,13 @@ const Content = ({ queryKey }: IContentProps) => {
       diemTongKet2: item?.diemTongKet2,
       sinhVienId: item?.sinhVienId
     }));
+    if (convertData.length === 0) {
+      notification.show('Không có dữ liệu để nộp điểm', {
+        severity: 'warning',
+        autoHideDuration: 5000
+      });
+      return;
+    }
     const finalData = {
       listDiemSo: convertData,
       lopHocPhanId: currentFilter?.lopHocPhan?.id,

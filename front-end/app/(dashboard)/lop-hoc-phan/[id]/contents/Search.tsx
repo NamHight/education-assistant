@@ -68,6 +68,12 @@ const Search = ({ id, query }: ISearch) => {
     formData.append('SinhVienId', data.id);
     mutationAdd.mutate(formData);
   };
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      e.preventDefault(); // ✅ Prevent Enter from submitting
+      e.stopPropagation();
+    }
+  };
   return (
     <AnimatePresence>
       {openLHP && (
@@ -109,7 +115,11 @@ const Search = ({ id, query }: ISearch) => {
                     isDisableMessError
                     type='text'
                     value={searchValue}
-                    onChange={(e: any) => setSearchValue(e.target.value)}
+                    onChange={(e: any) => {
+                      
+                      setSearchValue(e.target.value)
+                    }}
+                    onKeyDown={handleKeyDown}
                   />
                 </Box>
               </Box>

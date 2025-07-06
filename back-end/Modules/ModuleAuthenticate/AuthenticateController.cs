@@ -93,7 +93,7 @@ public class AuthenticateController : ControllerBase
     {
         try
         {
-            await _serviceEmail.SendOTPForgotPassword(request.Email);
+            await _serviceEmail.SendOTPForgotPassword_Mobile(request.Email);
             return Ok(new { message = "OTP đã được gửi đến email của bạn" });
         }
         catch (Exception ex)
@@ -107,7 +107,7 @@ public class AuthenticateController : ControllerBase
     {
         try
         {
-            var isValid = await _serviceEmail.VerifyOTP(request.Email, request.OtpCode);
+            var isValid = await _serviceEmail.VerifyOTP_Mobile(request.Email, request.OtpCode);
             if (isValid)
             {
                 return Ok(new { message = "OTP hợp lệ" });
@@ -125,7 +125,7 @@ public class AuthenticateController : ControllerBase
     {
         try
         {
-            await _serviceEmail.ResetPasswordWithOTP(request.Email, request.OtpCode, request.NewPassword);
+            await _serviceEmail.ResetPasswordWithOTP_Mobile(request.Email, request.OtpCode, request.NewPassword);
             return Ok(new { message = "Đổi mật khẩu thành công" });
         }
         catch (Exception ex)

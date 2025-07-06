@@ -9,9 +9,11 @@ import { AnimatePresence, motion } from 'motion/react';
 import { APP_ROUTE } from '@/types/general';
 import { useUser, useUserActions } from '@/stores/selectors';
 import { ThemeSwitcher } from '@toolpad/core/DashboardLayout';
+import { useQueryClient } from '@tanstack/react-query';
 const ToolBarAccount = () => {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [menuAnchorEl, setMenuAnchorEl] = React.useState<HTMLElement | null>(null);
   const user = useUser();
   const userActions = useUserActions();
@@ -22,6 +24,7 @@ const ToolBarAccount = () => {
 
   const handleLogout = () => {
     userActions?.logout();
+    queryClient.clear();
     router.push(APP_ROUTE.DANG_NHAP);
   };
 

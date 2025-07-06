@@ -18,6 +18,8 @@ import '@fontsource/roboto/700.css';
 import LoadingScreen from '@/components/loading/LoadingScreen';
 import { WaveAnimationLoading } from '@/components/loading/LoadingScreenWave';
 import Image from 'next/image';
+import { cookies } from 'next/headers';
+import { ROLE } from '@/types/general';
 
 export const metadata: Metadata = {
   title: 'CKC Hỗ trợ đào tạo',
@@ -36,12 +38,15 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const cookie = await cookies();
+  const role = cookie.get(ROLE)?.value;
+
   return (
     <html lang='en' data-toolpad-color-scheme='light'>
       <body className={`antialiased`} style={{ fontFamily: 'Roboto, Arial, sans-serif' }}>
         <AppRouterCacheProvider options={{ enableCssLayer: true, speedy: true }}>
           <Suspense fallback={<WaveAnimationLoading />}>
-            <NextAppProvider theme={theme} navigation={NAVIGATION} branding={BRANDING}>
+            <NextAppProvider theme={theme} navigation={NAVIGATION(role)} branding={BRANDING}>
               <Provider>{children}</Provider>
             </NextAppProvider>
           </Suspense>

@@ -58,7 +58,7 @@ interface IContentFormProps {
 const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => {
   const schema = useMemo(() => {
     return yup.object().shape({
-      TenKhoa: yup.string().required('Tên khoa không được để trống'),
+      TenKhoa: yup.string().required('Tên khoa không được để trống').max(200, 'Tên khoa không được quá 200 ký tự'),
       SoDienThoai: yup
         .string()
         .required('Số điện thoại là bắt buộc')
@@ -72,6 +72,7 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
       Email: yup
         .string()
         .required('Email là bắt buộc')
+        .max(220, 'Email không được quá 220 ký tự')
         .test('is-caothang-email', 'Email phải có đuôi @caothang.edu.vn', (value) => {
           return value ? value.endsWith('@caothang.edu.vn') : false;
         })
@@ -80,8 +81,8 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
           const username = value.split('@')[0];
           return /^[a-zA-Z0-9._-]+$/.test(username) && username.length >= 3;
         }),
-      ViTriPhong: yup.string().required('Vị trí phòng không được để trống'),
-      Website: yup.string().notRequired()
+      ViTriPhong: yup.string().required('Vị trí phòng không được để trống').max(100, 'Vị trí phòng không được quá 100 ký tự'),
+      Website: yup.string().notRequired().max(200, 'Website không được quá 200 ký tự')
     });
   }, [data]);
   const {

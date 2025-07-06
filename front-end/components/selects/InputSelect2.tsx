@@ -108,6 +108,7 @@ const InputSelect2 = (props: InputSelectProps) => {
             render={({ field }) => (
               <Autocomplete
                 {...rest}
+                noOptionsText='Không có dữ liệu'
                 value={field.value || (multiple ? [] : null)}
                 onChange={(event, newValue) => {
                   getOnChangeValue?.(newValue);
@@ -248,6 +249,7 @@ const InputSelect2 = (props: InputSelectProps) => {
             multiple={multiple}
             fullWidth={fullWidth}
             defaultValue={defaultValue}
+             noOptionsText='Không có dữ liệu'
             disabled={isDisabled}
             limitTags={limitShow}
             loading={isLoading}

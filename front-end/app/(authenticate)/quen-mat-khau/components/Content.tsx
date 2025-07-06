@@ -78,6 +78,7 @@ const Content = () => {
           <div className='flex items-center justify-center gap-2'>
             <span className='text-sm text-gray-500'>Bạn đã có tài khoản?</span>
             <button
+              type="button"
               onClick={() => router.push('/dang-nhap')}
               className='text-sm font-semibold text-blue-600 hover:text-blue-500 cursor-pointer transition-colors duration-200 ease-in-out hover:underline'
             >

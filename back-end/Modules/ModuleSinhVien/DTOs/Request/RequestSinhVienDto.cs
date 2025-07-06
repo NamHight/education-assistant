@@ -28,9 +28,7 @@ public class RequestAddSinhVienDto
     public DateTime? NgaySinh { get; set; }
 
     public int? GioiTinhEnum { get; set; }
-
-    [Required(ErrorMessage = "Địa chỉ không được để trống")]
-    [MaxLength(255, ErrorMessage = "Địa chỉ không được quá 255 ký tự")]
+    
     public string DiaChi { get; set; } = string.Empty;
     [Required(ErrorMessage = "Trạng thái sinh viên không được để trống")]
 
