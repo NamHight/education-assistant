@@ -87,8 +87,8 @@ namespace Education_assistant.Modules.ModuleSinhVien
             await _serviceMaster.SinhVien.DeleteAsync(id);
             return NoContent();
         }
-        [HttpDelete("{sinhVienId}/xoa-sv-khoi-lhp")]
-        public async Task<ActionResult> DeleteSinhVienAsync(Guid sinhVienId, [FromForm] Guid lopHocPhanId)
+        [HttpDelete("{sinhVienId}/lhp/{lopHocPhanId}/xoa-sv-khoi-lhp")]
+        public async Task<ActionResult> DeleteSinhVienAsync(Guid sinhVienId, Guid lopHocPhanId)
         {
             await _serviceMaster.SinhVien.DeleteSinhVienKhoiLopHocPhanAsync(sinhVienId, lopHocPhanId);
             return NoContent();
