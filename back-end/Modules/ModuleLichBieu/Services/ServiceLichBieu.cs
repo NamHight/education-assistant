@@ -143,7 +143,8 @@ namespace Education_assistant.Modules.ModuleLichBieu.Services
             {
                 return Enumerable.Empty<ResponseLichBieuDto>();
             }
-            var chuongTrinhDaoTao = await _repositoryMaster.ChuongTrinhDaoTao.GetChuongTrinhDaoTaoByKhoaAndNganhIdAsync(lopHoc.NamHoc, lopHoc.NganhId.Value);
+            var nganhId = lopHoc.NganhId;
+            var chuongTrinhDaoTao = await _repositoryMaster.ChuongTrinhDaoTao.GetChuongTrinhDaoTaoByKhoaAndNganhIdAsync(lopHoc.NamHoc, nganhId);
             if (chuongTrinhDaoTao is null)
             {
                 return Enumerable.Empty<ResponseLichBieuDto>();

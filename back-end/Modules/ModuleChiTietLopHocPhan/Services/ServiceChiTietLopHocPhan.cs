@@ -229,20 +229,19 @@ public class ServiceChiTietLopHocPhan : IServiceChiTietLopHocPhan
             foreach (var item in importData)
             {
                 var existingRecord = await _repositoryMaster.ChiTietLopHocPhan.GetByMaSinhVienAndLopHocPhanIdAsync(item.MaSinhVien, request.LopHocPhanId);
-                if (existingRecord == null)
+                if (existingRecord != null)
                 {
-                    throw new ChiTietLopHocPhanBadRequestException("Dữ liệu đầu vào file excel không đầy đủ!.");
+                    existingRecord.DiemChuyenCan = item.DiemChuyenCan;
+                    existingRecord.DiemTrungBinh = item.DiemTrungBinh;
+                    existingRecord.DiemThi1 = item.DiemThi1;
+                    existingRecord.DiemThi2 = item.DiemThi2;
+                    existingRecord.DiemTongKet1 = item.DiemTongKet1;
+                    existingRecord.DiemTongKet2 = item.DiemTongKet2;
+                    existingRecord.GhiChu = item.GhiChu;
+                    existingRecord.NgayLuuDiem = DateTime.Now;
+                    existingRecord.UpdatedAt = DateTime.Now;
+                    listChiTiets.Add(existingRecord);
                 }
-                existingRecord.DiemChuyenCan = item.DiemChuyenCan;
-                existingRecord.DiemTrungBinh = item.DiemTrungBinh;
-                existingRecord.DiemThi1 = item.DiemThi1;
-                existingRecord.DiemThi2 = item.DiemThi2;
-                existingRecord.DiemTongKet1 = item.DiemTongKet1;
-                existingRecord.DiemTongKet2 = item.DiemTongKet2;
-                existingRecord.GhiChu = item.GhiChu;
-                existingRecord.NgayLuuDiem = DateTime.Now;
-                existingRecord.UpdatedAt = DateTime.Now;
-                listChiTiets.Add(existingRecord);
             }
 
 

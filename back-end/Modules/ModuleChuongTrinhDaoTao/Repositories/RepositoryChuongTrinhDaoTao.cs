@@ -43,9 +43,9 @@ public class RepositoryChuongTrinhDaoTao : RepositoryBase<ChuongTrinhDaoTao>, IR
        return await FindByCondition(item => item.Id == id, trackChanges).Include(item => item.Nganh).FirstOrDefaultAsync();
     }
 
-    public async Task<ChuongTrinhDaoTao?> GetChuongTrinhDaoTaoByKhoaAndNganhIdAsync(int khoa, Guid nganhId)
+    public async Task<ChuongTrinhDaoTao?> GetChuongTrinhDaoTaoByKhoaAndNganhIdAsync(int khoa, Guid? nganhId)
     {
-        return await FindByCondition(item => item.Khoa == khoa && item.NganhId == nganhId, false).FirstOrDefaultAsync();
+        return await FindByCondition(item => item.Khoa == khoa && item.NganhId == nganhId, false).FirstOrDefaultAsync(); 
     }
 
     public async Task<ChuongTrinhDaoTao?> GetChuongTrinhDaoTaoByMaAsync(string maChuongTrinh, bool trackChanges)
