@@ -69,7 +69,7 @@ export const API = {
     GET_BY_LOP_HOC_PHAN: '/SinhVien/by-lop-hoc-phan',
     GET_BY_MSSV: '/SinhVien/mssv',
     DANG_KY_MON_HOC: '/SinhVien/dang-ky-mon-hoc',
-    DELETE_LHP: '/SinhVien/:id/lhp/:lopHocPhanId',
+    DELETE_LHP: '/SinhVien/:id/lhp/:lopHocPhanId/xoa-sv-khoi-lhp',
   },
   GIANG_VIEN: {
     GET_ALL: '/giangviens',

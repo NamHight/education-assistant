@@ -18,7 +18,7 @@ const page = async () => {
         label: key
       }))
     : [];
-      console.log('test' , chartData, xepHangSV, tyLeTL);
+
   return (
     <Box className="flex flex-col gap-4 w-full">
         <Box className="flex flex-wrap gap-3">

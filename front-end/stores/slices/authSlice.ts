@@ -35,6 +35,7 @@ export const createAuthSlice = createSlice<RootAuthState, IAuthState>((set) => (
         cookieStorage.remove(TOKEN_ACCESS);
         cookieStorage.remove(REFRESH_TOKEN);
         cookieStorage.remove(ROLE);
+        window.location.href = '/login';
       }),
     updateUser: (partialUser) =>
       set((state: IAuthState) => {

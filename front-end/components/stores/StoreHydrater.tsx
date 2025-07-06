@@ -39,7 +39,6 @@ const StoreHydrater = ({ auth, setting }: StoreHydraterProps) => {
     staleTime: Infinity,
     retry: false,
   });
-  console.log('user',user);
   useEffect(() => {
     if (!isClient) return;
   if (setting) {
@@ -48,8 +47,17 @@ const StoreHydrater = ({ auth, setting }: StoreHydraterProps) => {
       });
     }
     if (auth?.user) {
+      if(auth?.user?.deletedAt) {
+        actions?.logout();
+
+        return;
+      }
       useAuthStore.setState({ user: auth.user });
     } else if (user) {
+      if(user?.deletedAt) {
+        actions?.logout();
+        return;
+      }
       useAuthStore.setState({ user });
     }
   }, [auth?.user, user, setting, isClient]);
