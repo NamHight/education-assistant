@@ -89,7 +89,7 @@ const AddModal = ({ openAdd, handleCloseAdd }: IAddModalProps) => {
   const handleSubmitData = async (data: IFormData) => {
     const formData = new FormData();
     formData.append('NganhId', String(data?.Nganh?.id));
-    formData.append('Hoc', String(data?.HocKy?.id));
+    formData.append('HocKy', String(data?.HocKy?.id));
     formData.append('Khoa', String(data?.Khoa?.id));
     await mutationCreate.mutateAsync(formData);
   };
