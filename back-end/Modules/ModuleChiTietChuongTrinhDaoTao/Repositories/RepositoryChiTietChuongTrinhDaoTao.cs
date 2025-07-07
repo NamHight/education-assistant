@@ -97,6 +97,14 @@ public class RepositoryChiTietChuongTrinhDaoTao : RepositoryBase<ChiTietChuongTr
             false).FirstOrDefaultAsync();
     }
 
+    public async Task<ChiTietChuongTrinhDaoTao?> GetCtctdtByIdsCtctdtAndMonHocAsync(List<Guid> chuongTrinhId,
+        Guid monHocId)
+    {
+        return await FindByCondition(
+            item => chuongTrinhId.Contains(item.ChuongTrinhDaoTaoId!.Value) && item.MonHocId == monHocId,
+            false).FirstOrDefaultAsync();
+    }
+
     public void UpdateChiTietChuongTrinhDaoTao(ChiTietChuongTrinhDaoTao chiTietChuongTrinhDaoTao)
     {
         Update(chiTietChuongTrinhDaoTao);
