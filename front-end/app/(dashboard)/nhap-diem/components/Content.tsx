@@ -15,10 +15,10 @@ import { ChuongTrinhDaoTaoService } from '@/services/ChuongTrinhDaoTaoService';
 import { LoaiMonHocEnum } from '@/models/MonHoc';
 import moment from 'moment';
 import { useNotifications } from '@toolpad/core';
-import { LoaiLopHocPhan, TrangThaiLopHocPhanEnum } from '@/types/options';
+import { IOption, LoaiLopHocPhan, TrangThaiLopHocPhanEnum } from '@/types/options';
 import InputSelect2 from '@/components/selects/InputSelect2';
 import { usePopoverLock } from '@/hooks/context/PopoverLock';
-import { set, sortBy } from 'lodash';
+import { get, set, sortBy } from 'lodash';
 import { ChiTietLopHocPhanService } from '@/services/ChiTietLopHocPhanService';
 import { useUser } from '@/stores/selectors';
 import Link from 'next/link';
@@ -27,6 +27,7 @@ import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import { fi } from 'zod/v4/locales';
 import { ChiTietLopHocPhan } from '@/models/ChiTietLopHocPhan';
 import { HocBaService } from '@/services/HocBaService';
+import { useForm } from 'react-hook-form';
 const TableEdit = dynamic(() => import('./TableEdit'), {
   ssr: false
 });
@@ -34,8 +35,28 @@ const TableEdit = dynamic(() => import('./TableEdit'), {
 interface IContentProps {
   queryKey: string;
 }
+export interface IFilter {
+    hocKy: IOption | null;
+    loaiChuongTrinh: IOption | null;
+    lopHocPhan: {
+      id: string | null;
+      name: string | null;
+      monHocId: string | null;
+      chuongTrinhDaoTaoId: string | null;
+      loaiMonHoc: number | null;
+    } | null;
+    khoa: IOption | null;
+  }
 
 const Content = ({ queryKey }: IContentProps) => {
+    const { control, getValues,setValue } = useForm<IFilter>({
+    defaultValues: {
+      hocKy: null,
+      loaiChuongTrinh: null,
+      lopHocPhan:  null,
+      khoa: null
+    }
+  });
   const notification = useNotifications();
   const queryClient = useQueryClient();
   const user = useUser();
@@ -51,7 +72,7 @@ const Content = ({ queryKey }: IContentProps) => {
       monHocId: string;
       chuongTrinhDaoTaoId: string;
       loaiMonHoc: number;
-    };
+    } | null;
     khoa: number;
   } | null>(null);
   const filterRef = useRef(filter);
@@ -59,12 +80,12 @@ const Content = ({ queryKey }: IContentProps) => {
     items: []
   });
   const [isOpenPopover, setisOpenPopover] = useState<boolean>(false);
-  const { data, isLoading } = useQuery({
-    queryKey: [queryKey, filterModel, filter?.lopHocPhan?.id],
+  const { data:queryData, isLoading } = useQuery({
+    queryKey: [queryKey, filterModel,getValues("lopHocPhan")?.id],
     queryFn: async () => {
       const searchKeyWord = handleTextSearch(filterModel?.quickFilterValues as any[]);
       let params: IParamChiTietLopHocPhan = {
-        lopHocPhanId: filter?.lopHocPhan?.id
+        lopHocPhanId: getValues("lopHocPhan")?.id as any,
       };
       if (searchKeyWord) {
         params = {
@@ -73,30 +94,40 @@ const Content = ({ queryKey }: IContentProps) => {
         };
       }
       const result = await ChiTietLopHocPhanService.getAllChiTietLopHocPhanByLopHocPhanId(
-        filter?.lopHocPhan?.id as any,
+        getValues("lopHocPhan")?.id as any,
         params
       );
       return result;
     },
-    enabled: !!filter?.lopHocPhan?.id && !!filter?.khoa && !!filter?.hocKy && !!filter?.loaiChuongTrinh,
+    enabled: !!getValues("lopHocPhan")?.id && !!getValues("khoa")?.id && !!getValues("hocKy")?.id && !!getValues("loaiChuongTrinh")?.id,
     placeholderData: (prev) => prev,
     refetchOnWindowFocus: false,
     gcTime: 0
   });
+  const data = useMemo(() => {
+  const hasRequiredValues = !!getValues("lopHocPhan")?.id && 
+                           !!getValues("khoa")?.id && 
+                           !!getValues("hocKy")?.id && 
+                           !!getValues("loaiChuongTrinh")?.id;
+  
+  if (!hasRequiredValues) {
+    return { data: [] };
+  }
+  return queryData || [];
+}, [queryData, getValues("lopHocPhan")?.id, getValues("khoa")?.id, getValues("hocKy")?.id, getValues("loaiChuongTrinh")?.id]);
   const { data: lhp, isLoading: isLoadingLHP } = useQuery({
-    queryKey: ['lhp-list', filter?.khoa, filter?.hocKy, filter?.loaiChuongTrinh, user?.id],
+    queryKey: ['lhp-list',getValues("khoa")?.id, getValues("hocKy")?.id, getValues("loaiChuongTrinh")?.id, user?.id],
     queryFn: async () => {
       const params: IParamLopHocPhan2 = {
-        khoa: filter?.khoa,
-        hocky: filter?.hocKy,
-        loaiChuongTrinhDaoTao: filter?.loaiChuongTrinh,
+        khoa: getValues("khoa")?.id,
+        hocky: getValues("hocKy")?.id,
+        loaiChuongTrinhDaoTao: getValues("loaiChuongTrinh")?.id,
         giangVienId: user?.id
       };
       const result = await LopHocPhanService.getLopHocPhanByGiangVienId(params);
       return result;
     },
     select: (data) => {
-      console.log("data",data);
       return data?.map((item: any) => ({
         id: item.id,
         name: item.maHocPhan,
@@ -107,8 +138,9 @@ const Content = ({ queryKey }: IContentProps) => {
     },
     placeholderData: (prev) => prev,
     refetchOnWindowFocus: false,
-    enabled: !!user && !!filter?.khoa && !!filter?.hocKy && !!filter?.loaiChuongTrinh
+    enabled: !!user && !!getValues("khoa")?.id && !!getValues("hocKy")?.id && !!getValues("loaiChuongTrinh")?.id
   });
+
   useEffect(() => {
     filterRef.current = filter;
   }, [filter]);
@@ -145,8 +177,8 @@ const Content = ({ queryKey }: IContentProps) => {
         autoHideDuration: 5000
       });
     },
-    onError: (error) => {
-      notification.show('Nộp điểm thất bại', {
+    onError: (error: any) => {
+      notification.show(error?.Message || 'Nộp điểm thất bại', {
         severity: 'error',
         autoHideDuration: 5000
       });
@@ -525,17 +557,20 @@ const Content = ({ queryKey }: IContentProps) => {
   //     </Fragment>
   //   );
   // }, [loaiLopHocPhan]);
-  const handleSave = (item: any) => {
+  const handleSave = useCallback((item: any) => {
+      const lopHocPhan = getValues('lopHocPhan');
+      const khoa = getValues('khoa');
+      const hocKy = getValues('hocKy');
+      const loaiChuongTrinh = getValues('loaiChuongTrinh');
      if (
-      !filter?.lopHocPhan?.id ||
-      !filter?.khoa ||
-      !filter?.hocKy ||
-      !filter?.loaiChuongTrinh ||
-      !filter?.lopHocPhan?.monHocId ||
-      !filter?.lopHocPhan?.chuongTrinhDaoTaoId ||
-      (data && data?.data?.length === 0)
+      !lopHocPhan?.id ||
+      !khoa?.id ||
+      !hocKy?.id ||
+      !loaiChuongTrinh?.id ||
+      !lopHocPhan?.monHocId ||
+      !lopHocPhan?.chuongTrinhDaoTaoId
     ) {
-      notification.show('Vui lòng chọn đầy đủ thông tin trước khi nộp điểm', {
+      notification.show('Vui lòng chọn đầy đủ thông tin trước khi lưu điểm', {
         severity: 'warning',
         autoHideDuration: 5000
       });
@@ -548,7 +583,6 @@ const Content = ({ queryKey }: IContentProps) => {
       });
       return;
     }
-    const currentFilter = filterRef.current;
     const convertData = item?.map((item: any) => ({
       id: item.id,
       diemChuyenCan: item.diemChuyenCan,
@@ -561,19 +595,23 @@ const Content = ({ queryKey }: IContentProps) => {
     }));
     const finalData = {
       listDiemSo: convertData,
-      loaiMonHoc: currentFilter?.lopHocPhan?.loaiMonHoc 
+      loaiMonHoc: lopHocPhan?.loaiMonHoc 
     };
     mutateSaving.mutate(finalData);
-  };
+  }, [data, notification, mutateSaving]);
 
   const handleNopDiem = async () => {
+const lopHocPhan = getValues('lopHocPhan');
+    const khoa = getValues('khoa');
+    const hocKy = getValues('hocKy');
+    const loaiChuongTrinh = getValues('loaiChuongTrinh');
     if (
-      !filter?.lopHocPhan?.id ||
-      !filter?.khoa ||
-      !filter?.hocKy ||
-      !filter?.loaiChuongTrinh ||
-      !filter?.lopHocPhan?.monHocId ||
-      !filter?.lopHocPhan?.chuongTrinhDaoTaoId ||
+      !lopHocPhan?.id ||
+      !khoa?.id ||
+      !hocKy?.id ||
+      !loaiChuongTrinh?.id ||
+      !lopHocPhan?.monHocId ||
+      !lopHocPhan?.chuongTrinhDaoTaoId ||
       (data && data?.data?.length === 0)
     ) {
       notification.show('Vui lòng chọn đầy đủ thông tin trước khi nộp điểm', {
@@ -582,26 +620,32 @@ const Content = ({ queryKey }: IContentProps) => {
       });
       return;
     }
-    const currentFilter = filterRef.current;
     const rowIds = apiRef.current?.getRowModels();
     const allRows = Array.from(rowIds?.values() || []);
     const convertData = allRows?.filter(item => item?.sinhVienId)?.map((item) => ({
-      diemTongKet1: item?.diemTongKet1,
-      diemTongKet2: item?.diemTongKet2,
-      sinhVienId: item?.sinhVienId
+      DiemTongKet1: item?.diemTongKet1 || 0,
+      DiemTongKet2: item?.diemTongKet2 || 0,
+      SinhVienId: item?.sinhVienId
     }));
+    const checkIsDiemTongKet1 = convertData?.some((item) => item?.DiemTongKet1 === 0 || item?.DiemTongKet1 === undefined);
+    if (checkIsDiemTongKet1) {
+      notification.show('Vui lòng nhập điểm tổng kết hoặc lưu điểm trước khi nộp', {
+        severity: 'warning',
+        autoHideDuration: 4000
+      });
+      return;
+    } 
     if (convertData.length === 0) {
       notification.show('Không có dữ liệu để nộp điểm', {
         severity: 'warning',
-        autoHideDuration: 5000
+        autoHideDuration: 4000
       });
       return;
     }
     const finalData = {
-      listDiemSo: convertData,
-      lopHocPhanId: currentFilter?.lopHocPhan?.id,
-      monHocId: currentFilter?.lopHocPhan?.monHocId,
-      chuongTrinhDaoTaoId: currentFilter?.lopHocPhan?.chuongTrinhDaoTaoId
+      ListDiemSo: convertData,
+      LopHocPhanId: lopHocPhan?.id,
+      MonHocId: lopHocPhan?.monHocId,
     };
     mutationNopDiem.mutate(finalData);
   };
@@ -620,6 +664,8 @@ const Content = ({ queryKey }: IContentProps) => {
         handleNopDiem={handleNopDiem}
         setfilter={setfilter}
         filter={filter}
+        control={control}
+        setValue={setValue}
         // contentPopover={handleShowFilter}
         // isOpen={isOpenPopover}
         // handleClick={handleOpenPopover}

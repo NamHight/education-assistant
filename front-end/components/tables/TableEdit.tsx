@@ -461,7 +461,7 @@ const TableEdit = forwardRef(
             }
           }}
           className='!border-gray-200 shadow-sm'
-          sx={(theme) => ({
+          sx={(theme) => ({ 
             height: '100%',
             overflowY: 'auto',
             [`& .${gridClasses.columnHeaders}`]: {

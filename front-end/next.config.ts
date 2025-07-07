@@ -4,7 +4,6 @@ const nextConfig: NextConfig = {
   // ✅ Image optimization
   images: {
     remotePatterns: [
-      new URL('http://192.168.2.60:8000/uploads/**'),
       {
         protocol: "http",
         hostname: "localhost",

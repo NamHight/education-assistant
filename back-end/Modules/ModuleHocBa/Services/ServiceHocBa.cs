@@ -1,7 +1,9 @@
 using AutoMapper;
 using Education_assistant.Contracts.LoggerServices;
+using Education_assistant.Exceptions.ThrowError.ChiTietChuongTrinhDaoTaoExceptions;
 using Education_assistant.Exceptions.ThrowError.ChiTietLopHocPhanExceptions;
 using Education_assistant.Exceptions.ThrowError.HocBaExceptions;
+using Education_assistant.Exceptions.ThrowError.SinhVienChuongTrinhDaoTaoExceptions;
 using Education_assistant.helpers.implements;
 using Education_assistant.Models;
 using Education_assistant.Models.Enums;
@@ -132,6 +134,9 @@ public class ServiceHocBa : IServiceHocBa
         var sinhVienIds = request.ListDiemSo.Select(d => d.SinhVienId!.Value).ToList();
         var allSvCtdt = await _repositoryMaster.sinhVienChuongTrinhDao
             .GetSinhVienChuongTrinhDaoTaoByIdsAsync(sinhVienIds);
+        if (allSvCtdt is null || !allSvCtdt.Any())
+            throw new SinhVienChuongTrinhDaoTaoNotFoundException(
+                "Không tìm thấy sinh viên trong chương trình đào tạo tương ứng với danh sách điểm số.");
         // var svCtdtDict = allSvCtdt
         //     .GroupBy(s => s.SinhVienId!.Value)s
         //     .ToDictionary(g => g.Key, g => g.ToList());
@@ -141,6 +146,9 @@ public class ServiceHocBa : IServiceHocBa
             .ToList();
         var ctctdt = await _repositoryMaster.ChiTietChuongTrinhDaoTao
             .GetCtctdtByIdsCtctdtAndMonHocAsync(allChuongTrinhIds, request.MonHocId);
+        if (ctctdt is null)
+            throw new ChiTietChuongTrinhDaoTaoNotFoundException();
+
         var exsitingHocBas =
             await _repositoryMaster.HocBa.GetAllHocBaByKeysAsync(sinhVienIds, ctctdt!.Id);
         var hocBaDict =

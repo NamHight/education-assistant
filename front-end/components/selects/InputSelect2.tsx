@@ -30,6 +30,7 @@ interface InputSelectProps {
   onOpen?: () => void;
   onClose?: () => void;
   defaultValue?: any;
+  value?: any;
   [key: string]: any;
 }
 
@@ -56,6 +57,7 @@ const InputSelect2 = (props: InputSelectProps) => {
     disablePortal,
     onOpen,
     onClose,
+    value,
     defaultValue,
     ...rest
   } = props;
@@ -249,7 +251,7 @@ const InputSelect2 = (props: InputSelectProps) => {
             multiple={multiple}
             fullWidth={fullWidth}
             defaultValue={defaultValue}
-             noOptionsText='Không có dữ liệu'
+            noOptionsText='Không có dữ liệu'
             disabled={isDisabled}
             limitTags={limitShow}
             loading={isLoading}

@@ -1,5 +1,5 @@
 'use client';
-import React, { Dispatch, forwardRef, RefObject, useMemo, useState } from 'react';
+import React, { Dispatch, forwardRef, RefObject, useEffect, useMemo, useState } from 'react';
 import {
   DataGrid,
   GridRowId,
@@ -43,6 +43,8 @@ import { ChiTietLopHocPhanService } from '@/services/ChiTietLopHocPhanService';
 import { saveAs } from 'file-saver';
 import { useNotifications } from '@toolpad/core';
 import moment from 'moment';
+import { UseFormSetValue } from 'react-hook-form';
+import { IFilter } from './Content';
 function TextInput(props: React.InputHTMLAttributes<HTMLInputElement>) {
   return (
     <input
@@ -219,8 +221,10 @@ interface ImportFileProps {
 }
 interface ITableEditProps {
   row: any[];
+  control?: any;
   columns: GridColDef[];
   apiRef?: any;
+  setValue:UseFormSetValue<IFilter>;
   isSaving?: boolean;
   isLoading?: boolean;
   setFilterModel?: (data: any) => void;
@@ -236,7 +240,7 @@ interface ITableEditProps {
         loaiMonHoc: number;
         monHocId: string;
         chuongTrinhDaoTaoId: string;
-      };
+      } | null;
       khoa: number;
     } | null>
   >;
@@ -256,7 +260,7 @@ interface ITableEditProps {
       loaiMonHoc: number;
       monHocId: string;
       chuongTrinhDaoTaoId: string;
-    };
+    } | null;
     khoa: number;
   } | null;
   queryKey: string;
@@ -266,7 +270,9 @@ const TableEdit = forwardRef(
   (
     {
       columns,
+      control,
       row,
+      setValue,
       isLoading,
       setFilterModel,
       setSortModel,
@@ -428,7 +434,7 @@ const TableEdit = forwardRef(
         setFile(fileList[0]);
         handleImportFileClick({ LopHocPhanId: filter?.lopHocPhan?.id || '', File: fileList[0] });
       }
-    };
+    }
     return (
       <motion.div
         initial={{ opacity: 0 }}
@@ -448,7 +454,8 @@ const TableEdit = forwardRef(
                 <Box className='flex-1'>
                   <InputSelect2
                     fullWidth
-                    name={'bac'}
+                    control={control}
+                    name={'loaiChuongTrinh'}
                     placeholder={'Chọn bậc'}
                     data={LoaiChuongTrinhDaoTao ?? []}
                     getOptionKey={(option) => option.id}
@@ -456,9 +463,12 @@ const TableEdit = forwardRef(
                     getOnChangeValue={(value) => {
                       setfilter((prev: any) => ({
                         ...prev,
-                        loaiChuongTrinh: value?.id
+                        loaiChuongTrinh: value?.id,
+                        lopHocPhan: null
                       }));
+                      setValue("lopHocPhan", null);
                     }}
+                  
                   />
                 </Box>
               </Box>
@@ -469,14 +479,18 @@ const TableEdit = forwardRef(
                     fullWidth
                     name={'khoa'}
                     placeholder={'Chọn Khoa'}
+                    control={control}
                     data={yearOptions ?? []}
                     getOptionKey={(option) => option.id}
                     getOptionLabel={(option: any) => option.name}
                     getOnChangeValue={(value) => {
                       setfilter((prev: any) => ({
                         ...prev,
-                        khoa: value?.id
+                        khoa: value?.id,
+                        lopHocPhan: null
+              
                       }));
+                     setValue("lopHocPhan", null);
                     }}
                   />
                 </Box>
@@ -487,6 +501,7 @@ const TableEdit = forwardRef(
                   <InputSelect2
                     fullWidth
                     name={'hocKy'}
+                    control={control}
                     placeholder={'Chọn học kỳ'}
                     data={HocKyLopHocPhan ?? []}
                     getOptionKey={(option) => option.id}
@@ -494,8 +509,11 @@ const TableEdit = forwardRef(
                     getOnChangeValue={(value) => {
                       setfilter((prev: any) => ({
                         ...prev,
-                        hocKy: value?.id
+                        hocKy: value?.id,
+                        lopHocPhan: null
+              
                       }));
+                      setValue("lopHocPhan", null);
                     }}
                   />
                 </Box>
@@ -507,7 +525,8 @@ const TableEdit = forwardRef(
                 <Box className='flex-1'>
                   <InputSelect2
                     fullWidth
-                    name={'LopHocPhan'}
+                    name={'lopHocPhan'}
+                    control={control}
                     placeholder={'Chọn lớp'}
                     data={lopHocPhan ?? []}
                     isLoading={isLoadingLHP}
