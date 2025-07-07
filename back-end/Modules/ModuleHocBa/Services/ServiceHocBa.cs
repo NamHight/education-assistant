@@ -132,9 +132,9 @@ public class ServiceHocBa : IServiceHocBa
         var sinhVienIds = request.ListDiemSo.Select(d => d.SinhVienId!.Value).ToList();
         var allSvCtdt = await _repositoryMaster.sinhVienChuongTrinhDao
             .GetSinhVienChuongTrinhDaoTaoByIdsAsync(sinhVienIds);
-        var svCtdtDict = allSvCtdt
-            .GroupBy(s => s.SinhVienId!.Value)
-            .ToDictionary(g => g.Key, g => g.ToList());
+        // var svCtdtDict = allSvCtdt
+        //     .GroupBy(s => s.SinhVienId!.Value)s
+        //     .ToDictionary(g => g.Key, g => g.ToList());
         var allChuongTrinhIds = allSvCtdt
             .Select(s => s.ChuongTrinhDaoTaoId!.Value)
             .Distinct()
