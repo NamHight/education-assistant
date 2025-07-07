@@ -49,9 +49,6 @@ public class RequestListUpdateHocbaDto
     public Guid LopHocPhanId { get; set; }
 
     [Required(ErrorMessage = "Id chi tiết chương trình đào tạo không được để trống")]
-    public Guid ChuongTrinhDaoTaoId { get; set; }
-
-    [Required(ErrorMessage = "Id chi tiết chương trình đào tạo không được để trống")]
     public Guid MonHocId { get; set; }
 }
 
