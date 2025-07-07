@@ -29,4 +29,15 @@ export class ThongKeService {
       .then((response) => response.data)
       .catch((error) => error.response?.data);
   }
+
+  static async getThongKeTyLeThiLaiTrongNam() {
+    return await authApi.get(`${API.THONG_KE.GET_TY_LE_THI_LAI_TRONG_NAM}`)
+      .then((response) => response.data)
+      .catch((error) => error.response?.data);
+  }
+  static async getThongKeTyLeThiLaiTrongNamServer() {
+    return await authApiServer.get(`${API.THONG_KE.GET_TY_LE_THI_LAI_TRONG_NAM}`)
+      .then((response) => response.data)
+      .catch((error) => error.response?.data);
+  }
 }

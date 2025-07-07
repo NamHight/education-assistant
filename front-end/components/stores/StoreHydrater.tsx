@@ -1,10 +1,12 @@
 'use client';
 import authApi from '@/lib/authAxios';
+import cookieStorage from '@/lib/cookie';
 import { GiangVien } from '@/models/GiangVien';
 import { AuthenticateService } from '@/services/AuthenticateService';
 import { useAuthStore } from '@/stores/authStore';
+import { useUserActions } from '@/stores/selectors';
 import { useAppStore } from '@/stores/store';
-import { API } from '@/types/general';
+import { API, REFRESH_TOKEN, ROLE } from '@/types/general';
 import { usePrefetchQuery, useQuery, useQueryClient } from '@tanstack/react-query';
 import React, { useEffect, useState } from 'react';
 
@@ -18,10 +20,12 @@ interface StoreHydraterProps {
 }
 
 const StoreHydrater = ({ auth, setting }: StoreHydraterProps) => {
+  'use client';
     const [isClient, setIsClient] = useState(false);
      useEffect(() => {
     setIsClient(true);
   }, []);
+  const actions = useUserActions();
   const hasUser = !!auth?.user;
   const { data: user } = useQuery({
     queryKey: ['user'],
@@ -30,24 +34,33 @@ const StoreHydrater = ({ auth, setting }: StoreHydraterProps) => {
       return response;
     },
     ...(hasUser ? { initialData: auth.user } : {}),
-    enabled: !hasUser,
+    enabled: isClient && !hasUser,
     gcTime: Infinity,
     staleTime: Infinity,
     retry: false,
   });
   useEffect(() => {
     if (!isClient) return;
-    if (auth?.user) {
-      useAuthStore.setState({ user: auth.user });
-    } else if (user) {
-      useAuthStore.setState({ user });
-    }
-    if (setting) {
+  if (setting) {
       useAppStore.setState({
         theme: setting.theme
       });
     }
-  }, [auth?.user, user, setting]);
+    if (auth?.user) {
+      if(auth?.user?.deletedAt) {
+        actions?.logout();
+
+        return;
+      }
+      useAuthStore.setState({ user: auth.user });
+    } else if (user) {
+      if(user?.deletedAt) {
+        actions?.logout();
+        return;
+      }
+      useAuthStore.setState({ user });
+    }
+  }, [auth?.user, user, setting, isClient]);
   return null;
 };
 

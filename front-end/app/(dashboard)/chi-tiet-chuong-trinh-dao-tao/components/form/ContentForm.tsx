@@ -193,7 +193,8 @@ const ContentForm = forwardRef(({ onSubmit, data, initialData, setKhoas }: ICont
       SoTinChi: '',
       DiemTichLuy: false,
       LoaiMonHoc: null,
-      HocKy: null
+      HocKy: null,
+      SoTinChi: 0
     }
   });
 

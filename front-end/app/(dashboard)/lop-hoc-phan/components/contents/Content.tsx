@@ -46,6 +46,11 @@ const Content = ({ queryKey }: ContentProps) => {
   const refTable = useRef<{ handleClose: () => void; handleOpenDelete: () => void; handleCloseDelete: () => void }>(
     null
   );
+   const [filterOption, setFilterOption] = useState<{
+      trangThai: number | null;
+    }>({
+      trangThai: null,
+    });
   const notification = useNotifications();
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
@@ -77,7 +82,7 @@ const Content = ({ queryKey }: ContentProps) => {
 
   const queryClient = useQueryClient();
   const { data, isLoading, isFetching } = useQuery({
-    queryKey: [queryKey, paginationModel, sortModel, filterModel],
+    queryKey: [queryKey, paginationModel, sortModel, filterModel, filterOption],
     queryFn: async () => {
       const searchKeyWord = handleTextSearch(filterModel?.quickFilterValues as any[]);
       let params: IParamLopHocPhan = {
@@ -86,7 +91,9 @@ const Content = ({ queryKey }: ContentProps) => {
         sortBy: 'createdAt',
         sortByOrder: 'desc'
       };
-
+      if(filterOption?.trangThai){
+        params.trangThai = filterOption?.trangThai;
+      }
       if (sortModel.field && sortModel.sort) {
         params.sortBy = sortModel.field;
         params.sortByOrder = sortModel.sort === 'asc' ? 'asc' : 'desc';
@@ -185,9 +192,7 @@ const Content = ({ queryKey }: ContentProps) => {
       <MenuItem
         key='edit'
         onClick={() => {
-          handleClickOpenEdit();
-          setGetId(id as string);
-          refTable.current?.handleClose();
+          router.push(APP_ROUTE.LOP_HOC_PHAN.EDIT(id as string));
         }}
         sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}
       >
@@ -362,6 +367,23 @@ const Content = ({ queryKey }: ContentProps) => {
       <Box className='flex justify-start gap-4 border border-gray-200 rounded-lg p-4 shadow-sm'>
         <Button title={'Thêm mới học phần'} onClick={() => handleClickOpenAdd()} />
         <Button title={'Thêm mới học kỳ phụ'} onClick={() => router.push(APP_ROUTE.LOP_HOC_PHAN.ADD_HOC_KY_PHU)} />
+        <Box className='flex-1' >
+           <InputSelect2
+            fullWidth
+            name={'TrangThai'}
+            placeholder={'Trạng thái'}
+            data={TrangThaiLopHocPhan ?? []}
+            getOptionKey={(option) => option.id}
+            getOptionLabel={(option: any) => option.name}
+            getOnChangeValue={(value: any) => {
+              setFilterOption((prev) => ({
+                ...prev,
+                trangThai: value?.id || null
+              }));
+            }}
+          />
+        </Box>
+
       </Box>
       <Table
         ref={refTable}

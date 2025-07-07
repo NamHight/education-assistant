@@ -61,11 +61,12 @@ interface IContentFormProps {
 const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => {
   const schema = useMemo(() => {
     return yup.object().shape({
-      TenBoMon: yup.string().required('Mã ngành không được để trống'),
+      TenBoMon: yup.string().max(200, 'Tên bộ môn không được quá 200 ký tự').required('Mã ngành không được để trống'),
       Email: yup
         .string()
         .matches(emailPattern, 'Email không hợp lệ')
         .email('Email không hợp lệ')
+        .max(220, 'Email không được quá 220 ký tự')
         .required('Tên ngành không được để trống'),
       SoDienThoai: yup
         .string()

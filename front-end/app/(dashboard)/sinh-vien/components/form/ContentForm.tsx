@@ -64,13 +64,14 @@ interface IContentFormProps {
 const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => {
   const schema = useMemo(() => {
     return yup.object().shape({
-      HoTen: yup.string().required('Họ và tên là bắt buộc'),
+      HoTen: yup.string().max(200, 'Họ và tên không được quá 220 ký tự').required('Họ và tên là bắt buộc'),
       Email: yup
         .string()
         .required('Email là bắt buộc')
         .test('is-caothang-email', 'Email phải có đuôi @caothang.edu.vn', (value) => {
           return value ? value.endsWith('@caothang.edu.vn') : false;
         })
+        .max(200, 'Email không được quá 220 ký tự')
         .test('valid-username', 'Tên người dùng không hợp lệ', (value) => {
           if (!value) return false;
           const username = value.split('@')[0];
@@ -97,8 +98,8 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
       GioiTinh: yup.object().required('Giới tính là bắt buộc'),
       TrangThaiSinhVienEnum: yup.object().required('Trạng thái là bắt buộc'),
       LopHoc: yup.object().required('Lớp học là bắt buộc'),
-      DiaChi: yup.string().notRequired(),
-      MSSV: yup.string().notRequired()
+      DiaChi: yup.string().max(225,"Địa chỉ không được quá 225 ký tự").notRequired(),
+      MSSV: yup.string().required("Mã số sinh viên là bắt buộc").max(20, 'Mã số sinh viên không được quá 20 ký tự'),
     });
   }, [data]);
   const { data: lopHocs, isLoading: isLoadingLopHoc } = useQuery({

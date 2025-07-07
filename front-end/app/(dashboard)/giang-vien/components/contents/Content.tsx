@@ -38,7 +38,7 @@ import {
   TrendingUp,
   Unplug
 } from 'lucide-react';
-import { TrangThaiGiangVien } from '@/types/options';
+import { LoaiTaiKhoanEnum, TrangThaiGiangVien } from '@/types/options';
 import { PeopleAltTwoTone } from '@mui/icons-material';
 import authApi from '@/lib/authAxios';
 import { filter } from 'lodash';
@@ -232,6 +232,18 @@ const Content = ({ queryKey, khoaData, tinhTrangServer }: ContentProps) => {
           return '';
       }
     };
+    const formatRole = (role: number) => {
+      switch (role) {
+        case LoaiTaiKhoanEnum.ADMIN:
+          return 'Admin';
+        case LoaiTaiKhoanEnum.QUAN_LY_KHOA_BO_MON:
+          return 'Quản lý khoa bộ môn';
+        case LoaiTaiKhoanEnum.GIANG_VIEN:
+          return 'Giảng viên';
+        default:
+          return '';
+      }
+    }
     return [
       {
         field: 'id',
@@ -250,9 +262,9 @@ const Content = ({ queryKey, khoaData, tinhTrangServer }: ContentProps) => {
       },
       {
         field: 'anhDaiDien',
-        headerName: 'Ảnh đại diện',
-        headerAlign: 'left',
-        minWidth: 140,
+        headerName: 'Ảnh',
+        headerAlign: 'center',
+        minWidth: 100,
         sortable: false,
         filterable: false,
         hideable: false,
@@ -372,6 +384,19 @@ const Content = ({ queryKey, khoaData, tinhTrangServer }: ContentProps) => {
         }
       },
       {
+        field: 'role',
+        headerName: 'Vai trò',
+        type: 'string',
+        minWidth: 80,
+        disableColumnMenu: true,
+        sortable: false,
+        display: 'flex',
+        flex: 0.8,
+        renderCell: (params: any) => {
+          return formatRole(params.row?.taiKhoan?.loaiTaiKhoan)
+        }
+      },
+      {
         field: 'trangThai',
         headerName: 'Trạng thái',
         type: 'string',
@@ -386,7 +411,7 @@ const Content = ({ queryKey, khoaData, tinhTrangServer }: ContentProps) => {
       },
       {
         field: 'deletedAt',
-        headerName: 'Đã xóa',
+        headerName: 'Xóa',
         type: 'string',
         minWidth: 60,
         disableColumnMenu: true,

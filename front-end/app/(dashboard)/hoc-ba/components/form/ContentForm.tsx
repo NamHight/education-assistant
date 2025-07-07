@@ -75,8 +75,7 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
         .number()
         .min(0, 'Điểm tổng kết không hợp lệ')
         .max(10, 'Điểm tổng kết tối đa 10')
-        .required('Điểm tổng kết không được để trống')
-        .min(0, 'Điểm tổng kết không hợp lệ'),
+        .required('Điểm tổng kết không được để trống'),
       KetQua: yup.object().required('Kết quả không được để trống'),
       SinhVien: yup.object().required('Sinh viên không được để trống'),
       LopHocPhan: yup.object().required('Lớp học phần không được để trống'),

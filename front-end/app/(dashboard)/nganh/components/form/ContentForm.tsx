@@ -45,7 +45,6 @@ import TextArea from '@/components/textarea/TextArea';
 import { Nganh } from '@/models/Nganh';
 
 export interface IFormData {
-  MaNganh: string;
   TenNganh: string;
   MoTa: string;
   Khoa: IOption;
@@ -60,8 +59,7 @@ interface IContentFormProps {
 const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => {
   const schema = useMemo(() => {
     return yup.object().shape({
-      MaNganh: yup.string().required('Mã ngành không được để trống'),
-      TenNganh: yup.string().required('Tên ngành không được để trống'),
+      TenNganh: yup.string().max(200, 'Tên ngành không được quá 200 ký tự').required('Tên ngành không được để trống'),
       MoTa: yup.string().notRequired(),
       Khoa: yup.object().required('Khoa không được để trống')
     });
@@ -103,9 +101,6 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
     if (data?.id) {
       form.append('Id', data.id);
     }
-    if (formData?.MaNganh) {
-      form.append('MaNganh', formData.MaNganh);
-    }
     if (formData?.TenNganh) {
       form.append('TenNganh', formData.TenNganh);
     }
@@ -135,16 +130,6 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
   return (
     <FormControl fullWidth component={'form'} onSubmit={handleSubmit(handleSubmitForm)} className='flex flex-col gap-4'>
       <Grid container spacing={2} rowSpacing={1}>
-        <Grid size={{ xs: 12, sm: 6, md: 6, lg: 6 }}>
-          <Input2
-            {...register('MaNganh')}
-            title='Mã ngành'
-            placeholder='Nhập mã ngành'
-            error={errors.MaNganh?.message}
-            isDisabled={false}
-            type='text'
-          />
-        </Grid>
         <Grid size={{ xs: 12, sm: 6, md: 6, lg: 6 }}>
           <Input2
             {...register('TenNganh')}

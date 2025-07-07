@@ -6,7 +6,7 @@ export const THEME_LIGHT: string = 'light';
 export const THEME_DARK: string = 'dark';
 export const TOOLPAD_MODE: string = 'toolpad-mode';
 export const USER: string = 'user';
-
+export const ROLE: string = 'role';
 export const API = {
   BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3000/api',
   TUAN: {
@@ -45,7 +45,9 @@ export const API = {
   },
   THONG_KE: {
     GET_XEP_LOAI_HOC_LUC: '/ThongKe/xep-loai-hoc-luc',
-    XEP_HANG_SINH_VIEN: '/ThongKe/top-sinh-vien-gpa'
+    XEP_HANG_SINH_VIEN: '/ThongKe/top-sinh-vien-gpa',
+    GET_TY_LE_QUA_MON: '/ThongKe/qua-mon-trong-nam',
+    GET_TY_LE_THI_LAI_TRONG_NAM: '/ThongKe/thi-lai-trong-nam',
   },
   PHONG_HOC: {
     GET_ALL: '/PhongHoc',
@@ -66,7 +68,8 @@ export const API = {
     EXPORT: '/SinhVien/:id/export',
     GET_BY_LOP_HOC_PHAN: '/SinhVien/by-lop-hoc-phan',
     GET_BY_MSSV: '/SinhVien/mssv',
-    DANG_KY_MON_HOC: '/SinhVien/dang-ky-mon-hoc'
+    DANG_KY_MON_HOC: '/SinhVien/dang-ky-mon-hoc',
+    DELETE_LHP: '/SinhVien/:id/lhp/:lopHocPhanId/xoa-sv-khoi-lhp',
   },
   GIANG_VIEN: {
     GET_ALL: '/giangviens',

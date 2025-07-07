@@ -14,6 +14,7 @@ interface IInput2Props {
   type?: string;
   editAble?: boolean;
   onClickEdit?: () => void;
+  className?: string;
   isEditAble?: boolean;
   isDisableMessError?: boolean;
   [key: string]: any;
@@ -28,6 +29,7 @@ const Input2 = ({
   isDisabled,
   onClickEdit,
   editAble,
+  className,
   isEditAble,
   isDisableMessError,
   ...rest
@@ -75,7 +77,7 @@ const Input2 = ({
         variant='outlined'
         disabled={isDisabled}
         fullWidth
-        className='!mb-1'
+        className={clsx('!mb-1', className)}
         error={!!error}
         placeholder={placeholder}
         sx={(theme) => ({

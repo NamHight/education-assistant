@@ -415,7 +415,9 @@ const TableEdit = forwardRef(
           ease: [0.22, 1, 0.36, 1]
         }}
         className='flex flex-col gap-4'
-        style={{ height: 'calc(100vh - 200px)' }}
+        style={{ height: 'calc(100vh - 200px)', minHeight: '600px', // ✅ Add minimum height
+      display: 'flex',
+      flexDirection: 'column' }}
       >
         <Box className='flex w-full gap-4 '>
           <Box className='flex-1 gap-4 flex justify-center items-center p-4 border border-gray-200 rounded-lg shadow-sm light:bg-white'>
@@ -588,7 +590,15 @@ const TableEdit = forwardRef(
             </Box>
           </Box>
         </Box>
-
+ <Box 
+      sx={{ 
+        flex: 1, // ✅ Take remaining space
+        minHeight: '400px', // ✅ Minimum height for DataGrid
+        display: 'flex',
+        flexDirection: 'column',
+        height: '100%'
+      }}
+    >
         <DataGrid
           apiRef={apiRef}
           rows={row}
@@ -637,7 +647,9 @@ const TableEdit = forwardRef(
           }}
           className='!border-gray-200 shadow-sm'
           sx={(theme) => ({
-            height: '100%',
+          height: '100%', 
+          flex: 1, 
+          minHeight: '400px',
             overflowY: 'auto',
             '& .MuiDataGrid-editInputCell': {
               margin: 0
@@ -715,6 +727,7 @@ const TableEdit = forwardRef(
           })}
           loading={isSaving || isLoading}
         />
+        </Box>
       </motion.div>
     );
   }
