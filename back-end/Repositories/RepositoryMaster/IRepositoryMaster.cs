@@ -16,6 +16,7 @@ using Education_assistant.Modules.ModuleNganh.Repositories;
 using Education_assistant.Modules.ModulePhongHoc.Repositories;
 using Education_assistant.Modules.ModuleSinhVien.Repositories;
 using Education_assistant.Modules.ModuleSinhVien.Repositories.DangKyMonHocs;
+using Education_assistant.Modules.ModuleSinhVien.Repositories.SinhVienChuongTrinhDaoTaos;
 using Education_assistant.Modules.ModuleThongKe.Repositories;
 using Education_assistant.Modules.ModuleTuan.Repositories;
 
@@ -42,6 +43,7 @@ public interface IRepositoryMaster : IDisposable
     IRepositoryTuan Tuan { get; }
     IRepositoryThongKe ThongKe { get; }
     IRepositoryDangKyMonHoc DangKyMonHoc { get; }
+    IRepositorySinhVienChuongTrinhDaoTao sinhVienChuongTrinhDao { get; }
     public Task ExecuteInTransactionAsync(Func<Task> operation);
 
     Task BulkUpdateEntityAsync<T>(IList<T> entities) where T : class;

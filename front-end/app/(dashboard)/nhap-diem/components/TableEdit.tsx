@@ -621,12 +621,13 @@ const TableEdit = forwardRef(
               );
             }
           }}
+          getRowHeight={() => 'auto'}
           sortingMode='server'
           filterMode='server'
           showCellVerticalBorder
           showToolbar
           disableColumnResize
-          autoHeight={false}
+          autoHeight={true}
           disableColumnMenu
           hideFooter
           density='compact'
