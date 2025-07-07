@@ -96,6 +96,7 @@ const Content = ({ queryKey }: IContentProps) => {
       return result;
     },
     select: (data) => {
+      console.log("data",data);
       return data?.map((item: any) => ({
         id: item.id,
         name: item.maHocPhan,
@@ -228,7 +229,7 @@ const Content = ({ queryKey }: IContentProps) => {
         field: 'lopHocPhan',
         headerName: 'Lớp học',
         headerAlign: 'left',
-        minWidth: 100,
+        minWidth: 120,
         flex: 1,
         sortable: false,
         display: 'flex',
@@ -560,7 +561,7 @@ const Content = ({ queryKey }: IContentProps) => {
     }));
     const finalData = {
       listDiemSo: convertData,
-      loaiMonHoc: currentFilter?.lopHocPhan?.loaiMonHoc
+      loaiMonHoc: currentFilter?.lopHocPhan?.loaiMonHoc 
     };
     mutateSaving.mutate(finalData);
   };
@@ -584,7 +585,7 @@ const Content = ({ queryKey }: IContentProps) => {
     const currentFilter = filterRef.current;
     const rowIds = apiRef.current?.getRowModels();
     const allRows = Array.from(rowIds?.values() || []);
-    const convertData = allRows?.map((item) => ({
+    const convertData = allRows?.filter(item => item?.sinhVienId)?.map((item) => ({
       diemTongKet1: item?.diemTongKet1,
       diemTongKet2: item?.diemTongKet2,
       sinhVienId: item?.sinhVienId

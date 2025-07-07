@@ -1,6 +1,5 @@
 using AutoMapper;
 using Education_assistant.Contracts.LoggerServices;
-using Education_assistant.Exceptions.ThrowError.ChiTietChuongTrinhDaoTaoExceptions;
 using Education_assistant.Exceptions.ThrowError.ChiTietLopHocPhanExceptions;
 using Education_assistant.Exceptions.ThrowError.HocBaExceptions;
 using Education_assistant.helpers.implements;
@@ -130,33 +129,34 @@ public class ServiceHocBa : IServiceHocBa
     {
         if (request.ListDiemSo == null)
             throw new ChiTietLopHocPhanBadRequestException("Danh sách điểm số không được bỏ trống!.");
-        var ctctdt =
-            await _repositoryMaster.ChiTietChuongTrinhDaoTao.GetCtctdtByCtctAndMonHocAsync(request.ChuongTrinhDaoTaoId,
-                request.MonHocId);
-        if (ctctdt is null)
-            throw new ChiTietChuongTrinhDaoTaoBadRequestException("Môn học chưa được thêm chương trình đào tạo");
-        var hocBaKeys = request.ListDiemSo
-            .Where(d => d.SinhVienId.HasValue)
-            .Select(d => new { SinhVienId = d.SinhVienId!.Value })
+        var sinhVienIds = request.ListDiemSo.Select(d => d.SinhVienId!.Value).ToList();
+        var allSvCtdt = await _repositoryMaster.sinhVienChuongTrinhDao
+            .GetSinhVienChuongTrinhDaoTaoByIdsAsync(sinhVienIds);
+        // var svCtdtDict = allSvCtdt
+        //     .GroupBy(s => s.SinhVienId!.Value)s
+        //     .ToDictionary(g => g.Key, g => g.ToList());
+        var allChuongTrinhIds = allSvCtdt
+            .Select(s => s.ChuongTrinhDaoTaoId!.Value)
+            .Distinct()
             .ToList();
+        var ctctdt = await _repositoryMaster.ChiTietChuongTrinhDaoTao
+            .GetCtctdtByIdsCtctdtAndMonHocAsync(allChuongTrinhIds, request.MonHocId);
         var exsitingHocBas =
-            await _repositoryMaster.HocBa.GetAllHocBaByKeysAsync(hocBaKeys.Select(item => item.SinhVienId).ToList(),
-                request.LopHocPhanId, ctctdt.Id);
+            await _repositoryMaster.HocBa.GetAllHocBaByKeysAsync(sinhVienIds, ctctdt!.Id);
         var hocBaDict =
-            exsitingHocBas.ToDictionary(e => (e.SinhVienId, e.LopHocPhanId, e.ChiTietChuongTrinhDaoTaoId), e => e);
+            exsitingHocBas.ToDictionary(e => (e.SinhVienId, e.ChiTietChuongTrinhDaoTaoId), e => e);
         var updateHocBas = new List<HocBa>();
-
         foreach (var diemSo in request.ListDiemSo)
         {
             var diemTongKetLopHocPhan = _diemSoHelper.ComparePoint(diemSo.DiemTongKet1, diemSo.DiemTongKet2);
-            var key = (diemSo.SinhVienId, request.LopHocPhanId, ctctdt.Id);
+            var key = (diemSo.SinhVienId, ctctdt.Id);
             if (!hocBaDict.TryGetValue(key, out var exsitingHocBa))
             {
                 _loggerService.LogInfo($"Bỏ qua bảng ghi cho sinh viên id: {diemSo.SinhVienId}");
                 continue;
             }
 
-            var diemSoTong = _diemSoHelper.ComparePoint(diemTongKetLopHocPhan, exsitingHocBa.DiemTongKet.Value);
+            var diemSoTong = _diemSoHelper.ComparePoint(diemTongKetLopHocPhan, exsitingHocBa.DiemTongKet!.Value);
             var hocBa = new HocBa
             {
                 Id = exsitingHocBa.Id,
@@ -164,52 +164,50 @@ public class ServiceHocBa : IServiceHocBa
                 MoTa = exsitingHocBa.MoTa,
                 KetQua = diemSoTong >= 5 ? (int)KetQuaHocBaEnum.DAT : (int)KetQuaHocBaEnum.KHONG_DAT,
                 SinhVienId = diemSo.SinhVienId,
-                LopHocPhanId = request.LopHocPhanId,
                 ChiTietChuongTrinhDaoTaoId = ctctdt.Id,
                 CreatedAt = exsitingHocBa.CreatedAt,
                 UpdatedAt = DateTime.Now
             };
+            if (exsitingHocBa.KetQua == (int)KetQuaHocBaEnum.KHONG_DAT && diemSoTong >= 5)
+                hocBa.LopHocPhanId = request.LopHocPhanId;
             updateHocBas.Add(hocBa);
         }
 
         await _repositoryMaster.ExecuteInTransactionBulkEntityAsync(async () =>
         {
-            await _repositoryMaster.BulkUpdateEntityAsync<HocBa>(updateHocBas);
+            await _repositoryMaster.BulkUpdateEntityAsync(updateHocBas);
         });
-
-        foreach (var hocBa in updateHocBas)
+        var updateHocBaSinhVienIds = updateHocBas
+            .Where(hb => hb.SinhVienId.HasValue)
+            .Select(hb => hb.SinhVienId!.Value)
+            .Distinct()
+            .ToList();
+        var getALlSinhVien = await _repositoryMaster.SinhVien.GetAllSinhVienByIds(updateHocBaSinhVienIds, true);
+        var gpaCalculations = getALlSinhVien.Select(async sinhVien => new
         {
-            var sinhVien = await _repositoryMaster.SinhVien.GetSinhVienByIdAsync(hocBa.SinhVienId.Value, true);
-            if (sinhVien != null)
-            {
-                var gpa = await _repositoryMaster.HocBa.TinhGPAAsync(hocBa.SinhVienId.Value);
-
-                await _repositoryMaster.ExecuteInTransactionAsync(async () =>
+            SinhVien = sinhVien,
+            GPA = await _repositoryMaster.HocBa.TinhGPAAsync(sinhVien.Id)
+        });
+        var results = await Task.WhenAll(gpaCalculations);
+        await _repositoryMaster.ExecuteInTransactionAsync(async () =>
+        {
+            foreach (var result in results)
+                if (result.GPA.HasValue)
                 {
+                    var gpa = result.GPA.Value;
+                    var sinhVien = result.SinhVien;
                     if (gpa >= 9)
-                    {
                         sinhVien!.TinhTrangHocTap = (int)TinhTrangHocTapSinhVienEnum.XUAT_SAC;
-                    }
                     else if (gpa >= 8)
-                    {
                         sinhVien!.TinhTrangHocTap = (int)TinhTrangHocTapSinhVienEnum.GIOI;
-                    }
                     else if (gpa >= 7)
-                    {
                         sinhVien!.TinhTrangHocTap = (int)TinhTrangHocTapSinhVienEnum.KHA;
-                    }
                     else if (gpa >= 5)
-                    {
                         sinhVien!.TinhTrangHocTap = (int)TinhTrangHocTapSinhVienEnum.TRUNG_BINH;
-                    }
                     else if (gpa < 5)
-                    {
                         sinhVien!.TinhTrangHocTap = (int)TinhTrangHocTapSinhVienEnum.YEU;
-                    }
-                    await Task.CompletedTask;
-                });
-            }
-        }
+                }
+        });
 
         try
         {
