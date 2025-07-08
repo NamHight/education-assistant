@@ -1,6 +1,7 @@
 using AutoMapper;
 using ClosedXML.Excel;
 using Education_assistant.Contracts.LoggerServices;
+using Education_assistant.Exceptions.ThrowError;
 using Education_assistant.Exceptions.ThrowError.ChiTietLopHocPhanExceptions;
 using Education_assistant.Exceptions.ThrowError.DangKyMonHocExceptions;
 using Education_assistant.Exceptions.ThrowError.GiangVienExceptions;
@@ -16,6 +17,7 @@ using Education_assistant.Repositories.Paginations;
 using Education_assistant.Repositories.RepositoryMaster;
 using Education_assistant.Services.ServiceFile;
 using Microsoft.EntityFrameworkCore;
+using NetTopologySuite.Operation.Buffer;
 
 namespace Education_assistant.Modules.ModuleSinhVien.Services;
 
@@ -59,6 +61,9 @@ public class ServiceSinhVien : IServiceSinhVien
             {
                 await _repositoryMaster.SinhVien.CreateAsync(newSinhVien);
             });
+            var listSinhVien = new List<Guid>();
+            listSinhVien.Add(newSinhVien.Id);
+            await CreatedListSinhVienChuongTrinhDaoTaoAsync(listSinhVien, request.LopHocId);
             _loggerService.LogInfo("Thêm thông tin sinh viên thành công.");
             var sinhVienDto = _mapper.Map<ResponseSinhVienDto>(newSinhVien);
             return sinhVienDto;
@@ -154,13 +159,49 @@ public class ServiceSinhVien : IServiceSinhVien
 
     }
 
+    private async Task CreatedListSinhVienChuongTrinhDaoTaoAsync(List<Guid> sinhVienIds, Guid lopHocId)
+    {
+        var lopHoc = await _repositoryMaster.LopHoc.GetLopHocByIdAsync(lopHocId, false);
+        if (lopHoc is null)
+        {
+            throw new LopHocNotFoundException(lopHocId);
+        }
+        var chuongTrinhDaoTao = await _repositoryMaster.ChuongTrinhDaoTao.GetChuongTrinhDaoTaoByKhoaAndNganhIdAsync(lopHoc.NamHoc, lopHoc.NganhId);
+        if (chuongTrinhDaoTao is null)
+        {
+            throw new GenericNotFoundException($"Không tìm thấy chương trình chương tạo dựa theo ngành id: {lopHoc.NganhId}: và khóa: {lopHoc.NamHoc}");
+        }
+        var listSinhVienChuongTrinhDaoTao = new List<SinhVienChuongTrinhDaoTao>();
+        var sinhVienChuongTrinhDaoTaoExistings = await _repositoryMaster.sinhVienChuongTrinhDao.GetAllSinhVienChuongTrinhDaoTaoBySinhVienIdAndChuongTrinhDaoTaoIdAsync(sinhVienIds, chuongTrinhDaoTao.Id);
+        var newSinhViens = sinhVienIds.Except(sinhVienChuongTrinhDaoTaoExistings).ToList();
+
+        if (!newSinhViens.Any())
+        {
+            System.Console.WriteLine("test sinh viên đã có chương trình đào tạo");
+            return;
+        }
+
+        foreach (var sinhVienId in newSinhViens)
+        {
+            listSinhVienChuongTrinhDaoTao.Add(new SinhVienChuongTrinhDaoTao
+            {
+                SinhVienId = sinhVienId,
+                ChuongTrinhDaoTaoId = chuongTrinhDaoTao.Id
+            });
+        }
+        await _repositoryMaster.ExecuteInTransactionBulkEntityAsync(async () =>
+        {
+            await _repositoryMaster.BulkAddEntityAsync<SinhVienChuongTrinhDaoTao>(listSinhVienChuongTrinhDaoTao);
+        });
+    }
+
     public async Task<(IEnumerable<ResponseSinhVienTinhTrangHocTapDto> data, PageInfo page)> GetAllSinhVienAsync(
         ParamSinhVienDto paramSinhVienDto)
     {
         var sinhViens = await _repositoryMaster.SinhVien.GetAllSinhVienAsync(paramSinhVienDto.page,
             paramSinhVienDto.limit, paramSinhVienDto.search, paramSinhVienDto.sortBy, paramSinhVienDto.sortByOrder,
             paramSinhVienDto.lopId, paramSinhVienDto.tinhTrangHocTap);
-        
+
         var sinhVienDtos = _mapper.Map<IEnumerable<ResponseSinhVienTinhTrangHocTapDto>>(sinhViens);
         foreach (var svDto in sinhVienDtos)
         {
@@ -282,13 +323,16 @@ public class ServiceSinhVien : IServiceSinhVien
                 };
                 newSinhViens.Add(sv);
             }
-        try{
+    
+        try {
             if (newSinhViens.Any())
             {
                 await _repositoryMaster.ExecuteInTransactionBulkEntityAsync(async () =>
                 {
                     await _repositoryMaster.BulkAddEntityAsync<SinhVien>(newSinhViens);
                 });
+                var listSinhVienIds = new List<Guid>(newSinhViens.Select(item => item.Id));
+                await CreatedListSinhVienChuongTrinhDaoTaoAsync(listSinhVienIds, request.lopHocId);
             }
         }
         catch (DbUpdateException ex)
@@ -471,8 +515,7 @@ public class ServiceSinhVien : IServiceSinhVien
         var dangKyMonHoc = await _repositoryMaster.DangKyMonHoc.GetDangKyMonHocBySinhVienAndLopHocPhanAsync(sinhVienId, lopHocPhanId);
         
         var chiTietLopHocPhan = await _repositoryMaster.ChiTietLopHocPhan.GetChiTietLopHocPhanBySinhVienAndLopHocPhanAsync(sinhVienId, lopHocPhanId);
-        var hocBa = await _repositoryMaster.HocBa.GetHocBaBySinhVienAndLopHocPhanAsync(sinhVienId, lopHocPhanId);
-        if (dangKyMonHoc is null && chiTietLopHocPhan is null && hocBa is null)
+        if (dangKyMonHoc is null && chiTietLopHocPhan is null)
         {
             throw new SinhVienNotFoundException(sinhVienId);
         }
@@ -487,10 +530,6 @@ public class ServiceSinhVien : IServiceSinhVien
                 if (chiTietLopHocPhan is not null)
                 {
                     _repositoryMaster.ChiTietLopHocPhan.DeleteChiTietLopHocPhan(chiTietLopHocPhan);
-                }
-                if (hocBa is not null)
-                {
-                    _repositoryMaster.HocBa.DeleteHocBa(hocBa);
                 }
                 await Task.CompletedTask;
             });
@@ -508,5 +547,51 @@ public class ServiceSinhVien : IServiceSinhVien
         {
             throw new Exception($"Lỗi hệ thống!: {ex.Message}");
         }
+    }
+
+    public async Task<IEnumerable<SinhVienSimpleDto>> GetAllSinhVienByLopHocIdAsync(Guid lopHocId)
+    {
+        var sinhViens = await _repositoryMaster.SinhVien.GetAllSinhVienByLopHoc(lopHocId);
+        var sinhVienDtos = _mapper.Map<IEnumerable<SinhVienSimpleDto>>(sinhViens);
+        return sinhVienDtos;
+    }
+
+    public async Task UpdateChuyenSinhVienByLopHocAsync(RequestAddSinhVienChuyenLopDto request)
+    {
+        var lopHoc = await _repositoryMaster.LopHoc.GetLopHocByIdAsync(request.LopHocId, false);
+        if (lopHoc is null)
+        {
+            throw new LopHocNotFoundException(request.LopHocId);
+        }
+        var sinhViens = await _repositoryMaster.SinhVien.GetAllSinhVienByIds(request.SinhVienIds, false);
+        if (!sinhViens.Any()) {
+            throw new GenericNotFoundException($"Danh sách sinh viên trong tìm thấy, thử lại.");
+        }
+        var sinhVienIds = sinhViens.Select(item => item.Id).ToList();
+        var chuongTrinhDaoTao = await _repositoryMaster.ChuongTrinhDaoTao.GetChuongTrinhDaoTaoByKhoaAndNganhIdAsync(lopHoc.NamHoc, lopHoc.NganhId);
+        if (chuongTrinhDaoTao is null)
+        {
+            throw new GenericNotFoundException($"Không tìm thấy chương trình chương tạo dựa theo ngành id: {lopHoc.NganhId}: và khóa: {lopHoc.NamHoc}");
+        }
+        var sinhVienChuongTrinhDaoTaoExistings = await _repositoryMaster.sinhVienChuongTrinhDao.GetAllSinhVienChuongTrinhDaoTaoBySinhVienIdAndChuongTrinhDaoTaoIdAsync(sinhVienIds, chuongTrinhDaoTao.Id);
+        var newCtdtIds = sinhVienIds.Except(sinhVienChuongTrinhDaoTaoExistings).ToList();
+
+        var listSinhVienChuongTrinhDaoTao = newCtdtIds.Select(sinhVienId => new SinhVienChuongTrinhDaoTao
+        {
+            SinhVienId = sinhVienId,
+            ChuongTrinhDaoTaoId = chuongTrinhDaoTao.Id
+        }).ToList();
+
+        foreach (var sinhVien in sinhViens)
+        {
+            sinhVien.LopHocId = lopHoc.Id;
+            sinhVien.UpdatedAt = DateTime.Now;
+        }
+        
+        await _repositoryMaster.ExecuteInTransactionBulkEntityAsync(async () =>
+        {
+            await _repositoryMaster.BulkUpdateEntityAsync<SinhVien>(sinhViens);
+            await _repositoryMaster.BulkAddEntityAsync<SinhVienChuongTrinhDaoTao>(listSinhVienChuongTrinhDaoTao);
+        });
     }
 }

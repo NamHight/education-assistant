@@ -27,7 +27,7 @@ public class RepositoryNganh : RepositoryBase<Nganh>, IRepositoryNganh
 
     public async Task<PagedListAsync<Nganh>?> GetAllNganhAsync(int page, int limit, string search, string sortBy, string sortByOrder)
     {
-        return await PagedListAsync<Nganh>.ToPagedListAsync(_context.Nganhs!.SearchBy(search, item => item.TenNganh).Include(item => item.Khoa)
+        return await PagedListAsync<Nganh>.ToPagedListAsync(_context.Nganhs!.SearchBy(search, item => item.TenNganh).Include(item => item.Khoa).Include(item => item.NganhCha)
                                                                 .SortByOptions(sortBy, sortByOrder, new Dictionary<string, Expression<Func<Nganh, object>>>
                                                                 {
                                                                     ["createdat"] = item => item.CreatedAt,
@@ -38,7 +38,7 @@ public class RepositoryNganh : RepositoryBase<Nganh>, IRepositoryNganh
 
     public async Task<Nganh?> GetNganhByIdAsync(Guid id, bool trackChanges)
     {
-        return await FindByCondition(item => item.Id == id, trackChanges).Include(item => item.Khoa).FirstOrDefaultAsync();
+        return await FindByCondition(item => item.Id == id, trackChanges).Include(item => item.Khoa).Include(item => item.NganhCha).FirstOrDefaultAsync();
     }
 
     public void UpdateNganh(Nganh nganh)

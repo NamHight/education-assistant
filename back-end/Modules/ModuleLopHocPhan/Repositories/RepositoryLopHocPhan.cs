@@ -212,18 +212,22 @@ public class RepositoryLopHocPhan : RepositoryBase<LopHocPhan>, IRepositoryLopHo
 
     public async Task<IEnumerable<LopHocPhan>> GetAllLopHocPhanByLopHocAndHocKyAsync(int? hocKy, string? maLopHoc, Guid? chuongTrinhDaoTaoId)
     {
+        System.Console.WriteLine($"test học kỳ: {hocKy} , chuongtrinhDaotaoId: {chuongTrinhDaoTaoId}, ma lớp: {maLopHoc}");
         var query = _context.LopHocPhans!
                     .AsNoTracking()
+                    .Include(lhp => lhp.MonHoc)
+                        .ThenInclude(mh => mh.DanhSachChiTietChuongTrinhDaoTao)
                     .Where(lhp => lhp.Loai == (int)LoaiLopHocEnum.LOP_HOC_PHAN && lhp.TrangThai == (int)TrangThaiLopHocPhanEnum.DANG_HOAT_DONG)
                     .AsNoTracking();
         if (hocKy.HasValue && !string.IsNullOrWhiteSpace(maLopHoc) && chuongTrinhDaoTaoId.HasValue && chuongTrinhDaoTaoId != Guid.Empty)
         {
-            query = query.Where(lhp => lhp.MaHocPhan.StartsWith(maLopHoc)
-                                    && lhp.MonHoc.DanhSachChiTietChuongTrinhDaoTao.Any(ct => ct.HocKy == hocKy && ct.ChuongTrinhDaoTaoId == chuongTrinhDaoTaoId));
+            System.Console.WriteLine($"test mang may tinhtest học kỳ: {hocKy} , chuongtrinhDaotaoId: {chuongTrinhDaoTaoId}, ma lớp: {maLopHoc}");
+            query = query.Where(lhp => lhp.MaHocPhan.StartsWith(maLopHoc) &&  lhp.MonHoc.DanhSachChiTietChuongTrinhDaoTao.Any(ct => ct.HocKy == hocKy.Value && ct.ChuongTrinhDaoTaoId == chuongTrinhDaoTaoId.Value));
         }
         return await query.ToListAsync();
     }
-    // var query = _context.ChiTietChuongTrinhDaoTaos!
+    // var query = _context.ChiTietChuongTrinhDaoTaos!  lhp.MaHocPhan.StartsWith(maLopHoc) &&
+                                   
         //             .AsNoTracking()
         //             .Include(item => item.MonHoc)
         //                 .ThenInclude(item => item.DanhSachLopHocPhan)
