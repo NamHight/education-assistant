@@ -30,8 +30,10 @@ public class RequestUpdateTuanDto
     public DateTime? NgayKetThuc { get; set; }
    
 }
-public class RequestAddTuanSimpleDto
+public class RequestAddTuanByNamAndNgayBatDauDto
 {
     [Required(ErrorMessage = "Năm học không được để trống")]
     public int NamHoc { get; set; }
+    [Required(ErrorMessage = "Ngày bắt đầu không được để trống")]
+    public DateTime NgayBatDau { get; set; }
 }

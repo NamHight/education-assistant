@@ -39,7 +39,8 @@ public class RequestAddSinhVienDto
     public int? TinhTrangHocTapSinhVienEnum { get; set; }
     public DateTime? NgayTotNghiep { get; set; }
     public DateTime NgayNhapHoc { get; set; }
-    public Guid? LopHocId { get; set; }
+    [Required(ErrorMessage = "Id lớp học không được bỏ trống")]
+    public Guid LopHocId { get; set; }
     public IFormFile? File { get; set; }
 }
 public class RequestUpdateSinhVienDto
@@ -85,6 +86,14 @@ public class RequestUpdateSinhVienDto
     public Guid? LopHocId { get; set; }
     public IFormFile? File { get; set; }
     public DateTime? CreatedAt { get; set; }
+}
+
+public class RequestAddSinhVienChuyenLopDto
+{
+    [Required(ErrorMessage = "Danh sách id sinh viên được bỏ trống")]
+    public List<Guid>? SinhVienIds { get; set; }
+    [Required(ErrorMessage = "Id lớp học được bỏ trống")]
+    public Guid LopHocId { get; set; }
 }
 
 public class RequestImportFileSinhVienDto

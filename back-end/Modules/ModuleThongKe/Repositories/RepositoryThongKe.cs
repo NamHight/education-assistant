@@ -76,7 +76,7 @@ public class RepositoryThongKe : IRepositoryThongKe
         return result;
     }
 
-    public async Task<List<ResponseThongKeTrongNamDto>> ThongKetThiLaiTrongNam()
+    public async Task<List<ResponseThongKeTrongNamDto>> ThongKetThiLaiTrongNam(int nam)
     {
         var result = new List<ResponseThongKeTrongNamDto>();
 
@@ -85,14 +85,19 @@ public class RepositoryThongKe : IRepositoryThongKe
         await conn.OpenAsync();
         using var cmd = conn.CreateCommand();
 
-        cmd.CommandText = "CALL ThongKe_ThiLai";
+        cmd.CommandText = "CALL ThongKe_ThiLai(@nam)";
         cmd.CommandType = CommandType.Text;
+
+        var paramNam = cmd.CreateParameter();
+        paramNam.ParameterName = "@nam";
+        paramNam.Value = nam;
+        paramNam.DbType = DbType.Int32;
+        cmd.Parameters.Add(paramNam);
 
         int key = 1;
         using var reader = await cmd.ExecuteReaderAsync();
         while (await reader.ReadAsync())
         {
-            
             result.Add(new ResponseThongKeTrongNamDto
                 {
                     Key = key++,

@@ -30,31 +30,6 @@ public class ServiceChuongTrinhDaoTao : IServiceChuongTrinhDaoTao
     {
         try
         {
-            if (request.Khoa >= 1900)
-            {
-                if (!await _repositoryMaster.Tuan.HasTuanForNamHocAsync(request.Khoa.Value))
-                {
-                    var tuans = new List<Tuan>();
-                    var startDate = new DateTime(request.Khoa.Value, 1, 1);
-                    for (int i = 1; i <= 52; i++)
-                    {
-                        var start = startDate.AddDays((i - 1) * 7);
-                        var end = start.AddDays(6);
-                        tuans.Add(new Tuan
-                        {
-                            SoTuan = i,
-                            NamHoc = request.Khoa.Value,
-                            NgayBatDau = start,
-                            NgayKetThuc = end,
-                            CreatedAt = DateTime.UtcNow,
-                        });
-                    }
-                    await _repositoryMaster.ExecuteInTransactionBulkEntityAsync(async () =>
-                    {
-                        await _repositoryMaster.BulkAddEntityAsync<Tuan>(tuans);
-                    });
-                }
-            }
             var ChuongTrinhDaoTao = await _repositoryMaster.ChuongTrinhDaoTao.GetChuongTrinhDaoTaoByKhoaAndNganhIdAsync(request.Khoa.Value, request.NganhId.Value);
             if (ChuongTrinhDaoTao is not null)
             {

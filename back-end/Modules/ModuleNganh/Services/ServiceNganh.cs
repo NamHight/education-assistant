@@ -120,6 +120,7 @@ public class ServiceNganh : IServiceNganh
                 nganh.TenNganh = request.TenNganh;
                 nganh.MoTa = request.MoTa;
                 nganh.KhoaId = request.KhoaId;
+                nganh.NganhChaId = request.NganhChaId;
                 nganh.UpdatedAt = DateTime.Now;
                 await Task.CompletedTask;
             });

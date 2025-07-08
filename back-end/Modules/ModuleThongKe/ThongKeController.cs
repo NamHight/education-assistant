@@ -30,9 +30,9 @@ namespace Education_assistant.Modules.ModuleThongKe
             return Ok(result);
         }
         [HttpGet("thi-lai-trong-nam")]
-        public async Task<ActionResult> GetThongKeThiLaiTrongNamAsync()
+        public async Task<ActionResult> GetThongKeThiLaiTrongNamAsync([FromQuery] int nam)
         {
-            var result = await _serviceMaster.ThongKe.ThongKetThiLaiTrongNam();
+            var result = await _serviceMaster.ThongKe.ThongKetThiLaiTrongNam(nam);
             return Ok(result);
         }
         [HttpGet("qua-mon-trong-nam")]

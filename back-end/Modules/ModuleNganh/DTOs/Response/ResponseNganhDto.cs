@@ -10,6 +10,8 @@ public class ResponseNganhDto
     public string MaNganh { get; set; } = string.Empty;
     public string TenNganh { get; set; } = string.Empty;
     public string? MoTa { get; set; }
+    public Guid? NganhChaId { get; set; }
+    public NganhSimpleDto? NganhCha { get; set; }
     public Guid? KhoaId { get; set; }
     public KhoaSimpleDto? Khoa { get; set; }
     public DateTime? CreatedAt { get; set; }
