@@ -94,8 +94,17 @@ public class ServiceHocBa : IServiceHocBa
 
     public async Task<ResponseHocBaSummaryDto> GetAllHocBaBySinhVienAsync(ParamHocBaBySinhVienDto param)
     {
-        var hocBas = await _repositoryMaster.HocBa.GetAllHocBaBySinhVienAsync(param.search, param.sortBy, param.sortByOrder, param.sinhVienId);
-        var GPA = await _repositoryMaster.HocBa.TinhGPAAsync(param.sinhVienId);
+        var sinhVien = await _repositoryMaster.SinhVien.GetSinhVienByMssvAsync(param.mssv, false);
+        if (sinhVien is null)
+        {
+            return new ResponseHocBaSummaryDto
+            {
+                ListHocBa = Enumerable.Empty<ResponseHocBaDto>(),
+                GPA = null
+            };
+        }
+        var hocBas = await _repositoryMaster.HocBa.GetAllHocBaBySinhVienAsync(param.search, param.sortBy, param.sortByOrder, sinhVien.Id);
+        var GPA = await _repositoryMaster.HocBa.TinhGPAAsync(sinhVien.Id);
         var hocBaDtos = _mapper.Map<IEnumerable<ResponseHocBaDto>>(hocBas);
         return new ResponseHocBaSummaryDto
         {

@@ -83,11 +83,12 @@ public class RepositoryHocBa : RepositoryBase<HocBa>, IRepositoryHocBa
         {
             query = query.SearchBy(search, item => item.ChiTietChuongTrinhDaoTao.MonHoc.TenMonHoc);
         }
-        query = query.Where(item => item.SinhVienId == sinhVienId);
+        query = query.Where(item => item.SinhVienId == sinhVienId && item.UpdatedAt != null);
         return await query.SortByOptions(sortBy, sortByOrder, new Dictionary<string, Expression<Func<HocBa, object>>>
                             {
                                 ["createdat"] = item => item.CreatedAt,
                                 ["updatedat"] = item => item.UpdatedAt!,
+                                ["hocky"] = item => item.ChiTietChuongTrinhDaoTao.HocKy,
                                 ["diemtongket"] = item => item.DiemTongKet!,
                                 ["ketqua"] = item => item.KetQua!
                             }).ToListAsync();
@@ -124,6 +125,7 @@ public class RepositoryHocBa : RepositoryBase<HocBa>, IRepositoryHocBa
             .Include(hb => hb.ChiTietChuongTrinhDaoTao)
             .Where(hb => hb.SinhVienId == sinhVienId
                          && hb.DiemTongKet != null
+                         && hb.UpdatedAt != null
                          && hb.ChiTietChuongTrinhDaoTao != null
                          && hb.ChiTietChuongTrinhDaoTao.SoTinChi > 0
                          && hb.ChiTietChuongTrinhDaoTao.DiemTichLuy == true

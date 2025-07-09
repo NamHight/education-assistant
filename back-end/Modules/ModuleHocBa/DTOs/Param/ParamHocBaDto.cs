@@ -14,5 +14,5 @@ public class ParamHocBaBySinhVienDto
     public string search { get; set; } = string.Empty;
     public string sortBy { get; set; } = string.Empty;
     public string sortByOrder { get; set; } = string.Empty;
-    public Guid sinhVienId { get; set; }
+    public string mssv { get; set; } = string.Empty;
 }
