@@ -144,4 +144,14 @@ public class ServiceChiTietChuongTrinhDaoTao : IServiceChiTietChuongTrinhDaoTao
             throw new Exception($"Lỗi hệ thống!: {ex.Message}");   
         }
     }
+    public async Task<ResponseChiTietChuongTrinhDaoTaoDto> GetChiTietChuongTrinhDaoTaoByMonHocIdAsync(Guid monHocId, bool trackChanges)
+    {
+        var ctctDaoTao = await _repositoryMaster.ChiTietChuongTrinhDaoTao.GetChiTietChuongTrinhDaoTaoByMonHocIdAsync(monHocId, false);
+        if (ctctDaoTao is null)
+        {
+            throw new ChiTietChuongTrinhDaoTaoNotFoundException(monHocId);
+        }
+        var ctctDaoTaoDto = _mapper.Map<ResponseChiTietChuongTrinhDaoTaoDto>(ctctDaoTao);
+        return ctctDaoTaoDto;
+    }
 }

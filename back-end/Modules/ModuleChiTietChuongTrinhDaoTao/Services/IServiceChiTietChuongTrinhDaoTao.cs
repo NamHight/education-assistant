@@ -16,5 +16,6 @@ public interface IServiceChiTietChuongTrinhDaoTao
     Task<ResponseChiTietChuongTrinhDaoTaoDto> CreateAsync(RequestAddChiTietChuongTrinhDaoTaoDto request);
     Task UpdateAsync(Guid id, RequestUpdateChiTietChuongTrinhDaoTaoDto request);
     Task DeleteAsync(Guid id);
+    Task<ResponseChiTietChuongTrinhDaoTaoDto> GetChiTietChuongTrinhDaoTaoByMonHocIdAsync(Guid monHoc, bool trackChanges);
 
 }

@@ -24,4 +24,6 @@ public interface IRepositoryChiTietChuongTrinhDaoTao
     Task CreateAsync(ChiTietChuongTrinhDaoTao chiTietChuongTrinhDaoTao);
     void UpdateChiTietChuongTrinhDaoTao(ChiTietChuongTrinhDaoTao chiTietChuongTrinhDaoTao);
     void DeleteChiTietChuongTrinhDaoTao(ChiTietChuongTrinhDaoTao chiTietChuongTrinhDaoTao);
+    Task<ChiTietChuongTrinhDaoTao?> GetChiTietChuongTrinhDaoTaoByMonHocIdAsync(Guid monHocId, bool trackChanges);
+
 }
