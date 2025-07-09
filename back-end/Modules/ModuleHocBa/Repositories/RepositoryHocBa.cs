@@ -70,7 +70,7 @@ public class RepositoryHocBa : RepositoryBase<HocBa>, IRepositoryHocBa
             sinhVienIds.Contains(item.SinhVienId!.Value) && item.ChiTietChuongTrinhDaoTaoId == ctctdtId).ToListAsync();
     }
 
-    public async Task<IEnumerable<HocBa>> GetAllHocBaBySinhVienAsync(string search, string sortBy, string sortByOrder, Guid sinhVienId)
+    public async Task<IEnumerable<HocBa>> GetAllHocBaBySinhVienAsync(string sortBy, string sortByOrder, Guid sinhVienId)
     {
         var query = _context.HocBas!
             .AsNoTracking()
@@ -79,10 +79,6 @@ public class RepositoryHocBa : RepositoryBase<HocBa>, IRepositoryHocBa
             .Include(item => item.ChiTietChuongTrinhDaoTao)
             .ThenInclude(item => item!.ChuongTrinhDaoTao)
             .AsQueryable();
-        if (!string.IsNullOrWhiteSpace(search))
-        {
-            query = query.SearchBy(search, item => item.ChiTietChuongTrinhDaoTao.MonHoc.TenMonHoc);
-        }
         query = query.Where(item => item.SinhVienId == sinhVienId && item.UpdatedAt != null);
         return await query.SortByOptions(sortBy, sortByOrder, new Dictionary<string, Expression<Func<HocBa, object>>>
                             {

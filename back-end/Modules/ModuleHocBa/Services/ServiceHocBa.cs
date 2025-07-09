@@ -103,7 +103,7 @@ public class ServiceHocBa : IServiceHocBa
                 GPA = null
             };
         }
-        var hocBas = await _repositoryMaster.HocBa.GetAllHocBaBySinhVienAsync(param.search, param.sortBy, param.sortByOrder, sinhVien.Id);
+        var hocBas = await _repositoryMaster.HocBa.GetAllHocBaBySinhVienAsync(param.sortBy, param.sortByOrder, sinhVien.Id);
         var GPA = await _repositoryMaster.HocBa.TinhGPAAsync(sinhVien.Id);
         var hocBaDtos = _mapper.Map<IEnumerable<ResponseHocBaDto>>(hocBas);
         return new ResponseHocBaSummaryDto
