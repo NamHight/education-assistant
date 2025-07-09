@@ -121,11 +121,9 @@ public class RepositoryHocBa : RepositoryBase<HocBa>, IRepositoryHocBa
     public async Task<decimal?> TinhGPAAsync(Guid sinhVienId)
     {
         var hocBas = await _context.HocBas!
-            .Include(hb => hb.LopHocPhan)
             .Include(hb => hb.ChiTietChuongTrinhDaoTao)
             .Where(hb => hb.SinhVienId == sinhVienId
                          && hb.DiemTongKet != null
-                         && hb.LopHocPhan != null
                          && hb.ChiTietChuongTrinhDaoTao != null
                          && hb.ChiTietChuongTrinhDaoTao.SoTinChi > 0
                          && hb.ChiTietChuongTrinhDaoTao.DiemTichLuy == true

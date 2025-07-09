@@ -92,11 +92,16 @@ public class ServiceHocBa : IServiceHocBa
         return (data: hocBaDtos, page: hocBas!.PageInfo);
     }
 
-    public async Task<IEnumerable<ResponseHocBaDto>> GetAllHocBaBySinhVienAsync(ParamHocBaBySinhVienDto param)
+    public async Task<ResponseHocBaSummaryDto> GetAllHocBaBySinhVienAsync(ParamHocBaBySinhVienDto param)
     {
         var hocBas = await _repositoryMaster.HocBa.GetAllHocBaBySinhVienAsync(param.search, param.sortBy, param.sortByOrder, param.sinhVienId);
+        var GPA = await _repositoryMaster.HocBa.TinhGPAAsync(param.sinhVienId);
         var hocBaDtos = _mapper.Map<IEnumerable<ResponseHocBaDto>>(hocBas);
-        return hocBaDtos;
+        return new ResponseHocBaSummaryDto
+        {
+            ListHocBa = hocBaDtos,
+            GPA = GPA
+        };
     }
 
     public async Task<ResponseHocBaDto> GetHocBaByIdAsync(Guid id, bool trackChanges)

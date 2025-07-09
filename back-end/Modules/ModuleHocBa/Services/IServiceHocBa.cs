@@ -10,7 +10,7 @@ namespace Education_assistant.Modules.ModuleHocBa.Services;
 public interface IServiceHocBa
 {
     Task<(IEnumerable<ResponseHocBaDto> data, PageInfo page)> GetAllHocBaAsync(ParamHocBaDto paramHocBaDto);
-    Task<IEnumerable<ResponseHocBaDto>> GetAllHocBaBySinhVienAsync(ParamHocBaBySinhVienDto param);
+    Task<ResponseHocBaSummaryDto> GetAllHocBaBySinhVienAsync(ParamHocBaBySinhVienDto param);
     Task<ResponseHocBaDto> GetHocBaByIdAsync(Guid id, bool trackChanges);
     Task<ResponseHocBaDto> CreateAsync(RequestAddHocbaDto request);
     Task UpdateAsync(Guid id, RequestUpdateHocbaDto request);
