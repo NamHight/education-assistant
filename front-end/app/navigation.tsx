@@ -18,6 +18,7 @@ import HouseIcon from '@mui/icons-material/House';
 import ScoreIcon from '@mui/icons-material/Score';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import useCheckPermission from '@/helper/useCheckPermission';
+import ChangeCircleOutlinedIcon from '@mui/icons-material/ChangeCircleOutlined';
 import cookieStorage from '@/lib/cookie';
 import { ROLE } from '@/types/general';
 import { LoaiTaiKhoaEnum } from '@/models/TaiKhoan';
@@ -123,6 +124,12 @@ export const NAVIGATION  = (role?: string) : Navigation => {
     title: 'Lớp học',
     icon: <HouseIcon />,
     pattern: `lop-hoc/:rest*`
+  },
+  {
+    segment: 'chuyen-lop',
+    title: 'Chuyển lớp học',
+    icon: <ChangeCircleOutlinedIcon />,
+    pattern: `chuyen-lop/:rest*`
   }
 ]
 

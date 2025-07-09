@@ -51,6 +51,11 @@ public class RepositoryChiTietChuongTrinhDaoTao : RepositoryBase<ChiTietChuongTr
                 }).AsNoTracking(), page, limit);
     }
 
+    public async Task<List<Guid>?> GetAllIdChiTietChuongTrinhDaoTaoByChuongTrinhDaoTaoIdAsync(Guid chuongTrinhDaoTaoId)
+    {
+        return await FindAll(false).Where(item => item.ChuongTrinhDaoTaoId == chuongTrinhDaoTaoId).Select(item => item.Id).ToListAsync();
+    }
+
     public async Task<IEnumerable<ChiTietChuongTrinhDaoTao>?> GetAllCtctdtByCtdtIdAsync(Guid id, int? hocKy = null)
     {
         if (hocKy == null)

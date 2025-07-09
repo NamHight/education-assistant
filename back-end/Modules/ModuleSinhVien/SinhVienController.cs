@@ -36,7 +36,7 @@ namespace Education_assistant.Modules.ModuleSinhVien
             Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(result.page));
             return Ok(result.data);
         }
-        [HttpGet("{lopHocId}by-lop-hoc")]
+        [HttpGet("{lopHocId}/by-lop-hoc")]
         public async Task<ActionResult> GetAllSinhVienByLopHocAsync(Guid lopHocId)
         {
             var result = await _serviceMaster.SinhVien.GetAllSinhVienByLopHocIdAsync(lopHocId);
@@ -75,7 +75,7 @@ namespace Education_assistant.Modules.ModuleSinhVien
         }
         [HttpPost("chuyen-lop")]
         [ServiceFilter(typeof(ValidationFilter))]
-        public async Task<ActionResult> AddSinhVienLopHocAsync([FromForm] RequestAddSinhVienChuyenLopDto model)
+        public async Task<ActionResult> AddSinhVienLopHocAsync([FromBody] RequestAddSinhVienChuyenLopDto model)
         {
             await _serviceMaster.SinhVien.UpdateChuyenSinhVienByLopHocAsync(model);
             return Ok("Chuyển sinh viên sang lớp học thành công");
