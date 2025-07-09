@@ -26,7 +26,7 @@ public class RepositoryHocBa : RepositoryBase<HocBa>, IRepositoryHocBa
 
 //.SearchBy(search, item => item.SinhVien!.HoTen)
     public async Task<PagedListAsync<HocBa>> GetAllHocBaAsync(int page, int limit, string search, string sortBy,
-        string sortByOrder, Guid? lopHocPhanId)
+        string sortByOrder, Guid? lopHocPhanId, Guid? sinhVienId)
     {
         var query = _context.HocBas!
             .AsNoTracking()
@@ -42,8 +42,14 @@ public class RepositoryHocBa : RepositoryBase<HocBa>, IRepositoryHocBa
             else
                 query = query.SearchBy(search, item => item.SinhVien!.HoTen);
         }
-
-        query = query.Where(item => item.LopHocPhanId == lopHocPhanId);
+        if (sinhVienId.HasValue && sinhVienId != Guid.Empty)
+        {
+            query = query.Where(item => item.SinhVienId == sinhVienId);
+        }
+        if (lopHocPhanId.HasValue && lopHocPhanId != Guid.Empty)
+        {
+            query = query.Where(item => item.LopHocPhanId == lopHocPhanId);
+        }
         return await PagedListAsync<HocBa>.ToPagedListAsync(query
             .SortByOptions(sortBy, sortByOrder, new Dictionary<string, Expression<Func<HocBa, object>>>
             {
@@ -64,6 +70,29 @@ public class RepositoryHocBa : RepositoryBase<HocBa>, IRepositoryHocBa
             sinhVienIds.Contains(item.SinhVienId!.Value) && item.ChiTietChuongTrinhDaoTaoId == ctctdtId).ToListAsync();
     }
 
+    public async Task<IEnumerable<HocBa>> GetAllHocBaBySinhVienAsync(string search, string sortBy, string sortByOrder, Guid sinhVienId)
+    {
+        var query = _context.HocBas!
+            .AsNoTracking()
+            .Include(item => item.SinhVien)
+            .Include(item => item.LopHocPhan)
+            .Include(item => item.ChiTietChuongTrinhDaoTao)
+            .ThenInclude(item => item!.ChuongTrinhDaoTao)
+            .AsQueryable();
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            query = query.SearchBy(search, item => item.ChiTietChuongTrinhDaoTao.MonHoc.TenMonHoc);
+        }
+        query = query.Where(item => item.SinhVienId == sinhVienId);
+        return await query.SortByOptions(sortBy, sortByOrder, new Dictionary<string, Expression<Func<HocBa, object>>>
+                            {
+                                ["createdat"] = item => item.CreatedAt,
+                                ["updatedat"] = item => item.UpdatedAt!,
+                                ["diemtongket"] = item => item.DiemTongKet!,
+                                ["ketqua"] = item => item.KetQua!
+                            }).ToListAsync();
+    }
+
     public async Task<HocBa?> GetHocBaByIdAsync(Guid id, bool trackChanges)
     {
         return await FindByCondition(item => item.Id == id, trackChanges).Include(item => item.SinhVien)
@@ -80,6 +109,13 @@ public class RepositoryHocBa : RepositoryBase<HocBa>, IRepositoryHocBa
     {
         return await FindByCondition(item => item.SinhVienId == sinhVienId && item.LopHocPhanId == lopHocPhanId, false)
             .FirstOrDefaultAsync();
+    }
+
+    public async Task<List<(Guid, Guid)>> GetIdSinhVienAndIdChiTietByListSinhVienAndListChiTietAsync(List<Guid> sinhVienIds, List<Guid> chiTietIds)
+    {
+        return await FindAll(false).Where(item => sinhVienIds.Contains(item.SinhVienId.Value) && chiTietIds.Contains(item.ChiTietChuongTrinhDaoTaoId.Value))
+                                    .Select(hb => new ValueTuple<Guid, Guid>(hb.SinhVienId.Value, hb.ChiTietChuongTrinhDaoTaoId.Value))
+                                    .ToListAsync();
     }
 
     public async Task<decimal?> TinhGPAAsync(Guid sinhVienId)

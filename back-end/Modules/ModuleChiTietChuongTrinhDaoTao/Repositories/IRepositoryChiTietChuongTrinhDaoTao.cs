@@ -18,6 +18,8 @@ public interface IRepositoryChiTietChuongTrinhDaoTao
     Task<ChiTietChuongTrinhDaoTao?> GetChiTietChuongTrinhDaoTaoByMonHocIdAndChuongTrinhId(Guid monHocId,
         Guid chuongTrinhDaoTaoId);
 
+    Task<List<Guid>?> GetAllIdChiTietChuongTrinhDaoTaoByChuongTrinhDaoTaoIdAsync(Guid chuongTrinhDaoTaoId);
+
     Task<IEnumerable<ChiTietChuongTrinhDaoTao>?> GetAllCtctdtByCtdtIdAsync(Guid id, int? hocKy = null);
     Task CreateAsync(ChiTietChuongTrinhDaoTao chiTietChuongTrinhDaoTao);
     void UpdateChiTietChuongTrinhDaoTao(ChiTietChuongTrinhDaoTao chiTietChuongTrinhDaoTao);
