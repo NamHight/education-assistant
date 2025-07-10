@@ -20,5 +20,4 @@ public interface IServiceLopHocPhan
     Task UpdateTrangThaiAsync(Guid id, int trangThai);
     Task UpdateListLophocPhanAsync(List<RequestUpdateLopHocPhanDto> listRequest);
     Task DeleteAsync(Guid id);
-    
 }

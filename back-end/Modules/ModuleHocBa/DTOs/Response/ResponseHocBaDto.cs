@@ -23,7 +23,12 @@ public class ResponseHocBaDto
 }
 
 public class HocBaSimpleDto
-{ 
+{
     public Guid Id { get; set; }
     public decimal DiemTongKet { get; set; }
+}
+public class ResponseHocBaSummaryDto
+{
+    public IEnumerable<ResponseHocBaDto>? ListHocBa { get; set; }
+    public decimal? GPA { get; set; }
 }

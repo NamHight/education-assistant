@@ -17,8 +17,13 @@ public class Nganh : BaseEntity
     public string TenNganh { get; set; } = string.Empty;
     [Column("mo_ta")]
     public string? MoTa { get; set; }
+    [Column("nganh_cha_id")]
+    public Guid? NganhChaId { get; set; }
+    [ForeignKey("NganhChaId")] public virtual Nganh? NganhCha { get; set; }
     [Column("khoa_id")] public Guid? KhoaId { get; set; }
     [ForeignKey("KhoaId")] public virtual Khoa? Khoa { get; set; }
+
+    public virtual ICollection<Nganh>? DanhSachNganhCon { get; set; }
     public virtual ICollection<ChuongTrinhDaoTao>? DanhSachChuongTrinhDaoTao { get; set; }
     public virtual ICollection<LopHoc>? DanhSachLopHoc { get; set; }
 }

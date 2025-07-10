@@ -36,6 +36,12 @@ public class HocBaController : ControllerBase
         Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(result.page));
         return Ok(result.data);
     }
+    [HttpGet("by-sinh-vien")]
+    public async Task<ActionResult> GetAllHocBaAsync([FromQuery] ParamHocBaBySinhVienDto param)
+    {
+        var result = await _serviceMaster.HocBa.GetAllHocBaBySinhVienAsync(param);
+        return Ok(result);
+    }
 
 
     [HttpGet("{id}")]

@@ -26,7 +26,7 @@ public class LopHocPhan : BaseEntity
         get => TrangThai.HasValue ? (TrangThaiLopHocPhanEnum)TrangThai.Value : null;
         set => TrangThai = value.HasValue ? (int)value.Value : null;
     }
-    [Column("loai-lop")]
+    [Column("loai_lop")]
     public int? Loai { get; set; }
     [NotMapped]
     public LoaiLopHocEnum? LoaiLopHocEnum

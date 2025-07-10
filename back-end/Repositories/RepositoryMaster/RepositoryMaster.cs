@@ -210,7 +210,8 @@ public class RepositoryMaster : IRepositoryMaster
         {
             SetOutputIdentity = true,
             PreserveInsertOrder = true,
-            UseTempDB = false
+            UseTempDB = false,
+            BatchSize = 500
         };
         await _repositoryContext.BulkUpdateAsync(entities, bulkConfig);
     }
@@ -222,7 +223,8 @@ public class RepositoryMaster : IRepositoryMaster
         {
             SetOutputIdentity = true,
             PreserveInsertOrder = true,
-            UseTempDB = false
+            UseTempDB = false,
+            BatchSize = 500
         };
         await _repositoryContext.BulkInsertAsync(entities, bulkConfig);
     }
@@ -233,7 +235,7 @@ public class RepositoryMaster : IRepositoryMaster
         {
             SetOutputIdentity = false,
             PreserveInsertOrder = false,
-            UseTempDB = false
+            UseTempDB = false,
         };
         var parameter = Expression.Parameter(typeof(T), "x");
         var property = Expression.Property(parameter, "Id");

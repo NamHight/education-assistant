@@ -2,6 +2,7 @@ import authApi from '@/lib/authAxios';
 import authApiServer from '@/lib/authAxiosServer';
 import { API } from '@/types/general';
 import { IParamSinhVien } from '@/types/params';
+import { error } from 'console';
 
 export class SinhVienService {
   static async getAllSinhVien(params: IParamSinhVien) {
@@ -58,6 +59,16 @@ export class SinhVienService {
         })
       )
       .catch((error) => error.response?.data);
+  }
+  static async getAllSinhVienByLopHoc(lopHocId: string | number | null){
+    return await authApi.get(`${API.SINH_VIEN.GET_BY_ID_LOP_HOC}`.replace(':lopHocId', `${lopHocId}`))
+                    .then((response) => response.data)
+                    .catch((error) => error.response?.data);
+  }
+  static async getAllSinhVienByLopHocServer(lopHocId: string | number | null){
+    return await authApiServer.get(`${API.SINH_VIEN.GET_BY_ID_LOP_HOC}`.replace(':lopHocId', `${lopHocId}`))
+                    .then((response) => response.data)
+                    .catch((error) => error.response?.data);
   }
   static async getAllTinhTrangHocTap(params: IParamSinhVien) {
     return await authApi
@@ -160,6 +171,14 @@ export class SinhVienService {
       return result.data;
     } catch (error: any) {
       throw error.response?.data;
+    }
+  }
+  static async ChuyenLopSinhVien(data: any){
+    try{
+      const result = await authApi.post(`${API.SINH_VIEN.CHUYEN_LOP_SINH_VIEN}`, data);
+      return result.data;
+    }catch(error: any){
+      throw error.response?.data
     }
   }
 }

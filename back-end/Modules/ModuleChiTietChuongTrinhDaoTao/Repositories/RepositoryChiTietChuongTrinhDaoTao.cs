@@ -1,4 +1,5 @@
 using System.Linq.Expressions;
+using DocumentFormat.OpenXml.Office2010.Excel;
 using Education_assistant.Context;
 using Education_assistant.Extensions;
 using Education_assistant.Models;
@@ -48,6 +49,11 @@ public class RepositoryChiTietChuongTrinhDaoTao : RepositoryBase<ChiTietChuongTr
                     ["hocky"] = item => item.HocKy,
                     ["loaimonhoc"] = item => item.LoaiMonHoc!
                 }).AsNoTracking(), page, limit);
+    }
+
+    public async Task<List<Guid>?> GetAllIdChiTietChuongTrinhDaoTaoByChuongTrinhDaoTaoIdAsync(Guid chuongTrinhDaoTaoId)
+    {
+        return await FindAll(false).Where(item => item.ChuongTrinhDaoTaoId == chuongTrinhDaoTaoId).Select(item => item.Id).ToListAsync();
     }
 
     public async Task<IEnumerable<ChiTietChuongTrinhDaoTao>?> GetAllCtctdtByCtdtIdAsync(Guid id, int? hocKy = null)
@@ -108,5 +114,12 @@ public class RepositoryChiTietChuongTrinhDaoTao : RepositoryBase<ChiTietChuongTr
     public void UpdateChiTietChuongTrinhDaoTao(ChiTietChuongTrinhDaoTao chiTietChuongTrinhDaoTao)
     {
         Update(chiTietChuongTrinhDaoTao);
+    }
+    public async Task<ChiTietChuongTrinhDaoTao?> GetChiTietChuongTrinhDaoTaoByMonHocIdAsync(Guid monHocId, bool trackChanges)
+    {
+        return await FindByCondition(item => item.MonHocId == monHocId, trackChanges)
+           .Include(item => item.ChuongTrinhDaoTao)
+           .Include(item => item.BoMon)
+           .Include(item => item.MonHoc).ThenInclude(mh => mh.Khoa).FirstOrDefaultAsync();
     }
 }

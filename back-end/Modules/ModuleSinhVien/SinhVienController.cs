@@ -36,6 +36,12 @@ namespace Education_assistant.Modules.ModuleSinhVien
             Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(result.page));
             return Ok(result.data);
         }
+        [HttpGet("{lopHocId}/by-lop-hoc")]
+        public async Task<ActionResult> GetAllSinhVienByLopHocAsync(Guid lopHocId)
+        {
+            var result = await _serviceMaster.SinhVien.GetAllSinhVienByLopHocIdAsync(lopHocId);
+            return Ok(result);
+        }
         [HttpGet("all-tinh-trang-hoc-tap")]
         public async Task<ActionResult> GetAllSummaryAsync([FromQuery] Guid lopId)
         {
@@ -66,6 +72,13 @@ namespace Education_assistant.Modules.ModuleSinhVien
         {
             var result = await _serviceMaster.SinhVien.CreateAsync(model);
             return Ok(result);
+        }
+        [HttpPost("chuyen-lop")]
+        [ServiceFilter(typeof(ValidationFilter))]
+        public async Task<ActionResult> AddSinhVienLopHocAsync([FromBody] RequestAddSinhVienChuyenLopDto model)
+        {
+            await _serviceMaster.SinhVien.UpdateChuyenSinhVienByLopHocAsync(model);
+            return Ok("Chuyển sinh viên sang lớp học thành công");
         }
         [HttpPost("dang-ky-mon-hoc")]
         [ServiceFilter(typeof(ValidationFilter))]

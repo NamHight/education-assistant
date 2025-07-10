@@ -53,6 +53,13 @@ namespace Education_assistant.Modules.ModuleTuan
             var result = await _serviceMaster.Tuan.CreateAsync(model);
             return Ok(result);
         }
+        [HttpPost("tao-auto-tuan")]
+        [ServiceFilter(typeof(ValidationFilter))]
+        public async Task<ActionResult> AddTuanAutoAsync([FromForm] RequestAddTuanByNamAndNgayBatDauDto model)
+        {
+            await _serviceMaster.Tuan.CreateAutoTuanForNamHocAsnyc(model);
+            return Ok("Tạo danh sách tuần thành công");
+        }
         [HttpPut("{id}")]
         [ServiceFilter(typeof(ValidationFilter))]
         public async Task<ActionResult> UpdateTuanAsync(Guid id, [FromForm] RequestUpdateTuanDto model)

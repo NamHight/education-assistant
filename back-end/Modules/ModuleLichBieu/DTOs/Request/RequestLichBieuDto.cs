@@ -63,7 +63,9 @@ namespace Education_assistant.Modules.ModuleLichBieu.DTOs.Request
         public int HocKy { get; set; }
         [Required(ErrorMessage = "Id lớp học không được để trống")]
         public Guid lopHocId { get; set; }
-        [Required(ErrorMessage = "Id vào tuần không được để trống")]
+        [Required(ErrorMessage = "Id tuần hiện tại không được để trống")]
+        public Guid TuanHienTaiId { get; set; }
+        [Required(ErrorMessage = "Id từ tuần không được để trống")]
         public Guid VaoTuanId { get; set; }
         [Required(ErrorMessage = "Id đến tuần không được để trống")]
         public Guid DenTuanId { get; set; }

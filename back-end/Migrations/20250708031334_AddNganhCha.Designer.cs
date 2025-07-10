@@ -4,6 +4,7 @@ using Education_assistant.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Education_assistant.Migrations
 {
     [DbContext(typeof(RepositoryContext))]
-    partial class RepositoryContextModelSnapshot : ModelSnapshot
+    [Migration("20250708031334_AddNganhCha")]
+    partial class AddNganhCha
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -686,7 +689,7 @@ namespace Education_assistant.Migrations
 
                     b.Property<int?>("Loai")
                         .HasColumnType("int")
-                        .HasColumnName("loai_lop");
+                        .HasColumnName("loai-lop");
 
                     b.Property<string>("MaHocPhan")
                         .IsRequired()

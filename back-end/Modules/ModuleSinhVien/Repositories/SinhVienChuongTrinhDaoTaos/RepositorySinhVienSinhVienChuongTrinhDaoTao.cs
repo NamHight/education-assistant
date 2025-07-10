@@ -38,4 +38,13 @@ public class RepositorySinhVienSinhVienChuongTrinhDaoTao : RepositoryBase<SinhVi
             })
             .ToListAsync();
     }
+
+    public async Task<List<Guid>> GetAllSinhVienChuongTrinhDaoTaoBySinhVienIdAndChuongTrinhDaoTaoIdAsync(List<Guid> sinhVienIds, Guid chuongTrinhDaoTaoId)
+    {
+        return await _context.SinhVienChuongTrinhDaoTaos!
+                    .AsNoTracking()
+                    .Where(item => sinhVienIds.Contains(item.SinhVienId!.Value) && item.ChuongTrinhDaoTaoId == chuongTrinhDaoTaoId)
+                    .Select(item => item.SinhVienId!.Value)
+                    .ToListAsync();
+    }
 }

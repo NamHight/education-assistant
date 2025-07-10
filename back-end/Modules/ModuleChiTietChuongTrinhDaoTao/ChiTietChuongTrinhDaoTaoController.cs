@@ -68,5 +68,11 @@ namespace Education_assistant.Modules.ModuleChiTietChuongTrinhDaoTao
             return Ok(result);
 
         }
+        [HttpGet("by-subject/{monHocId}")]
+        public async Task<ActionResult> GetChiTietChuongTrinhDaoTaoByMonHocIdAsync(Guid monHocId)
+        {
+            var result = await _serviceMaster.ChiTietChuongTrinhDaoTao.GetChiTietChuongTrinhDaoTaoByMonHocIdAsync(monHocId, false);
+            return Ok(result);
+        }
     }
 }

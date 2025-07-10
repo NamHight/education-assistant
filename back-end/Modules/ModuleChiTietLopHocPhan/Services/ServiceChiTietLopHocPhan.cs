@@ -315,9 +315,13 @@ public class ServiceChiTietLopHocPhan : IServiceChiTietLopHocPhan
                     existingDiemSo.DiemTongKet2 = (diemSo.DiemChuyenCan * 0.1m) + (diemSo.DiemTrungBinh * 0.4m) + (diemSo.DiemThi2 * 0.5m);
                 }
             }
-            if (request.LoaiMonHoc == (int)LoaiMonHocEnum.MODUN)
+            else if (request.LoaiMonHoc == (int)LoaiMonHocEnum.MODUN)
             {
                 existingDiemSo.DiemTongKet1 = (diemSo.DiemTrungBinh * 0.4m) + (diemSo.DiemThi1 * 0.6m);
+            }
+            else
+            {
+                existingDiemSo.DiemTongKet1 = diemSo.DiemTongKet1;
             }
 
             existingDiemSo.GhiChu = diemSo.GhiChu;

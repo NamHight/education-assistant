@@ -13,4 +13,3 @@ public class ParamSinhVienByLopHocPhanDto : BaseParam
 {
     public Guid lopHocPhanId { get; set; }
 }
-

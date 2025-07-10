@@ -57,7 +57,7 @@ public class RepositorySinhVien : RepositoryBase<SinhVien>, IRepositorySinhVien
 
     public async Task<IEnumerable<SinhVien>> GetAllSinhVienByLopHoc(Guid lopHocId)
     {
-        return await FindAll(false).Where(item => item.LopHocId == lopHocId).ToListAsync();
+        return await FindAll(false).Where(item => item.TrangThaiSinhVien == (int)TrangThaiSinhVienEnum.DANG_HOC && item.LopHocId == lopHocId).ToListAsync();
     }
 
     public async Task<PagedListAsync<SinhVien>> GetAllSinhVienByLopHocPhanIdAsync(int page, int limit, string? search,
