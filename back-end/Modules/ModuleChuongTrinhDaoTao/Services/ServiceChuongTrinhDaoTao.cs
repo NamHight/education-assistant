@@ -121,9 +121,9 @@ public class ServiceChuongTrinhDaoTao : IServiceChuongTrinhDaoTao
                 ctDaoTaoExistting.MaChuongTrinh = _layKyTuHelper.LayKyTuDau(request.TenChuongTrinh) + request.Khoa.ToString();
                 ctDaoTaoExistting.TenChuongTrinh = request.TenChuongTrinh;
                 ctDaoTaoExistting.LoaiChuonTrinhDaoTao = request.LoaiChuonTrinhDaoTao;
-                ctDaoTaoExistting.ThoiGianDaoTao = request.ThoiGianDaoTao;
                 ctDaoTaoExistting.MoTa = request.MoTa;
                 ctDaoTaoExistting.TongSoTinChi = request.TongSoTinChi;
+                ctDaoTaoExistting.ThoiGianDaoTao = request.ThoiGianDaoTao;
                 ctDaoTaoExistting.Khoa = request.Khoa;
                 ctDaoTaoExistting.NganhId = request.NganhId;
                 ctDaoTaoExistting.UpdatedAt = DateTime.Now;
