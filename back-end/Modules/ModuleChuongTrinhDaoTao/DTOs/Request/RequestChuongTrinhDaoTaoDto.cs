@@ -12,7 +12,7 @@ public class RequestAddChuongTrinhDaoTaoDto
     public int LoaiChuonTrinhDaoTao { get; set; }
 
     [Required(ErrorMessage = "Thời gian đào tạo không được để trống")]
-    public string ThoiGianDaoTao { get; set; } = string.Empty;
+    public int ThoiGianDaoTao { get; set; }
     public string? MoTa { get; set; }
 
     [Required(ErrorMessage = "Tổng số tín chỉ không được để trống")]
@@ -38,7 +38,7 @@ public class RequestUpdateChuongTrinhDaoTaoDto
     public int LoaiChuonTrinhDaoTao { get; set; }
 
     [Required(ErrorMessage = "Thời gian đào tạo không được để trống")]
-    public string ThoiGianDaoTao { get; set; } = string.Empty;
+    public int ThoiGianDaoTao { get; set; }
     public string? MoTa { get; set; }
 
     [Required(ErrorMessage = "Tổng số tín chỉ không được để trống")]

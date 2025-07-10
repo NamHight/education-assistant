@@ -51,8 +51,6 @@ const Content = ({query, initialData}: ContentProps) => {
       queryKey: [queryKey, lopHocHienTaiId],
       queryFn: async () => {
         const result = await SinhVienService.getAllSinhVienByLopHoc(lopHocHienTaiId);
-        console.log('testsssssssss')
-        
         return result;
       },
       refetchOnWindowFocus: false
@@ -78,8 +76,8 @@ const Content = ({query, initialData}: ContentProps) => {
           queryKey: [queryKey, lopHocChuyenDenId],
         })
       },
-      onError: (error) => {
-        notification.show('Chuyển thất bại', {
+      onError: (error: any) => {
+        notification.show(error?.Message, {
           severity: 'error',
           autoHideDuration: 5000
         });
