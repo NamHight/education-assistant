@@ -225,7 +225,7 @@ interface ITableEditProps {
   control?: any;
   columns: GridColDef[];
   apiRef?: any;
-  setValue:UseFormSetValue<IFilter>;
+  setValue: UseFormSetValue<IFilter>;
   isSaving?: boolean;
   isLoading?: boolean;
   setFilterModel?: (data: any) => void;
@@ -294,7 +294,6 @@ const TableEdit = forwardRef(
       handleNopDiem,
       isMutateSavingPending,
       isMutateNopDiemPending
-
     }: ITableEditProps,
     ref
   ) => {
@@ -318,12 +317,12 @@ const TableEdit = forwardRef(
       return newRow;
     }, []);
     const queryClient = useQueryClient();
-   const handleCellClick = React.useCallback((params: GridCellParams) => {
-  if (!params.isEditable) return;
-  setCellModesModel({
-    [params.id]: { [params.field]: { mode: GridCellModes.Edit } }
-  });
-}, []);
+    const handleCellClick = React.useCallback((params: GridCellParams) => {
+      if (!params.isEditable) return;
+      setCellModesModel({
+        [params.id]: { [params.field]: { mode: GridCellModes.Edit } }
+      });
+    }, []);
     const handleCellModesModelChange = React.useCallback((newModel: GridCellModesModel) => {
       setCellModesModel(newModel);
     }, []);
@@ -379,15 +378,15 @@ const TableEdit = forwardRef(
       }
     });
     const handleImportFileClick = (data: ImportFileProps) => {
-    const rowIds = apiRef.current?.getRowModels();
-    const allRows = Array.from(rowIds?.values() || []);
-    if(allRows.length === 0) {
-      notification.show('Không có dữ liệu để import', {
-        severity: 'warning',
-        autoHideDuration: 5000
-      });
-      return;
-    }
+      const rowIds = apiRef.current?.getRowModels();
+      const allRows = Array.from(rowIds?.values() || []);
+      if (allRows.length === 0) {
+        notification.show('Không có dữ liệu để import', {
+          severity: 'warning',
+          autoHideDuration: 5000
+        });
+        return;
+      }
       const formData = new FormData();
       formData.append('lopHocPhanId', data.LopHocPhanId);
       if (data.File && data.File instanceof File) {
@@ -399,7 +398,7 @@ const TableEdit = forwardRef(
       if (!event.target.files || event.target.files.length === 0) {
         return;
       }
-      if(event.target.files[0].type !== 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+      if (event.target.files[0].type !== 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
         notification.show('Vui lòng chọn file Excel (.xlsx)', {
           severity: 'error',
           autoHideDuration: 5000
@@ -414,22 +413,22 @@ const TableEdit = forwardRef(
         setFile(fileList[0]);
         handleImportFileClick({ LopHocPhanId: filter?.lopHocPhan?.id || '', File: fileList[0] });
       }
-    }
+    };
     return (
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{
-          duration: 0.1,
+          duration: 0.1
         }}
         className='flex flex-col gap-4 relative'
-        style={{ 
-                  display: 'flex',
-        flexDirection: 'column',
-      minHeight: '500px', // ✅ Minimum height
-      maxHeight: '600px',
-        overflow: 'hidden',
-         }}
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          minHeight: '500px', // ✅ Minimum height
+          maxHeight: '600px',
+          overflow: 'hidden'
+        }}
       >
         <Box className='flex w-full gap-4'>
           <Box className='flex-1 gap-4 flex flex-col p-4 border border-gray-200 rounded-lg shadow-sm light:bg-white'>
@@ -451,9 +450,8 @@ const TableEdit = forwardRef(
                         loaiChuongTrinh: value?.id,
                         lopHocPhan: null
                       }));
-                      setValue("lopHocPhan", null);
+                      setValue('lopHocPhan', null);
                     }}
-                  
                   />
                 </Box>
               </Box>
@@ -473,9 +471,8 @@ const TableEdit = forwardRef(
                         ...prev,
                         khoa: value?.id,
                         lopHocPhan: null
-              
                       }));
-                     setValue("lopHocPhan", null);
+                      setValue('lopHocPhan', null);
                     }}
                   />
                 </Box>
@@ -497,7 +494,7 @@ const TableEdit = forwardRef(
                         hocKy: value?.id,
                         lopHocPhan: null
                       }));
-                      setValue("lopHocPhan", null);
+                      setValue('lopHocPhan', null);
                     }}
                   />
                 </Box>
@@ -594,7 +591,7 @@ const TableEdit = forwardRef(
             </LoadingButton>
           </Box>
         </Box>
-          
+
         <DataGrid
           apiRef={apiRef}
           rows={row}
@@ -640,39 +637,40 @@ const TableEdit = forwardRef(
               noRowsVariant: 'linear-progress'
             }
           }}
-             className='!border-gray-200 shadow-sm'
+          className='!border-gray-200 shadow-sm'
           sx={(theme) => ({
-             flex: 1,
+            flex: 1,
             height: '100%',
             overflowY: 'auto',
             '& input[type=number]::-webkit-inner-spin-button, & input[type=number]::-webkit-outer-spin-button': {
-      WebkitAppearance: 'none',
-      margin: 0,
-    },
-    '& input[type=number]': {
-      MozAppearance: 'textfield',
-    },
-            '& .MuiInputBase-input':{
+              WebkitAppearance: 'none',
+              margin: 0
+            },
+            '& input[type=number]': {
+              MozAppearance: 'textfield'
+            },
+            '& .MuiInputBase-input': {
               padding: '0 4px',
               height: '100%',
               boxSizing: 'border-box'
             },
             '& .MuiDataGrid-editInputCell': {
               margin: 0,
-              cursor: "pointer"
+              cursor: 'pointer'
             },
             '& .MuiDataGrid-main': {
-            overflow: 'auto', // ✅ Enable scrolling
-          flex: 1
-          },
-             '& .MuiDataGrid-cell': {
-            whiteSpace: 'break-spaces',
-            wordBreak: 'break-word',
-            overflowWrap: 'break-word',
-            lineHeight: '1.5',
-            padding: '4px 3px',
-            display: 'flex',
-            alignItems: 'center',  },
+              overflow: 'auto', // ✅ Enable scrolling
+              flex: 1
+            },
+            '& .MuiDataGrid-cell': {
+              whiteSpace: 'break-spaces',
+              wordBreak: 'break-word',
+              overflowWrap: 'break-word',
+              lineHeight: '1.5',
+              padding: '4px 3px',
+              display: 'flex',
+              alignItems: 'center'
+            },
             [`& .${gridClasses.columnHeaders}`]: {
               borderBottom: `1px solid ${theme.palette.grey[600]}`
             },
@@ -722,7 +720,7 @@ const TableEdit = forwardRef(
           loading={isSaving || isLoading}
         />
         <Box
-          className="absolute flex items-center gap-2  right-0 top-43"
+          className='absolute flex items-center gap-2  right-0 top-43'
           sx={{
             background: 'rgba(255,255,255,0.95)',
             borderRadius: 2,
@@ -735,7 +733,7 @@ const TableEdit = forwardRef(
         >
           <WarningAmberIcon sx={{ color: '#ff9800', fontSize: 18 }} />
           <Typography
-            variant="body2"
+            variant='body2'
             sx={{
               fontSize: 12,
               color: '#b26a00',

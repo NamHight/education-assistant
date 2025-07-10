@@ -74,9 +74,15 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
   const schema = useMemo(() => {
     return yup.object().shape({
       MaChuongTrinh: yup.string().notRequired(),
-      TenChuongTrinh: yup.string().max(255, 'Tên chương trình không được vượt quá 255 ký tự').required('Tên chương trình không được để trống'),
+      TenChuongTrinh: yup
+        .string()
+        .max(255, 'Tên chương trình không được vượt quá 255 ký tự')
+        .required('Tên chương trình không được để trống'),
       LoaiChuonTrinhDaoTao: yup.object().required('Loại chương trình đào tạo không được để trống'),
-      ThoiGianDaoTao: yup.number().min(1, 'Thời gian đào tạo phải lớn hơn hoặc bằng 1').required('Thời gian đào tạo không được để trống'),
+      ThoiGianDaoTao: yup
+        .number()
+        .min(1, 'Thời gian đào tạo phải lớn hơn hoặc bằng 1')
+        .required('Thời gian đào tạo không được để trống'),
       MoTa: yup.string().optional(),
       TongSoTinChi: yup
         .number()

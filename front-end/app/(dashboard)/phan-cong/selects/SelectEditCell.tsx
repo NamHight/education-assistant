@@ -1,4 +1,4 @@
-"use client"
+'use client';
 import { Typography } from '@mui/material';
 import React, { useEffect } from 'react';
 
@@ -18,7 +18,13 @@ export default function SelectEditCell({ params, giangVienOptions, fetchGiangVie
     <select
       className='bg-white border z-99 border-gray-300 p-1 text-[13px] focus:outline-none focus:ring-2 focus:ring-blue-500'
       value={params.value || ''}
-      onChange={(e) => params.api.setEditCellValue({ id: params.id, field: params.field, value: e.target.value === '' ? null : e.target.value })}
+      onChange={(e) =>
+        params.api.setEditCellValue({
+          id: params.id,
+          field: params.field,
+          value: e.target.value === '' ? null : e.target.value
+        })
+      }
       style={{
         width: '100%',
         overflowY: 'auto',
@@ -28,7 +34,6 @@ export default function SelectEditCell({ params, giangVienOptions, fetchGiangVie
         fontWeight: 400,
         fontFamily: 'inherit'
       }}
-
     >
       {options.map((item: any) => (
         <option

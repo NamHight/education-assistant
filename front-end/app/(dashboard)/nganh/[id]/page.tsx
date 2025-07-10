@@ -16,7 +16,7 @@ interface IPageProps {
 const page = async ({ params }: IPageProps) => {
   const { id } = await params;
   const nganh = NganhService.getNganhByIdServer(id).catch(() => undefined);
-  const khoa = KhoaService.getKhoaNoPageServer().catch(() => ([]));
+  const khoa = KhoaService.getKhoaNoPageServer().catch(() => []);
   const [nganhData, khoaData] = await Promise.all([nganh, khoa]);
   return (
     <div>

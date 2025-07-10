@@ -60,15 +60,17 @@ export class SinhVienService {
       )
       .catch((error) => error.response?.data);
   }
-  static async getAllSinhVienByLopHoc(lopHocId: string | number | null){
-    return await authApi.get(`${API.SINH_VIEN.GET_BY_ID_LOP_HOC}`.replace(':lopHocId', `${lopHocId}`))
-                    .then((response) => response.data)
-                    .catch((error) => error.response?.data);
+  static async getAllSinhVienByLopHoc(lopHocId: string | number | null) {
+    return await authApi
+      .get(`${API.SINH_VIEN.GET_BY_ID_LOP_HOC}`.replace(':lopHocId', `${lopHocId}`))
+      .then((response) => response.data)
+      .catch((error) => error.response?.data);
   }
-  static async getAllSinhVienByLopHocServer(lopHocId: string | number | null){
-    return await authApiServer.get(`${API.SINH_VIEN.GET_BY_ID_LOP_HOC}`.replace(':lopHocId', `${lopHocId}`))
-                    .then((response) => response.data)
-                    .catch((error) => error.response?.data);
+  static async getAllSinhVienByLopHocServer(lopHocId: string | number | null) {
+    return await authApiServer
+      .get(`${API.SINH_VIEN.GET_BY_ID_LOP_HOC}`.replace(':lopHocId', `${lopHocId}`))
+      .then((response) => response.data)
+      .catch((error) => error.response?.data);
   }
   static async getAllTinhTrangHocTap(params: IParamSinhVien) {
     return await authApi
@@ -135,13 +137,16 @@ export class SinhVienService {
       throw error.response?.data;
     }
   }
-  static async deleteSinhVienByLHP(id: string | number | null,data: any) {
+  static async deleteSinhVienByLHP(id: string | number | null, data: any) {
     try {
-      const result = await authApi.delete(`${API.SINH_VIEN.DELETE_LHP}`.replace(':id', `${id}`).replace(':lopHocPhanId', `${data.lopHocPhanId}`),{
-        headers: {
-          'Content-Type': 'application/json',
+      const result = await authApi.delete(
+        `${API.SINH_VIEN.DELETE_LHP}`.replace(':id', `${id}`).replace(':lopHocPhanId', `${data.lopHocPhanId}`),
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          }
         }
-      });
+      );
       return result.data;
     } catch (error: any) {
       throw error.response?.data;
@@ -173,12 +178,12 @@ export class SinhVienService {
       throw error.response?.data;
     }
   }
-  static async ChuyenLopSinhVien(data: any){
-    try{
+  static async ChuyenLopSinhVien(data: any) {
+    try {
       const result = await authApi.post(`${API.SINH_VIEN.CHUYEN_LOP_SINH_VIEN}`, data);
       return result.data;
-    }catch(error: any){
-      throw error.response?.data
+    } catch (error: any) {
+      throw error.response?.data;
     }
   }
 }

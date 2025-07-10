@@ -36,24 +36,24 @@ interface IContentProps {
   queryKey: string;
 }
 export interface IFilter {
-    hocKy: IOption | null;
-    loaiChuongTrinh: IOption | null;
-    lopHocPhan: {
-      id: string | null;
-      name: string | null;
-      monHocId: string | null;
-      chuongTrinhDaoTaoId: string | null;
-      loaiMonHoc: number | null;
-    } | null;
-    khoa: IOption | null;
-  }
+  hocKy: IOption | null;
+  loaiChuongTrinh: IOption | null;
+  lopHocPhan: {
+    id: string | null;
+    name: string | null;
+    monHocId: string | null;
+    chuongTrinhDaoTaoId: string | null;
+    loaiMonHoc: number | null;
+  } | null;
+  khoa: IOption | null;
+}
 
 const Content = ({ queryKey }: IContentProps) => {
-    const { control, getValues,setValue } = useForm<IFilter>({
+  const { control, getValues, setValue } = useForm<IFilter>({
     defaultValues: {
       hocKy: null,
       loaiChuongTrinh: null,
-      lopHocPhan:  null,
+      lopHocPhan: null,
       khoa: null
     }
   });
@@ -80,12 +80,12 @@ const Content = ({ queryKey }: IContentProps) => {
     items: []
   });
   const [isOpenPopover, setisOpenPopover] = useState<boolean>(false);
-  const { data:queryData, isLoading } = useQuery({
-    queryKey: [queryKey, filterModel,filter?.lopHocPhan?.id],
+  const { data: queryData, isLoading } = useQuery({
+    queryKey: [queryKey, filterModel, filter?.lopHocPhan?.id],
     queryFn: async () => {
       const searchKeyWord = handleTextSearch(filterModel?.quickFilterValues as any[]);
       let params: IParamChiTietLopHocPhan = {
-        lopHocPhanId: filter?.lopHocPhan?.id as any,
+        lopHocPhanId: filter?.lopHocPhan?.id as any
       };
       if (searchKeyWord) {
         params = {
@@ -94,7 +94,7 @@ const Content = ({ queryKey }: IContentProps) => {
         };
       }
       const result = await ChiTietLopHocPhanService.getAllChiTietLopHocPhanByLopHocPhanId(
-        getValues("lopHocPhan")?.id as any,
+        getValues('lopHocPhan')?.id as any,
         params
       );
       return result;
@@ -104,18 +104,16 @@ const Content = ({ queryKey }: IContentProps) => {
     gcTime: 0
   });
   const data = useMemo(() => {
-  const hasRequiredValues = !!filter?.lopHocPhan?.id && 
-                           !!filter?.khoa && 
-                           !!filter?.hocKy && 
-                           !!filter?.loaiChuongTrinh;
+    const hasRequiredValues =
+      !!filter?.lopHocPhan?.id && !!filter?.khoa && !!filter?.hocKy && !!filter?.loaiChuongTrinh;
 
-  if (!hasRequiredValues) {
-    return { data: [] };
-  }
-  return queryData || [];
-}, [queryData, filter?.lopHocPhan?.id, filter?.khoa, filter?.hocKy, filter?.loaiChuongTrinh]);
+    if (!hasRequiredValues) {
+      return { data: [] };
+    }
+    return queryData || [];
+  }, [queryData, filter?.lopHocPhan?.id, filter?.khoa, filter?.hocKy, filter?.loaiChuongTrinh]);
   const { data: lhp, isLoading: isLoadingLHP } = useQuery({
-    queryKey: ['lhp-list',filter?.khoa, filter?.hocKy, filter?.loaiChuongTrinh, user?.id],
+    queryKey: ['lhp-list', filter?.khoa, filter?.hocKy, filter?.loaiChuongTrinh, user?.id],
     queryFn: async () => {
       const params: IParamLopHocPhan2 = {
         khoa: filter?.khoa,
@@ -129,7 +127,7 @@ const Content = ({ queryKey }: IContentProps) => {
     select: (data) => {
       return data?.map((item: any) => ({
         id: item.id,
-        name: item.maHocPhan.split("_")[0],
+        name: item.maHocPhan.split('_')[0],
         loaiMonHoc: item.monHoc?.chiTietChuongTrinhDaoTao?.loaiMonHoc,
         monHocId: item.monHocId,
         chuongTrinhDaoTaoId: item.monHoc?.chiTietChuongTrinhDaoTao?.chuongTrinhDaoTao?.id
@@ -279,30 +277,30 @@ const Content = ({ queryKey }: IContentProps) => {
         type: 'number',
         sortable: false,
         display: 'flex',
-      align: 'center',
+        align: 'center',
         editable: true,
         disableColumnMenu: true,
         preProcessEditCellProps: (params) => {
-           const rawValue = params.props.value;
-            if (rawValue === '' || rawValue === null || rawValue === undefined) {
-              return { ...params.props, value: null, error: false };
-            }
-            const value = Number(rawValue);
-            console.log('value', params.hasChanged);
+          const rawValue = params.props.value;
+          if (rawValue === '' || rawValue === null || rawValue === undefined) {
+            return { ...params.props, value: null, error: false };
+          }
+          const value = Number(rawValue);
+          console.log('value', params.hasChanged);
           if (isNaN(value) || value < 1 || value > 10) {
-              return { ...params.props, value: null, error: false };
-            }
-            return { ...params.props, value, error: false };
+            return { ...params.props, value: null, error: false };
+          }
+          return { ...params.props, value, error: false };
         },
         valueGetter: (params) => {
-          if(params === null || params === '' || params === undefined){
+          if (params === null || params === '' || params === undefined) {
             return null;
           }
           const convertNumber = Number(params);
           if (isNaN(convertNumber) || convertNumber < 1 || convertNumber > 10) {
             return null;
           }
-          return params
+          return params;
         },
         cellClassName: (params) => {
           return 'cursor-pointer hover:bg-gray-100 transition-colors duration-200 ease-in-out';
@@ -317,33 +315,33 @@ const Content = ({ queryKey }: IContentProps) => {
         type: 'number',
         sortable: false,
         display: 'flex',
-         align: 'center',
+        align: 'center',
         editable: true,
         disableColumnMenu: true,
         cellClassName: (params) => {
           return 'cursor-pointer hover:bg-gray-100 transition-colors duration-200 ease-in-out';
         },
-            preProcessEditCellProps: (params) => {
-           const rawValue = params.props.value;
-            if (rawValue === '' || rawValue === null || rawValue === undefined) {
-              return { ...params.props, value: null, error: false };
-            }
-            const value = Number(rawValue);
-            console.log('value', params.hasChanged);
+        preProcessEditCellProps: (params) => {
+          const rawValue = params.props.value;
+          if (rawValue === '' || rawValue === null || rawValue === undefined) {
+            return { ...params.props, value: null, error: false };
+          }
+          const value = Number(rawValue);
+          console.log('value', params.hasChanged);
           if (isNaN(value) || value < 1 || value > 10) {
-              return { ...params.props, value: null, error: false };
-            }
-            return { ...params.props, value, error: false };
+            return { ...params.props, value: null, error: false };
+          }
+          return { ...params.props, value, error: false };
         },
         valueGetter: (params) => {
-          if(params === null || params === '' || params === undefined){
+          if (params === null || params === '' || params === undefined) {
             return null;
           }
           const convertNumber = Number(params);
           if (isNaN(convertNumber) || convertNumber < 1 || convertNumber > 10) {
             return null;
           }
-          return params
+          return params;
         }
       },
       {
@@ -355,30 +353,30 @@ const Content = ({ queryKey }: IContentProps) => {
         type: 'number',
         sortable: false,
         display: 'flex',
-         align: 'center',
+        align: 'center',
         editable: true,
         disableColumnMenu: true,
-           preProcessEditCellProps: (params) => {
-           const rawValue = params.props.value;
-            if (rawValue === '' || rawValue === null || rawValue === undefined) {
-              return { ...params.props, value: null, error: false };
-            }
-            const value = Number(rawValue);
-            console.log('value', params.hasChanged);
+        preProcessEditCellProps: (params) => {
+          const rawValue = params.props.value;
+          if (rawValue === '' || rawValue === null || rawValue === undefined) {
+            return { ...params.props, value: null, error: false };
+          }
+          const value = Number(rawValue);
+          console.log('value', params.hasChanged);
           if (isNaN(value) || value < 1 || value > 10) {
-              return { ...params.props, value: null, error: false };
-            }
-            return { ...params.props, value, error: false };
+            return { ...params.props, value: null, error: false };
+          }
+          return { ...params.props, value, error: false };
         },
         valueGetter: (params) => {
-          if(params === null || params === '' || params === undefined){
+          if (params === null || params === '' || params === undefined) {
             return null;
           }
           const convertNumber = Number(params);
           if (isNaN(convertNumber) || convertNumber < 1 || convertNumber > 10) {
             return null;
           }
-          return params
+          return params;
         },
         cellClassName: (params) => {
           return 'cursor-pointer hover:bg-gray-100 transition-colors duration-200 ease-in-out';
@@ -393,30 +391,30 @@ const Content = ({ queryKey }: IContentProps) => {
         type: 'number',
         sortable: false,
         display: 'flex',
-          align: 'center',
+        align: 'center',
         editable: true,
         disableColumnMenu: true,
-            preProcessEditCellProps: (params) => {
-           const rawValue = params.props.value;
-            if (rawValue === '' || rawValue === null || rawValue === undefined) {
-              return { ...params.props, value: null, error: false };
-            }
-            const value = Number(rawValue);
-            console.log('value', params.hasChanged);
+        preProcessEditCellProps: (params) => {
+          const rawValue = params.props.value;
+          if (rawValue === '' || rawValue === null || rawValue === undefined) {
+            return { ...params.props, value: null, error: false };
+          }
+          const value = Number(rawValue);
+          console.log('value', params.hasChanged);
           if (isNaN(value) || value < 1 || value > 10) {
-              return { ...params.props, value: null, error: false };
-            }
-            return { ...params.props, value, error: false };
+            return { ...params.props, value: null, error: false };
+          }
+          return { ...params.props, value, error: false };
         },
         valueGetter: (params) => {
-          if(params === null || params === '' || params === undefined){
+          if (params === null || params === '' || params === undefined) {
             return null;
           }
           const convertNumber = Number(params);
           if (isNaN(convertNumber) || convertNumber < 1 || convertNumber > 10) {
             return null;
           }
-          return params
+          return params;
         },
         cellClassName: (params) => {
           return 'cursor-pointer hover:bg-gray-100 transition-colors duration-200 ease-in-out';
@@ -462,7 +460,7 @@ const Content = ({ queryKey }: IContentProps) => {
         type: 'number',
         sortable: false,
         display: 'flex',
-         align: 'center',
+        align: 'center',
         editable: false,
         disableColumnMenu: true,
         renderCell: (params) => {
@@ -513,8 +511,8 @@ const Content = ({ queryKey }: IContentProps) => {
               onChange={(e) =>
                 params.api.setEditCellValue({ id: params.id, field: params.field, value: e.target.value })
               }
-              className="
-              !border-0 outline-none w-full h-full bg-transparent"
+              className='
+              !border-0 outline-none w-full h-full bg-transparent'
               style={{
                 width: '100%',
                 height: '100%',
@@ -561,51 +559,54 @@ const Content = ({ queryKey }: IContentProps) => {
   //     </Fragment>
   //   );
   // }, [loaiLopHocPhan]);
-  const handleSave = useCallback((item: any) => {
+  const handleSave = useCallback(
+    (item: any) => {
       const lopHocPhan = getValues('lopHocPhan');
       const khoa = getValues('khoa');
       const hocKy = getValues('hocKy');
       const loaiChuongTrinh = getValues('loaiChuongTrinh');
-     if (
-      !lopHocPhan?.id ||
-      !khoa?.id ||
-      !hocKy?.id ||
-      !loaiChuongTrinh?.id ||
-      !lopHocPhan?.monHocId ||
-      !lopHocPhan?.chuongTrinhDaoTaoId
-    ) {
-      notification.show('Vui lòng chọn đầy đủ thông tin trước khi lưu điểm', {
-        severity: 'warning',
-        autoHideDuration: 5000
-      });
-      return;
-    }
-    if (item && item.length === 0) {
-      notification.show('Không có dữ liệu để lưu', {
-        severity: 'warning',
-        autoHideDuration: 5000
-      });
-      return;
-    }
-    const convertData = item?.map((item: any) => ({
-      id: item.id,
-      diemChuyenCan: item.diemChuyenCan,
-      diemTrungBinh: item.diemTrungBinh,
-      diemThi1: item.diemThi1,
-      diemThi2: item.diemThi2,
-      diemTongKet1: item.diemTongKet1,
-      diemTongKet2: item.diemTongKet2,
-      ghiChu: item?.ghiChu || ''
-    }));
-    const finalData = {
-      listDiemSo: convertData,
-      loaiMonHoc: lopHocPhan?.loaiMonHoc 
-    };
-    mutateSaving.mutate(finalData);
-  }, [data, notification, mutateSaving]);
+      if (
+        !lopHocPhan?.id ||
+        !khoa?.id ||
+        !hocKy?.id ||
+        !loaiChuongTrinh?.id ||
+        !lopHocPhan?.monHocId ||
+        !lopHocPhan?.chuongTrinhDaoTaoId
+      ) {
+        notification.show('Vui lòng chọn đầy đủ thông tin trước khi lưu điểm', {
+          severity: 'warning',
+          autoHideDuration: 5000
+        });
+        return;
+      }
+      if (item && item.length === 0) {
+        notification.show('Không có dữ liệu để lưu', {
+          severity: 'warning',
+          autoHideDuration: 5000
+        });
+        return;
+      }
+      const convertData = item?.map((item: any) => ({
+        id: item.id,
+        diemChuyenCan: item.diemChuyenCan,
+        diemTrungBinh: item.diemTrungBinh,
+        diemThi1: item.diemThi1,
+        diemThi2: item.diemThi2,
+        diemTongKet1: item.diemTongKet1,
+        diemTongKet2: item.diemTongKet2,
+        ghiChu: item?.ghiChu || ''
+      }));
+      const finalData = {
+        listDiemSo: convertData,
+        loaiMonHoc: lopHocPhan?.loaiMonHoc
+      };
+      mutateSaving.mutate(finalData);
+    },
+    [data, notification, mutateSaving]
+  );
 
   const handleNopDiem = async () => {
-const lopHocPhan = getValues('lopHocPhan');
+    const lopHocPhan = getValues('lopHocPhan');
     const khoa = getValues('khoa');
     const hocKy = getValues('hocKy');
     const loaiChuongTrinh = getValues('loaiChuongTrinh');
@@ -626,19 +627,23 @@ const lopHocPhan = getValues('lopHocPhan');
     }
     const rowIds = apiRef.current?.getRowModels();
     const allRows = Array.from(rowIds?.values() || []);
-    const convertData = allRows?.filter(item => item?.sinhVienId)?.map((item) => ({
-      DiemTongKet1: item?.diemTongKet1 || 0,
-      DiemTongKet2: item?.diemTongKet2 || 0,
-      SinhVienId: item?.sinhVienId
-    }));
-    const checkIsDiemTongKet1 = convertData?.some((item) => item?.DiemTongKet1 === 0 || item?.DiemTongKet1 === undefined);
+    const convertData = allRows
+      ?.filter((item) => item?.sinhVienId)
+      ?.map((item) => ({
+        DiemTongKet1: item?.diemTongKet1 || 0,
+        DiemTongKet2: item?.diemTongKet2 || 0,
+        SinhVienId: item?.sinhVienId
+      }));
+    const checkIsDiemTongKet1 = convertData?.some(
+      (item) => item?.DiemTongKet1 === 0 || item?.DiemTongKet1 === undefined
+    );
     if (checkIsDiemTongKet1) {
       notification.show('Vui lòng nhập điểm tổng kết hoặc lưu điểm trước khi nộp', {
         severity: 'warning',
         autoHideDuration: 4000
       });
       return;
-    } 
+    }
     if (convertData.length === 0) {
       notification.show('Không có dữ liệu để nộp điểm', {
         severity: 'warning',
@@ -649,7 +654,7 @@ const lopHocPhan = getValues('lopHocPhan');
     const finalData = {
       ListDiemSo: convertData,
       LopHocPhanId: lopHocPhan?.id,
-      MonHocId: lopHocPhan?.monHocId,
+      MonHocId: lopHocPhan?.monHocId
     };
     mutationNopDiem.mutate(finalData);
   };

@@ -26,7 +26,7 @@ const queryKey = 'danh-sach-mon-hoc-chi-tiet-chuong-trinh-dao-tao';
 const Content: FC<ContentProps> = ({ initialData, anotherData }) => {
   const notification = useNotifications();
   const [khoas, setkhoas] = useState<any[]>([]);
-  const refForm = useRef<{ handleResetForm: (data:any) => void; setValue: (name: string, value: any) => void }>(null);
+  const refForm = useRef<{ handleResetForm: (data: any) => void; setValue: (name: string, value: any) => void }>(null);
   const router = useRouter();
   const [filter, setFilter] = useState<{
     chuongTrinhDaoTaoId?: string;

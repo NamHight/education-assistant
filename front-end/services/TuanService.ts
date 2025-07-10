@@ -20,4 +20,13 @@ export class TuanService {
       .then((response) => response.data)
       .catch((error) => error.response?.data);
   }
+
+  static async createTuanAuto(data: any){
+    try {
+      const result = await authApi.post(`${API.TUAN.CREATE_AUTO}`, data);
+      return result;
+    } catch (error: any) {
+      throw error.response?.data;
+    }
+  }
 }

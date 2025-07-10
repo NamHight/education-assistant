@@ -1,7 +1,7 @@
 'use client';
 
 import ToolTipImage from '@/components/tooltips/ToolTipImage';
-import { alpha, Autocomplete, Box, MenuItem, TextField, Typography } from '@mui/material';
+import { alpha, Autocomplete, Box, Dialog, DialogActions, DialogContent, DialogTitle, Grid, IconButton, MenuItem, Modal, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from '@mui/material';
 import { GridActionsCellItem, GridColDef, GridFilterModel } from '@mui/x-data-grid';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { motion } from 'motion/react';
@@ -31,7 +31,13 @@ import ClearIcon from '@mui/icons-material/Clear';
 import RestoreIcon from '@mui/icons-material/Restore';
 import { SinhVienService } from '@/services/SinhVienService';
 import Link from 'next/link';
-import { HocKyLopHocPhan, IOption, TrangThaiLopHocPhanEnum, TrangThaiPhongHocEnum, TrangThaiSinhVienEnum } from '@/types/options';
+import {
+  HocKyLopHocPhan,
+  IOption,
+  TrangThaiLopHocPhanEnum,
+  TrangThaiPhongHocEnum,
+  TrangThaiSinhVienEnum
+} from '@/types/options';
 import { GioiTinhEnum } from '@/models/GiangVien';
 import { KhoaService } from '@/services/KhoaService';
 import { MonHocService } from '@/services/MonHocService';
@@ -40,41 +46,53 @@ import { BoMonService } from '@/services/BoMonService';
 import { PhongHocService } from '@/services/PhongHocService';
 import { LoaiPhongHocEnum } from '@/models/PhongHoc';
 import { HocBaService } from '@/services/HocBaService';
-import { KetQuaHocBaEnum } from '@/models/HocBa';
+import { HocBa, KetQuaHocBaEnum } from '@/models/HocBa';
 import InputSelect2 from '@/components/selects/InputSelect2';
 import { LopHocPhanService } from '@/services/LopHocPhanService';
 import Input2 from '@/components/inputs/Input2';
 import { Controller, useForm } from 'react-hook-form';
 import LoadingButton from '@mui/lab/LoadingButton';
 import { LoaiMonHocEnum } from '@/models/MonHoc';
-const Table = dynamic(() => import('../tables/Table'), {
-  ssr: false
-});
+import { Trash2 } from 'lucide-react';
+import useCheckPermission from '@/helper/useCheckPermission';
+import ModalEdit from '../Modals/ModalEdit';
+
 interface ContentProps {
   queryKey: string;
-  lopHocPhanServer?: any;
 }
 interface IFormData {
   mssv: string;
   hocky: IOption;
 }
-const Content = ({ queryKey, lopHocPhanServer }: ContentProps) => {
+const Content = ({ queryKey }: ContentProps) => {
   const router = useRouter();
+  const [idHocBa, setIdHocBa] = useState<string | null>(null);
   const notification = useNotifications();
+  const { isAdmin } = useCheckPermission();
   const refTable = useRef<{ handleClose: () => void; handleOpenDelete: () => void; handleCloseDelete: () => void }>(
     null
   );
   const [getMssv, setMssv] = useState<string>('');
   const queryClient = useQueryClient();
-  const {register, handleSubmit, watch,control} = useForm<IFormData>({
+  const { register, handleSubmit, watch } = useForm<IFormData>({
     defaultValues: {
       mssv: '',
       hocky: HocKyLopHocPhan[0]
     }
   });
+    const [open, setOpen] = React.useState(false);
   const hocKy = watch('hocky');
-  const { data, isLoading, isFetching } = useQuery({
-    queryKey: [queryKey, getMssv,hocKy?.id],
+
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+  const { data, isLoading } = useQuery({
+    queryKey: [queryKey, getMssv, hocKy?.id],
     queryFn: async () => {
       let params: IParamHocBa = {
         sortBy: 'hocky',
@@ -87,6 +105,7 @@ const Content = ({ queryKey, lopHocPhanServer }: ContentProps) => {
     refetchOnWindowFocus: false,
     enabled: !!getMssv
   });
+  
   const mutationDelete = useMutation({
     mutationFn: async (id: string | number | null) => {
       const result = await HocBaService.deleteHocBa(id);
@@ -106,28 +125,13 @@ const Content = ({ queryKey, lopHocPhanServer }: ContentProps) => {
       });
     }
   });
-  const handleDelete = (id: string | number | null) => {
-    mutationDelete.mutate(id);
-  };
-  console.log("data", data);
-  const columns = useMemo((): GridColDef[] => {
-    const formatKetQua = (status: number) => {
-      switch (status) {
-        case KetQuaHocBaEnum.DAT:
-          return <ChipOption title='Đạt' color='info' />;
-        case KetQuaHocBaEnum.KHONG_DAT:
-          return <ChipOption title='Không đạt' color='error' />;
-        default:
-          return '';
-      }
-    };
-    const formatLoaiMonHoc = (loaiMonHoc: number) => {
+  const formatLoaiMonHoc = (loaiMonHoc: number) => {
       switch (loaiMonHoc) {
         case LoaiMonHocEnum.CHUC_CHUNG_CHI:
           return 'CCC';
         case LoaiMonHocEnum.DO_AN_TOT_NGHIEP:
           return 'DATN';
-          case LoaiMonHocEnum.LY_THUYET:
+        case LoaiMonHocEnum.LY_THUYET:
           return 'LT';
         case LoaiMonHocEnum.THUC_HANH:
           return 'TH';
@@ -146,89 +150,13 @@ const Content = ({ queryKey, lopHocPhanServer }: ContentProps) => {
         default:
           return '';
       }
-    }
-    return [
-      {
-        field: 'mssv',
-        headerName: 'MSSV',
-        headerAlign: 'left',
-        type: 'string',
-        minWidth: 200,
-        disableColumnMenu: true,
-        sortable: false,
-        display: 'flex',
-        flex: 1,
-        renderCell: (params: any) => {
-          return params.row?.sinhVien?.mssv ? <Typography>{params.row?.sinhVien?.mssv}</Typography> : null;
-        }
-      },
-      {
-        field: 'monHoc',
-        headerName: 'Môn học',
-        headerAlign: 'left',
-        type: 'string',
-        minWidth: 200,
-        disableColumnMenu: true,
-        sortable: false,
-        display: 'flex',
-        flex: 2,
-        renderCell: (params: any) => {
-          return params.row.chiTietChuongTrinhDaoTao.monHoc ? (
-            <Typography>
-              {params.row.chiTietChuongTrinhDaoTao.monHoc.tenMonHoc}
-            </Typography>
-          ) : null;
-        }
-      },
-      {
-        field: 'loaiMonHoc',
-        headerName: 'Loại',
-        type: 'string',
-        minWidth: 50,
-        disableColumnMenu: true,
-        sortable: false,
-        display: 'flex',
-        align: 'center',
-        headerAlign: 'center',
-        flex: 0.6,
-        renderCell: (params: any) => {  
-          return formatLoaiMonHoc(params.row?.chiTietChuongTrinhDaoTao.loaiMonHoc)
-        }
-      },
-      {
-        field: 'chiTietChuongTrinhDaoTao',
-        headerName: 'ĐVHP',
-        type: 'string',
-        minWidth: 50,
-        disableColumnMenu: true,
-        sortable: false,
-        display: 'flex',
-        align: 'center',
-        headerAlign: 'center',
-        flex: 0.6,
-        renderCell: (params: any) => {
-          return params.row.chiTietChuongTrinhDaoTao ? (
-            <Typography>
-              {params.row.chiTietChuongTrinhDaoTao.soTinChi}
-            </Typography>
-          ) : null;
-        }
-      },
-      {
-        field: 'diemTongKet',
-        headerName: 'Tổng kết',
-        type: 'number',
-        minWidth: 50,
-        disableColumnMenu: true,
-        sortable: false,
-        display: 'flex',
-        align: 'center',
-        headerAlign: 'center',
-        flex: 1,
-      }
-    ];
-  }, [data?.data]);
-  const handleSubmitSearch = (data:IFormData) => {
+    };
+
+  console.log('data', data);
+  const handleDelete = (id: string | number | null) => {
+    mutationDelete.mutate(id);
+  };
+  const handleSubmitSearch = (data: IFormData) => {
     if (data.mssv) {
       setMssv(data.mssv);
     } else {
@@ -237,166 +165,215 @@ const Content = ({ queryKey, lopHocPhanServer }: ContentProps) => {
     if (refTable.current) {
       refTable.current.handleClose();
     }
-  }
+  };
   return (
     <Box className='flex flex-col gap-4'>
+      <ModalEdit open={open} handleClose={handleClose} idHocBa={idHocBa} />
       <Box className='flex justify-between gap-4 flex-row  border border-gray-200 rounded-lg py-3 px-4 shadow-sm'>
-        <form className='max-w-md w-full flex justify-center gap-2 items-center'  onSubmit={handleSubmit(handleSubmitSearch)}>
+        <form
+          className='max-w-md w-full flex justify-center gap-2 items-center'
+          onSubmit={handleSubmit(handleSubmitSearch)}
+        >
           <Input2
-          className='flex-1'
+            className='flex-1'
             {...register('mssv')}
             placeholder='Nhập mã số sinh viên'
             isDisabled={false}
             type='number'
           />
-          <LoadingButton type='submit' className='!border !border-solid !text-[14px] !leading-6' >Tìm kiếm</LoadingButton>
+          <LoadingButton type='submit' className='!border !border-solid !text-[14px] !leading-6'>
+            Tìm kiếm
+          </LoadingButton>
         </form>
-        <Box className='flex justify-end items-center gap-4 w-full'>
-          <Box className='max-w-[150px] w-full'>
-             <Controller
-            name={'hocky'}
-            control={control}
-            render={({ field }) => (
-              <Autocomplete
-                noOptionsText='Không có dữ liệu'
-                value={field.value}
-                onChange={(event, newValue) => {
-                  field.onChange(newValue);
-                }}
-                clearIcon={<ClearIcon className={'w-4 h-4'} />}
-                slotProps={{
-                  clearIndicator: {
-                    sx: {
-                      padding: '8px !important',
-                      color: (theme) => theme.palette.text.secondary,
-                      border: 'none !important',
-                      backgroundColor: 'transparent !important',
-
-                      '&:hover': {
-                        color: (theme) => theme.palette.error.main,
-                        backgroundColor: (theme) => `${alpha(theme.palette.error.main, 0.08)} !important`
-                      },
-
-                      '& svg': {
-                        fontSize: '1.125rem !important'
-                      }
-                    }
-                  },
-                  popupIndicator: {
-                    sx: {
-                      padding: '8px !important',
-                      color: (theme) => theme.palette.text.secondary,
-                      border: 'none !important',
-                      backgroundColor: 'transparent !important',
-
-                      '&:hover': {
-                        color: (theme) => theme.palette.primary.main,
-                        backgroundColor: (theme) => `${alpha(theme.palette.primary.main, 0.08)} !important`
-                      },
-
-                      // Target icon SVG
-                      '& svg': {
-                        fontSize: '1.25rem !important',
-                        transition: 'all 0.2s ease-in-out'
-                      }
-                    }
-                  },
-
-                  chip: {
-                    className: 'mr-1',
-                    sx: {
-                      '& .MuiSvgIcon-root': {
-                        color: alpha('#dd1313', 0.7),
-                        '&:hover': {
-                          color: '#dd1313'
-                        }
-                      }
-                    }
-                  }
-                }}
-                fullWidth
-                id={`multiple-limit-hoc-ky`}
-                options={HocKyLopHocPhan ?? []}
-                getOptionLabel={(option) => option?.name || ''}
-                getOptionKey={(option) => option?.id || ''}
-                isOptionEqualToValue={(option, value) => {
-                  if (!option || !value) return false;
-                  return option.id === value.id;
-                }}
-                renderInput={(params) => {
-                  return <TextField {...params} placeholder={"Chọn học kỳ"} />;
-                }}
-                sx={(theme) => ({
-                  mb: '3px',
-                  '& .MuiOutlinedInput-root': {
-                    height: 'unset',
-                    margin: '0px',
-                    padding: '4.573px 10px',
-                    borderRadius: '8px !important',
-                    borderColor:  alpha(theme.palette.grey[600], 0.5),
-                    '& fieldset': {
-                      borderColor: alpha(theme.palette.divider, 0.5)
-                    },
-                    '&:hover fieldset': {
-                      borderColor: alpha(theme.palette.primary.main, 0.5)
-                    },
-                    '&.Mui-focused fieldset': {
-                      borderColor: alpha(theme.palette.primary.main, 0.5)
-                    }
-                  },
-
-                  '& .MuiAutocomplete-endAdornment': {
-                    '& .MuiIconButton-root': {
-                      padding: '8px !important',
-                      border: 'none !important',
-                      backgroundColor: 'transparent !important',
-
-                      '&[title="Open"]': {
-                        color: theme.palette.text.secondary,
-                        '&:hover': {
-                          color: `${theme.palette.primary.main} !important`,
-                          backgroundColor: `${alpha(theme.palette.primary.main, 0.08)} !important`,
-                          transform: 'rotate(180deg)',
-                          transition: 'all 0.2s ease-in-out'
-                        }
-                      },
-                      '&[title="Clear"]': {
-                        color: theme.palette.text.secondary,
-                        '&:hover': {
-                          color: `${theme.palette.error.main} !important`,
-                          backgroundColor: `${alpha(theme.palette.error.main, 0.08)} !important`,
-                          transform: 'scale(1.1)',
-                          transition: 'all 0.2s ease-in-out'
-                        }
-                      },
-
-                      '& svg': {
-                        fontSize: '1.25rem !important',
-                        transition: 'all 0.2s ease-in-out'
-                      }
-                    }
-                  }
-                })}
-              />
-            )}
-          />
+        {
+          isAdmin && (
+            <Box className='flex justify-end items-center gap-4 w-full'>
+          <Box className='flex items-center justify-center'>
+            <Button title={'Thêm mới'} onClick={() => router.push(APP_ROUTE.HOC_BA.ADD)} />
           </Box>
-              <Box className="flex items-center justify-center">
-          <Button title={'Thêm mới'} onClick={() => router.push(APP_ROUTE.HOC_BA.ADD)} />
         </Box>
-        </Box>
+          )
+        }
       </Box>
-      <Table
-        ref={refTable}
-        rows={data?.listHocBa}
-        columns={columns}
-        isFetching={isFetching}
-        isLoading={isLoading}
-        handleDeleteCallBack={handleDelete}
-        customToolBar
-        urlNavigate='hoc-ba'
-        placeholderSearch='Tìm kiếm học bạ...'
-      />
+      <Grid container spacing={2} sx={{ width: '100%' }}>
+      {
+      isLoading ?  <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', py: 6 }}>
+          <Box
+            sx={{
+              width: 48,
+              height: 48,
+              border: '6px solid #e0e0e0',
+              borderTop: '6px solid #1976d2',
+              borderRadius: '50%',
+              animation: 'spin 1s linear infinite',
+              '@keyframes spin': {
+                '0%': { transform: 'rotate(0deg)' },
+                '100%': { transform: 'rotate(360deg)' },
+              },
+            }}
+          />
+        </Box> : data?.length > 0 ?  data?.map((item: any, index: number) => (
+          <Grid size={12} key={item.hocKy}>
+        <Typography variant="h6" sx={{ fontWeight: 700, color: '#d32f2f', mb: 1 }}>
+        Học Kỳ {item.hocKy}
+      </Typography>
+      <TableContainer
+        component={Paper}
+        className="group"
+        sx={{
+          backgroundColor: 'white',
+          borderRadius: 1,
+          border: '1px solid #e5e7eb !important',
+          boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+          px: 0,
+          py: 0,
+        }}
+      >
+        <Table
+          size="small"
+          sx={{
+            '& th, & td': {
+              padding: '6px 10px',
+              fontSize: 14,
+              whiteSpace: 'nowrap',
+            },
+            '& th': {
+              background: '#f9fafb',
+              fontWeight: 700,
+              borderBottom: '1px solid #e5e7eb',
+            },
+            '& td': {
+              borderBottom: '1px solid #f3f4f6',
+            },
+          }}
+        >
+          <TableHead>
+            <TableRow>
+              <TableCell align="center" sx={{ width: 40 }}>TT</TableCell>
+              <TableCell
+                sx={{
+                  fontWeight: 700,
+                  minWidth: 140,
+                  maxWidth: 280,
+                  width: '40%',
+                  whiteSpace: 'normal',
+                  wordBreak: 'break-word',
+                }}
+              >
+                Tên Môn
+              </TableCell>
+              <TableCell align="center" sx={{ width: 60, fontWeight: 700 }}>Loại</TableCell>
+              <TableCell align="center" sx={{ width: 60, fontWeight: 700 }}>ĐVHP</TableCell>
+              <TableCell align="center" sx={{ width: 60, fontWeight: 700 }}>Tổng Kết</TableCell>
+              <TableCell align="center" sx={{ width: 80, fontWeight: 700 }}>Ghi Chú</TableCell>
+             {
+                isAdmin && (
+                  <TableCell align="center" sx={{ width: 80, fontWeight: 700 }}>Hành Động</TableCell>
+                )
+             }
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {item?.listHocBa?.map((row: HocBa, idx: number) => (
+              <TableRow key={idx}  sx={{
+                    '&:hover': {
+                      backgroundColor: '#f3f4f6', // hoặc màu bạn muốn
+                    },
+                  }}>
+                <TableCell align="center" >{idx + 1}</TableCell>
+                <TableCell
+                  sx={{
+                    minWidth: 180,
+                    maxWidth: 320,
+                    width: '40%',
+                    whiteSpace: 'normal',
+                    wordBreak: 'break-word',
+                    fontWeight: 500,
+                  }}
+                >
+                  {row?.chiTietChuongTrinhDaoTao?.monHoc?.tenMonHoc}
+                </TableCell>
+                <TableCell align="center">
+                  {formatLoaiMonHoc(Number(row?.chiTietChuongTrinhDaoTao?.loaiMonHoc))}
+                </TableCell>
+                <TableCell align="center">
+                  {row?.chiTietChuongTrinhDaoTao?.soTinChi}
+                </TableCell>
+                <TableCell align="center">{row?.diemTongKet}</TableCell>
+                <TableCell align="center">{row?.moTa}</TableCell>
+                {
+                  isAdmin && (
+<TableCell align="center" className="!flex !justify-center !items-center !gap-3">
+                  <button onClick={() => {
+                    console.log('row', row);
+                    setIdHocBa(row.id);
+                    handleClickOpen();
+                  }} className="p-1 cursor-pointer hover:text-blue-600 bg-gray-100 border-amber-50 hover:bg-gray-200 border rounded-md flex items-center justify-center">
+                    <EditIcon className="!h-4 !w-4 text-blue-500" />
+                  </button>
+                  <button onClick={() => handleDelete(row.id)} className="p-1 cursor-pointer hover:text-blue-600 bg-gray-100 border-amber-50 hover:bg-gray-200 border rounded-md flex items-center justify-center">
+                    <Trash2 className="h-4 w-4 text-red-500" />
+                  </button>
+                </TableCell>
+              
+                  )
+                }
+                </TableRow>
+            ))}
+            <TableRow>
+              <TableCell colSpan={4} align="right">
+                <Typography sx={{ fontWeight: 700, color: '#d32f2f' }}>
+                  Điểm TB HK{item?.hocKy}:
+                </Typography>
+              </TableCell>
+              <TableCell align="center">
+                <Typography sx={{ fontWeight: 700, color: '#d32f2f' }}>
+                  {item?.diemTongKet}
+                </Typography>
+              </TableCell>
+              <TableCell />
+            </TableRow>
+           {
+            item?.hocKy % 2 === 0 && (
+               <TableRow>
+              <TableCell colSpan={4} align="right">
+                <Typography sx={{ fontWeight: 700, color: '#d32f2f' }}>
+                  Điểm TB Năm {item?.hocKy - 1}:
+                </Typography>
+              </TableCell>
+              <TableCell align="center">
+                <Typography sx={{ fontWeight: 700, color: '#d32f2f' }}>
+                    {
+                    (() => {
+                      const prevOddHocKy = item?.hocKy - 1;
+                      const prevOddItem = data?.find((d: any) => d.hocKy === prevOddHocKy);
+                      if (prevOddItem?.diemTongKet != null && item?.diemTongKet != null) {
+                        const avg = (Number(prevOddItem.diemTongKet) + Number(item.diemTongKet)) / 2;
+                        return avg.toFixed(2);
+                      }
+                      return '';
+                    })()
+                    }
+                </Typography>
+              </TableCell>
+              <TableCell />
+            </TableRow>
+            )
+           }
+          </TableBody>
+        </Table>
+      </TableContainer>
+      </Grid>
+        )) : (
+          <Grid size={12} className="flex flex-col items-center justify-center h-full mt-20">
+            <Typography variant="body1" color="textSecondary" align="center">
+              Không có dữ liệu học bạ cho sinh viên này.
+            </Typography>
+          </Grid>
+        )
+      }
+
+      </Grid>
     </Box>
   );
 };

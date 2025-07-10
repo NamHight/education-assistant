@@ -37,7 +37,7 @@ export class HocBaService {
       });
   }
 
-  static async getAllHocBaByMssv(params: IParamHocBa){
+  static async getAllHocBaByMssv(params: IParamHocBa) {
     return await authApi
       .get(`${API.HOC_BA.GET_ALL_BY_MSSV}`, {
         params: params
@@ -74,6 +74,7 @@ export class HocBaService {
       throw error.response?.data;
     }
   }
+
 
   static async deleteHocBa(id: string | number | null) {
     try {

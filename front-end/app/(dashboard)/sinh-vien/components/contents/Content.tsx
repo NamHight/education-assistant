@@ -23,7 +23,12 @@ import ClearIcon from '@mui/icons-material/Clear';
 import RestoreIcon from '@mui/icons-material/Restore';
 import { SinhVienService } from '@/services/SinhVienService';
 import Link from 'next/link';
-import { TinhTrangHocTapSinhVien, TinhTrangHocTapSinhVienEnum, TrangThaiSinhVien, TrangThaiSinhVienEnum } from '@/types/options';
+import {
+  TinhTrangHocTapSinhVien,
+  TinhTrangHocTapSinhVienEnum,
+  TrangThaiSinhVien,
+  TrangThaiSinhVienEnum
+} from '@/types/options';
 import { GioiTinhEnum } from '@/models/GiangVien';
 import PeopleAltOutlinedIcon from '@mui/icons-material/PeopleAltOutlined';
 import {

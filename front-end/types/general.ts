@@ -11,7 +11,8 @@ export const API = {
   BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3000/api',
   TUAN: {
     GET_ALL_BY_NAM_HOC: '/Tuan/by-nam-hoc',
-    GET_ALL_DEN_BY_TUAN_VAO: '/Tuan/combobox-copy'
+    GET_ALL_DEN_BY_TUAN_VAO: '/Tuan/combobox-copy',
+    CREATE_AUTO: '/Tuan/tao-auto-tuan',
   },
   LICH_BIEU: {
     GET_ALL: '/LichBieu',
@@ -42,13 +43,13 @@ export const API = {
     GET_BY_ID: '/HocBa/:id',
     NOP_DIEM: '/HocBa/nop-diem',
     DELETE_LIST: '/HocBa/delete-list',
-    GET_ALL_BY_MSSV: '/HocBa/by-sinh-vien',
+    GET_ALL_BY_MSSV: '/HocBa/by-sinh-vien'
   },
   THONG_KE: {
     GET_XEP_LOAI_HOC_LUC: '/ThongKe/xep-loai-hoc-luc',
     XEP_HANG_SINH_VIEN: '/ThongKe/top-sinh-vien-gpa',
     GET_TY_LE_QUA_MON: '/ThongKe/qua-mon-trong-nam',
-    GET_TY_LE_THI_LAI_TRONG_NAM: '/ThongKe/thi-lai-trong-nam',
+    GET_TY_LE_THI_LAI_TRONG_NAM: '/ThongKe/thi-lai-trong-nam'
   },
   PHONG_HOC: {
     GET_ALL: '/PhongHoc',
@@ -59,9 +60,9 @@ export const API = {
   NGANH: {
     GET_ALL: '/Nganh',
     GET_BY_ID: '/Nganh/:id',
-    GET_ALL_NO_PAGE: "/Nganh/no-page",
-    GET_ALL_BY_KHOA_ID: "/Nganh/no-parent/:khoaId",
-    GET_BY_KHOA_ID: '/Nganh/by-khoa/:khoaId',
+    GET_ALL_NO_PAGE: '/Nganh/no-page',
+    GET_ALL_BY_KHOA_ID: '/Nganh/no-parent/:khoaId',
+    GET_BY_KHOA_ID: '/Nganh/by-khoa/:khoaId'
   },
   SINH_VIEN: {
     GET_ALL: '/SinhVien',
@@ -75,7 +76,7 @@ export const API = {
     DANG_KY_MON_HOC: '/SinhVien/dang-ky-mon-hoc',
     DELETE_LHP: '/SinhVien/:id/lhp/:lopHocPhanId/xoa-sv-khoi-lhp',
     GET_BY_ID_LOP_HOC: '/SinhVien/:lopHocId/by-lop-hoc',
-    CHUYEN_LOP_SINH_VIEN: '/SinhVien/chuyen-lop',
+    CHUYEN_LOP_SINH_VIEN: '/SinhVien/chuyen-lop'
   },
   GIANG_VIEN: {
     GET_ALL: '/giangviens',
@@ -86,7 +87,7 @@ export const API = {
     UPDATE_PROFILE: '/giangviens/:id/update-giang-vien',
     GET_BY_BO_MON_ID: '/giangviens/:boMonId/by-bomon',
     TINH_TRANG: '/giangviens/tinh-trang-lam-viec',
-    GET_GIANG_VIEN_NO_PAGE: '/giangviens/no-page',
+    GET_GIANG_VIEN_NO_PAGE: '/giangviens/no-page'
   },
   KHOA: {
     GET_ALL: '/khoa',

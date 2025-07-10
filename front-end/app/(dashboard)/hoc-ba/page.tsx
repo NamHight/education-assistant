@@ -20,19 +20,9 @@ import { TrangThaiLopHocPhanEnum } from '@/types/options';
 export default async function Page() {
   const queryClient = getQueryClient();
   const queryKey = 'hoc-ba-list';
-  const lopHocPhans = await LopHocPhanService.getAllLopHocPhanServer({
-    trangThai: TrangThaiLopHocPhanEnum.DANG_HOAT_DONG,
-    sortBy: 'createdAt',
-    sortByOrder: 'desc',
-    limit: 99999999999
-  })
-    .then((res) => res?.data)
-    .catch((error) => {
-      return [];
-    });
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <Content queryKey={queryKey} lopHocPhanServer={lopHocPhans?.length > 0 ? lopHocPhans : undefined} />
+      <Content queryKey={queryKey}  />
     </HydrationBoundary>
   );
 }

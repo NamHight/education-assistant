@@ -80,16 +80,21 @@ public class RepositoryHocBa : RepositoryBase<HocBa>, IRepositoryHocBa
             .ThenInclude(ctdt => ctdt.ChuongTrinhDaoTao)
             .AsQueryable();
         query = query.Where(item => item.SinhVienId == sinhVienId && item.UpdatedAt != null);
-        return await query.GroupBy(hb => hb.ChiTietChuongTrinhDaoTao.HocKy).Select(x => new ResponseHocBaProfileDto
+        return await query.GroupBy(hb => hb.ChiTietChuongTrinhDaoTao!.HocKy).Select(x => new ResponseHocBaProfileDto
         {
             HocKy = x.Key,
-            ListHocBa = x.ToList()
+            ListHocBa = x.ToList(),
+            DiemTongKet = Math.Round(x.ToList()
+                    .Where(hb => hb.DiemTongKet != null && hb.UpdatedAt != null)
+                    .Sum(hb => hb.DiemTongKet * hb.ChiTietChuongTrinhDaoTao!.SoTinChi) /
+                x.ToList().Sum(hb => hb.ChiTietChuongTrinhDaoTao!.SoTinChi) ?? 0, 2)
         }).ToListAsync();
     }
 
     public async Task<HocBa?> GetHocBaByIdAsync(Guid id, bool trackChanges)
     {
         return await FindByCondition(item => item.Id == id, trackChanges).Include(item => item.SinhVien)
+            .Include(item => item.LopHocPhan)
             .Include(item => item.LopHocPhan).Include(item => item.ChiTietChuongTrinhDaoTao)
             .ThenInclude(item => item!.ChuongTrinhDaoTao).FirstOrDefaultAsync();
     }

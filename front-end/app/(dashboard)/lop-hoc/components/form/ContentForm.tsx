@@ -71,7 +71,10 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
   const [getKhoa, setKhoa] = React.useState<number>(0);
   const schema = useMemo(() => {
     return yup.object().shape({
-      MaLopHoc: yup.string().required('Mã lớp học không được để trống').max(50, 'Mã lớp học không được vượt quá 50 ký tự'),
+      MaLopHoc: yup
+        .string()
+        .required('Mã lớp học không được để trống')
+        .max(50, 'Mã lớp học không được vượt quá 50 ký tự'),
       SiSo: yup
         .number()
         .typeError('Sĩ số phải là số')
@@ -98,23 +101,23 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
     enabled: Boolean(getKhoa),
     refetchOnWindowFocus: false
   });
-    const { data: khoas, isLoading: isLoadingKhoa } = useQuery({
-      queryKey: ['khoas'],
-      queryFn: async () => {
-        const response = await KhoaService.getKhoaNoPage();
-        return response;
-      },
-      initialData: initialData?.khoas,
-      select: (data) => {
-        return data.map((item: any) => ({
-          id: item.id,
-          name: item.tenKhoa
-        }));
-      },
-      refetchOnWindowFocus: false
-    });
+  const { data: khoas, isLoading: isLoadingKhoa } = useQuery({
+    queryKey: ['khoas'],
+    queryFn: async () => {
+      const response = await KhoaService.getKhoaNoPage();
+      return response;
+    },
+    initialData: initialData?.khoas,
+    select: (data) => {
+      return data.map((item: any) => ({
+        id: item.id,
+        name: item.tenKhoa
+      }));
+    },
+    refetchOnWindowFocus: false
+  });
   const { data: nganhs, isLoading: isLoadingNganh } = useQuery({
-    queryKey: ['nganhs',getKhoa],
+    queryKey: ['nganhs', getKhoa],
     queryFn: async () => {
       const response = await NganhService.getNganhByKhoaId(getKhoa);
       return response;
@@ -125,7 +128,7 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
         name: item.tenNganh
       }));
     },
-        enabled: Boolean(getKhoa),
+    enabled: Boolean(getKhoa),
     refetchOnWindowFocus: false
   });
   const {
@@ -218,7 +221,7 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
             type='number'
           />
         </Grid>
-         <Grid size={{ xs: 12, sm: 6, md: 6, lg: 6 }} className="relative">
+        <Grid size={{ xs: 12, sm: 6, md: 6, lg: 6 }} className='relative'>
           <InputSelect2
             control={control}
             fullWidth
@@ -227,11 +230,11 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
             title={'Khoa'}
             data={khoas ?? []}
             isLoading={isLoadingKhoa}
-            getOnChangeValue={(option => {
+            getOnChangeValue={(option) => {
               setKhoa(option?.id);
               setValue('GiangVien', null);
               setValue('Nganh', null);
-            })}
+            }}
             getOptionKey={(option) => option.id}
             getOptionLabel={(option: any) => option.name}
             error={(errors.Khoa as any)?.message}

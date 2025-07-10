@@ -98,8 +98,8 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
       GioiTinh: yup.object().required('Giới tính là bắt buộc'),
       TrangThaiSinhVienEnum: yup.object().required('Trạng thái là bắt buộc'),
       LopHoc: yup.object().required('Lớp học là bắt buộc'),
-      DiaChi: yup.string().max(225,"Địa chỉ không được quá 225 ký tự").notRequired(),
-      MSSV: yup.string().required("Mã số sinh viên là bắt buộc").max(20, 'Mã số sinh viên không được quá 20 ký tự'),
+      DiaChi: yup.string().max(225, 'Địa chỉ không được quá 225 ký tự').notRequired(),
+      MSSV: yup.string().required('Mã số sinh viên là bắt buộc').max(20, 'Mã số sinh viên không được quá 20 ký tự')
     });
   }, [data]);
   const { data: lopHocs, isLoading: isLoadingLopHoc } = useQuery({

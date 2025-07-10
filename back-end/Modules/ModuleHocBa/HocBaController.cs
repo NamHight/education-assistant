@@ -61,7 +61,7 @@ public class HocBaController : ControllerBase
 
     [HttpPut("{id}")]
     [ServiceFilter(typeof(ValidationFilter))]
-    public async Task<ActionResult> UpdateHocBaAsync(Guid id, [FromForm] RequestUpdateHocbaDto model)
+    public async Task<ActionResult> UpdateHocBaAsync(Guid id, [FromBody] RequestUpdateHocbaDto model)
     {
         await _serviceMaster.HocBa.UpdateAsync(id, model);
         return NoContent();

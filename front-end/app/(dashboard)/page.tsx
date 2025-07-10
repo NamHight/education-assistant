@@ -20,18 +20,18 @@ const page = async () => {
     : [];
 
   return (
-    <Box className="flex flex-col gap-4 w-full">
-        <Box className="flex flex-wrap gap-3 max-h-[400px] ">
-          <Box className="flex-1 h-full">
-            <ChartPieLopHocPhan data={chartData?.length > 0 ? chartData : undefined} />
-          </Box>
-          <Box className="flex-1 h-full">
-            <ChartPieThiLai data={tyLeTL?.length > 0 ? tyLeTL : undefined} />
-          </Box>
+    <Box className='flex flex-col gap-4 w-full'>
+      <Box className='flex flex-wrap gap-3 max-h-[400px] '>
+        <Box className='flex-1 h-full'>
+          <ChartPieLopHocPhan data={chartData?.length > 0 ? chartData : undefined} />
         </Box>
-          <Box>
-            <ChartRankSinhVien data={xepHangSV?.length > 0 ? xepHangSV : undefined} />
-          </Box>
+        <Box className='flex-1 h-full'>
+          <ChartPieThiLai data={tyLeTL?.length > 0 ? tyLeTL : undefined} />
+        </Box>
+      </Box>
+      <Box>
+        <ChartRankSinhVien data={xepHangSV?.length > 0 ? xepHangSV : undefined} />
+      </Box>
     </Box>
   );
 };

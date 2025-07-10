@@ -28,21 +28,23 @@ export class NganhService {
       .catch((error) => error.response?.data);
   }
 
-
   static async getAllNganhNoPageServer() {
-    return await authApiServer.get(`${API.NGANH.GET_ALL_NO_PAGE}`)
+    return await authApiServer
+      .get(`${API.NGANH.GET_ALL_NO_PAGE}`)
       .then((response) => response.data)
       .catch((error) => error.response?.data);
   }
 
   static async getAllNganhNoPage() {
-    return await authApi.get(`${API.NGANH.GET_ALL_NO_PAGE}`)
+    return await authApi
+      .get(`${API.NGANH.GET_ALL_NO_PAGE}`)
       .then((response) => response.data)
       .catch((error) => error.response?.data);
   }
 
   static async getAllNganhByKhoaId(khoaId: number | string | null) {
-    return await authApi.get(`${API.NGANH.GET_ALL_BY_KHOA_ID}`.replace(':khoaId', `${khoaId}`))
+    return await authApi
+      .get(`${API.NGANH.GET_ALL_BY_KHOA_ID}`.replace(':khoaId', `${khoaId}`))
       .then((response) => response.data)
       .catch((error) => error.response?.data);
   }

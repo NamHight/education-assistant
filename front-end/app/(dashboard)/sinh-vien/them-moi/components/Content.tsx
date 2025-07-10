@@ -34,7 +34,7 @@ const Content: FC<ContentProps> = ({ initialData, anotherData }) => {
       });
       router.push('/sinh-vien');
     },
-    onError: (error:any) => {
+    onError: (error: any) => {
       notification.show(error?.Message || 'Thêm thất bại', {
         severity: 'error',
         autoHideDuration: 5000

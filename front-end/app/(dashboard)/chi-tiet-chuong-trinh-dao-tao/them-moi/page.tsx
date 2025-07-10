@@ -12,7 +12,7 @@ import { MonHocService } from '@/services/MonHocService';
 import ListMonHoc from './components/ListMonHoc';
 
 const page = async () => {
-  const khoa = KhoaService.getKhoaNoPageServer().catch(() => ( [] ));
+  const khoa = KhoaService.getKhoaNoPageServer().catch(() => []);
   const chuongTrinhDaoTao = ChuongTrinhDaoTaoService.getAllChuongTrinhDaoTaoServer({
     limit: 99999999999,
     sortBy: 'createdAt',

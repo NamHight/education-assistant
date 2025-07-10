@@ -37,4 +37,6 @@ public class ResponseHocBaProfileDto
 {
     public int HocKy { get; set; }
     public List<HocBa> ListHocBa { get; set; } = new();
+
+    public decimal? DiemTongKet { get; set; }
 }

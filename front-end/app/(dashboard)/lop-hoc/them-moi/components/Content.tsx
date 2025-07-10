@@ -39,8 +39,8 @@ const Content: FC<ContentProps> = ({ initialData, anotherData }) => {
         exact: false
       });
       router.push('/lop-hoc');
-      },
-      onError: (error: any) => {
+    },
+    onError: (error: any) => {
       notification.show(error.message || error?.Message, {
         severity: 'error',
         autoHideDuration: 5000

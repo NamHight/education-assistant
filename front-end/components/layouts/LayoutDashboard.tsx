@@ -5,7 +5,7 @@ import ToolBarAccount from '../customs/ToolBarAccount';
 const LayoutDashboard = ({ children }: { children: ReactNode }) => {
   return (
     <DashboardLayout
-    slots={{
+      slots={{
         toolbarActions: ToolBarAccount
       }}
       sx={{

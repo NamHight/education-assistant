@@ -68,7 +68,7 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
       Khoa: yup.object().required('Khoa không được để trống')
     });
   }, [data]);
-    const {
+  const {
     register,
     handleSubmit,
     formState: { errors },
@@ -102,11 +102,11 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
     },
     refetchOnWindowFocus: false
   });
-const selectedKhoa = watch("Khoa")?.id;
-useEffect(() => {
-  setKhoaId(selectedKhoa);
-}, [selectedKhoa]);
-const { data: nganhs, isLoading: isLoadingNganh } = useQuery({
+  const selectedKhoa = watch('Khoa')?.id;
+  useEffect(() => {
+    setKhoaId(selectedKhoa);
+  }, [selectedKhoa]);
+  const { data: nganhs, isLoading: isLoadingNganh } = useQuery({
     queryKey: ['nganhs', khoaId],
     queryFn: async () => {
       const response = await NganhService.getAllNganhByKhoaId(khoaId);

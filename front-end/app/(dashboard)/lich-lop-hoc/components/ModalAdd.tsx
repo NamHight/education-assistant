@@ -56,8 +56,18 @@ const ModalAdd = forwardRef(({ open, handleClose, queryKey, filter }: ModalAddPr
   } | null>(null);
   const schema = useMemo(() => {
     return yup.object().shape({
-      TietBatDau: yup.number().min(1, 'Tiết bắt đầu phải lớn hơn hoặc bằng 1').max(99,"Tiết bắt đầu phải nhỏ hơn hoặc bằng 99").typeError('Tiết bắt đầu phải là số').required('Tiết bắt đầu là bắt buộc'),
-      TietKetThuc: yup.number().min(1, 'Tiết kết thúc phải lớn hơn hoặc bằng 1').max(99,"Tiết kết thúc phải nhỏ hơn hoặc bằng 99").typeError('Tiết kết thúc phải là số').required('Tiết kết thúc là bắt buộc'),
+      TietBatDau: yup
+        .number()
+        .min(1, 'Tiết bắt đầu phải lớn hơn hoặc bằng 1')
+        .max(99, 'Tiết bắt đầu phải nhỏ hơn hoặc bằng 99')
+        .typeError('Tiết bắt đầu phải là số')
+        .required('Tiết bắt đầu là bắt buộc'),
+      TietKetThuc: yup
+        .number()
+        .min(1, 'Tiết kết thúc phải lớn hơn hoặc bằng 1')
+        .max(99, 'Tiết kết thúc phải nhỏ hơn hoặc bằng 99')
+        .typeError('Tiết kết thúc phải là số')
+        .required('Tiết kết thúc là bắt buộc'),
       Thu: yup.object().required('Thứ là bắt buộc'),
       Tuan: yup.object().required('Tuần là bắt buộc'),
       LopHocPhan: yup.object().required('Lớp học phần là bắt buộc'),

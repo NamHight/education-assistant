@@ -131,7 +131,15 @@ const Content = ({ queryKey, lopHocServer, boMonServer }: IContentProps) => {
     }
   };
   const { data, isLoading } = useQuery({
-    queryKey: [queryKey, filterModel, sortModel, filter?.lopHoc?.id, filter?.tuan?.id, filter?.hocKy, filter?.namHoc?.id],
+    queryKey: [
+      queryKey,
+      filterModel,
+      sortModel,
+      filter?.lopHoc?.id,
+      filter?.tuan?.id,
+      filter?.hocKy,
+      filter?.namHoc?.id
+    ],
     queryFn: async () => {
       if (!filter || !filter?.lopHoc?.id || !filter?.tuan?.id || !filter?.hocKy || !filter?.namHoc?.id) {
         return [];
@@ -157,7 +165,7 @@ const Content = ({ queryKey, lopHocServer, boMonServer }: IContentProps) => {
         };
       }
       const result = await LichBieuService.getLichBieuByKhoa(params);
-      console.log("result",result);
+      console.log('result', result);
       return result;
     },
     enabled: !!filter?.tuan && !!filter?.lopHoc?.id && !!filter?.hocKy && !!filter?.namHoc,

@@ -58,7 +58,10 @@ interface IContentFormProps {
 const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => {
   const schema = useMemo(() => {
     return yup.object().shape({
-      TenMonHoc: yup.string().max(200, 'Tên môn học không được quá 200 ký tự').required('Tên môn học không được để trống'),
+      TenMonHoc: yup
+        .string()
+        .max(200, 'Tên môn học không được quá 200 ký tự')
+        .required('Tên môn học không được để trống'),
       MoTa: yup.string().notRequired(),
       Khoa: yup.object().required('Khoa không được để trống')
     });

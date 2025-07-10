@@ -264,7 +264,7 @@ const Content = ({ queryKey }: ContentProps) => {
         renderCell: (params: any) => {
           return formatType(params.value);
         }
-      },
+      }
     ];
   }, [data?.data]);
   return (

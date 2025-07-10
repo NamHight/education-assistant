@@ -18,10 +18,10 @@ const page = async () => {
   const [lopHocData] = await Promise.all([lopHocs]);
   return (
     <Box>
-    <PopoverLockProvider>
-      <Content queryKey={queryKey} lopHocServer={lopHocData?.length > 0 ? lopHocData : undefined} />
-    </PopoverLockProvider>
-     </Box>
+      <PopoverLockProvider>
+        <Content queryKey={queryKey} lopHocServer={lopHocData?.length > 0 ? lopHocData : undefined} />
+      </PopoverLockProvider>
+    </Box>
   );
 };
 

@@ -25,20 +25,8 @@ public class RequestAddHocbaDto
 
 public class RequestUpdateHocbaDto
 {
-    [Required(ErrorMessage = "Id không được để trống")]
-    public Guid Id { get; set; }
-
     [Required(ErrorMessage = "Điểm tổng kết không được để trống")]
     public decimal DiemTongKet { get; set; }
-
-    [Required(ErrorMessage = "Id sinh viên không được để trống")]
-    public Guid? SinhVienId { get; set; }
-
-    [Required(ErrorMessage = "Id lớp học phần không được để trống")]
-    public Guid? LopHocPhanId { get; set; }
-
-    [Required(ErrorMessage = "Id chi tiết chương trình đào tạo không được để trống")]
-    public Guid? ChiTietChuongTrinhDaoTaoId { get; set; }
 }
 
 public class RequestListUpdateHocbaDto

@@ -73,7 +73,7 @@ const Content = ({ queryKey, khoaData, tinhTrangServer }: ContentProps) => {
     trangThai?: { id: string; name: string };
   } | null>(null);
   const queryClient = useQueryClient();
- 
+
   const { data, isLoading, isFetching } = useQuery({
     queryKey: [queryKey, paginationModel, sortModel, filterModel, filterOption],
     queryFn: async () => {
@@ -112,10 +112,10 @@ const Content = ({ queryKey, khoaData, tinhTrangServer }: ContentProps) => {
     placeholderData: (prev) => prev,
     refetchOnWindowFocus: false
   });
-   const { data: tinhTrangs } = useQuery({
+  const { data: tinhTrangs } = useQuery({
     queryKey: ['tinh-trang-giang-vien', filterOption?.khoa?.id],
     queryFn: async () => {
-      let params: IParamGiangVien = {}
+      const params: IParamGiangVien = {};
       if (filterOption?.khoa?.id) {
         params.khoaId = filterOption?.khoa?.id;
       }
@@ -124,7 +124,7 @@ const Content = ({ queryKey, khoaData, tinhTrangServer }: ContentProps) => {
       return result;
     },
     initialData: filterOption?.khoa?.id ? undefined : tinhTrangServer,
-    refetchOnWindowFocus: false,
+    refetchOnWindowFocus: false
   });
   const { data: khoas, isLoading: isLoadingKhoa } = useQuery({
     queryKey: ['khoa-list'],
@@ -243,7 +243,7 @@ const Content = ({ queryKey, khoaData, tinhTrangServer }: ContentProps) => {
         default:
           return '';
       }
-    }
+    };
     return [
       {
         field: 'id',
@@ -379,7 +379,7 @@ const Content = ({ queryKey, khoaData, tinhTrangServer }: ContentProps) => {
         display: 'flex',
         flex: 0.8,
         renderCell: (params: any) => {
-          return formatRole(params.row?.taiKhoan?.loaiTaiKhoan)
+          return formatRole(params.row?.taiKhoan?.loaiTaiKhoan);
         }
       },
       {
@@ -433,9 +433,7 @@ const Content = ({ queryKey, khoaData, tinhTrangServer }: ContentProps) => {
               <LampDesk className='!text-green-500' />
             </Box>
             <Box>
-              <Typography className='text-blue-500 !font-bold !text-xl'>
-                {tinhTrangs?.dangCongTac || 0}
-              </Typography>
+              <Typography className='text-blue-500 !font-bold !text-xl'>{tinhTrangs?.dangCongTac || 0}</Typography>
             </Box>
           </Box>
           <Box className='flex flex-col border border-gray-200 rounded-lg p-4 shadow-sm gap-3 w-full'>

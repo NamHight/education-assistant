@@ -268,10 +268,10 @@ const TableEdit = forwardRef(
     }, []);
 
     const handleCellClick = React.useCallback((params: GridCellParams, event: React.MouseEvent) => {
-       if (!params.isEditable) return;
-  setCellModesModel({
-    [params.id]: { [params.field]: { mode: GridCellModes.Edit } }
-  });
+      if (!params.isEditable) return;
+      setCellModesModel({
+        [params.id]: { [params.field]: { mode: GridCellModes.Edit } }
+      });
     }, []);
     const handleCellModesModelChange = React.useCallback((newModel: GridCellModesModel) => {
       setCellModesModel(newModel);
@@ -291,90 +291,90 @@ const TableEdit = forwardRef(
         animate={{ opacity: 1 }}
         transition={{
           duration: 0.2,
-          ease: "easeInOut"
+          ease: 'easeInOut'
         }}
         className='flex flex-col gap-4'
         style={{ height: 'calc(100vh - 200px)' }}
       >
         <Box className='flex w-full gap-4 p-4 border border-gray-200 rounded-lg shadow-sm light:bg-white'>
-          <Box className="flex w-full justify-center items-center gap-3 flex-1">
+          <Box className='flex w-full justify-center items-center gap-3 flex-1'>
             <Box className='flex justify-center items-center gap-3 w-full'>
-            <Typography className='!text-[16px] !leading-6 !font-semibold'>Bậc</Typography>
-            <Box className='flex-1'>
-              <InputSelect2
-                fullWidth
-                name={'bac'}
-                placeholder={'Chọn bậc'}
-                data={LoaiChuongTrinhDaoTao ?? []}
-                getOptionKey={(option) => option.id}
-                getOptionLabel={(option: any) => option.name}
-                getOnChangeValue={(value) => {
-                  setfilter((prev: any) => ({
-                    ...prev,
-                    loaiChuongTrinh: value?.id
-                  }));
-                }}
-              />
+              <Typography className='!text-[16px] !leading-6 !font-semibold'>Bậc</Typography>
+              <Box className='flex-1'>
+                <InputSelect2
+                  fullWidth
+                  name={'bac'}
+                  placeholder={'Chọn bậc'}
+                  data={LoaiChuongTrinhDaoTao ?? []}
+                  getOptionKey={(option) => option.id}
+                  getOptionLabel={(option: any) => option.name}
+                  getOnChangeValue={(value) => {
+                    setfilter((prev: any) => ({
+                      ...prev,
+                      loaiChuongTrinh: value?.id
+                    }));
+                  }}
+                />
+              </Box>
             </Box>
-          </Box>
-          <Box className='flex justify-center items-center gap-3 w-full'>
-            <Typography className='!text-[16px] !leading-6 !font-semibold'>Khóa</Typography>
-            <Box className='flex-1'>
-              <InputSelect2
-                fullWidth
-                name={'khoa'}
-                placeholder={'Chọn Khoa'}
-                data={yearOptions ?? []}
-                getOptionKey={(option) => option.id}
-                getOptionLabel={(option: any) => option.name}
-                getOnChangeValue={(value) => {
-                  setfilter((prev: any) => ({
-                    ...prev,
-                    khoa: value?.id
-                  }));
-                }}
-              />
+            <Box className='flex justify-center items-center gap-3 w-full'>
+              <Typography className='!text-[16px] !leading-6 !font-semibold'>Khóa</Typography>
+              <Box className='flex-1'>
+                <InputSelect2
+                  fullWidth
+                  name={'khoa'}
+                  placeholder={'Chọn Khoa'}
+                  data={yearOptions ?? []}
+                  getOptionKey={(option) => option.id}
+                  getOptionLabel={(option: any) => option.name}
+                  getOnChangeValue={(value) => {
+                    setfilter((prev: any) => ({
+                      ...prev,
+                      khoa: value?.id
+                    }));
+                  }}
+                />
+              </Box>
             </Box>
-          </Box>
-          <Box className='flex justify-center items-center gap-3 w-full'>
-            <Typography className='!text-[16px] !leading-6 !font-semibold'>Loại</Typography>
-            <Box className='flex-1'>
-              <InputSelect2
-                fullWidth
-                name={'daoTao'}
-                placeholder={'Chọn đào tạo'}
-                data={chuongTrinhDaotao ?? []}
-                isLoading={isLoadingCtdt}
-                getOptionKey={(option) => option.id}
-                getOptionLabel={(option: any) => option.name}
-                getOnChangeValue={(value) => {
-                  setfilter((prev: any) => ({
-                    ...prev,
-                    chuongTrinh: value?.id
-                  }));
-                }}
-              />
+            <Box className='flex justify-center items-center gap-3 w-full'>
+              <Typography className='!text-[16px] !leading-6 !font-semibold'>Loại</Typography>
+              <Box className='flex-1'>
+                <InputSelect2
+                  fullWidth
+                  name={'daoTao'}
+                  placeholder={'Chọn đào tạo'}
+                  data={chuongTrinhDaotao ?? []}
+                  isLoading={isLoadingCtdt}
+                  getOptionKey={(option) => option.id}
+                  getOptionLabel={(option: any) => option.name}
+                  getOnChangeValue={(value) => {
+                    setfilter((prev: any) => ({
+                      ...prev,
+                      chuongTrinh: value?.id
+                    }));
+                  }}
+                />
+              </Box>
             </Box>
-          </Box>
-          <Box className='flex justify-center items-center gap-3 w-full'>
-            <Typography className='!text-[16px] !leading-6 !font-semibold'>Học kỳ</Typography>
-            <Box className='flex-1'>
-              <InputSelect2
-                fullWidth
-                name={'hocKy'}
-                placeholder={'Chọn học kỳ'}
-                data={HocKyLopHocPhan ?? []}
-                getOptionKey={(option) => option.id}
-                getOptionLabel={(option: any) => option.name}
-                getOnChangeValue={(value) => {
-                  setfilter((prev: any) => ({
-                    ...prev,
-                    hocKy: value?.id
-                  }));
-                }}
-              />
+            <Box className='flex justify-center items-center gap-3 w-full'>
+              <Typography className='!text-[16px] !leading-6 !font-semibold'>Học kỳ</Typography>
+              <Box className='flex-1'>
+                <InputSelect2
+                  fullWidth
+                  name={'hocKy'}
+                  placeholder={'Chọn học kỳ'}
+                  data={HocKyLopHocPhan ?? []}
+                  getOptionKey={(option) => option.id}
+                  getOptionLabel={(option: any) => option.name}
+                  getOnChangeValue={(value) => {
+                    setfilter((prev: any) => ({
+                      ...prev,
+                      hocKy: value?.id
+                    }));
+                  }}
+                />
+              </Box>
             </Box>
-          </Box>
           </Box>
           <Box className='flex justify-end'>
             <LoadingButton
@@ -435,7 +435,7 @@ const TableEdit = forwardRef(
             }
           }}
           className='!border-gray-200 shadow-sm'
-          sx={(theme) => ({ 
+          sx={(theme) => ({
             height: '100%',
             overflowY: 'auto',
             [`& .${gridClasses.columnHeaders}`]: {

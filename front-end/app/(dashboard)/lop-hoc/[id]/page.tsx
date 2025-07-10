@@ -19,7 +19,7 @@ interface IPageProps {
 const page = async ({ params }: IPageProps) => {
   const { id } = await params;
   const lopHocPromise = LopHocService.getLopHocByIdServer(id).catch(() => undefined);
-    const khoa = KhoaService.getKhoaNoPageServer().catch(() => ( [] ));
+  const khoa = KhoaService.getKhoaNoPageServer().catch(() => []);
   const [khoaData, lopHocData] = await Promise.all([khoa, lopHocPromise]);
   return (
     <div>
@@ -27,7 +27,7 @@ const page = async ({ params }: IPageProps) => {
         id={id}
         initialData={lopHocData}
         anotherData={{
-          khoas: khoaData?.length > 0 ? khoaData : undefined,
+          khoas: khoaData?.length > 0 ? khoaData : undefined
         }}
       />
     </div>

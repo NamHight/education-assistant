@@ -189,15 +189,15 @@ const ContentForm = forwardRef(({ onSubmit, data, initialData, setKhoas }: ICont
       DiemTichLuy: true,
       LoaiMonHoc: null,
       HocKy: null,
-      SoTinChi: 0,
+      SoTinChi: 0
     }
   });
 
   useImperativeHandle(
     ref,
     () => ({
-      handleResetForm: (data:any) => reset(data),
-      setValue: (name: string, value: any) => setValue(name, value),
+      handleResetForm: (data: any) => reset(data),
+      setValue: (name: string, value: any) => setValue(name, value)
     }),
     [reset]
   );

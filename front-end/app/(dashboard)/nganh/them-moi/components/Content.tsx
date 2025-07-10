@@ -53,7 +53,7 @@ const Content: FC<ContentProps> = ({ initialData, anotherData }) => {
       <ContentForm
         onSubmit={handleSubmitForm}
         initialData={{
-          khoas: anotherData?.khoas,
+          khoas: anotherData?.khoas
         }}
       />
     </motion.div>

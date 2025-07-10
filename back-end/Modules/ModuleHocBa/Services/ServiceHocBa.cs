@@ -118,17 +118,12 @@ public class ServiceHocBa : IServiceHocBa
     {
         try
         {
-            if (id != request.Id)
-                throw new HocBaBadRequestException($"Id: {id} và Id: {request.Id} của khoa không giống nhau!");
             var hocBa = await _repositoryMaster.HocBa.GetHocBaByIdAsync(id, true);
             if (hocBa is null) throw new HocBaNotFoundException(id);
             await _repositoryMaster.ExecuteInTransactionAsync(async () =>
             {
                 hocBa.DiemTongKet = request.DiemTongKet;
                 hocBa.KetQua = request.DiemTongKet >= 5 ? (int)KetQuaHocBaEnum.DAT : (int)KetQuaHocBaEnum.KHONG_DAT;
-                hocBa.SinhVienId = request.SinhVienId;
-                hocBa.LopHocPhanId = request.LopHocPhanId;
-                hocBa.ChiTietChuongTrinhDaoTaoId = request.ChiTietChuongTrinhDaoTaoId;
                 hocBa.UpdatedAt = DateTime.Now;
                 await Task.CompletedTask;
             });

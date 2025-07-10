@@ -22,119 +22,123 @@ import ChangeCircleOutlinedIcon from '@mui/icons-material/ChangeCircleOutlined';
 import cookieStorage from '@/lib/cookie';
 import { ROLE } from '@/types/general';
 import { LoaiTaiKhoaEnum } from '@/models/TaiKhoan';
+import { SettingsIcon } from 'lucide-react';
 
-
-
-export const NAVIGATION  = (role?: string) : Navigation => {
+export const NAVIGATION = (role?: string): Navigation => {
   console.log('role', role);
-  const isAdmin = (Number(role) === LoaiTaiKhoaEnum.ADMIN) || (Number(role) === LoaiTaiKhoaEnum.QUAN_LY_KHOA_BO_MON);
+  const isAdmin = Number(role) === LoaiTaiKhoaEnum.ADMIN || Number(role) === LoaiTaiKhoaEnum.QUAN_LY_KHOA_BO_MON;
   const allNavigate = [
-  {
-    segment: '/',
-    title: 'Trang chủ',
-    icon: <DashboardIcon />,
-    pattern: `/:rest*`
-  },
-  {
-    segment: 'nhap-diem',
-    title: 'Nhập điểm',
-    icon: <ScoreIcon />,
-    pattern: `nhap-diem/:rest*`
-  },
-  {
-    segment: 'phan-cong',
-    title: 'Phân công',
-    icon: <GroupWorkIcon />,
-    pattern: `phan-cong/:rest*`
-  },
-  {
-    segment: 'lich-lop-hoc',
-    title: 'Lịch lớp học',
-    icon: <CalendarMonthIcon />,
-    pattern: `lich-lop-hoc/:rest*`
-  },
-  {
-    segment: 'giang-vien',
-    title: 'Giảng viên',
-    icon: <PeopleIcon />,
-    pattern: `giang-vien/:rest*`
-  },
-  {
-    segment: 'lop-hoc-phan',
-    title: 'Lớp học phần',
-    icon: <ClassIcon />,
-    pattern: `lop-hoc-phan/:rest*`
-  },
-  {
-    segment: 'sinh-vien',
-    title: 'Sinh viên',
-    icon: <Groups3Icon />,
-    pattern: `sinh-vien/:rest*`
-  },
-  {
-    segment: 'khoa',
-    title: 'Khoa',
-    icon: <WorkOutlineIcon />,
-    pattern: `khoa/:rest*`
-  },
-  {
-    segment: 'mon-hoc',
-    title: 'Môn học',
-    icon: <SubjectIcon />,
-    pattern: `mon-hoc/:rest*`
-  },
-  {
-    segment: 'nganh',
-    title: 'Ngành',
-    icon: <AnchorIcon />,
-    pattern: `nganh/:rest*`
-  },
-  {
-    segment: 'bo-mon',
-    title: 'Bộ môn',
-    icon: <HistoryEduIcon />,
-    pattern: `bo-mon/:rest*`
-  },
-  {
-    segment: 'hoc-ba',
-    title: 'Học bạ',
-    icon: <LibraryBooksIcon />,
-    pattern: `hoc-ba/:rest*`
-  },
-  {
-    segment: 'chuong-trinh-dao-tao',
-    title: 'Chương trình đào tạo',
-    icon: <SquareFootIcon />,
-    pattern: `chuong-trinh-dao-tao/:rest*`
-  },
-  {
-    segment: 'chi-tiet-chuong-trinh-dao-tao',
-    title: 'Chi tiết chương trình đào tạo',
-    icon: <AddchartIcon />,
-    pattern: `chi-tiet-chuong-trinh-dao-tao/:rest*`
-  },
-  {
-    segment: 'phong-hoc',
-    title: 'Phòng học',
-    icon: <HotelClassIcon />,
-    pattern: `phong-hoc/:rest*`
-  },
-  {
-    segment: 'lop-hoc',
-    title: 'Lớp học',
-    icon: <HouseIcon />,
-    pattern: `lop-hoc/:rest*`
-  },
-  {
-    segment: 'chuyen-lop',
-    title: 'Chuyển lớp học',
-    icon: <ChangeCircleOutlinedIcon />,
-    pattern: `chuyen-lop/:rest*`
-  }
-]
+    {
+      segment: '/',
+      title: 'Trang chủ',
+      icon: <DashboardIcon />,
+      pattern: `/:rest*`
+    },
+    {
+      segment: 'nhap-diem',
+      title: 'Nhập điểm',
+      icon: <ScoreIcon />,
+      pattern: `nhap-diem/:rest*`
+    },
+    {
+      segment: 'phan-cong',
+      title: 'Phân công',
+      icon: <GroupWorkIcon />,
+      pattern: `phan-cong/:rest*`
+    },
+    {
+      segment: 'lich-lop-hoc',
+      title: 'Lịch lớp học',
+      icon: <CalendarMonthIcon />,
+      pattern: `lich-lop-hoc/:rest*`
+    },
+    {
+      segment: 'giang-vien',
+      title: 'Giảng viên',
+      icon: <PeopleIcon />,
+      pattern: `giang-vien/:rest*`
+    },
+    {
+      segment: 'lop-hoc-phan',
+      title: 'Lớp học phần',
+      icon: <ClassIcon />,
+      pattern: `lop-hoc-phan/:rest*`
+    },
+    {
+      segment: 'sinh-vien',
+      title: 'Sinh viên',
+      icon: <Groups3Icon />,
+      pattern: `sinh-vien/:rest*`
+    },
+    {
+      segment: 'khoa',
+      title: 'Khoa',
+      icon: <WorkOutlineIcon />,
+      pattern: `khoa/:rest*`
+    },
+    {
+      segment: 'mon-hoc',
+      title: 'Môn học',
+      icon: <SubjectIcon />,
+      pattern: `mon-hoc/:rest*`
+    },
+    {
+      segment: 'nganh',
+      title: 'Ngành',
+      icon: <AnchorIcon />,
+      pattern: `nganh/:rest*`
+    },
+    {
+      segment: 'bo-mon',
+      title: 'Bộ môn',
+      icon: <HistoryEduIcon />,
+      pattern: `bo-mon/:rest*`
+    },
+    {
+      segment: 'hoc-ba',
+      title: 'Học bạ',
+      icon: <LibraryBooksIcon />,
+      pattern: `hoc-ba/:rest*`
+    },
+    {
+      segment: 'chuong-trinh-dao-tao',
+      title: 'Chương trình đào tạo',
+      icon: <SquareFootIcon />,
+      pattern: `chuong-trinh-dao-tao/:rest*`,
+    },
+    {
+      segment: 'chi-tiet-chuong-trinh-dao-tao',
+      title: 'Chi tiết chương trình đào tạo',
+      icon: <AddchartIcon />,
+      pattern: `chi-tiet-chuong-trinh-dao-tao/:rest*`
+    },
+    {
+      segment: 'phong-hoc',
+      title: 'Phòng học',
+      icon: <HotelClassIcon />,
+      pattern: `phong-hoc/:rest*`
+    },
+    {
+      segment: 'lop-hoc',
+      title: 'Lớp học',
+      icon: <HouseIcon />,
+      pattern: `lop-hoc/:rest*`
+    },
+    {
+      segment: 'chuyen-lop',
+      title: 'Chuyển lớp học',
+      icon: <ChangeCircleOutlinedIcon />,
+      pattern: `chuyen-lop/:rest*`
+    },
+    {
+      segment: 'cai-dat',
+      title: 'Cài đặt',
+      icon: <SettingsIcon />,
+      pattern: `cai-dat/:rest*`
+    }
+  ];
 
-
-  return allNavigate.filter(item => {
+  return allNavigate.filter((item) => {
     const adminOnlyRoutes = ['giang-vien', 'sinh-vien', 'khoa', 'mon-hoc', 'nganh', 'bo-mon'];
 
     if (!isAdmin && adminOnlyRoutes.includes(item.segment)) {
@@ -143,5 +147,4 @@ export const NAVIGATION  = (role?: string) : Navigation => {
 
     return true;
   });
-
-} 
+};
