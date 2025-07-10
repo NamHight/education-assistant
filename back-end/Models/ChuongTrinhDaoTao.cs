@@ -28,10 +28,9 @@ public class ChuongTrinhDaoTao : BaseEntity
         get => LoaiChuonTrinhDaoTao.HasValue ? (LoaiChuongTrinhDaoTaoEnum)LoaiChuonTrinhDaoTao.Value : null;
         set => LoaiChuonTrinhDaoTao = value.HasValue ? (int)value.Value : null;
     }
-
     [Column("thoi_gian_dao_tao")]
     [Required(ErrorMessage = "Thời gian đào tạo không được để trống")]
-    public int? ThoiGianDaoTao { get; set; }
+    public int ThoiGianDaoTao { get; set; }
     [Column("mo_ta")] public string? MoTa { get; set; }
     [Column("tong_so_tin_chi")] public int TongSoTinChi { get; set; }
     [Column("khoa")] public int? Khoa { get; set; }
