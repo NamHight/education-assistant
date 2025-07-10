@@ -221,7 +221,7 @@ public class RepositoryMaster : IRepositoryMaster
     {
         var bulkConfig = new BulkConfig
         {
-            SetOutputIdentity = true,
+            SetOutputIdentity = false,
             PreserveInsertOrder = true,
             UseTempDB = false,
             BatchSize = 500

@@ -39,9 +39,9 @@ const Content: FC<ContentProps> = ({ initialData, anotherData }) => {
         exact: false
       });
       router.push('/lop-hoc');
-    },
-    onError: (error) => {
-      notification.show('Thêm thất bại', {
+      },
+      onError: (error: any) => {
+      notification.show(error.message || error?.Message, {
         severity: 'error',
         autoHideDuration: 5000
       });
