@@ -12,8 +12,8 @@ interface IPageProps {
 
 const page = async ({ params }: IPageProps) => {
   const { id } = await params;
-  const lopHoc = LopHocService.getLopHocNoPageServer().catch(() => ( [] ));
-  const sinhVien = SinhVienService.getSinhVienByIdServer(id).catch(() => undefined );
+  const lopHoc = LopHocService.getLopHocNoPageServer().catch(() => []);
+  const sinhVien = SinhVienService.getSinhVienByIdServer(id).catch(() => undefined);
   const [lopHocData, sinhVienData] = await Promise.all([lopHoc, sinhVien]);
   return (
     <div>

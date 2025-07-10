@@ -49,6 +49,7 @@ export interface IParamChiTietChuongTrinhDaoTao extends IBaseParams {
 
 export interface IParamHocBa extends IBaseParams {
   lopHocPhanId?: string;
+  mssv?: string;
 }
 
 export interface IParamChiTietLopHocPhan extends IBaseParams {
@@ -67,9 +68,9 @@ export interface IParamLopHocPhan2 {
 }
 
 export interface IParamLichBieu extends IBaseParams {
-  lopHocId: string;
+  lopHocId?: string;
   boMonId?: string;
-  tuanId: string;
+  tuanId?: string;
   hocKy?: number | string;
   namHoc?: number | string;
 }

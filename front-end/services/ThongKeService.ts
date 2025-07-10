@@ -30,13 +30,17 @@ export class ThongKeService {
       .catch((error) => error.response?.data);
   }
 
-  static async getThongKeTyLeThiLaiTrongNam() {
-    return await authApi.get(`${API.THONG_KE.GET_TY_LE_THI_LAI_TRONG_NAM}`)
+  static async getThongKeTyLeThiLaiTrongNam(nam: number) {
+    return await authApi
+      .get(`${API.THONG_KE.GET_TY_LE_THI_LAI_TRONG_NAM}`, {
+        params: { nam }
+      })
       .then((response) => response.data)
       .catch((error) => error.response?.data);
   }
   static async getThongKeTyLeThiLaiTrongNamServer() {
-    return await authApiServer.get(`${API.THONG_KE.GET_TY_LE_THI_LAI_TRONG_NAM}`)
+    return await authApiServer
+      .get(`${API.THONG_KE.GET_TY_LE_THI_LAI_TRONG_NAM}`)
       .then((response) => response.data)
       .catch((error) => error.response?.data);
   }

@@ -10,12 +10,19 @@ import { APP_ROUTE } from '@/types/general';
 import { useUser, useUserActions } from '@/stores/selectors';
 import { ThemeSwitcher } from '@toolpad/core/DashboardLayout';
 import { useQueryClient } from '@tanstack/react-query';
+import { GiangVien } from '@/models/GiangVien';
 const ToolBarAccount = () => {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+  const [userState, setUserState] = React.useState<GiangVien | null>(null);
   const router = useRouter();
   const queryClient = useQueryClient();
   const [menuAnchorEl, setMenuAnchorEl] = React.useState<HTMLElement | null>(null);
   const user = useUser();
+  useEffect(() => {
+    if (user) {
+      setUserState(user);
+    }
+  }, [user]);
   const userActions = useUserActions();
   const toggleMenu = (event: React.MouseEvent<HTMLElement>) => {
     setMenuAnchorEl(isMenuOpen ? null : event.currentTarget);
@@ -31,7 +38,7 @@ const ToolBarAccount = () => {
   return (
     <React.Fragment>
       <ThemeSwitcher />
-      <Tooltip title={user?.hoTen} enterDelay={600}>
+      <Tooltip title={userState?.hoTen} enterDelay={600}>
         <div className='relative'>
           <AnimatePresence mode='wait'>
             <motion.div key='avatar' initial='hidden' animate='visible' whileHover='hover' whileTap='tap'>
@@ -41,11 +48,11 @@ const ToolBarAccount = () => {
                 aria-label='avatar'
                 onClick={toggleMenu}
               >
-                {user?.anhDaiDien ? (
+                {userState?.anhDaiDien ? (
                   <Avatar
                     variant='rounded'
                     sx={{ width: 40, height: 40 }}
-                    src={user.anhDaiDien}
+                    src={userState.anhDaiDien}
                     alt='ảnh đại diện'
                     className='object-cover bg-gray-200 border border-gray-300'
                     component={motion.div}

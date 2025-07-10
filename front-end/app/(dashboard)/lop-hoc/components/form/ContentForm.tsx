@@ -51,6 +51,7 @@ import { PhongHoc } from '@/models/PhongHoc';
 import { LopHoc } from '@/models/LopHoc';
 import { GiangVienService } from '@/services/GiangVienService';
 import { NganhService } from '@/services/NganhService';
+import { WarningAmber } from '@mui/icons-material';
 
 export interface IFormData {
   MaLopHoc: string;
@@ -67,9 +68,13 @@ interface IContentFormProps {
 }
 
 const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => {
+  const [getKhoa, setKhoa] = React.useState<number>(0);
   const schema = useMemo(() => {
     return yup.object().shape({
-      MaLopHoc: yup.string().required('Mã lớp học không được để trống').max(50, 'Mã lớp học không được vượt quá 50 ký tự'),
+      MaLopHoc: yup
+        .string()
+        .required('Mã lớp học không được để trống')
+        .max(50, 'Mã lớp học không được vượt quá 50 ký tự'),
       SiSo: yup
         .number()
         .typeError('Sĩ số phải là số')
@@ -82,42 +87,48 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
   }, [data]);
 
   const { data: giangViens, isLoading: isLoadingGiangVien } = useQuery({
-    queryKey: ['giangviens'],
+    queryKey: ['giangviens', getKhoa],
     queryFn: async () => {
-      const response = await GiangVienService.danhSachGiangVien({
-        limit: 9999999999,
-        sortBy: 'createdAt',
-        sortByOrder: 'desc',
-        active: true
-      });
-      return response?.data;
+      const response = await GiangVienService.getGiangVienByKhoaId(getKhoa);
+      return response;
     },
-    initialData: initialData?.giangViens,
     select: (data) => {
       return data.map((item: any) => ({
         id: item.id,
         name: item.hoTen
       }));
     },
+    enabled: Boolean(getKhoa),
+    refetchOnWindowFocus: false
+  });
+  const { data: khoas, isLoading: isLoadingKhoa } = useQuery({
+    queryKey: ['khoas'],
+    queryFn: async () => {
+      const response = await KhoaService.getKhoaNoPage();
+      return response;
+    },
+    initialData: initialData?.khoas,
+    select: (data) => {
+      return data.map((item: any) => ({
+        id: item.id,
+        name: item.tenKhoa
+      }));
+    },
     refetchOnWindowFocus: false
   });
   const { data: nganhs, isLoading: isLoadingNganh } = useQuery({
-    queryKey: ['nganhs'],
+    queryKey: ['nganhs', getKhoa],
     queryFn: async () => {
-      const response = await NganhService.getAllNganh({
-        limit: 9999999999,
-        sortBy: 'createdAt',
-        sortByOrder: 'desc'
-      });
-      return response?.data;
+      const response = await NganhService.getNganhByKhoaId(getKhoa);
+      return response;
     },
-    initialData: initialData?.nganhs,
     select: (data) => {
       return data.map((item: any) => ({
         id: item.id,
         name: item.tenNganh
       }));
     },
+    enabled: Boolean(getKhoa),
     refetchOnWindowFocus: false
   });
   const {
@@ -175,6 +186,10 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
           id: data.giangVien?.id,
           name: data.giangVien?.hoTen
         },
+        Khoa: {
+          id: data?.nganh?.khoa?.id,
+          name: data?.nganh?.khoa?.tenKhoa
+        },
         Nganh: {
           id: data.nganh?.id,
           name: data.nganh?.tenNganh
@@ -204,6 +219,25 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
             error={errors.SiSo?.message}
             isDisabled={false}
             type='number'
+          />
+        </Grid>
+        <Grid size={{ xs: 12, sm: 6, md: 6, lg: 6 }} className='relative'>
+          <InputSelect2
+            control={control}
+            fullWidth
+            name={'Khoa'}
+            placeholder={'Chọn khoa'}
+            title={'Khoa'}
+            data={khoas ?? []}
+            isLoading={isLoadingKhoa}
+            getOnChangeValue={(option) => {
+              setKhoa(option?.id);
+              setValue('GiangVien', null);
+              setValue('Nganh', null);
+            }}
+            getOptionKey={(option) => option.id}
+            getOptionLabel={(option: any) => option.name}
+            error={(errors.Khoa as any)?.message}
           />
         </Grid>
         <Grid size={{ xs: 12, sm: 6, md: 6, lg: 6 }}>

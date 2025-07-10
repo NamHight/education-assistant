@@ -6,18 +6,16 @@ import authApiServer from '@/lib/authAxiosServer';
 import { API } from '@/types/general';
 import { LopHocService } from '@/services/LopHocService';
 import { KhoaService } from '@/services/KhoaService';
+import { NganhService } from '@/services/NganhService';
 
 const page = async () => {
-  const khoa = await KhoaService.getAllKhoaServer({
-    limit: 99999999999,
-    sortBy: 'createdAt',
-    sortByOrder: 'desc'
-  }).catch(() => ({ data: [] }));
+  const khoa = await KhoaService.getKhoaNoPageServer().catch(() => []);
+  const [khoaData] = await Promise.all([khoa]);
   return (
     <Box className='flex flex-col border border-gray-200 rounded-lg p-4 shadow-sm'>
       <Content
         anotherData={{
-          khoas: khoa?.data?.length > 0 ? khoa?.data : undefined
+          khoas: khoaData?.length > 0 ? khoaData : undefined
         }}
       />
     </Box>

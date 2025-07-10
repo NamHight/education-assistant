@@ -20,7 +20,7 @@ import InputSelect2 from '@/components/selects/InputSelect2';
 import { usePopoverLock } from '@/hooks/context/PopoverLock';
 import { set } from 'lodash';
 
-const TableEdit = dynamic(() => import('@/components/tables/TableEdit'), {
+const TableEdit = dynamic(() => import('@/app/(dashboard)/phan-cong/tables/TableEdit'), {
   ssr: false
 });
 
@@ -49,7 +49,15 @@ const Content = ({ queryKey, ctdtServer }: IContentProps) => {
   });
   const [isOpenPopover, setisOpenPopover] = useState<boolean>(false);
   const { data, isLoading } = useQuery({
-    queryKey: [queryKey, sortModel, filterModel, filter],
+    queryKey: [
+      queryKey,
+      sortModel,
+      filterModel,
+      filter?.hocKy,
+      filter?.loaiChuongTrinh,
+      filter?.chuongTrinh,
+      filter?.khoa
+    ],
     queryFn: async () => {
       const searchKeyWord = handleTextSearch(filterModel?.quickFilterValues as any[]);
       let params: IParamLopHocPhan = {
@@ -74,7 +82,6 @@ const Content = ({ queryKey, ctdtServer }: IContentProps) => {
       return result;
     },
     enabled: !!filter?.chuongTrinh && !!filter?.khoa && !!filter?.hocKy && !!filter?.loaiChuongTrinh,
-    placeholderData: (prev) => prev,
     refetchOnWindowFocus: false,
     gcTime: 0
   });
@@ -96,7 +103,6 @@ const Content = ({ queryKey, ctdtServer }: IContentProps) => {
       }));
     },
     initialData: ctdtServer,
-    placeholderData: (prev) => prev,
     refetchOnWindowFocus: false
   });
   const mutateSaving = useMutation({
@@ -197,8 +203,8 @@ const Content = ({ queryKey, ctdtServer }: IContentProps) => {
         headerName: 'Loại',
         type: 'string',
         headerAlign: 'left',
-        minWidth: 100,
-        flex: 1,
+        minWidth: 80,
+        flex: 0.8,
         sortable: false,
         display: 'flex',
         align: 'left',
@@ -212,7 +218,7 @@ const Content = ({ queryKey, ctdtServer }: IContentProps) => {
         field: 'giangVienId',
         headerName: 'Giảng viên',
         headerAlign: 'left',
-        minWidth: 140,
+        minWidth: 160,
         sortable: false,
         filterable: false,
         type: 'singleSelect',
@@ -222,6 +228,9 @@ const Content = ({ queryKey, ctdtServer }: IContentProps) => {
         display: 'flex',
         editable: true,
         flex: 1,
+        cellClassName: (params) => {
+          return 'cursor-pointer hover:bg-gray-100 transition-colors duration-200 ease-in-out';
+        },
         renderEditCell: (params) => (
           <SelectEditCell
             params={params}
@@ -230,6 +239,7 @@ const Content = ({ queryKey, ctdtServer }: IContentProps) => {
           />
         ),
         renderCell: (params) => {
+          if (!params.value) return null;
           const khoaId = params.row?.monHoc?.khoaId;
           const giangVien = giangVienOptions[khoaId]?.find((item: any) => item.value === params.value);
           return giangVien ? (
@@ -296,6 +306,7 @@ const Content = ({ queryKey, ctdtServer }: IContentProps) => {
       giangVienId: item?.giangVienId,
       createdAt: moment().format('YYYY-MM-DD HH:mm:ss')
     }));
+    console.log('convertData', convertData);
     mutateSaving.mutate(convertData);
   };
   return (

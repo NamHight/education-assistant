@@ -1,18 +1,18 @@
-'use server'
-import { Box } from '@mui/material'
-import React from 'react'
+'use server';
+import { Box } from '@mui/material';
+import React from 'react';
 import { clsx as cn } from 'clsx';
 import Content from './components/contents/Content';
 import { LopHocService } from '@/services/LopHocService';
 export default async function Page() {
-  const lopHoc = await LopHocService.getLopHocNoPageServer().catch(() => ([]));
+  const lopHoc = await LopHocService.getLopHocNoPageServer().catch(() => []);
   return (
     <Box className='flex flex-col gap-3'>
-      <Content 
+      <Content
         initialData={{
-            lopHocs: lopHoc?.length > 0 ? lopHoc : undefined
-          }}
+          lopHocs: lopHoc?.length > 0 ? lopHoc : undefined
+        }}
       />
     </Box>
-  )
+  );
 }

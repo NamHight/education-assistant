@@ -167,7 +167,7 @@ const Content = ({ queryKey }: ContentProps) => {
         headerName: 'Số điện thoại',
         headerAlign: 'left',
         type: 'number',
-        minWidth: 180,
+        minWidth: 100,
         disableColumnMenu: true,
         sortable: false,
         display: 'flex',

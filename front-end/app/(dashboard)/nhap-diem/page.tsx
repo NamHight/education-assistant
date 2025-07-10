@@ -13,8 +13,8 @@ const page = async () => {
   const queryKey = 'nhap-diem-list';
   return (
     <Box>
-       <PopoverLockProvider>
-      <Content queryKey={queryKey} />
+      <PopoverLockProvider>
+        <Content queryKey={queryKey} />
       </PopoverLockProvider>
     </Box>
   );

@@ -98,13 +98,13 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData, query
     }
   });
 
-   const mutationUpdate = useMutation({
-      mutationFn: async (form: FormData) => {
-        const result = await LopHocPhanService.updateLopHocPhan(data?.id, form);
-        return { id: data?.id, ...result };
-      },
-      onSuccess: (data: any) => {
-        queryClient.setQueryData([queryKey, { id: data?.id }], (oldData: any) => {
+  const mutationUpdate = useMutation({
+    mutationFn: async (form: FormData) => {
+      const result = await LopHocPhanService.updateLopHocPhan(data?.id, form);
+      return { id: data?.id, ...result };
+    },
+    onSuccess: (data: any) => {
+      queryClient.setQueryData([queryKey, { id: data?.id }], (oldData: any) => {
         if (oldData) {
           return {
             ...oldData,
@@ -113,20 +113,20 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData, query
         }
         return oldData;
       });
-        notification.show('Thay đổi sỉ số thành công', {
-          severity: 'success',
-          autoHideDuration: 5000
-        });
-        setErrorSiSo(null);
-      },
-      onError: (error: any) => {
-         setErrorSiSo(null);
-        notification.show(error.Message || 'Thay đổi sỉ số thất bại', {
-          severity: 'error',
-          autoHideDuration: 5000
-        });
-      }
-    });
+      notification.show('Thay đổi sỉ số thành công', {
+        severity: 'success',
+        autoHideDuration: 5000
+      });
+      setErrorSiSo(null);
+    },
+    onError: (error: any) => {
+      setErrorSiSo(null);
+      notification.show(error.Message || 'Thay đổi sỉ số thất bại', {
+        severity: 'error',
+        autoHideDuration: 5000
+      });
+    }
+  });
   const handleChangeStatus = () => {
     const formData = new FormData();
     formData.append('trangThai', Number(data?.trangThai) === 1 ? '2' : '1');
@@ -134,7 +134,7 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData, query
   };
   const handleChangeSiSo = () => {
     setIsChange((prev) => !prev);
-  }
+  };
   const handleChangeSiSoSubmit = () => {
     if (numberSiSo === data?.siSo) {
       setIsChange(false);
@@ -144,12 +144,12 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData, query
       setErrorSiSo('Sỉ số không được nhỏ hơn hoặc bằng 0');
       return;
     }
-     const formData = new FormData();
+    const formData = new FormData();
     if (data?.id) formData.append('id', String(data.id));
     formData.append('siSo', String(numberSiSo || 0));
     mutationUpdate.mutate(formData);
     handleChangeSiSo();
-  }
+  };
   const handleOnKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       e.preventDefault();
@@ -163,62 +163,59 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData, query
           <Button
             className='!absolute !top-3 right-0 !p-0 !h-0 hover:!underline !text-blue-500 '
             sx={{
-              color: errorSiSo ? 'red !important' : 'inherit',
+              color: errorSiSo ? 'red !important' : 'inherit'
             }}
-            onClick={() => isChangeSiSo ? handleChangeSiSoSubmit() : handleChangeSiSo()}
+            onClick={() => (isChangeSiSo ? handleChangeSiSoSubmit() : handleChangeSiSo())}
           >
             {isChangeSiSo ? 'Lưu' : 'Thay đổi'}
           </Button>
           <Box className='flex flex-col gap-1'>
             <Typography className='!text-[16px] !font-[500] !leading-6 !text-gray-500 mb-1'>Sỉ số</Typography>
-            {
-              isChangeSiSo ? (
-           <>
-           <TextField
-           name='siSo'
-           type='number'
-           onChange={(e: any) => {
-            setNumberSiSo(e.target.value);
-           }}
-            value={numberSiSo}
-            onKeyDown={handleOnKeyDown}
-           sx={(theme) => ({
-              '& .MuiOutlinedInput-root': {
-                       mt: '0px !important',
-                       borderColor: errorSiSo ? 'red' : theme.palette.grey[500],
-                '& fieldset': {
-                  borderColor: errorSiSo ? 'red' : theme.palette.grey[500]
-                },
-                '&:hover fieldset': {
-                  borderColor: theme.palette.primary.main
-                },
-                '&.Mui-focused fieldset': {
-                  borderColor: theme.palette.primary.main
-                }
-              },
-              '& .MuiInputBase-input': {
-                padding: '10px 2px',
-                fontSize: '14px',
-                color: theme.palette.text.primary
-              }
-           })}  className="border-gray-200" id="outlined-basic" placeholder='Nhập sỉ số' variant="outlined" />
-           {
-              errorSiSo && (
-                <Typography className='!text-red-600 !text-sm mt-1'>
-                  {errorSiSo}
-                </Typography>
-              )
-           }
-           </>
-              ) : (
-                <Box
-              className='rounded bg-gray-100 px-3 py-2 border border-gray-200 text-[15px] text-gray-800 font-medium'
-              style={{ minHeight: 40, display: 'flex', alignItems: 'center' }}
-            >
-              {data?.siSo || 0}
-            </Box>
-              )
-            }
+            {isChangeSiSo ? (
+              <>
+                <TextField
+                  name='siSo'
+                  type='number'
+                  onChange={(e: any) => {
+                    setNumberSiSo(e.target.value);
+                  }}
+                  value={numberSiSo}
+                  onKeyDown={handleOnKeyDown}
+                  sx={(theme) => ({
+                    '& .MuiOutlinedInput-root': {
+                      mt: '0px !important',
+                      borderColor: errorSiSo ? 'red' : theme.palette.grey[500],
+                      '& fieldset': {
+                        borderColor: errorSiSo ? 'red' : theme.palette.grey[500]
+                      },
+                      '&:hover fieldset': {
+                        borderColor: theme.palette.primary.main
+                      },
+                      '&.Mui-focused fieldset': {
+                        borderColor: theme.palette.primary.main
+                      }
+                    },
+                    '& .MuiInputBase-input': {
+                      padding: '10px 2px',
+                      fontSize: '14px',
+                      color: theme.palette.text.primary
+                    }
+                  })}
+                  className='border-gray-200'
+                  id='outlined-basic'
+                  placeholder='Nhập sỉ số'
+                  variant='outlined'
+                />
+                {errorSiSo && <Typography className='!text-red-600 !text-sm mt-1'>{errorSiSo}</Typography>}
+              </>
+            ) : (
+              <Box
+                className='rounded bg-gray-100 px-3 py-2 border border-gray-200 text-[15px] text-gray-800 font-medium'
+                style={{ minHeight: 40, display: 'flex', alignItems: 'center' }}
+              >
+                {data?.siSo || 0}
+              </Box>
+            )}
           </Box>
         </Grid>
         <Grid size={{ xs: 12, sm: 6, md: 6, lg: 6 }}>

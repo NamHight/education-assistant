@@ -80,7 +80,7 @@ const ListClass = ({ id, queryKey }: IListtClassProps) => {
   }, [data?.meta?.TotalCount]);
   const mutationDelete = useMutation({
     mutationFn: async (idSV: string | number | null) => {
-      const result = await SinhVienService.deleteSinhVienByLHP(idSV,{lopHocPhanId : id});
+      const result = await SinhVienService.deleteSinhVienByLHP(idSV, { lopHocPhanId: id });
       return result;
     },
     onSuccess: () => {

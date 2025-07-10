@@ -19,26 +19,15 @@ interface IPageProps {
 const page = async ({ params }: IPageProps) => {
   const { id } = await params;
   const lopHocPromise = LopHocService.getLopHocByIdServer(id).catch(() => undefined);
-  const giangViensPromise = GiangVienService.danhSachGiangVienServer({
-    limit: 99999999999,
-    sortBy: 'createdAt',
-    sortByOrder: 'desc',
-    active: true
-  }).catch(() => ({ data: [] }));
-  const nganhsPromise = NganhService.getAllNganhServer({
-    limit: 99999999999,
-    sortBy: 'createdAt',
-    sortByOrder: 'desc'
-  }).catch(() => ({ data: [] }));
-  const [giangVienData, nganhData, lopHocData] = await Promise.all([giangViensPromise, nganhsPromise, lopHocPromise]);
+  const khoa = KhoaService.getKhoaNoPageServer().catch(() => []);
+  const [khoaData, lopHocData] = await Promise.all([khoa, lopHocPromise]);
   return (
     <div>
       <Content
         id={id}
         initialData={lopHocData}
         anotherData={{
-          giangViens: giangVienData.data?.length > 0 ? giangVienData.data : undefined,
-          nganhs: nganhData.data?.length > 0 ? nganhData.data : undefined
+          khoas: khoaData?.length > 0 ? khoaData : undefined
         }}
       />
     </div>
