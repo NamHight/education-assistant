@@ -1,4 +1,5 @@
 using System.Linq.Expressions;
+using DocumentFormat.OpenXml.Wordprocessing;
 using Education_assistant.Context;
 using Education_assistant.Extensions;
 using Education_assistant.Models;
@@ -21,21 +22,20 @@ public class RepositoryLopHocPhan : RepositoryBase<LopHocPhan>, IRepositoryLopHo
         await Create(lopHocPhan);
     }
 
-    public async Task<int> CreateSinhVienLopHocPhanHocBa(Guid maLop, Guid maLhp, Guid? maGiangVien, Guid maMonHoc,
-        Guid maCtctdt, int HocKy)
+    public async Task<int> CreateSinhVienLopHocPhanHocBa(Guid maLop, Guid maLhp, Guid maMonHoc,
+        int HocKy)
     {
         var parameters = new[]
         {
             new MySqlParameter("maLop", maLop),
             new MySqlParameter("maLhp", maLhp),
-            new MySqlParameter("maGiangVien", maGiangVien),
             new MySqlParameter("maMonHoc", maMonHoc),
-            new MySqlParameter("maChiTietCTDT", maCtctdt),
             new MySqlParameter("hocKy", HocKy)
         };
         var result = await _context.Database.ExecuteSqlRawAsync(
-            @"CALL sp_taoChiTietLopHocPhanVaHocBa( ?, ?, ?, ?, ?, ?)",
+            @"CALL sp_taoChiTietLopHocPhanVaHocBa( ?, ?, ?, ?)",
             parameters);
+        
         return result;
     }
 
@@ -58,6 +58,18 @@ public class RepositoryLopHocPhan : RepositoryBase<LopHocPhan>, IRepositoryLopHo
         Guid? giangVienId
     )
     {
+        Guid nganhId = Guid.Empty;
+
+        if (chuongTrinhId.HasValue && chuongTrinhId != Guid.Empty)
+        {
+            var fetchedNganhId = await _context.ChuongTrinhDaoTaos!
+                .AsNoTracking()
+                .Where(item => item.Id == chuongTrinhId.Value)
+                .Select(item => item.NganhId)
+                .FirstOrDefaultAsync();
+
+            nganhId = fetchedNganhId ?? Guid.Empty;
+        }
         var query = _context.LopHocPhans!
             .AsNoTracking()
             .IgnoreQueryFilters()
@@ -70,26 +82,41 @@ public class RepositoryLopHocPhan : RepositoryBase<LopHocPhan>, IRepositoryLopHo
             .Include(x => x.GiangVien)
             .AsNoTracking();
 
-        if (loaiLopHoc.HasValue && loaiLopHoc != 0 && loaiLopHoc != null)
-            query = query.Where(item => item.Loai == loaiLopHoc);
-        if (trangThai.HasValue && trangThai != 0)
-            query = query.Where(x => x.TrangThai == trangThai);
-        if (loaiLopHoc.HasValue && loaiLopHoc != 2)
-            if ((chuongTrinhId.HasValue && chuongTrinhId != Guid.Empty) ||
-                (khoa.HasValue && khoa != 0) ||
-                (loaiChuongTrinh.HasValue && loaiChuongTrinh != 0) ||
-                (hocKy.HasValue && hocKy != 0))
-                query = query.Where(lhp => lhp.MonHoc != null &&
-                                           lhp.MonHoc.DanhSachChiTietChuongTrinhDaoTao != null &&
-                                           lhp.MonHoc.DanhSachChiTietChuongTrinhDaoTao
-                                               .Any(ct => ct.ChuongTrinhDaoTaoId == chuongTrinhId.Value &&
-                                                          ct.ChuongTrinhDaoTao!.Khoa == khoa.Value &&
-                                                          ct.ChuongTrinhDaoTao!.LoaiChuonTrinhDaoTao ==
-                                                          loaiChuongTrinh.Value &&
-                                                          ct.HocKy == hocKy.Value) &&
-                                           _context.LopHocs!.Any(lh => lh.NamHoc == khoa.Value &&
-                                                                       lhp.MaHocPhan.StartsWith(lh.MaLopHoc)));
+        if (loaiLopHoc.HasValue && loaiLopHoc != 0)
+        {
+            System.Console.WriteLine($"tesst loai lop");
+            query = query.Where(item => item.Loai == loaiLopHoc.Value);
+        }
 
+        if (trangThai.HasValue && trangThai != 0)
+        {
+            System.Console.WriteLine($"tesst trang thai");
+            query = query.Where(x => x.TrangThai == trangThai);
+        }
+            
+        
+        System.Console.WriteLine($"tesst chuong trình: {chuongTrinhId} : khóa : {khoa}, loai choungw tình: {loaiChuongTrinh} , hoc kỳ {hocKy}");
+        if (chuongTrinhId.HasValue && chuongTrinhId != Guid.Empty && khoa.HasValue && loaiChuongTrinh.HasValue && hocKy.HasValue)
+        {
+            System.Console.WriteLine($"tesst điều kiện:");
+            query = query.Where(lhp =>
+                lhp.MonHoc != null &&
+                lhp.MonHoc.DanhSachChiTietChuongTrinhDaoTao != null &&
+                lhp.MonHoc.DanhSachChiTietChuongTrinhDaoTao.Any(ct =>
+                    (!chuongTrinhId.HasValue || ct.ChuongTrinhDaoTaoId == chuongTrinhId.Value) &&
+                    (!khoa.HasValue || ct.ChuongTrinhDaoTao!.Khoa == khoa.Value) &&
+                    (!loaiChuongTrinh.HasValue || ct.ChuongTrinhDaoTao!.LoaiChuonTrinhDaoTao == loaiChuongTrinh.Value) &&
+                    (!hocKy.HasValue || ct.HocKy == hocKy.Value)
+                ) &&
+                (
+                    !chuongTrinhId.HasValue ||
+                    (!khoa.HasValue || _context.LopHocs!.Any(lh =>
+                        lh.NamHoc == khoa.Value &&
+                        lhp.MaHocPhan.StartsWith(lh.MaLopHoc + "_")
+                    ))
+                )
+            );
+        }
         if (giangVienId.HasValue && giangVienId != Guid.Empty)
             query = query.Where(item => item.GiangVienId == giangVienId.Value);
         // Áp dụng search và sort
@@ -133,11 +160,12 @@ public class RepositoryLopHocPhan : RepositoryBase<LopHocPhan>, IRepositoryLopHo
                         .Where(ct =>
                             (!chuongTrinhId.HasValue || ct.ChuongTrinhDaoTaoId == chuongTrinhId) &&
                             (!khoa.HasValue || ct.ChuongTrinhDaoTao!.Khoa == khoa) &&
-                            (!loaiChuongTrinh.HasValue ||
-                             ct.ChuongTrinhDaoTao!.LoaiChuonTrinhDaoTao == loaiChuongTrinh) &&
+                            (!loaiChuongTrinh.HasValue || ct.ChuongTrinhDaoTao!.LoaiChuonTrinhDaoTao == loaiChuongTrinh) &&
                             (!hocKy.HasValue || ct.HocKy == hocKy) &&
-                            _context.LopHocs!.Any(lh =>
-                                lh.NamHoc == khoa!.Value && lhp.MaHocPhan.StartsWith(lh.MaLopHoc))
+                            !chuongTrinhId.HasValue || _context.LopHocs!.Any(lh =>
+                                lh.NamHoc == khoa!.Value
+                                // && lh.NganhId == nganhId
+                                && lhp.MaHocPhan.StartsWith(lh.MaLopHoc + "_"))
                         )
                         .Select(ct => new ChiTietChuongTrinhDaoTao
                         {
@@ -280,7 +308,7 @@ public class RepositoryLopHocPhan : RepositoryBase<LopHocPhan>, IRepositoryLopHo
             .ToListAsync();
 
         return chiTietLopHocPhans
-            .Any(ct => maLopHocs.Any(maLop => ct.LopHocPhan!.MaHocPhan.StartsWith(maLop)));
+            .Any(ct => maLopHocs.Any(maLop => ct.LopHocPhan!.MaHocPhan.StartsWith(maLop + "_")));
     }
 
     public void UpdateLopHocPhan(LopHocPhan lopHocPhan)

@@ -4,6 +4,7 @@ using Education_assistant.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Education_assistant.Migrations
 {
     [DbContext(typeof(RepositoryContext))]
-    partial class RepositoryContextModelSnapshot : ModelSnapshot
+    [Migration("20250710161807_removeThoiGianDaoTao")]
+    partial class removeThoiGianDaoTao
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -274,10 +277,6 @@ namespace Education_assistant.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("varchar(255)")
                         .HasColumnName("ten_chuong_trinh");
-
-                    b.Property<int>("ThoiGianDaoTao")
-                        .HasColumnType("int")
-                        .HasColumnName("thoi_gian_dao_tao");
 
                     b.Property<int>("TongSoTinChi")
                         .HasColumnType("int")

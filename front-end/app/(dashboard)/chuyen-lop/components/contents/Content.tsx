@@ -78,8 +78,8 @@ const Content = ({query, initialData}: ContentProps) => {
           queryKey: [queryKey, lopHocChuyenDenId],
         })
       },
-      onError: (error) => {
-        notification.show('Chuyển thất bại', {
+      onError: (error: any) => {
+        notification.show(error?.Message, {
           severity: 'error',
           autoHideDuration: 5000
         });
