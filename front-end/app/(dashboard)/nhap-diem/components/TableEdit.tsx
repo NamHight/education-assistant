@@ -45,6 +45,7 @@ import { useNotifications } from '@toolpad/core';
 import moment from 'moment';
 import { UseFormSetValue } from 'react-hook-form';
 import { IFilter } from './Content';
+import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 function TextInput(props: React.InputHTMLAttributes<HTMLInputElement>) {
   return (
     <input
@@ -264,6 +265,8 @@ interface ITableEditProps {
     khoa: number;
   } | null;
   queryKey: string;
+  isMutateSavingPending?: boolean;
+  isMutateNopDiemPending?: boolean;
 }
 
 const TableEdit = forwardRef(
@@ -288,7 +291,10 @@ const TableEdit = forwardRef(
       lopHocPhan,
       filter,
       queryKey,
-      handleNopDiem
+      handleNopDiem,
+      isMutateSavingPending,
+      isMutateNopDiemPending
+
     }: ITableEditProps,
     ref
   ) => {
@@ -312,38 +318,12 @@ const TableEdit = forwardRef(
       return newRow;
     }, []);
     const queryClient = useQueryClient();
-    const handleCellClick = React.useCallback((params: GridCellParams, event: React.MouseEvent) => {
-      if (!params.isEditable) {
-        return;
-      }
-      if ((event.target as any).nodeType === 1 && !event.currentTarget.contains(event.target as Element)) {
-        return;
-      }
-      setCellModesModel((prevModel: any) => {
-        return {
-          ...Object.keys(prevModel).reduce(
-            (acc, id) => ({
-              ...acc,
-              [id]: Object.keys(prevModel[id]).reduce(
-                (acc2, field) => ({
-                  ...acc2,
-                  [field]: { mode: GridCellModes.View }
-                }),
-                {}
-              )
-            }),
-            {}
-          ),
-          [params.id]: {
-            ...Object.keys(prevModel[params.id] || {}).reduce(
-              (acc, field) => ({ ...acc, [field]: { mode: GridCellModes.View } }),
-              {}
-            ),
-            [params.field]: { mode: GridCellModes.Edit }
-          }
-        };
-      });
-    }, []);
+   const handleCellClick = React.useCallback((params: GridCellParams) => {
+  if (!params.isEditable) return;
+  setCellModesModel({
+    [params.id]: { [params.field]: { mode: GridCellModes.Edit } }
+  });
+}, []);
     const handleCellModesModelChange = React.useCallback((newModel: GridCellModesModel) => {
       setCellModesModel(newModel);
     }, []);
@@ -440,11 +420,16 @@ const TableEdit = forwardRef(
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{
-          duration: 0.5,
-          ease: [0.22, 1, 0.36, 1]
+          duration: 0.1,
         }}
-        className='flex flex-col gap-4'
-        style={{ height: 'calc(100vh - 200px)' }}
+        className='flex flex-col gap-4 relative'
+        style={{ 
+                  display: 'flex',
+        flexDirection: 'column',
+      minHeight: '500px', // ✅ Minimum height
+      maxHeight: '600px',
+        overflow: 'hidden',
+         }}
       >
         <Box className='flex w-full gap-4'>
           <Box className='flex-1 gap-4 flex flex-col p-4 border border-gray-200 rounded-lg shadow-sm light:bg-white'>
@@ -511,7 +496,6 @@ const TableEdit = forwardRef(
                         ...prev,
                         hocKy: value?.id,
                         lopHocPhan: null
-              
                       }));
                       setValue("lopHocPhan", null);
                     }}
@@ -527,7 +511,7 @@ const TableEdit = forwardRef(
                     fullWidth
                     name={'lopHocPhan'}
                     control={control}
-                    placeholder={'Chọn lớp'}
+                    placeholder={'Chọn lớp học phần'}
                     data={lopHocPhan ?? []}
                     isLoading={isLoadingLHP}
                     getOptionKey={(option) => option.id}
@@ -563,7 +547,7 @@ const TableEdit = forwardRef(
           <Box className='grid grid-cols-2 gap-4 p-4 border border-gray-200 rounded-lg shadow-sm light:bg-white'>
             <LoadingButton
               disabled={false}
-              loading={false}
+              loading={isMutateNopDiemPending}
               startIcon={<AddToPhotosIcon />}
               loadingPosition='start'
               onClick={() => handleNopDiem?.()}
@@ -573,7 +557,7 @@ const TableEdit = forwardRef(
             </LoadingButton>
             <LoadingButton
               disabled={false}
-              loading={false}
+              loading={isMutateSavingPending}
               startIcon={<SaveIcon />}
               loadingPosition='start'
               onClick={() => saveChanges()}
@@ -610,7 +594,7 @@ const TableEdit = forwardRef(
             </LoadingButton>
           </Box>
         </Box>
-
+          
         <DataGrid
           apiRef={apiRef}
           rows={row}
@@ -646,7 +630,7 @@ const TableEdit = forwardRef(
           showCellVerticalBorder
           showToolbar
           disableColumnResize
-          autoHeight={true}
+          autoHeight={false}
           disableColumnMenu
           hideFooter
           density='compact'
@@ -658,11 +642,37 @@ const TableEdit = forwardRef(
           }}
              className='!border-gray-200 shadow-sm'
           sx={(theme) => ({
+             flex: 1,
             height: '100%',
             overflowY: 'auto',
-            '& .MuiDataGrid-editInputCell': {
-              margin: 0
+            '& input[type=number]::-webkit-inner-spin-button, & input[type=number]::-webkit-outer-spin-button': {
+      WebkitAppearance: 'none',
+      margin: 0,
+    },
+    '& input[type=number]': {
+      MozAppearance: 'textfield',
+    },
+            '& .MuiInputBase-input':{
+              padding: '0 4px',
+              height: '100%',
+              boxSizing: 'border-box'
             },
+            '& .MuiDataGrid-editInputCell': {
+              margin: 0,
+              cursor: "pointer"
+            },
+            '& .MuiDataGrid-main': {
+            overflow: 'auto', // ✅ Enable scrolling
+          flex: 1
+          },
+             '& .MuiDataGrid-cell': {
+            whiteSpace: 'break-spaces',
+            wordBreak: 'break-word',
+            overflowWrap: 'break-word',
+            lineHeight: '1.5',
+            padding: '4px 3px',
+            display: 'flex',
+            alignItems: 'center',  },
             [`& .${gridClasses.columnHeaders}`]: {
               borderBottom: `1px solid ${theme.palette.grey[600]}`
             },
@@ -711,6 +721,32 @@ const TableEdit = forwardRef(
           })}
           loading={isSaving || isLoading}
         />
+        <Box
+          className="absolute flex items-center gap-2  right-0 top-43"
+          sx={{
+            background: 'rgba(255,255,255,0.95)',
+            borderRadius: 2,
+            boxShadow: 2,
+            px: 2,
+            py: 1,
+            zIndex: 20,
+            border: '1px solid #ffe082'
+          }}
+        >
+          <WarningAmberIcon sx={{ color: '#ff9800', fontSize: 18 }} />
+          <Typography
+            variant="body2"
+            sx={{
+              fontSize: 12,
+              color: '#b26a00',
+              fontWeight: 500,
+              letterSpacing: 0.1,
+              lineHeight: 1.4
+            }}
+          >
+            Cảnh báo: Lưu ý sau khi nhập điểm nhớ ấn ra ngoài bảng để lưu thao tác.
+          </Typography>
+        </Box>
       </motion.div>
     );
   }

@@ -26,8 +26,8 @@ import SaveIcon from '@mui/icons-material/Save';
 import { darken } from '@mui/material/styles';
 import { GridApiCommunity } from '@mui/x-data-grid/internals';
 import { motion } from 'motion/react';
-import { Box, Popover, Typography } from '@mui/material';
-import { HocKyLopHocPhan, LoaiChuongTrinhDaoTao, LoaiMonHoc, weekOptions, yearOptions } from '@/types/options';
+import { Box, Grid, Popover, Typography } from '@mui/material';
+import { HocKyLopHocPhan, IOption, LoaiChuongTrinhDaoTao, LoaiMonHoc, weekOptions, yearOptions } from '@/types/options';
 import { ToolbarButton } from '@mui/x-data-grid';
 import SearchIcon from '@mui/icons-material/Search';
 import clsx from 'clsx';
@@ -49,6 +49,7 @@ import { fi } from 'zod/v4/locales';
 import { Add } from '@mui/icons-material';
 import { CalendarFold } from 'lucide-react';
 import { LichBieuService } from '@/services/LichBieuService';
+import { useForm } from 'react-hook-form';
 function TextInput(props: React.InputHTMLAttributes<HTMLInputElement>) {
   return (
     <input
@@ -221,6 +222,7 @@ interface ImportFileProps {
   File: File | null;
 }
 interface ITableEditProps {
+  isLoadingMutationCopy?: boolean;
   row: any[];
   columns: GridColDef[];
   apiRef?: any;
@@ -297,9 +299,17 @@ interface ITableEditProps {
   handleOpenModal?: () => void;
 }
 
+interface IFormData{
+  NamHoc : IOption | null;
+  Tuan: IOption | null;
+  HocKy: IOption | null;
+  LopHoc: IOption | null;
+}
+
 const TableEdit = forwardRef(
   (
     {
+      isLoadingMutationCopy,
       columns,
       row,
       isLoading,
@@ -405,7 +415,9 @@ const TableEdit = forwardRef(
         }));
       }
     }, [user]);
-
+    const {setValue,control} = useForm<IFormData>({
+      mode: 'onChange',
+    })
     return (
       <motion.div
         initial={{ opacity: 0 }}
@@ -423,12 +435,15 @@ const TableEdit = forwardRef(
           <Box className='flex-1 gap-4 flex justify-center items-center p-4 border border-gray-200 rounded-lg shadow-sm light:bg-white'>
             <Box className='flex flex-col gap-4 w-full'>
               <Box className='flex gap-4 w-full'>
-                <Box className='flex justify-center items-center gap-3 w-full'>
-                  <Typography className='!text-[16px] !leading-6 !font-semibold'>Năm học</Typography>
-                  <Box className='flex-1'>
+                <Grid container className='flex justify-center items-center gap-3 w-full'>
+                 <Grid size={3}>
+                   <Typography className='!text-[16px] !leading-6 !font-semibold'>Năm học</Typography>
+                 </Grid>
+                  <Grid size={9} className='flex-1'>
                     <InputSelect2
                       fullWidth
-                      name={'Năm'}
+                      name={'NamHoc'}
+                      control={control}
                       placeholder={'Chọn năm học'}
                       data={yearOptions ?? []}
                       getOptionKey={(option) => option.id}
@@ -441,16 +456,24 @@ const TableEdit = forwardRef(
                             name: value?.name
                           }
                         }));
+                        setfilter((prev: any) => ({
+                          ...prev,
+                          tuan: null
+                        }));
+                        setValue('Tuan', null);
                       }}
                     />
-                  </Box>
-                </Box>
-                <Box className='flex justify-center items-center gap-3 w-full'>
-                  <Typography className='!text-[16px] !leading-6 !font-semibold'>Tuần</Typography>
-                  <Box className='flex-1'>
+                  </Grid>
+                </Grid>
+                <Grid container className='flex justify-center items-center gap-3 w-full'>
+                  <Grid size={3}>
+                    <Typography className='!text-[16px] !leading-6 !font-semibold'>Tuần</Typography>
+                  </Grid>
+                  <Grid size={9}>
                     <InputSelect2
                       fullWidth
                       name={'Tuan'}
+                      control={control}
                       placeholder={'Chọn tuần'}
                       data={tuans ?? []}
                       isLoading={isLoadingTuan}
@@ -466,15 +489,18 @@ const TableEdit = forwardRef(
                         }));
                       }}
                     />
-                  </Box>
-                </Box>
+                  </Grid>
+                </Grid>
               </Box>
               <Box className='flex gap-4 w-full'>
-                <Box className='flex justify-start items-center gap-3 w-full'>
-                  <Typography className='!text-[16px] !leading-6 !font-semibold'>Học kỳ</Typography>
-                  <Box className='flex-1'>
+                <Grid container className='flex justify-start items-center gap-3 w-full'>
+                 <Grid size={3}>
+                   <Typography className='!text-[16px] !leading-6 !font-semibold'>Học kỳ</Typography>
+                 </Grid>
+                  <Grid size={9} className='flex-1'>
                     <InputSelect2
                       fullWidth
+                      control={control}
                       isDisabled={!isAdmin}
                       name={'HocKy'}
                       placeholder={'Chọn học kỳ'}
@@ -488,14 +514,17 @@ const TableEdit = forwardRef(
                         }));
                       }}
                     />
-                  </Box>
-                </Box>
-                <Box className='flex justify-center items-center gap-3 w-full'>
-                  <Typography className='!text-[16px] !leading-6 !font-semibold'>Lớp học</Typography>
-                  <Box className='flex-1'>
+                  </Grid>
+                </Grid>
+                <Grid container className='flex justify-center items-center gap-3 w-full'>
+                  <Grid size={3}>
+                    <Typography className='!text-[16px] !leading-6 !font-semibold'>Lớp học</Typography>
+                  </Grid>
+                  <Grid size={9}>
                     <InputSelect2
                       fullWidth
                       name={'LopHoc'}
+                      control={control}
                       placeholder={'Chọn lớp học'}
                       data={lophocs ?? []}
                       isLoading={isLoadingLH}
@@ -511,8 +540,8 @@ const TableEdit = forwardRef(
                         }));
                       }}
                     />
-                  </Box>
-                </Box>
+                  </Grid>
+                </Grid>
               </Box>
             </Box>
             <Box className='flex flex-col gap-4 items-center h-full justify-start'>
@@ -538,9 +567,11 @@ const TableEdit = forwardRef(
             </Box>
             <Box className='flex flex-[3] items-center justify-start w-full gap-3'>
               <Box className='flex flex-col gap-2 flex-2 w-full'>
-                <Box className='flex justify-center items-center gap-3 w-full'>
-                  <Typography className='!text-[16px] !leading-6 !font-semibold'>Vào</Typography>
-                  <Box className='flex-1'>
+                <Grid container className='flex justify-center items-center gap-3 w-full'>
+                 <Grid size={3}>
+                   <Typography className='!text-[16px] !leading-6 !font-semibold'>Từ</Typography>
+                 </Grid>
+                  <Grid size={9} className='flex-1'>
                     <InputSelect2
                       fullWidth
                       name={'TuanVao'}
@@ -556,11 +587,13 @@ const TableEdit = forwardRef(
                         }));
                       }}
                     />
-                  </Box>
-                </Box>
-                <Box className='flex justify-center items-center gap-3 w-full'>
-                  <Typography className='!text-[16px] !leading-6 !font-semibold'>Đến</Typography>
-                  <Box className='flex-1'>
+                  </Grid>
+                </Grid>
+                <Grid container className='flex justify-center items-center gap-3 w-full'>
+                 <Grid size={3}>
+                   <Typography className='!text-[16px] !leading-6 !font-semibold'>Đến</Typography>
+                 </Grid>
+                  <Grid size={9} className='flex-1'>
                     <InputSelect2
                       fullWidth
                       name={'TuanDen'}
@@ -576,16 +609,17 @@ const TableEdit = forwardRef(
                         }));
                       }}
                     />
-                  </Box>
-                </Box>
+                  </Grid>
+                </Grid>
               </Box>
               <Box className='flex-1 w-full min-md:flex'>
-                <Button
+                <LoadingButton
+                loading={isLoadingMutationCopy}
                   onClick={() => handleCopy?.()}
                   className='!border !border-gray-300 !rounded-md !bg-blue-500 !text-white hover:!bg-blue-600 transition-all !duration-200 !ease-in-out !shadow-sm !leading-6 hover:transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed'
                 >
                   Sao chép
-                </Button>
+                </LoadingButton>
               </Box>
             </Box>
           </Box>

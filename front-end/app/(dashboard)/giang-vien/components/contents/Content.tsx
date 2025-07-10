@@ -317,7 +317,7 @@ const Content = ({ queryKey, khoaData, tinhTrangServer }: ContentProps) => {
         headerName: 'Họ và tên',
         headerAlign: 'left',
         type: 'string',
-        minWidth: 200,
+        minWidth: 180,
         disableColumnMenu: true,
         sortable: false,
         display: 'flex',
@@ -368,20 +368,6 @@ const Content = ({ queryKey, khoaData, tinhTrangServer }: ContentProps) => {
         display: 'flex',
         align: 'left',
         flex: 1
-      },
-      {
-        field: 'createdAt',
-        headerName: 'Ngày tạo',
-        headerAlign: 'left',
-        type: 'string',
-        minWidth: 100,
-        disableColumnMenu: true,
-        sortable: true,
-        display: 'flex',
-        flex: 0.8,
-        valueFormatter: (params: any) => {
-          return formatDateBirth(params);
-        }
       },
       {
         field: 'role',

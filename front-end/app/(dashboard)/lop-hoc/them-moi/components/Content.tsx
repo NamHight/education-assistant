@@ -56,7 +56,7 @@ const Content: FC<ContentProps> = ({ initialData, anotherData }) => {
       <ContentForm
         onSubmit={handleSubmitForm}
         initialData={{
-          giangViens: anotherData.giangViens || [],
+          khoas: anotherData.khoas || [],
           nganhs: anotherData.nganhs || []
         }}
       />

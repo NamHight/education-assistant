@@ -81,11 +81,11 @@ const Content = ({ queryKey }: IContentProps) => {
   });
   const [isOpenPopover, setisOpenPopover] = useState<boolean>(false);
   const { data:queryData, isLoading } = useQuery({
-    queryKey: [queryKey, filterModel,getValues("lopHocPhan")?.id],
+    queryKey: [queryKey, filterModel,filter?.lopHocPhan?.id],
     queryFn: async () => {
       const searchKeyWord = handleTextSearch(filterModel?.quickFilterValues as any[]);
       let params: IParamChiTietLopHocPhan = {
-        lopHocPhanId: getValues("lopHocPhan")?.id as any,
+        lopHocPhanId: filter?.lopHocPhan?.id as any,
       };
       if (searchKeyWord) {
         params = {
@@ -99,29 +99,28 @@ const Content = ({ queryKey }: IContentProps) => {
       );
       return result;
     },
-    enabled: !!getValues("lopHocPhan")?.id && !!getValues("khoa")?.id && !!getValues("hocKy")?.id && !!getValues("loaiChuongTrinh")?.id,
-    placeholderData: (prev) => prev,
+    enabled: !!filter?.lopHocPhan?.id && !!filter?.khoa && !!filter?.hocKy && !!filter?.loaiChuongTrinh,
     refetchOnWindowFocus: false,
     gcTime: 0
   });
   const data = useMemo(() => {
-  const hasRequiredValues = !!getValues("lopHocPhan")?.id && 
-                           !!getValues("khoa")?.id && 
-                           !!getValues("hocKy")?.id && 
-                           !!getValues("loaiChuongTrinh")?.id;
-  
+  const hasRequiredValues = !!filter?.lopHocPhan?.id && 
+                           !!filter?.khoa && 
+                           !!filter?.hocKy && 
+                           !!filter?.loaiChuongTrinh;
+
   if (!hasRequiredValues) {
     return { data: [] };
   }
   return queryData || [];
-}, [queryData, getValues("lopHocPhan")?.id, getValues("khoa")?.id, getValues("hocKy")?.id, getValues("loaiChuongTrinh")?.id]);
+}, [queryData, filter?.lopHocPhan?.id, filter?.khoa, filter?.hocKy, filter?.loaiChuongTrinh]);
   const { data: lhp, isLoading: isLoadingLHP } = useQuery({
-    queryKey: ['lhp-list',getValues("khoa")?.id, getValues("hocKy")?.id, getValues("loaiChuongTrinh")?.id, user?.id],
+    queryKey: ['lhp-list',filter?.khoa, filter?.hocKy, filter?.loaiChuongTrinh, user?.id],
     queryFn: async () => {
       const params: IParamLopHocPhan2 = {
-        khoa: getValues("khoa")?.id,
-        hocky: getValues("hocKy")?.id,
-        loaiChuongTrinhDaoTao: getValues("loaiChuongTrinh")?.id,
+        khoa: filter?.khoa,
+        hocky: filter?.hocKy,
+        loaiChuongTrinhDaoTao: filter?.loaiChuongTrinh,
         giangVienId: user?.id
       };
       const result = await LopHocPhanService.getLopHocPhanByGiangVienId(params);
@@ -130,15 +129,14 @@ const Content = ({ queryKey }: IContentProps) => {
     select: (data) => {
       return data?.map((item: any) => ({
         id: item.id,
-        name: item.maHocPhan,
+        name: item.maHocPhan.split("_")[0],
         loaiMonHoc: item.monHoc?.chiTietChuongTrinhDaoTao?.loaiMonHoc,
         monHocId: item.monHocId,
         chuongTrinhDaoTaoId: item.monHoc?.chiTietChuongTrinhDaoTao?.chuongTrinhDaoTao?.id
       }));
     },
-    placeholderData: (prev) => prev,
     refetchOnWindowFocus: false,
-    enabled: !!user && !!getValues("khoa")?.id && !!getValues("hocKy")?.id && !!getValues("loaiChuongTrinh")?.id
+    enabled: !!user && !!filter?.khoa && !!filter?.hocKy && !!filter?.loaiChuongTrinh
   });
 
   useEffect(() => {
@@ -194,11 +192,11 @@ const Content = ({ queryKey }: IContentProps) => {
         headerName: 'STT',
         type: 'number',
         headerAlign: 'left',
-        minWidth: 80,
+        minWidth: 50,
         flex: 0.4,
         sortable: false,
         display: 'flex',
-        align: 'left',
+        align: 'center',
         editable: false,
         disableColumnMenu: true
       },
@@ -207,7 +205,7 @@ const Content = ({ queryKey }: IContentProps) => {
         headerName: 'Mã số',
         type: 'string',
         headerAlign: 'left',
-        minWidth: 100,
+        minWidth: 120,
         flex: 1,
         sortable: false,
         display: 'flex',
@@ -228,7 +226,7 @@ const Content = ({ queryKey }: IContentProps) => {
         headerName: 'Họ tên',
         type: 'string',
         headerAlign: 'left',
-        minWidth: 100,
+        minWidth: 120,
         flex: 1,
         sortable: false,
         display: 'flex',
@@ -281,33 +279,34 @@ const Content = ({ queryKey }: IContentProps) => {
         type: 'number',
         sortable: false,
         display: 'flex',
-        align: 'left',
+      align: 'center',
         editable: true,
         disableColumnMenu: true,
         preProcessEditCellProps: (params) => {
-          const value = Number(params.props.value);
-          return { ...params.props, error: isNaN(value) || value < 1 || value > 10 };
+           const rawValue = params.props.value;
+            if (rawValue === '' || rawValue === null || rawValue === undefined) {
+              return { ...params.props, value: null, error: false };
+            }
+            const value = Number(rawValue);
+            console.log('value', params.hasChanged);
+          if (isNaN(value) || value < 1 || value > 10) {
+              return { ...params.props, value: null, error: false };
+            }
+            return { ...params.props, value, error: false };
         },
-        renderEditCell: (params) => (
-          <Box className='w-full h-full relative'>
-            <input
-              type='number'
-              value={params.value ?? ''}
-              onChange={(e) =>
-                params.api.setEditCellValue({ id: params.id, field: params.field, value: e.target.value })
-              }
-              style={{
-                width: '100%',
-                height: '100%',
-                padding: '8px',
-                MozAppearance: 'textfield',
-                border: params.error ? '2px solid red' : undefined
-              }}
-              className='hide-number-spin'
-            />
-            {params.error ? <WarningAmberIcon className='absolute top-1 right-1 text-red-500 h-4 w-4' /> : null}
-          </Box>
-        )
+        valueGetter: (params) => {
+          if(params === null || params === '' || params === undefined){
+            return null;
+          }
+          const convertNumber = Number(params);
+          if (isNaN(convertNumber) || convertNumber < 1 || convertNumber > 10) {
+            return null;
+          }
+          return params
+        },
+        cellClassName: (params) => {
+          return 'cursor-pointer hover:bg-gray-100 transition-colors duration-200 ease-in-out';
+        }
       },
       {
         field: 'diemTrungBinh',
@@ -318,33 +317,34 @@ const Content = ({ queryKey }: IContentProps) => {
         type: 'number',
         sortable: false,
         display: 'flex',
-        align: 'left',
+         align: 'center',
         editable: true,
         disableColumnMenu: true,
-        preProcessEditCellProps: (params) => {
-          const value = Number(params.props.value);
-          return { ...params.props, error: isNaN(value) || value < 1 || value > 10 };
+        cellClassName: (params) => {
+          return 'cursor-pointer hover:bg-gray-100 transition-colors duration-200 ease-in-out';
         },
-        renderEditCell: (params) => (
-          <Box className='w-full h-full relative'>
-            <input
-              type='number'
-              value={params.value ?? ''}
-              onChange={(e) =>
-                params.api.setEditCellValue({ id: params.id, field: params.field, value: e.target.value })
-              }
-              style={{
-                width: '100%',
-                height: '100%',
-                padding: '8px',
-                MozAppearance: 'textfield',
-                border: params.error ? '2px solid red' : undefined
-              }}
-              className='hide-number-spin'
-            />
-            {params.error ? <WarningAmberIcon className='absolute top-1 right-1 text-red-500 h-4 w-4' /> : null}
-          </Box>
-        )
+            preProcessEditCellProps: (params) => {
+           const rawValue = params.props.value;
+            if (rawValue === '' || rawValue === null || rawValue === undefined) {
+              return { ...params.props, value: null, error: false };
+            }
+            const value = Number(rawValue);
+            console.log('value', params.hasChanged);
+          if (isNaN(value) || value < 1 || value > 10) {
+              return { ...params.props, value: null, error: false };
+            }
+            return { ...params.props, value, error: false };
+        },
+        valueGetter: (params) => {
+          if(params === null || params === '' || params === undefined){
+            return null;
+          }
+          const convertNumber = Number(params);
+          if (isNaN(convertNumber) || convertNumber < 1 || convertNumber > 10) {
+            return null;
+          }
+          return params
+        }
       },
       {
         field: 'diemThi1',
@@ -355,33 +355,34 @@ const Content = ({ queryKey }: IContentProps) => {
         type: 'number',
         sortable: false,
         display: 'flex',
-        align: 'left',
+         align: 'center',
         editable: true,
         disableColumnMenu: true,
-        preProcessEditCellProps: (params) => {
-          const value = Number(params.props.value);
-          return { ...params.props, error: isNaN(value) || value < 1 || value > 10 };
+           preProcessEditCellProps: (params) => {
+           const rawValue = params.props.value;
+            if (rawValue === '' || rawValue === null || rawValue === undefined) {
+              return { ...params.props, value: null, error: false };
+            }
+            const value = Number(rawValue);
+            console.log('value', params.hasChanged);
+          if (isNaN(value) || value < 1 || value > 10) {
+              return { ...params.props, value: null, error: false };
+            }
+            return { ...params.props, value, error: false };
         },
-        renderEditCell: (params) => (
-          <Box className='w-full h-full relative'>
-            <input
-              type='number'
-              value={params.value ?? ''}
-              onChange={(e) =>
-                params.api.setEditCellValue({ id: params.id, field: params.field, value: e.target.value })
-              }
-              style={{
-                width: '100%',
-                height: '100%',
-                padding: '8px',
-                MozAppearance: 'textfield',
-                border: params.error ? '2px solid red' : undefined
-              }}
-              className='hide-number-spin'
-            />
-            {params.error ? <WarningAmberIcon className='absolute top-1 right-1 text-red-500 h-4 w-4' /> : null}
-          </Box>
-        )
+        valueGetter: (params) => {
+          if(params === null || params === '' || params === undefined){
+            return null;
+          }
+          const convertNumber = Number(params);
+          if (isNaN(convertNumber) || convertNumber < 1 || convertNumber > 10) {
+            return null;
+          }
+          return params
+        },
+        cellClassName: (params) => {
+          return 'cursor-pointer hover:bg-gray-100 transition-colors duration-200 ease-in-out';
+        }
       },
       {
         field: 'diemThi2',
@@ -392,33 +393,34 @@ const Content = ({ queryKey }: IContentProps) => {
         type: 'number',
         sortable: false,
         display: 'flex',
-        align: 'left',
+          align: 'center',
         editable: true,
         disableColumnMenu: true,
-        preProcessEditCellProps: (params) => {
-          const value = Number(params.props.value);
-          return { ...params.props, error: isNaN(value) || value < 1 || value > 10 };
+            preProcessEditCellProps: (params) => {
+           const rawValue = params.props.value;
+            if (rawValue === '' || rawValue === null || rawValue === undefined) {
+              return { ...params.props, value: null, error: false };
+            }
+            const value = Number(rawValue);
+            console.log('value', params.hasChanged);
+          if (isNaN(value) || value < 1 || value > 10) {
+              return { ...params.props, value: null, error: false };
+            }
+            return { ...params.props, value, error: false };
         },
-        renderEditCell: (params) => (
-          <Box className='w-full h-full relative'>
-            <input
-              type='number'
-              value={params.value ?? ''}
-              onChange={(e) =>
-                params.api.setEditCellValue({ id: params.id, field: params.field, value: e.target.value })
-              }
-              style={{
-                width: '100%',
-                height: '100%',
-                padding: '8px',
-                MozAppearance: 'textfield',
-                border: params.error ? '2px solid red' : undefined
-              }}
-              className='hide-number-spin'
-            />
-            {params.error ? <WarningAmberIcon className='absolute top-1 right-1 text-red-500 h-4 w-4' /> : null}
-          </Box>
-        )
+        valueGetter: (params) => {
+          if(params === null || params === '' || params === undefined){
+            return null;
+          }
+          const convertNumber = Number(params);
+          if (isNaN(convertNumber) || convertNumber < 1 || convertNumber > 10) {
+            return null;
+          }
+          return params
+        },
+        cellClassName: (params) => {
+          return 'cursor-pointer hover:bg-gray-100 transition-colors duration-200 ease-in-out';
+        }
       },
       {
         field: 'diemTongKet1',
@@ -429,7 +431,7 @@ const Content = ({ queryKey }: IContentProps) => {
         type: 'number',
         sortable: false,
         display: 'flex',
-        align: 'left',
+        align: 'center',
         editable: false,
         disableColumnMenu: true,
         renderCell: (params) => {
@@ -460,7 +462,7 @@ const Content = ({ queryKey }: IContentProps) => {
         type: 'number',
         sortable: false,
         display: 'flex',
-        align: 'left',
+         align: 'center',
         editable: false,
         disableColumnMenu: true,
         renderCell: (params) => {
@@ -511,6 +513,8 @@ const Content = ({ queryKey }: IContentProps) => {
               onChange={(e) =>
                 params.api.setEditCellValue({ id: params.id, field: params.field, value: e.target.value })
               }
+              className="
+              !border-0 outline-none w-full h-full bg-transparent"
               style={{
                 width: '100%',
                 height: '100%',
@@ -666,6 +670,8 @@ const lopHocPhan = getValues('lopHocPhan');
         filter={filter}
         control={control}
         setValue={setValue}
+        isMutateSavingPending={mutateSaving.isPending}
+        isMutateNopDiemPending={mutationNopDiem.isPending}
         // contentPopover={handleShowFilter}
         // isOpen={isOpenPopover}
         // handleClick={handleOpenPopover}

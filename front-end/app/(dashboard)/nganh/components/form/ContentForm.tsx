@@ -43,11 +43,13 @@ import { Khoa } from '@/models/Khoa';
 import { MonHoc } from '@/models/MonHoc';
 import TextArea from '@/components/textarea/TextArea';
 import { Nganh } from '@/models/Nganh';
+import { NganhService } from '@/services/NganhService';
 
 export interface IFormData {
   TenNganh: string;
   MoTa: string;
   Khoa: IOption;
+  Nganh?: IOption;
 }
 
 interface IContentFormProps {
@@ -57,6 +59,8 @@ interface IContentFormProps {
 }
 
 const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => {
+  const [khoaId, setKhoaId] = React.useState<number | string | null>(null); // State to hold the selected Khoa ID
+
   const schema = useMemo(() => {
     return yup.object().shape({
       TenNganh: yup.string().max(200, 'Tên ngành không được quá 200 ký tự').required('Tên ngành không được để trống'),
@@ -64,11 +68,30 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
       Khoa: yup.object().required('Khoa không được để trống')
     });
   }, [data]);
+    const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+    control,
+    getValues,
+    watch
+  } = useForm<IFormData | any>({
+    mode: 'onChange',
+    resolver: yupResolver(schema),
+    defaultValues: {
+      MaNganh: '',
+      TenNganh: '',
+      MoTa: '',
+      Khoa: null,
+      Nganh: null
+    }
+  });
   const { data: khoas, isLoading: isLoadingKhoa } = useQuery({
     queryKey: ['khoas'],
     queryFn: async () => {
-      const response = await KhoaService.getAllKhoa();
-      return response?.data;
+      const response = await KhoaService.getKhoaNoPage();
+      return response;
     },
     initialData: initialData?.khoas,
     select: (data) => {
@@ -79,25 +102,29 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
     },
     refetchOnWindowFocus: false
   });
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    reset,
-    control
-  } = useForm<IFormData | any>({
-    mode: 'onChange',
-    resolver: yupResolver(schema),
-    defaultValues: {
-      MaNganh: '',
-      TenNganh: '',
-      MoTa: '',
-      Khoa: null
-    }
+const selectedKhoa = watch("Khoa")?.id;
+useEffect(() => {
+  setKhoaId(selectedKhoa);
+}, [selectedKhoa]);
+const { data: nganhs, isLoading: isLoadingNganh } = useQuery({
+    queryKey: ['nganhs', khoaId],
+    queryFn: async () => {
+      const response = await NganhService.getAllNganhByKhoaId(khoaId);
+      return response;
+    },
+    initialData: initialData?.nganhs,
+    select: (data) => {
+      return data.map((item: any) => ({
+        id: item.id,
+        name: item.tenNganh
+      }));
+    },
+    refetchOnWindowFocus: false,
+    enabled: !!khoaId
   });
   const handleSubmitForm = (formData: IFormData) => {
     const form = new FormData();
-
+    console.log('formData', formData);
     if (data?.id) {
       form.append('Id', data.id);
     }
@@ -109,6 +136,9 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
     }
     if (formData?.Khoa) {
       form.append('KhoaId', String(formData.Khoa?.id));
+    }
+    if (formData?.Nganh) {
+      form.append('NganhChaId', String(formData.Nganh?.id));
     }
     if (onSubmit) {
       onSubmit(form);
@@ -123,7 +153,13 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
         Khoa: {
           id: data.khoa?.id || '',
           name: data.khoa?.tenKhoa || ''
-        }
+        },
+        Nganh: data.nganhCha
+          ? {
+              id: data.nganhCha.id,
+              name: data.nganhCha.tenNganh
+            }
+          : null
       });
     }
   }, [reset, data]);
@@ -152,6 +188,20 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
             getOptionKey={(option) => option.id}
             getOptionLabel={(option: any) => option.name}
             error={(errors.Khoa as any)?.message}
+          />
+        </Grid>
+        <Grid size={{ xs: 12, sm: 6, md: 6, lg: 6 }}>
+          <InputSelect2
+            control={control}
+            fullWidth
+            name={'Nganh'}
+            placeholder={'Chọn ngành'}
+            title={'Ngành'}
+            isLoading={isLoadingNganh}
+            data={nganhs ?? []}
+            getOptionKey={(option) => option.id}
+            getOptionLabel={(option: any) => option.name}
+            error={(errors.Nganh as any)?.message}
           />
         </Grid>
         <Grid size={{ xs: 12, sm: 6, md: 12, lg: 12 }}>

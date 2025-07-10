@@ -23,7 +23,6 @@ public class HocBaController : ControllerBase
     [HttpPost("nop-diem")]
     public async Task<ActionResult> UpdateListHocBaAsync([FromBody] RequestListUpdateHocbaDto model)
     {
-        Console.WriteLine(JsonSerializer.Serialize(model));
         if (model == null) return BadRequest("Danh sách truyền lên bị null hoặc rỗng.");
         await _serviceMaster.HocBa.UpdateListHocBaAsync(model);
         return NoContent();
@@ -36,6 +35,7 @@ public class HocBaController : ControllerBase
         Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(result.page));
         return Ok(result.data);
     }
+
     [HttpGet("by-sinh-vien")]
     public async Task<ActionResult> GetAllHocBaAsync([FromQuery] ParamHocBaBySinhVienDto param)
     {

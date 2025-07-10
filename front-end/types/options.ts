@@ -149,7 +149,14 @@ const years = Array.from({ length: 15 }, (_, i) => currentYear - 14 + i);
 export const yearOptions: IOption[] = years.map((year) => ({
   id: year,
   name: year.toString()
+})).toReversed();
+
+const yearsCurrent = Array.from({ length: 4 }, (_, i) => currentYear - 3 + i);
+export const yearOptionsCurrent: IOption[] = yearsCurrent.map((year) => ({
+  id: year,
+  name: year.toString()
 }));
+
 export const weekOptions: IOption[] = Array.from({ length: 52 }, (_, i) => {
   return {
     id: i + 1,
@@ -208,7 +215,6 @@ export enum TinhTrangHocTapSinhVienEnum {
   KHA = 3,
   GIOI = 4,
   XUAT_SAC = 5,
-  DINH_CHI = 6
 }
 
 export const TinhTrangHocTapSinhVien: IOption[] = [
@@ -217,7 +223,6 @@ export const TinhTrangHocTapSinhVien: IOption[] = [
   { id: TinhTrangHocTapSinhVienEnum.KHA, name: 'Khá' },
   { id: TinhTrangHocTapSinhVienEnum.GIOI, name: 'Giỏi' },
   { id: TinhTrangHocTapSinhVienEnum.XUAT_SAC, name: 'Xuất sắc' },
-  { id: TinhTrangHocTapSinhVienEnum.DINH_CHI, name: 'Đình chỉ' }
 ];
 
 export const ThuTrongTuan: IOption[] = [

@@ -1,7 +1,7 @@
 'use client';
 
 import ToolTipImage from '@/components/tooltips/ToolTipImage';
-import { Box, MenuItem, Typography } from '@mui/material';
+import { alpha, Autocomplete, Box, MenuItem, TextField, Typography } from '@mui/material';
 import { GridActionsCellItem, GridColDef, GridFilterModel } from '@mui/x-data-grid';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { motion } from 'motion/react';
@@ -31,7 +31,7 @@ import ClearIcon from '@mui/icons-material/Clear';
 import RestoreIcon from '@mui/icons-material/Restore';
 import { SinhVienService } from '@/services/SinhVienService';
 import Link from 'next/link';
-import { TrangThaiLopHocPhanEnum, TrangThaiPhongHocEnum, TrangThaiSinhVienEnum } from '@/types/options';
+import { HocKyLopHocPhan, IOption, TrangThaiLopHocPhanEnum, TrangThaiPhongHocEnum, TrangThaiSinhVienEnum } from '@/types/options';
 import { GioiTinhEnum } from '@/models/GiangVien';
 import { KhoaService } from '@/services/KhoaService';
 import { MonHocService } from '@/services/MonHocService';
@@ -43,90 +43,50 @@ import { HocBaService } from '@/services/HocBaService';
 import { KetQuaHocBaEnum } from '@/models/HocBa';
 import InputSelect2 from '@/components/selects/InputSelect2';
 import { LopHocPhanService } from '@/services/LopHocPhanService';
-const Table = dynamic(() => import('@/components/tables/Table'), {
+import Input2 from '@/components/inputs/Input2';
+import { Controller, useForm } from 'react-hook-form';
+import LoadingButton from '@mui/lab/LoadingButton';
+import { LoaiMonHocEnum } from '@/models/MonHoc';
+const Table = dynamic(() => import('../tables/Table'), {
   ssr: false
 });
 interface ContentProps {
   queryKey: string;
   lopHocPhanServer?: any;
 }
-
+interface IFormData {
+  mssv: string;
+  hocky: IOption;
+}
 const Content = ({ queryKey, lopHocPhanServer }: ContentProps) => {
   const router = useRouter();
   const notification = useNotifications();
   const refTable = useRef<{ handleClose: () => void; handleOpenDelete: () => void; handleCloseDelete: () => void }>(
     null
   );
-  const [lopHocPhan, setlopHocPhan] = useState<string | undefined>(undefined);
-  const [paginationModel, setPaginationModel] = useState({
-    page: 0,
-    pageSize: 10
-  });
-  const [sortModel, setSortModel] = useState<Record<string, string | null | undefined>>({
-    field: '',
-    sort: ''
-  });
-  const [filterModel, setFilterModel] = useState<GridFilterModel>({
-    items: []
-  });
+  const [getMssv, setMssv] = useState<string>('');
   const queryClient = useQueryClient();
+  const {register, handleSubmit, watch,control} = useForm<IFormData>({
+    defaultValues: {
+      mssv: '',
+      hocky: HocKyLopHocPhan[0]
+    }
+  });
+  const hocKy = watch('hocky');
   const { data, isLoading, isFetching } = useQuery({
-    queryKey: [queryKey, paginationModel, sortModel, filterModel, lopHocPhan],
+    queryKey: [queryKey, getMssv,hocKy?.id],
     queryFn: async () => {
-      const searchKeyWord = handleTextSearch(filterModel?.quickFilterValues as any[]);
       let params: IParamHocBa = {
-        lopHocPhanId: lopHocPhan,
-        page: paginationModel.page + 1,
-        limit: paginationModel.pageSize,
-        sortBy: 'createdAt',
-        sortByOrder: 'desc'
+        sortBy: 'hocky',
+        sortByOrder: 'asc',
+        mssv: getMssv
       };
-
-      if (sortModel.field && sortModel.sort) {
-        params.sortBy = sortModel.field;
-        params.sortByOrder = sortModel.sort === 'asc' ? 'asc' : 'desc';
-      }
-      if (searchKeyWord) {
-        params = {
-          ...params,
-          search: searchKeyWord
-        };
-      }
-      const result = await HocBaService.getAllHocBa(params);
+      const result = await HocBaService.getAllHocBaByMssv(params);
       return result;
     },
-    placeholderData: (prev) => prev,
     refetchOnWindowFocus: false,
-    enabled: !!lopHocPhan
+    enabled: !!getMssv
   });
-  const { data: lopHocPhans, isLoading: isLoadingLHP } = useQuery({
-    queryKey: ['lop-hoc-phan-list'],
-    queryFn: async () => {
-      const response = await LopHocPhanService.getAllLopHocPhan({
-        trangThai: TrangThaiLopHocPhanEnum.DANG_HOAT_DONG,
-        page: 1,
-        limit: 99999999,
-        sortBy: 'createdAt',
-        sortByOrder: 'desc'
-      });
-      return response?.data;
-    },
-    initialData: lopHocPhanServer,
-    select: (data) => {
-      return data.map((item: any) => ({
-        id: item.id,
-        name: item.maHocPhan
-      }));
-    },
-    refetchOnWindowFocus: false
-  });
-  const rowCountRef = useRef(data?.meta?.TotalCount || 0);
-  const rowCount = useMemo(() => {
-    if (data?.meta?.TotalCount !== undefined) {
-      rowCountRef.current = data?.meta?.TotalCount;
-    }
-    return rowCountRef.current;
-  }, [data?.meta?.TotalCount]);
   const mutationDelete = useMutation({
     mutationFn: async (id: string | number | null) => {
       const result = await HocBaService.deleteHocBa(id);
@@ -161,22 +121,33 @@ const Content = ({ queryKey, lopHocPhanServer }: ContentProps) => {
           return '';
       }
     };
+    const formatLoaiMonHoc = (loaiMonHoc: number) => {
+      switch (loaiMonHoc) {
+        case LoaiMonHocEnum.CHUC_CHUNG_CHI:
+          return 'CCC';
+        case LoaiMonHocEnum.DO_AN_TOT_NGHIEP:
+          return 'DATN';
+          case LoaiMonHocEnum.LY_THUYET:
+          return 'LT';
+        case LoaiMonHocEnum.THUC_HANH:
+          return 'TH';
+        case LoaiMonHocEnum.MODUN:
+          return 'MD';
+        case LoaiMonHocEnum.THUC_TAP_TOT_NGHIEP:
+          return 'TTTN';
+        case LoaiMonHocEnum.KIEN_TAP:
+          return 'KT';
+        case LoaiMonHocEnum.KHOA_LUAN_TOT_NGHIEP:
+          return 'KL';
+        case LoaiMonHocEnum.THI_TOT_NGHIEP_LY_THUYET:
+          return 'TTN LT';
+        case LoaiMonHocEnum.THI_TOT_NGHIEP_THUC_HANH:
+          return 'TTN TH';
+        default:
+          return '';
+      }
+    }
     return [
-      {
-        field: 'id',
-        headerName: 'ID',
-        type: 'number',
-        headerAlign: 'left',
-        minWidth: 80,
-        flex: 0.4,
-        sortable: true,
-        display: 'flex',
-        align: 'left',
-        disableColumnMenu: true,
-        valueFormatter: (params: any) => {
-          return `#${params.slice(0, 2)}`;
-        }
-      },
       {
         field: 'mssv',
         headerName: 'MSSV',
@@ -192,126 +163,235 @@ const Content = ({ queryKey, lopHocPhanServer }: ContentProps) => {
         }
       },
       {
-        field: 'sinhVien',
-        headerName: 'Sinh Viên',
+        field: 'monHoc',
+        headerName: 'Môn học',
         headerAlign: 'left',
         type: 'string',
         minWidth: 200,
         disableColumnMenu: true,
         sortable: false,
         display: 'flex',
-        flex: 1,
+        flex: 2,
         renderCell: (params: any) => {
-          return params.value ? (
-            <Link
-              href={`${APP_ROUTE.SINH_VIEN.EDIT(params.row.sinhVien.id)}`}
-              className='flex items-center gap-2 text-blue-600 hover:text-blue-500'
-            >
-              {params.value?.hoTen}
-            </Link>
+          return params.row.chiTietChuongTrinhDaoTao.monHoc ? (
+            <Typography>
+              {params.row.chiTietChuongTrinhDaoTao.monHoc.tenMonHoc}
+            </Typography>
           ) : null;
         }
       },
       {
-        field: 'lopHocPhan',
-        headerName: 'Lớp học',
-        headerAlign: 'left',
+        field: 'loaiMonHoc',
+        headerName: 'Loại',
         type: 'string',
-        minWidth: 180,
+        minWidth: 50,
         disableColumnMenu: true,
         sortable: false,
         display: 'flex',
-        flex: 1,
-        renderCell: (params: any) => {
-          return params.value ? (
-            <Link
-              href={`${APP_ROUTE.LOP_HOC_PHAN.EDIT(params.row.lopHocPhan.id)}`}
-              className='flex items-center gap-2 text-blue-600 hover:text-blue-500'
-            >
-              {params.value?.maHocPhan}
-            </Link>
-          ) : null;
+        align: 'center',
+        headerAlign: 'center',
+        flex: 0.6,
+        renderCell: (params: any) => {  
+          return formatLoaiMonHoc(params.row?.chiTietChuongTrinhDaoTao.loaiMonHoc)
         }
       },
       {
         field: 'chiTietChuongTrinhDaoTao',
-        headerName: 'Chương trình đào tạo',
-        headerAlign: 'left',
-        type: 'number',
-        minWidth: 180,
+        headerName: 'ĐVHP',
+        type: 'string',
+        minWidth: 50,
         disableColumnMenu: true,
         sortable: false,
         display: 'flex',
-        align: 'left',
-        flex: 1,
+        align: 'center',
+        headerAlign: 'center',
+        flex: 0.6,
         renderCell: (params: any) => {
-          return params.value ? (
-            <Link
-              href={`${APP_ROUTE.CHI_TIET_CHUONG_TRINH_DAO_TAO.EDIT(params.row.chiTietChuongTrinhDaoTao.id)}`}
-              className='flex items-center gap-2 text-blue-600 hover:text-blue-500'
-            >
-              {params.value?.chuongTrinhDaoTao?.tenChuongTrinh}
-            </Link>
+          return params.row.chiTietChuongTrinhDaoTao ? (
+            <Typography>
+              {params.row.chiTietChuongTrinhDaoTao.soTinChi}
+            </Typography>
           ) : null;
         }
       },
       {
         field: 'diemTongKet',
-        headerName: 'Điểm tổng kết',
+        headerName: 'Tổng kết',
         type: 'number',
-        minWidth: 100,
+        minWidth: 50,
         disableColumnMenu: true,
         sortable: false,
         display: 'flex',
-        align: 'left',
-        headerAlign: 'left',
-        flex: 1
-      },
-      {
-        field: 'ketQua',
-        headerName: 'Kết quả',
-        type: 'string',
-        minWidth: 100,
-        disableColumnMenu: true,
-        sortable: false,
-        display: 'flex',
+        align: 'center',
+        headerAlign: 'center',
         flex: 1,
-        renderCell: (params: any) => {
-          return formatKetQua(params.value);
-        }
       }
     ];
   }, [data?.data]);
+  const handleSubmitSearch = (data:IFormData) => {
+    if (data.mssv) {
+      setMssv(data.mssv);
+    } else {
+      setMssv('');
+    }
+    if (refTable.current) {
+      refTable.current.handleClose();
+    }
+  }
   return (
     <Box className='flex flex-col gap-4'>
-      <Box className='flex justify-start gap-4 flex-row  border border-gray-200 rounded-lg p-4 shadow-sm'>
-        <Box className='max-w-sm w-full'>
-          <InputSelect2
-            fullWidth
-            name={'LopHocPhan'}
-            placeholder={'Chọn lớp'}
-            isLoading={isLoadingLHP}
-            data={lopHocPhans ?? []}
-            getOptionKey={(option) => option.id}
-            getOptionLabel={(option: any) => option.name}
-            getOnChangeValue={(value) => {
-              setlopHocPhan(value?.id);
-            }}
+      <Box className='flex justify-between gap-4 flex-row  border border-gray-200 rounded-lg py-3 px-4 shadow-sm'>
+        <form className='max-w-md w-full flex justify-center gap-2 items-center'  onSubmit={handleSubmit(handleSubmitSearch)}>
+          <Input2
+          className='flex-1'
+            {...register('mssv')}
+            placeholder='Nhập mã số sinh viên'
+            isDisabled={false}
+            type='number'
           />
+          <LoadingButton type='submit' className='!border !border-solid !text-[14px] !leading-6' >Tìm kiếm</LoadingButton>
+        </form>
+        <Box className='flex justify-end items-center gap-4 w-full'>
+          <Box className='max-w-[150px] w-full'>
+             <Controller
+            name={'hocky'}
+            control={control}
+            render={({ field }) => (
+              <Autocomplete
+                noOptionsText='Không có dữ liệu'
+                value={field.value}
+                onChange={(event, newValue) => {
+                  field.onChange(newValue);
+                }}
+                clearIcon={<ClearIcon className={'w-4 h-4'} />}
+                slotProps={{
+                  clearIndicator: {
+                    sx: {
+                      padding: '8px !important',
+                      color: (theme) => theme.palette.text.secondary,
+                      border: 'none !important',
+                      backgroundColor: 'transparent !important',
+
+                      '&:hover': {
+                        color: (theme) => theme.palette.error.main,
+                        backgroundColor: (theme) => `${alpha(theme.palette.error.main, 0.08)} !important`
+                      },
+
+                      '& svg': {
+                        fontSize: '1.125rem !important'
+                      }
+                    }
+                  },
+                  popupIndicator: {
+                    sx: {
+                      padding: '8px !important',
+                      color: (theme) => theme.palette.text.secondary,
+                      border: 'none !important',
+                      backgroundColor: 'transparent !important',
+
+                      '&:hover': {
+                        color: (theme) => theme.palette.primary.main,
+                        backgroundColor: (theme) => `${alpha(theme.palette.primary.main, 0.08)} !important`
+                      },
+
+                      // Target icon SVG
+                      '& svg': {
+                        fontSize: '1.25rem !important',
+                        transition: 'all 0.2s ease-in-out'
+                      }
+                    }
+                  },
+
+                  chip: {
+                    className: 'mr-1',
+                    sx: {
+                      '& .MuiSvgIcon-root': {
+                        color: alpha('#dd1313', 0.7),
+                        '&:hover': {
+                          color: '#dd1313'
+                        }
+                      }
+                    }
+                  }
+                }}
+                fullWidth
+                id={`multiple-limit-hoc-ky`}
+                options={HocKyLopHocPhan ?? []}
+                getOptionLabel={(option) => option?.name || ''}
+                getOptionKey={(option) => option?.id || ''}
+                isOptionEqualToValue={(option, value) => {
+                  if (!option || !value) return false;
+                  return option.id === value.id;
+                }}
+                renderInput={(params) => {
+                  return <TextField {...params} placeholder={"Chọn học kỳ"} />;
+                }}
+                sx={(theme) => ({
+                  mb: '3px',
+                  '& .MuiOutlinedInput-root': {
+                    height: 'unset',
+                    margin: '0px',
+                    padding: '4.573px 10px',
+                    borderRadius: '8px !important',
+                    borderColor:  alpha(theme.palette.grey[600], 0.5),
+                    '& fieldset': {
+                      borderColor: alpha(theme.palette.divider, 0.5)
+                    },
+                    '&:hover fieldset': {
+                      borderColor: alpha(theme.palette.primary.main, 0.5)
+                    },
+                    '&.Mui-focused fieldset': {
+                      borderColor: alpha(theme.palette.primary.main, 0.5)
+                    }
+                  },
+
+                  '& .MuiAutocomplete-endAdornment': {
+                    '& .MuiIconButton-root': {
+                      padding: '8px !important',
+                      border: 'none !important',
+                      backgroundColor: 'transparent !important',
+
+                      '&[title="Open"]': {
+                        color: theme.palette.text.secondary,
+                        '&:hover': {
+                          color: `${theme.palette.primary.main} !important`,
+                          backgroundColor: `${alpha(theme.palette.primary.main, 0.08)} !important`,
+                          transform: 'rotate(180deg)',
+                          transition: 'all 0.2s ease-in-out'
+                        }
+                      },
+                      '&[title="Clear"]': {
+                        color: theme.palette.text.secondary,
+                        '&:hover': {
+                          color: `${theme.palette.error.main} !important`,
+                          backgroundColor: `${alpha(theme.palette.error.main, 0.08)} !important`,
+                          transform: 'scale(1.1)',
+                          transition: 'all 0.2s ease-in-out'
+                        }
+                      },
+
+                      '& svg': {
+                        fontSize: '1.25rem !important',
+                        transition: 'all 0.2s ease-in-out'
+                      }
+                    }
+                  }
+                })}
+              />
+            )}
+          />
+          </Box>
+              <Box className="flex items-center justify-center">
+          <Button title={'Thêm mới'} onClick={() => router.push(APP_ROUTE.HOC_BA.ADD)} />
         </Box>
-        <Button title={'Thêm mới'} onClick={() => router.push(APP_ROUTE.HOC_BA.ADD)} />
+        </Box>
       </Box>
       <Table
         ref={refTable}
-        rows={data?.data}
+        rows={data?.listHocBa}
         columns={columns}
-        rowCount={rowCount}
         isFetching={isFetching}
         isLoading={isLoading}
-        setFilterModel={setFilterModel}
-        setSortModel={setSortModel}
-        setPaginationModel={setPaginationModel}
-        paginationModel={paginationModel}
         handleDeleteCallBack={handleDelete}
         customToolBar
         urlNavigate='hoc-ba'

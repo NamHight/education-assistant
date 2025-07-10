@@ -57,7 +57,7 @@ export interface IFormData {
   MaChuongTrinh: string;
   TenChuongTrinh: string;
   LoaiChuonTrinhDaoTao: IOption;
-  ThoiGianDaoTao: string;
+  ThoiGianDaoTao: number;
   MoTa: string;
   TongSoTinChi: number;
   Khoa: IOption;
@@ -76,12 +76,12 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
       MaChuongTrinh: yup.string().notRequired(),
       TenChuongTrinh: yup.string().max(255, 'Tên chương trình không được vượt quá 255 ký tự').required('Tên chương trình không được để trống'),
       LoaiChuonTrinhDaoTao: yup.object().required('Loại chương trình đào tạo không được để trống'),
-      ThoiGianDaoTao: yup.string().max(100, 'Thời gian đào tạo không được vượt quá 100 ký tự').required('Thời gian đào tạo không được để trống'),
+      ThoiGianDaoTao: yup.number().min(1, 'Thời gian đào tạo phải lớn hơn hoặc bằng 1').required('Thời gian đào tạo không được để trống'),
       MoTa: yup.string().optional(),
       TongSoTinChi: yup
         .number()
         .required('Tổng số tín chỉ không được để trống')
-        .min(0, 'Tổng số tín chỉ phải lớn hơn hoặc bằng 0')
+        .min(1, 'Tổng số tín chỉ phải lớn hơn hoặc bằng 1')
         .transform((value, originalValue) => (originalValue === '' ? null : value)),
       Khoa: yup.object().required('Khóa không được để trống'),
       Nganh: yup.object().required('Ngành không được để trống')
@@ -118,7 +118,7 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
     defaultValues: {
       TenChuongTrinh: '',
       LoaiChuonTrinhDaoTao: null,
-      ThoiGianDaoTao: '',
+      ThoiGianDaoTao: 0,
       MoTa: '',
       TongSoTinChi: 0,
       Khoa: null,
@@ -134,7 +134,7 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
       form.append('TenChuongTrinh', formData.TenChuongTrinh);
     }
     if (formData?.ThoiGianDaoTao) {
-      form.append('ThoiGianDaoTao', formData.ThoiGianDaoTao);
+      form.append('ThoiGianDaoTao', String(formData.ThoiGianDaoTao));
     }
     if (formData?.TongSoTinChi) {
       form.append('TongSoTinChi', formData.TongSoTinChi.toString());
@@ -197,7 +197,7 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
             placeholder='Nhập thời gian đào tạo'
             error={errors.ThoiGianDaoTao?.message}
             isDisabled={false}
-            type='text'
+            type='number'
           />
         </Grid>
         <Grid size={{ xs: 12, sm: 6, md: 6, lg: 6 }}>

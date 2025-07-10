@@ -142,7 +142,7 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
   const handleSubmitForm = (formData: IFormData) => {
     const form = new FormData();
     if (data?.id) form.append('Id', data.id);
-    if (formData.MSSV) form.append('MSSV', formData.MSSV);
+    if (formData.MSSV) form.append('MSSV', String(formData.MSSV));
     if (formData.HoTen) form.append('HoTen', formData.HoTen);
     if (formData.Email) form.append('Email', formData.Email);
     if (formData.CCCD) form.append('CCCD', formData.CCCD);
@@ -187,6 +187,7 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
       });
     }
   }, [reset, data]);
+  const eighteenYearsAgo = moment().subtract(18, 'year');
   return (
     <FormControl fullWidth component={'form'} onSubmit={handleSubmit(handleSubmitForm)} className='flex flex-col gap-4'>
       <Grid container spacing={2} rowSpacing={1}>
@@ -224,7 +225,7 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
             placeholder='Nhập mã số sinh viên'
             error={errors.MSSV?.message}
             isDisabled={false}
-            type='text'
+            type='number'
           />
         </Grid>
         <Grid size={{ xs: 12, sm: 6, md: 6, lg: 6 }}>
@@ -283,6 +284,7 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
               placeholder='Chọn ngày sinh'
               error={errors.NgaySinh?.message}
               isDisabled={false}
+              maxDate={eighteenYearsAgo}
               fullWidth
             />
           </Grid>

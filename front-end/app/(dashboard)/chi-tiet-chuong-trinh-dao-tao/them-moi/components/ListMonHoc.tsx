@@ -61,8 +61,8 @@ const ListMonHoc = ({ queryKey, chuongTrinhDaoTaoId, monHocId, hocKy, khoas }: I
       let params: IParamChiTietChuongTrinhDaoTao = {
         page: paginationModel.page + 1,
         limit: paginationModel.pageSize,
-        sortBy: 'createdAt',
-        sortByOrder: 'desc',
+        sortBy: 'hocky',
+        sortByOrder: 'asc',
         hocKy: Number(hocKy),
         chuongTrinhDaoTaoId: chuongTrinhDaoTaoId
       };
@@ -151,25 +151,25 @@ const ListMonHoc = ({ queryKey, chuongTrinhDaoTaoId, monHocId, hocKy, khoas }: I
     const formatType = (value: any) => {
       switch (value) {
         case LoaiMonHocEnum.CHUC_CHUNG_CHI:
-          return <Typography variant='body2'>Chức chung chi</Typography>;
+          return <Typography variant='body2'>CCH</Typography>;
         case LoaiMonHocEnum.DO_AN_TOT_NGHIEP:
-          return <Typography variant='body2'>Đồ án tốt nghiệp</Typography>;
+          return <Typography variant='body2'>ĐATN</Typography>;
         case LoaiMonHocEnum.KHOA_LUAN_TOT_NGHIEP:
-          return <Typography variant='body2'>Khóa luận tốt nghiệp</Typography>;
+          return <Typography variant='body2'>KLTN</Typography>;
         case LoaiMonHocEnum.KIEN_TAP:
-          return <Typography variant='body2'>Kiến tập</Typography>;
+          return <Typography variant='body2'>KT</Typography>;
         case LoaiMonHocEnum.MODUN:
-          return <Typography variant='body2'>Modun</Typography>;
+          return <Typography variant='body2'>Module</Typography>;
         case LoaiMonHocEnum.THI_TOT_NGHIEP_LY_THUYET:
-          return <Typography variant='body2'>Thi tốt nghiệp lý thuyết</Typography>;
+          return <Typography variant='body2'>TTNLT</Typography>;
         case LoaiMonHocEnum.THI_TOT_NGHIEP_THUC_HANH:
-          return <Typography variant='body2'>Thi tốt nghiệp thực hành</Typography>;
+          return <Typography variant='body2'>TTNTH</Typography>;
         case LoaiMonHocEnum.THUC_HANH:
-          return <Typography variant='body2'>Thực hành</Typography>;
+          return <Typography variant='body2'>TH</Typography>;
         case LoaiMonHocEnum.THUC_TAP_TOT_NGHIEP:
-          return <Typography variant='body2'>Thực tập tốt nghiệp</Typography>;
+          return <Typography variant='body2'>TTTN</Typography>;
         case LoaiMonHocEnum.LY_THUYET:
-          return <Typography variant='body2'>Lý thuyết</Typography>;
+          return <Typography variant='body2'>LT</Typography>;
         default:
           return null;
       }
@@ -265,7 +265,7 @@ const ListMonHoc = ({ queryKey, chuongTrinhDaoTaoId, monHocId, hocKy, khoas }: I
         headerName: 'Học kỳ',
         headerAlign: 'left',
         type: 'number',
-        minWidth: 50,
+        minWidth: 80,
         disableColumnMenu: true,
         sortable: false,
         display: 'flex',
@@ -276,27 +276,13 @@ const ListMonHoc = ({ queryKey, chuongTrinhDaoTaoId, monHocId, hocKy, khoas }: I
         field: 'loaiMonHoc',
         headerName: 'Loại Môn',
         type: 'string',
-        minWidth: 130,
+        minWidth: 80,
         disableColumnMenu: true,
         sortable: false,
         display: 'flex',
-        flex: 1,
+        flex: 0.8,
         renderCell: (params: any) => {
           return formatType(params.value);
-        }
-      },
-      {
-        field: 'createdAt',
-        headerName: 'Ngày tạo',
-        headerAlign: 'left',
-        type: 'string',
-        minWidth: 130,
-        disableColumnMenu: true,
-        sortable: true,
-        display: 'flex',
-        flex: 1,
-        valueFormatter: (params: any) => {
-          return formatDateBirth(params);
         }
       }
     ];

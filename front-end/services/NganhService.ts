@@ -28,13 +28,37 @@ export class NganhService {
       .catch((error) => error.response?.data);
   }
 
+
+  static async getAllNganhNoPageServer() {
+    return await authApiServer.get(`${API.NGANH.GET_ALL_NO_PAGE}`)
+      .then((response) => response.data)
+      .catch((error) => error.response?.data);
+  }
+
+  static async getAllNganhNoPage() {
+    return await authApi.get(`${API.NGANH.GET_ALL_NO_PAGE}`)
+      .then((response) => response.data)
+      .catch((error) => error.response?.data);
+  }
+
+  static async getAllNganhByKhoaId(khoaId: number | string | null) {
+    return await authApi.get(`${API.NGANH.GET_ALL_BY_KHOA_ID}`.replace(':khoaId', `${khoaId}`))
+      .then((response) => response.data)
+      .catch((error) => error.response?.data);
+  }
+
   static async getNganhById(id: number | string | null) {
     return await authApi
       .get(`${API.NGANH.GET_BY_ID}`.replace(':id', `${id}`))
       .then((response) => response.data)
       .catch((error) => error.response?.data);
   }
-
+  static async getNganhByKhoaId(khoaId: number | string) {
+    return await authApi
+      .get(`${API.NGANH.GET_BY_KHOA_ID}`.replace(':khoaId', `${khoaId}`))
+      .then((response) => response.data)
+      .catch((error) => error.response?.data);
+  }
   static async getNganhByIdServer(id: number | string | null) {
     return await authApiServer
       .get(`${API.NGANH.GET_BY_ID}`.replace(':id', `${id}`))

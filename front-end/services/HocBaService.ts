@@ -37,6 +37,17 @@ export class HocBaService {
       });
   }
 
+  static async getAllHocBaByMssv(params: IParamHocBa){
+    return await authApi
+      .get(`${API.HOC_BA.GET_ALL_BY_MSSV}`, {
+        params: params
+      })
+      .then((response) => Promise.resolve(response.data))
+      .catch((error) => {
+        return Promise.reject(error.response?.data);
+      });
+  }
+
   static async getHocBaById(id: string | number | null) {
     return await authApi
       .get(`${API.HOC_BA.GET_BY_ID}`.replace(':id', `${id}`))

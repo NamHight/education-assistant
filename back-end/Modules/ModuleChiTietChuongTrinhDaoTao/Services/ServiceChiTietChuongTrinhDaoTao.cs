@@ -15,9 +15,11 @@ namespace Education_assistant.Modules.ModuleChiTietChuongTrinhDaoTao.Services;
 public class ServiceChiTietChuongTrinhDaoTao : IServiceChiTietChuongTrinhDaoTao
 {
     private readonly ILoggerService _loggerService;
-    private readonly IRepositoryMaster _repositoryMaster;
     private readonly IMapper _mapper;
-    public ServiceChiTietChuongTrinhDaoTao(IRepositoryMaster repositoryMaster, ILoggerService loggerService, IMapper mapper)
+    private readonly IRepositoryMaster _repositoryMaster;
+
+    public ServiceChiTietChuongTrinhDaoTao(IRepositoryMaster repositoryMaster, ILoggerService loggerService,
+        IMapper mapper)
     {
         _repositoryMaster = repositoryMaster;
         _loggerService = loggerService;
@@ -139,13 +141,14 @@ public class ServiceChiTietChuongTrinhDaoTao : IServiceChiTietChuongTrinhDaoTao
             throw new Exception($"Lỗi hệ thống!: {ex.Message}");
         }
     }
-    public async Task<ResponseChiTietChuongTrinhDaoTaoDto> GetChiTietChuongTrinhDaoTaoByMonHocIdAsync(Guid monHocId, bool trackChanges)
+
+    public async Task<ResponseChiTietChuongTrinhDaoTaoDto> GetChiTietChuongTrinhDaoTaoByMonHocIdAsync(Guid monHocId,
+        bool trackChanges)
     {
-        var ctctDaoTao = await _repositoryMaster.ChiTietChuongTrinhDaoTao.GetChiTietChuongTrinhDaoTaoByMonHocIdAsync(monHocId, false);
-        if (ctctDaoTao is null)
-        {
-            throw new ChiTietChuongTrinhDaoTaoNotFoundException(monHocId);
-        }
+        var ctctDaoTao =
+            await _repositoryMaster.ChiTietChuongTrinhDaoTao
+                .GetChiTietChuongTrinhDaoTaoByMonHocIdAsync(monHocId, false);
+        if (ctctDaoTao is null) throw new ChiTietChuongTrinhDaoTaoNotFoundException();
         var ctctDaoTaoDto = _mapper.Map<ResponseChiTietChuongTrinhDaoTaoDto>(ctctDaoTao);
         return ctctDaoTaoDto;
     }

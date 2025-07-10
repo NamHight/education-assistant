@@ -7,6 +7,7 @@ export interface Nganh extends BaseEntity {
   id: string;
   maNganh: string;
   tenNganh: string;
+  nganhCha: Nganh | null;
   moTa?: string | null;
   khoaId?: string | null;
   khoa?: Khoa | null;

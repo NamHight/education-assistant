@@ -41,7 +41,8 @@ export const API = {
     GET_ALL: '/HocBa',
     GET_BY_ID: '/HocBa/:id',
     NOP_DIEM: '/HocBa/nop-diem',
-    DELETE_LIST: '/HocBa/delete-list'
+    DELETE_LIST: '/HocBa/delete-list',
+    GET_ALL_BY_MSSV: '/HocBa/by-sinh-vien',
   },
   THONG_KE: {
     GET_XEP_LOAI_HOC_LUC: '/ThongKe/xep-loai-hoc-luc',
@@ -57,7 +58,10 @@ export const API = {
   },
   NGANH: {
     GET_ALL: '/Nganh',
-    GET_BY_ID: '/Nganh/:id'
+    GET_BY_ID: '/Nganh/:id',
+    GET_ALL_NO_PAGE: "/Nganh/no-page",
+    GET_ALL_BY_KHOA_ID: "/Nganh/no-parent/:khoaId",
+    GET_BY_KHOA_ID: '/Nganh/by-khoa/:khoaId',
   },
   SINH_VIEN: {
     GET_ALL: '/SinhVien',

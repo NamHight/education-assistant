@@ -51,11 +51,11 @@ const Content = ({query, initialData}: ContentProps) => {
       queryKey: [queryKey, lopHocHienTaiId],
       queryFn: async () => {
         const result = await SinhVienService.getAllSinhVienByLopHoc(lopHocHienTaiId);
-        console.log('testsssssssss')
-        
         return result;
       },
-      refetchOnWindowFocus: false
+      refetchOnWindowFocus: false,
+      placeholderData: (prev) => prev
+
     });
 
     const mutationChuyenLop = useMutation({
@@ -155,7 +155,6 @@ const Content = ({query, initialData}: ContentProps) => {
             <Box flex={1} className='border border-gray-200 rounded-lg p-4 shadow-sm'>
               <Typography className="mb-6">Danh sách sinh viên</Typography>
               {
-                !isLoadingSinhVien ? (
                   <Box className="flex flex-col mt-4 gap-2 h-[300px] overflow-y-auto">
                     {sinhViens && sinhViens.map((sv: any) => (
                       <Box key={sv.id} className={`flex items-center justify-between border p-2 rounded ${sinhVienDaChonIds.includes(sv.id) ? '' : 'border-gray-200'}`}>
@@ -184,10 +183,7 @@ const Content = ({query, initialData}: ContentProps) => {
                         }
                       </Box>
                     ))}
-                  </Box>
-                ) : (
-                  null
-                )
+                  </Box>    
               }
             </Box>
             <Box flex={1} className='border border-gray-200 rounded-lg p-4 shadow-sm'>

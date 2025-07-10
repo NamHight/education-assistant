@@ -131,17 +131,17 @@ const Content = ({ queryKey, lopHocServer, boMonServer }: IContentProps) => {
     }
   };
   const { data, isLoading } = useQuery({
-    queryKey: [queryKey, filterModel, filter, sortModel],
+    queryKey: [queryKey, filterModel, sortModel, filter?.lopHoc?.id, filter?.tuan?.id, filter?.hocKy, filter?.namHoc?.id],
     queryFn: async () => {
-      if (!filter?.tuan?.id || !filter?.lopHoc?.id || !filter?.hocKy || !filter?.namHoc?.id) {
+      if (!filter || !filter?.lopHoc?.id || !filter?.tuan?.id || !filter?.hocKy || !filter?.namHoc?.id) {
         return [];
       }
       const searchKeyWord = handleTextSearch(filterModel?.quickFilterValues as any[]);
       let params: IParamLichBieu = {
-        lopHocId: filter.lopHoc.id,
-        tuanId: filter.tuan?.id,
-        hocKy: filter.hocKy,
-        namHoc: filter.namHoc?.id
+        lopHocId: filter?.lopHoc.id,
+        tuanId: filter?.tuan?.id,
+        hocKy: filter?.hocKy,
+        namHoc: filter?.namHoc?.id
       };
       if (sortModel?.field && sortModel?.sort) {
         params = {
@@ -157,12 +157,13 @@ const Content = ({ queryKey, lopHocServer, boMonServer }: IContentProps) => {
         };
       }
       const result = await LichBieuService.getLichBieuByKhoa(params);
+      console.log("result",result);
       return result;
     },
     enabled: !!filter?.tuan && !!filter?.lopHoc?.id && !!filter?.hocKy && !!filter?.namHoc,
-    placeholderData: (prev) => prev,
     refetchOnWindowFocus: false,
-    gcTime: 0
+    gcTime: 0,
+    staleTime: 0
   });
   const { data: lopHocs, isLoading: isLoadingLH } = useQuery({
     queryKey: ['lop-hoc-list'],
@@ -177,7 +178,6 @@ const Content = ({ queryKey, lopHocServer, boMonServer }: IContentProps) => {
       }));
     },
     initialData: lopHocServer,
-    placeholderData: (prev) => prev,
     refetchOnWindowFocus: false
   });
   const { data: tuans, isLoading: isLoadingTuan } = useQuery({
@@ -195,7 +195,6 @@ const Content = ({ queryKey, lopHocServer, boMonServer }: IContentProps) => {
         name: `${item.soTuan}`
       }));
     },
-    placeholderData: (prev) => prev,
     refetchOnWindowFocus: false,
     enabled: !!filter?.namHoc
   });
@@ -215,7 +214,6 @@ const Content = ({ queryKey, lopHocServer, boMonServer }: IContentProps) => {
         name: `${item.soTuan}`
       }));
     },
-    placeholderData: (prev) => prev,
     refetchOnWindowFocus: false,
     enabled: !!user && !!filterWeek?.tuanVao && !!filter?.namHoc && !!filter?.giangVien?.id
   });
@@ -594,6 +592,7 @@ const Content = ({ queryKey, lopHocServer, boMonServer }: IContentProps) => {
     const finalResult = {
       namHoc: filter?.namHoc?.id,
       vaoTuanId: filterWeek?.tuanVao,
+      tuanHienTaiId: filter?.tuan?.id,
       denTuanId: filterWeek?.tuanDen,
       hocKy: filter?.hocKy,
       lopHocId: filter?.lopHoc?.id
@@ -671,6 +670,7 @@ const Content = ({ queryKey, lopHocServer, boMonServer }: IContentProps) => {
         setfilterWeek={setfilterWeek}
         handleCopy={handleCopy}
         handleOpenModal={handleClickOpen}
+        isLoadingMutationCopy={mutationCopy.isPending}
         // contentPopover={handleShowFilter}
         // isOpen={isOpenPopover}
         // handleClick={handleOpenPopover}

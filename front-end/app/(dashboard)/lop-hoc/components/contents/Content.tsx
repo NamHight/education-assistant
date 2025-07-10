@@ -198,7 +198,7 @@ const Content = ({ queryKey }: ContentProps) => {
         headerName: 'Mã lớp học',
         headerAlign: 'left',
         type: 'string',
-        minWidth: 200,
+        minWidth: 80,
         disableColumnMenu: true,
         sortable: false,
         display: 'flex',

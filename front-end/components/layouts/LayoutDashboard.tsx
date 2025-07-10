@@ -1,4 +1,3 @@
-'use client';
 import { DashboardLayout, PageContainer } from '@toolpad/core';
 import React, { ReactNode } from 'react';
 import ToolBarAccount from '../customs/ToolBarAccount';

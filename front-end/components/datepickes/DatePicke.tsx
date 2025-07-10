@@ -8,6 +8,7 @@ interface IDatePickeProps {
   title?: string;
   error?: string | any;
   name: string;
+  maxDate?: any;
   isDisabled?: boolean;
   placeholder?: string;
   control?: any;
@@ -32,6 +33,7 @@ const DatePicke = ({
   minDate,
   editAble,
   isEditAble,
+  maxDate,
   onClickEdit,
   ...rest
 }: IDatePickeProps) => {
@@ -77,6 +79,7 @@ const DatePicke = ({
             minDate={minDate}
             disabled={isDisabled}
             {...field}
+            maxDate={maxDate}
             timezone='Asia/Ho_Chi_Minh'
             format={format || 'DD/MM/YYYY'}
             className={clsx('!mb-[5px]', { 'w-full': fullWidth })}
