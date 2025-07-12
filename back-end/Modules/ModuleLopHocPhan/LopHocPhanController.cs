@@ -35,6 +35,7 @@ namespace Education_assistant.Modules.ModuleLopHocPhan
             Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(result.page));
             return Ok(result.data);
         }
+
         [HttpGet("by-giang-vien")]
         public async Task<ActionResult> GetAllLopHocPhanByGiangVienAsync([FromQuery] ParamLopHocPhanSimpleDto paramLopHocPhanSimpleDto)
         {

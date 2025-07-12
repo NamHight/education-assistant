@@ -355,7 +355,7 @@ public class ServiceChiTietLopHocPhan : IServiceChiTietLopHocPhan
         {
             await _repositoryMaster.ExecuteInTransactionAsync(async () =>
             {
-                await _repositoryMaster.ChiTietLopHocPhan.UpdateNgayNopDiemChiTietLopHocPhanByLopHocPhanIdAsync(lopHocPhanId);
+                await _repositoryMaster.ChiTietLopHocPhan.UpdateNgayNopDiemChiTietLopHocPhanByLopHocPhanIdAsync(lopHocPhanId, false);
             });
         }
         catch (Exception ex)

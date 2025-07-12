@@ -231,7 +231,7 @@ public class ServiceHocBa : IServiceHocBa
             await _repositoryMaster.ExecuteInTransactionAsync(async () =>
             {
                 await _repositoryMaster.ChiTietLopHocPhan.UpdateNgayNopDiemChiTietLopHocPhanByLopHocPhanIdAsync(
-                    request.LopHocPhanId);
+                    request.LopHocPhanId, true);
             });
         }
         catch (Exception ex)
