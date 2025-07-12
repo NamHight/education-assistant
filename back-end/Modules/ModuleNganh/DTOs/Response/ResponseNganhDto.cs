@@ -4,6 +4,7 @@ namespace Education_assistant.Modules.ModuleNganh.DTOs.Response;
 
 public class ResponseNganhDto
 {
+    public int STT { get; set; }
     public Guid Id { get; set; }
     public string MaNganh { get; set; } = string.Empty;
     public string TenNganh { get; set; } = string.Empty;

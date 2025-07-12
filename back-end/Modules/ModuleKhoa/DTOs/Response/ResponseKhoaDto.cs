@@ -5,6 +5,7 @@ namespace Education_assistant.Modules.ModuleKhoa.DTOs.Response;
 
 public class ResponseKhoaDto
 {
+    public int STT { get; set; }
     public Guid Id { get; set; }
     public string TenKhoa { get; set; } = string.Empty;
     public string SoDienThoai { get; set; } = string.Empty;

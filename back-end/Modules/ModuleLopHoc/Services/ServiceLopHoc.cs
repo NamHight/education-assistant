@@ -88,8 +88,17 @@ namespace Education_assistant.Modules.ModuleLopHoc.Services
 
         public async Task<(IEnumerable<ResponseLopHocDto> data, PageInfo page)> GetAllLopHocAsync(ParamLopHocDto paramLopHocDto)
         {
+            var page = paramLopHocDto.page;
+            var limit = paramLopHocDto.limit;
             var lopHocs = await _repositoryMaster.LopHoc.GetAllLopHocAsync(paramLopHocDto.page, paramLopHocDto.limit, paramLopHocDto.search, paramLopHocDto.sortBy, paramLopHocDto.sortByOrder);
-            var lopHocDto = _mapper.Map<IEnumerable<ResponseLopHocDto>>(lopHocs);
+
+            var startIndex = (page - 1) * limit;
+            var lopHocDto = _mapper.Map<IEnumerable<ResponseLopHocDto>>(lopHocs)
+                    .Select((item, index) =>
+                    {
+                        item.STT = startIndex + index + 1;
+                        return item;
+                    });
             return (data: lopHocDto, page: lopHocs!.PageInfo);
         }
 

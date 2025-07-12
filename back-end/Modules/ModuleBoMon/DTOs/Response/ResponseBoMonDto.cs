@@ -5,6 +5,7 @@ namespace Education_assistant.Modules.ModuleBoMon.DTOs.Response;
 
 public class ResponseBoMonDto
 {
+    public int STT { get; set; }
     public Guid Id { get; set; }
     public string MaBoMon { get; set; } = string.Empty;
     public string TenBoMon { get; set; } = string.Empty;

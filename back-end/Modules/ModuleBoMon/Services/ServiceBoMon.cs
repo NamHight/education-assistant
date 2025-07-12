@@ -80,8 +80,17 @@ public class ServiceBoMon : IServiceBoMon
 
     public async Task<(IEnumerable<ResponseBoMonDto> data, PageInfo page)> GetAllBoMonAsync(ParamBoMonDto paramBoMonDto)
     {
+        var page = paramBoMonDto.page;
+        var limit = paramBoMonDto.limit;
         var boMons = await _repositoryMaster.BoMon.GetAllPaginatedAndSearchOrSortAsync(paramBoMonDto.page, paramBoMonDto.limit, paramBoMonDto.search, paramBoMonDto.sortBy, paramBoMonDto.sortByOrder);
-        var boMonDto = _mapper.Map<IEnumerable<ResponseBoMonDto>>(boMons);
+
+        var startIndex = (page - 1) * limit;
+        var boMonDto = _mapper.Map<IEnumerable<ResponseBoMonDto>>(boMons)
+                .Select((item, index) =>
+                {
+                    item.STT = startIndex + index + 1;
+                    return item;
+                });
         return (data: boMonDto, page: boMons!.PageInfo);
     }
 

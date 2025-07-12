@@ -26,3 +26,9 @@ public class ParamLopHocPhanForLichBieuDto
     public int hocKy { get; set; }
     public Guid lopHocId { get; set; }
 }
+public class ParamLopHocPhanDaNopDto : BaseParam
+{
+    public int loaiChuongTrinhDaoTao { get; set; }
+    public Guid khoaId { get; set; }
+    public int hocKy { get; set; }
+}

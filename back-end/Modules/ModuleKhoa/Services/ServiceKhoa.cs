@@ -80,10 +80,18 @@ public class ServiceKhoa : IServiceKhoa
     public async Task<(IEnumerable<ResponseKhoaDto> data, PageInfo page)> GetAllPaginationAndSearchAsync(
         ParamKhoaDto paramKhoaDto)
     {
-        Console.WriteLine($"9999999999999 sort {paramKhoaDto.sortBy}");
+        var page = paramKhoaDto.page;
+        var limit = paramKhoaDto.limit;
         var khoas = await _repositoryMaster.Khoa.GetAllPaginatedAndSearchOrSortAsync(paramKhoaDto.page,
             paramKhoaDto.limit, paramKhoaDto.search, paramKhoaDto.sortBy, paramKhoaDto.sortByOrder);
-        var khoaDto = _mapper.Map<IEnumerable<ResponseKhoaDto>>(khoas);
+
+        var startIndex = (page - 1) * limit;
+        var khoaDto = _mapper.Map<IEnumerable<ResponseKhoaDto>>(khoas)
+                .Select((item, index) =>
+                {
+                    item.STT = startIndex + index + 1;
+                    return item;
+                });
         return (data: khoaDto, page: khoas!.PageInfo);
     }
 

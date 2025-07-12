@@ -226,11 +226,19 @@ public class ServiceSinhVien : IServiceSinhVien
     public async Task<(IEnumerable<ResponseSinhVienTinhTrangHocTapDto> data, PageInfo page)> GetAllSinhVienAsync(
         ParamSinhVienDto paramSinhVienDto)
     {
+        var page = paramSinhVienDto.page;
+        var limit = paramSinhVienDto.limit;
         var sinhViens = await _repositoryMaster.SinhVien.GetAllSinhVienAsync(paramSinhVienDto.page,
             paramSinhVienDto.limit, paramSinhVienDto.search, paramSinhVienDto.sortBy, paramSinhVienDto.sortByOrder,
             paramSinhVienDto.lopId, paramSinhVienDto.tinhTrangHocTap);
 
-        var sinhVienDtos = _mapper.Map<IEnumerable<ResponseSinhVienTinhTrangHocTapDto>>(sinhViens);
+        var startIndex = (page - 1) * limit;
+        var sinhVienDtos = _mapper.Map<IEnumerable<ResponseSinhVienTinhTrangHocTapDto>>(sinhViens)
+                .Select((item, index) =>
+                {
+                    item.STT = startIndex + index + 1;
+                    return item;
+                });
         foreach (var svDto in sinhVienDtos)
         {
             var gpa = await _repositoryMaster.HocBa.TinhGPAAsync(svDto.Id);

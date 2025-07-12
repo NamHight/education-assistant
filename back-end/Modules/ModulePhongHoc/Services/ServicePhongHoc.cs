@@ -75,6 +75,8 @@ public class ServicePhongHoc : IServicePhongHoc
     public async Task<(IEnumerable<ResponsePhongHocDto> data, PageInfo page)> GetAllPhongHocAsync(
         ParamPhongHocDto paramPhongHocDto)
     {
+        var page = paramPhongHocDto.page;
+        var limit = paramPhongHocDto.limit;
         var phongHocs = await _repositoryMaster.PhongHoc.GetAllPhongHocAsync(paramPhongHocDto.page,
                                                         paramPhongHocDto.limit,
                                                         paramPhongHocDto.search,
@@ -83,7 +85,13 @@ public class ServicePhongHoc : IServicePhongHoc
                                                         paramPhongHocDto.loaiPhongHoc,
                                                         paramPhongHocDto.trangThai,
                                                         paramPhongHocDto.toaNha);
-        var phongHocDto = _mapper.Map<IEnumerable<ResponsePhongHocDto>>(phongHocs);
+        var startIndex = (page - 1) * limit;                                                
+        var phongHocDto = _mapper.Map<IEnumerable<ResponsePhongHocDto>>(phongHocs)
+                .Select((item, index) =>
+                {
+                    item.STT = startIndex + index + 1;
+                    return item;
+                });
         return (data: phongHocDto, page: phongHocs!.PageInfo);
     }
 

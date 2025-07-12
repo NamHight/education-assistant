@@ -84,11 +84,20 @@ public class ServiceChiTietChuongTrinhDaoTao : IServiceChiTietChuongTrinhDaoTao
     public async Task<(IEnumerable<ResponseChiTietChuongTrinhDaoTaoDto> data, PageInfo page)>
         GetAllChiTietChuongTrinhDaoTaoAsync(ParamChiTietChuongTrinhDaoTaoDto paramChiTietChuongTrinhDaoTaoDto)
     {
+        var page = paramChiTietChuongTrinhDaoTaoDto.page;
+        var limit = paramChiTietChuongTrinhDaoTaoDto.limit;
         var ctctDaoTaos = await _repositoryMaster.ChiTietChuongTrinhDaoTao.GetAllChiTietChuongTrinhDaoTaoAsync(
             paramChiTietChuongTrinhDaoTaoDto.page, paramChiTietChuongTrinhDaoTaoDto.limit,
             paramChiTietChuongTrinhDaoTaoDto.search, paramChiTietChuongTrinhDaoTaoDto.sortBy,
             paramChiTietChuongTrinhDaoTaoDto.sortByOrder, paramChiTietChuongTrinhDaoTaoDto.chuongTrinhDaoTaoId);
-        var ctctDaoTaoDtos = _mapper.Map<IEnumerable<ResponseChiTietChuongTrinhDaoTaoDto>>(ctctDaoTaos);
+
+        var startIndex = (page - 1) * limit;
+        var ctctDaoTaoDtos = _mapper.Map<IEnumerable<ResponseChiTietChuongTrinhDaoTaoDto>>(ctctDaoTaos)
+                .Select((item, index) =>
+                {
+                    item.STT = startIndex + index + 1;
+                    return item;
+                });
         return (data: ctctDaoTaoDtos, page: ctctDaoTaos!.PageInfo);
     }
 

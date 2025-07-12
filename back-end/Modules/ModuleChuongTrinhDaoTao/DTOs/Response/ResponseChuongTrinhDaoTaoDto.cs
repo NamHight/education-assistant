@@ -5,6 +5,7 @@ namespace Education_assistant.Modules.ModuleChuongTrinhDaoTao.DTOs.Response;
 
 public class ResponseChuongTrinhDaoTaoDto
 {
+    public int STT { get; set; }
     public Guid Id { get; set; }
     public string MaChuongTrinh { get; set; } = string.Empty;
     public string TenChuongTrinh { get; set; } = string.Empty;

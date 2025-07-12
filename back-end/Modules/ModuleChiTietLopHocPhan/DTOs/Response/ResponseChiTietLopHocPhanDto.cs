@@ -8,6 +8,7 @@ namespace Education_assistant.Modules.ModuleChiTietLopHocPhan.DTOs.Response;
 
 public class ResponseChiTietLopHocPhanDto
 {
+    public int STT { get; set; }
     public Guid? Id { get; set; }
     public decimal? DiemChuyenCan { get; set; }
     public decimal? DiemTrungBinh { get; set; }
