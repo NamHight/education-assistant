@@ -147,6 +147,8 @@ public class ServiceLopHocPhan : IServiceLopHocPhan
     public async Task<(IEnumerable<ResponseLopHocPhanDto> data, PageInfo page)> GetAllLopHocPhanAsync(
         ParamLopHocPhanDto paramLopHocPhanDto)
     {
+        var page = paramLopHocPhanDto.page;
+        var limit = paramLopHocPhanDto.limit;
         var lopHocPhans = await _repositoryMaster.LopHocPhan.GetAllLopHocPhanAsync(paramLopHocPhanDto.page,
             paramLopHocPhanDto.limit,
             paramLopHocPhanDto.search,
@@ -159,7 +161,14 @@ public class ServiceLopHocPhan : IServiceLopHocPhan
             paramLopHocPhanDto.trangThai,
             paramLopHocPhanDto.loaiLopHoc,
             paramLopHocPhanDto.giangVienId);
-        var lopHocPhanDtos = _mapper.Map<IEnumerable<ResponseLopHocPhanDto>>(lopHocPhans);
+
+        var startIndex = (page - 1) * limit;
+        var lopHocPhanDtos = _mapper.Map<IEnumerable<ResponseLopHocPhanDto>>(lopHocPhans)
+                .Select((item, index) =>
+                {
+                    item.STT = startIndex + index + 1;
+                    return item;
+                });
         return (data: lopHocPhanDtos, page: lopHocPhans!.PageInfo);
     }
 
@@ -197,6 +206,22 @@ public class ServiceLopHocPhan : IServiceLopHocPhan
         var lopHocPhans = await _repositoryMaster.LopHocPhan.GetAllLopHocPhanByLopHocAndHocKyAsync(param.hocKy, maLopHoc, chuongTrinhDaoTaoId);
         var lopHocPhanDtos = _mapper.Map<IEnumerable<ResponseLopHocPhanDto>>(lopHocPhans);
         return lopHocPhanDtos;
+    }
+
+    public async Task<(IEnumerable<ResponseLopHocPhanDto> data, PageInfo page)> GetAllLopHocPhanDaNopAsync(ParamLopHocPhanDaNopDto param)
+    {
+        var page = param.page;
+        var limit = param.limit;
+        var lopHocPhans = await _repositoryMaster.LopHocPhan.GetAllLopHocPhanDaNopAsync(param.page, param.limit, param.search, param.sortBy, param.sortByOrder, param.loaiChuongTrinhDaoTao, param.khoaId, param.hocKy);
+
+        var startIndex = (page - 1) * limit;
+        var lopHocPhanDtos = _mapper.Map<IEnumerable<ResponseLopHocPhanDto>>(lopHocPhans)
+                .Select((item, index) =>
+                {
+                    item.STT = startIndex + index + 1;
+                    return item;
+                });
+        return (data: lopHocPhanDtos, page: lopHocPhans!.PageInfo);
     }
 
     public async Task<IEnumerable<ResponseLopHocPhanDto>> GetAllLopHocPhanNoPageAsync()

@@ -5,6 +5,7 @@ namespace Education_assistant.Modules.ModulePhongHoc.DTOs.Response;
 
 public class ResponsePhongHocDto
 {
+    public int STT { get; set; }
     public Guid Id { get; set; }
     public string TenPhong { get; set; } = string.Empty;
     public string ToaNha { get; set; } = string.Empty;

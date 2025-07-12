@@ -150,6 +150,8 @@ public class ServiceChiTietLopHocPhan : IServiceChiTietLopHocPhan
 
     public async Task<(IEnumerable<ResponseChiTietLopHocPhanDto> data, PageInfo page)> GetAllChiTietLopHocPhanAsync(ParamChiTietLopHocPhanDto paramChiTietLopHocPhanDto)
     {
+        var page = paramChiTietLopHocPhanDto.page;
+        var limit = paramChiTietLopHocPhanDto.limit;
         var diemSos = await _repositoryMaster.ChiTietLopHocPhan.GetAllChiTietLopHocPhanAsync(paramChiTietLopHocPhanDto.page,
                                                                         paramChiTietLopHocPhanDto.limit,
                                                                         paramChiTietLopHocPhanDto.search,
@@ -157,7 +159,13 @@ public class ServiceChiTietLopHocPhan : IServiceChiTietLopHocPhan
                                                                         paramChiTietLopHocPhanDto.sortByOrder,
                                                                         paramChiTietLopHocPhanDto.lopHocPhanId,
                                                                         paramChiTietLopHocPhanDto.ngayNopDiem);
-        var diemSoDto = _mapper.Map<IEnumerable<ResponseChiTietLopHocPhanDto>>(diemSos);
+        var startIndex = (page - 1) * limit;
+        var diemSoDto = _mapper.Map<IEnumerable<ResponseChiTietLopHocPhanDto>>(diemSos)
+                .Select((item, index) =>
+                {
+                    item.STT = startIndex + index + 1;
+                    return item;
+                });
         return (data: diemSoDto, page: diemSos!.PageInfo);
     }
 

@@ -254,27 +254,63 @@ public class RepositoryLopHocPhan : RepositoryBase<LopHocPhan>, IRepositoryLopHo
         }
         return await query.ToListAsync();
     }
+
+    public async Task<PagedListAsync<LopHocPhan>?> GetAllLopHocPhanDaNopAsync(int page, int limit, string search, string sortBy, string sortByOrder, int loaiChuongTrinhDaoTao, Guid khoaId, int hocKy)
+    {
+        var query = _context.LopHocPhans
+                    .AsNoTracking()
+                    .Include(lhp => lhp.MonHoc)
+                    .ThenInclude(mh => mh!.DanhSachChiTietChuongTrinhDaoTao!
+                        .Where(ct => ct.ChuongTrinhDaoTao != null
+                                    && ct.ChuongTrinhDaoTao.LoaiChuonTrinhDaoTao == loaiChuongTrinhDaoTao
+                                    && ct.HocKy == hocKy
+                                    && ct.ChuongTrinhDaoTao.Nganh != null
+                                    && ct.ChuongTrinhDaoTao.Nganh.KhoaId == khoaId))
+                    .ThenInclude(ct => ct.ChuongTrinhDaoTao)
+                    .ThenInclude(ctdt => ctdt!.Nganh)
+                    .ThenInclude(n => n!.Khoa)
+                    .Include(lhp => lhp.GiangVien)
+                    .Where(lhp => lhp.GiangVien != null
+                          && lhp.DanhSachChiTietLopHocPhan!.Any(ct => ct.NgayNopDiem != null && ct.HocKy == hocKy)
+                          && lhp.MonHoc != null
+                          && lhp.MonHoc.DanhSachChiTietChuongTrinhDaoTao!
+                              .Any(ct => ct.ChuongTrinhDaoTao != null
+                                         && ct.ChuongTrinhDaoTao.LoaiChuonTrinhDaoTao == loaiChuongTrinhDaoTao
+                                         && ct.HocKy == hocKy
+                                         && ct.ChuongTrinhDaoTao.Nganh != null
+                                         && ct.ChuongTrinhDaoTao.Nganh.KhoaId == khoaId))
+                    .AsQueryable();
+        return await PagedListAsync<LopHocPhan>.ToPagedListAsync(query.SearchBy(search, item => item.MaHocPhan)
+                                                                                .SortByOptions(sortBy, sortByOrder, new Dictionary<string, System.Linq.Expressions.Expression<Func<LopHocPhan, object>>>
+                                                                                {
+                                                                                    ["createdat"] = item => item.CreatedAt,
+                                                                                    ["updatedat"] = item => item.UpdatedAt!,
+                                                                                    ["deletedat"] = item => item.DeletedAt!
+                                                                                })
+                                                                                , page, limit);
+    }
+
     // var query = _context.ChiTietChuongTrinhDaoTaos!  lhp.MaHocPhan.StartsWith(maLopHoc) &&
-                                   
-        //             .AsNoTracking()
-        //             .Include(item => item.MonHoc)
-        //                 .ThenInclude(item => item.DanhSachLopHocPhan)
-        //             .AsQueryable();
-        // if (hocKy.HasValue)
-        // {
-        //     query = query.Where(item => item.HocKy == hocKy);
-        // }
-        // if (chuongTrinhDaoTaoId.HasValue && chuongTrinhDaoTaoId != Guid.Empty)
-        // {
-        //     query = query.Where(item => item.ChuongTrinhDaoTaoId == chuongTrinhDaoTaoId && item.ChuongTrinhDaoTao != null);
-        // }
-        // var result = query.SelectMany(ct => ct.MonHoc.DanhSachLopHocPhan)
-        //                 .AsQueryable();
-        // if (!string.IsNullOrEmpty(maLopHoc))
-        // {
-        //     result = result.Where(lhp => lhp.MaHocPhan.StartsWith(maLopHoc));
-        // }
-        // return await result.Where(item => item.Loai == (int)LoaiLopHocEnum.LOP_HOC_PHAN && item.TrangThai == (int)TrangThaiLopHocPhanEnum.DANG_HOAT_DONG).ToListAsync();
+
+    //             .AsNoTracking()
+    //             .Include(item => item.MonHoc)
+    //                 .ThenInclude(item => item.DanhSachLopHocPhan)
+    //             .AsQueryable();
+    // if (hocKy.HasValue)
+    // {
+    //     query = query.Where(item => item.HocKy == hocKy);
+    // }
+    // if (chuongTrinhDaoTaoId.HasValue && chuongTrinhDaoTaoId != Guid.Empty)
+    // {
+    //     query = query.Where(item => item.ChuongTrinhDaoTaoId == chuongTrinhDaoTaoId && item.ChuongTrinhDaoTao != null);
+    // }
+    // var result = query.SelectMany(ct => ct.MonHoc.DanhSachLopHocPhan)
+    //                 .AsQueryable();
+    // if (!string.IsNullOrEmpty(maLopHoc))
+    // {
+    //     result = result.Where(lhp => lhp.MaHocPhan.StartsWith(maLopHoc));
+    // }
+    // return await result.Where(item => item.Loai == (int)LoaiLopHocEnum.LOP_HOC_PHAN && item.TrangThai == (int)TrangThaiLopHocPhanEnum.DANG_HOAT_DONG).ToListAsync();
 
     public async Task<IEnumerable<LopHocPhan>> GetAllLopHocPhanNoPageAsync()
     {

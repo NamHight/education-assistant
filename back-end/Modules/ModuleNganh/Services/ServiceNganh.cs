@@ -98,9 +98,18 @@ public class ServiceNganh : IServiceNganh
 
     public async Task<(IEnumerable<ResponseNganhDto> data, PageInfo page)> GetAllNganhAsync(ParamNganhDto paramNganhDto)
     {
+        var page = paramNganhDto.page;
+        var limit = paramNganhDto.limit;
         var nganhs = await _repositoryMaster.Nganh.GetAllNganhAsync(paramNganhDto.page, paramNganhDto.limit,
             paramNganhDto.search, paramNganhDto.sortBy, paramNganhDto.sortByOrder);
-        var nganhDtos = _mapper.Map<IEnumerable<ResponseNganhDto>>(nganhs);
+
+        var startIndex = (page - 1) * limit;
+        var nganhDtos = _mapper.Map<IEnumerable<ResponseNganhDto>>(nganhs)
+                .Select((item, index) =>
+                {
+                    item.STT = startIndex + index + 1;
+                    return item;
+                });
         return (data: nganhDtos, page: nganhs!.PageInfo);
     }
 

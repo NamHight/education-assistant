@@ -6,6 +6,7 @@ namespace Education_assistant.Modules.ModuleChiTietChuongTrinhDaoTao.DTOs.Respon
 
 public class ResponseChiTietChuongTrinhDaoTaoDto
 {
+    public int STT { get; set; }
     public Guid Id { get; set; }
     public Guid MonHocId { get; set; }
     public MonHocSimpleDto? MonHoc { get; set; }

@@ -5,6 +5,7 @@ namespace Education_assistant.Modules.ModuleMonHoc.DTOs.Response;
 
 public class ResponseMonHocDto
 {
+    public int STT { get; set; }
     public Guid Id { get; set; }
     public string MaMonHoc { get; set; } = string.Empty;
     public string TenMonHoc { get; set; } = string.Empty;

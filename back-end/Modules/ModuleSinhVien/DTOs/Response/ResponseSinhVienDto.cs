@@ -48,6 +48,7 @@ public class ResponseSinhVienSummaryDto
 }
 public class ResponseSinhVienTinhTrangHocTapDto
 {
+    public int STT { get; set; }
     public Guid Id { get; set; }
     public string MSSV { get; set; } = string.Empty;
     public string CCCD { get; set; } = string.Empty;

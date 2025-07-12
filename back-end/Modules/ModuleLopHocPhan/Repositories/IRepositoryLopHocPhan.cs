@@ -12,6 +12,7 @@ public interface IRepositoryLopHocPhan
     Task<IEnumerable<LopHocPhan>> GetAllLopHocPhanByGiangVienAsync(int loaiChuongTrinhDaoTao, int khoa, int hocKy,
         Guid giangVienId);
     Task<IEnumerable<LopHocPhan>> GetAllLopHocPhanByLopHocAndHocKyAsync(int? hocKy, string? maLopHoc, Guid? chuongTrinhDaoTaoId);
+    Task<PagedListAsync<LopHocPhan>?> GetAllLopHocPhanDaNopAsync(int page, int limit, string search, string sortBy, string sortByOrder, int loaiChuongTrinhDaoTao, Guid khoaId, int hocKy);
     Task<LopHocPhan?> GetLopHocPhanByIdAsync(Guid id, bool trackChanges);
 
     Task<int> CreateSinhVienLopHocPhanHocBa(Guid maLop, Guid maLhp, Guid maMonHoc, int HocKy);

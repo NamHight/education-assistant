@@ -82,10 +82,18 @@ public class ServiceChuongTrinhDaoTao : IServiceChuongTrinhDaoTao
     public async Task<(IEnumerable<ResponseChuongTrinhDaoTaoDto> data, PageInfo page)> GetAllChuongTrinhDaoTaoAsync(
         ParamChuongTrinhDaoTaoDto paramChuongTrinhDaoTaoDto)
     {
+        var page = paramChuongTrinhDaoTaoDto.page;
+        var limit = paramChuongTrinhDaoTaoDto.limit;
         var ctDaoTaos = await _repositoryMaster.ChuongTrinhDaoTao.GetAllPaginatedAndSearchOrSortAsync(
             paramChuongTrinhDaoTaoDto.page, paramChuongTrinhDaoTaoDto.limit, paramChuongTrinhDaoTaoDto.search,
             paramChuongTrinhDaoTaoDto.sortBy, paramChuongTrinhDaoTaoDto.sortByOrder);
-        var ctDaoTaoDto = _mapper.Map<IEnumerable<ResponseChuongTrinhDaoTaoDto>>(ctDaoTaos);
+        var startIndex = (page - 1) * limit;
+        var ctDaoTaoDto = _mapper.Map<IEnumerable<ResponseChuongTrinhDaoTaoDto>>(ctDaoTaos)
+                .Select((item, index) =>
+                {
+                    item.STT = startIndex + index + 1;
+                    return item;
+                });
         return (data: ctDaoTaoDto, page: ctDaoTaos!.PageInfo);
     }
 

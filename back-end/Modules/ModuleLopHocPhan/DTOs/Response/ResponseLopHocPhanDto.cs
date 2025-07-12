@@ -5,6 +5,7 @@ namespace Education_assistant.Modules.ModuleLopHocPhan.DTOs.Response;
 
 public class ResponseLopHocPhanDto
 {
+    public int STT { get; set; }
     public Guid Id { get; set; }
     public string MaHocPhan { get; set; } = string.Empty;
     public int SiSo { get; set; }

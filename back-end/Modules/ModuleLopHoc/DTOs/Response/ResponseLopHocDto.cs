@@ -6,6 +6,7 @@ namespace Education_assistant.Modules.ModuleLopHoc.DTOs.Response
 {
     public class ResponseLopHocDto
     {
+        public int STT { get; set; }
         public Guid Id { get; set; }
         public string MaLopHoc { get; set; } = string.Empty;
         public int SiSo { get; set; }
