@@ -17,7 +17,7 @@ public interface IRepositoryChiTietLopHocPhan
     Task CreateAsync(ChiTietLopHocPhan chiTietLopHocPhan);
     void UpdateChiTietLopHocPhan(ChiTietLopHocPhan chiTietLopHocPhan);
     Task<int> UpdateCtlhpWithPhanCongAsync(Guid maLhp, Guid giangVienId, Guid monHocId);
-    Task<int> UpdateNgayNopDiemChiTietLopHocPhanByLopHocPhanIdAsync(Guid lopHocPhanId);
+    Task<int> UpdateNgayNopDiemChiTietLopHocPhanByLopHocPhanIdAsync(Guid lopHocPhanId, bool nopDiem);
     void DeleteChiTietLopHocPhan(ChiTietLopHocPhan chiTietLopHocPhan);
     Task DeleteListChiTietLopHocPhan(List<Guid> ids);
     Task<int> TinhPhanTramChuyenCanAsync(Guid sinhVienId);
