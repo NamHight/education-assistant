@@ -20,3 +20,11 @@ public class PhongHocSimpleDto
     public string TenPhong { get; set; } = string.Empty;
 }
 
+public class ResponsePhongHocAutoDto
+{
+    public List<string>? TenPhongs { get; set; }
+    public string ToaNha { get; set; } = string.Empty;
+    public int SucChua { get; set; }
+    public int LoaiPhongHoc { get; set; }
+    public int TrangThaiPhongHoc { get; set; }
+}

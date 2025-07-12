@@ -34,7 +34,12 @@ namespace Education_assistant.Modules.ModulePhongHoc
             var result = await _serviceMaster.PhongHoc.GetAllPhongHocNoPageAsync();
             return Ok(result);
         }
-
+        [HttpGet("toa-nha-combobox")]
+        public async Task<ActionResult> GetAllToaNhaAsync()
+        {
+            var result = await _serviceMaster.PhongHoc.GetAllToaNhaAsync();
+            return Ok(result);
+        }
         [HttpGet("{id}")]
         public async Task<ActionResult> GetPhongHocByIdAsync(Guid id)
         {
@@ -49,7 +54,20 @@ namespace Education_assistant.Modules.ModulePhongHoc
             var result = await _serviceMaster.PhongHoc.CreateAsync(model);
             return Ok(result);
         }
-
+        [HttpPost("virtual-list")]
+        [ServiceFilter(typeof(ValidationFilter))]
+        public async Task<ActionResult> GenericPhongHocAutoVirtualListAsync([FromForm] RequestAddPhongHocVirtualListDto model)
+        {
+            var result = await _serviceMaster.PhongHoc.GenericPhongHocAutoVirtualListAsync(model);
+            return Ok(result);
+        }
+        [HttpPost("create-list")]
+        [ServiceFilter(typeof(ValidationFilter))]
+        public async Task<ActionResult> GenericPhongHocAutoVirtualListAsync([FromForm] RequestAddPhongHocAutoDto model)
+        {
+            var result = await _serviceMaster.PhongHoc.CreateListPhongHocAsync(model);
+            return Ok(result);
+        }
         [HttpPut("{id}")]
         [ServiceFilter(typeof(ValidationFilter))]
         public async Task<ActionResult> UpdatePhongHocAsync(Guid id, [FromForm] RequestUpdatePhongHocDto model)
