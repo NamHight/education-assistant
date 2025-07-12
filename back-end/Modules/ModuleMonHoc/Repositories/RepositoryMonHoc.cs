@@ -23,9 +23,16 @@ public class RepositoryMonHoc : RepositoryBase<MonHoc>, IRepositoryMonHoc
         Delete(monHoc);
     }
 
-    public async Task<PagedListAsync<MonHoc>?> GetAllPaginatedAndSearchOrSortAsync(int page, int limit, string search, string sortBy, string sortByOrder)
+    public async Task<PagedListAsync<MonHoc>?> GetAllPaginatedAndSearchOrSortAsync(int page, int limit, string search, string sortBy, string sortByOrder, Guid? khoaId)
     {
-        return await PagedListAsync<MonHoc>.ToPagedListAsync(_context.MonHocs!.SearchBy(search, item => item.TenMonHoc).Include(item => item.Khoa)
+        var query = _context.MonHocs!
+                    .AsNoTracking()
+                    .AsQueryable();
+        if (khoaId.HasValue && khoaId != Guid.Empty)
+        {
+            query = query.Where(item => item.KhoaId == khoaId);
+        }
+        return await PagedListAsync<MonHoc>.ToPagedListAsync(query.SearchBy(search, item => item.TenMonHoc).Include(item => item.Khoa)
                                                                                 .SortByOptions(sortBy, sortByOrder, new Dictionary<string, System.Linq.Expressions.Expression<Func<MonHoc, object>>>
                                                                                 {
                                                                                     ["createdat"] = item => item.CreatedAt,

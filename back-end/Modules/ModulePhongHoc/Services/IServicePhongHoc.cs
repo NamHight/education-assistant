@@ -13,7 +13,10 @@ namespace Education_assistant.Modules.ModulePhongHoc.Services
     {
         Task<(IEnumerable<ResponsePhongHocDto> data, PageInfo page)> GetAllPhongHocAsync(ParamPhongHocDto paramPhongHocDto);
         Task<IEnumerable<ResponsePhongHocDto>> GetAllPhongHocNoPageAsync();
+        Task<List<string>?> GetAllToaNhaAsync();
+        Task<ResponsePhongHocAutoDto> GenericPhongHocAutoVirtualListAsync(RequestAddPhongHocVirtualListDto request);
         Task<ResponsePhongHocDto> GetPhongHocByIdAsync(Guid id, bool trackChanges);
+        Task<ResponsePhongHocAutoDto> CreateListPhongHocAsync(RequestAddPhongHocAutoDto request);
         Task<ResponsePhongHocDto> CreateAsync(RequestAddPhongHocDto request);
         Task UpdateAsync(Guid id, RequestUpdatePhongHocDto request);
         Task UpdateTrangThaiAsync(Guid id, int trangThai);
