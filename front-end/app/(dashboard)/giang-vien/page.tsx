@@ -37,7 +37,11 @@ export default async function Page() {
   return (
     <Box className='flex flex-col gap-3'>
       <HydrationBoundary state={dehydrate(queryClient)}>
-        <Content queryKey={queryKey} tinhTrangServer={tinhTrangData ? tinhTrangData : undefined} khoaData={khoaData?.length > 0 ? khoaData : undefined} />
+        <Content
+          queryKey={queryKey}
+          tinhTrangServer={tinhTrangData ? tinhTrangData : undefined}
+          khoaData={khoaData?.length > 0 ? khoaData : undefined}
+        />
       </HydrationBoundary>
     </Box>
   );

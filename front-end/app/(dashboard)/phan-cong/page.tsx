@@ -21,10 +21,10 @@ const page = async () => {
     ctdt = { data: undefined };
   }
   return (
-       <PopoverLockProvider>
-    <Box>
-      <Content queryKey={queryKey} ctdtServer={ctdt?.data} />
-    </Box>
+    <PopoverLockProvider>
+      <Box>
+        <Content queryKey={queryKey} ctdtServer={ctdt?.data} />
+      </Box>
     </PopoverLockProvider>
   );
 };

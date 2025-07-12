@@ -56,6 +56,7 @@ const ModalEdit = forwardRef(({ open, handleClose, queryKey, filter, id }: Modal
       const result = await LichBieuService.getLichBieuById(id);
       return result;
     },
+    refetchOnWindowFocus: false,
     enabled: !!id
   });
   const notification = useNotifications();
@@ -115,11 +116,9 @@ const ModalEdit = forwardRef(({ open, handleClose, queryKey, filter, id }: Modal
         name: `${item.soTuan}`
       }));
     },
-    placeholderData: (prev) => prev,
     refetchOnWindowFocus: false,
     enabled: !!filterAdd?.namHoc
   });
-  console.log('result', tuans);
   const { data: lopHocPhans, isLoading: isLoadingLHP } = useQuery({
     queryKey: ['lop-hoc-phan-list', filter?.lopHoc?.id, filter?.hocKy],
     queryFn: async () => {
@@ -135,7 +134,6 @@ const ModalEdit = forwardRef(({ open, handleClose, queryKey, filter, id }: Modal
         name: item.maHocPhan
       }));
     },
-    placeholderData: (prev) => prev,
     refetchOnWindowFocus: false,
     enabled: open
   });

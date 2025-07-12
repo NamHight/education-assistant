@@ -17,6 +17,7 @@ import { PhongHocService } from '@/services/PhongHocService';
 import { ChuongTrinhDaoTaoService } from '@/services/ChuongTrinhDaoTaoService';
 import { ChitietChuongTrinhDaoTaoService } from '@/services/ChitietChuongTrinhDaoTaoService';
 import ListMonHoc from './ListMonHoc';
+import { ref } from 'yup';
 interface ContentProps {
   initialData?: any;
   anotherData?: any;
@@ -25,7 +26,7 @@ const queryKey = 'danh-sach-mon-hoc-chi-tiet-chuong-trinh-dao-tao';
 const Content: FC<ContentProps> = ({ initialData, anotherData }) => {
   const notification = useNotifications();
   const [khoas, setkhoas] = useState<any[]>([]);
-  const refForm = useRef<{ handleResetForm: () => void; boMons: any[]; monHocs: any[]; khoas: any[] }>(null);
+  const refForm = useRef<{ handleResetForm: (data: any) => void; setValue: (name: string, value: any) => void }>(null);
   const router = useRouter();
   const [filter, setFilter] = useState<{
     chuongTrinhDaoTaoId?: string;
@@ -49,18 +50,19 @@ const Content: FC<ContentProps> = ({ initialData, anotherData }) => {
         queryKey: ['chi-tiet-chuong-trinh-dao-tao-list'],
         exact: false
       });
-      setFilter((prev) => ({
-        ...prev,
+      setFilter({
         chuongTrinhDaoTaoId: data?.chuongTrinhDaoTaoId || null,
         boMonId: data?.boMonId || null,
         hocKy: data?.hocKy || null,
         monHocId: data?.monHocId || null
-      }));
+      });
       await queryClient.invalidateQueries({
         queryKey: [queryKey],
         exact: false
       });
-      refForm.current?.handleResetForm();
+      refForm.current?.setValue('SoTinChi', 0);
+      refForm.current?.setValue('LoaiMonHoc', null);
+      refForm.current?.setValue('HocKy', null);
     },
     onError: (error: any) => {
       notification.show(error?.Message || 'Thêm thất bại', {

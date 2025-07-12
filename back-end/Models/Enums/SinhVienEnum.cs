@@ -1,5 +1,3 @@
-using System;
-
 namespace Education_assistant.Models.Enums;
 
 public enum TrangThaiSinhVienEnum
@@ -10,12 +8,12 @@ public enum TrangThaiSinhVienEnum
     BO_HOC = 4,
     BUOC_THOI_HOC = 5
 }
+
 public enum TinhTrangHocTapSinhVienEnum
 {
     YEU = 1,
     TRUNG_BINH = 2,
     KHA = 3,
     GIOI = 4,
-    XUAT_SAC = 5,
-    DINH_CHI = 6
+    XUAT_SAC = 5
 }

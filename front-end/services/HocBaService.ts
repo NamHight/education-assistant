@@ -37,6 +37,17 @@ export class HocBaService {
       });
   }
 
+  static async getAllHocBaByMssv(params: IParamHocBa) {
+    return await authApi
+      .get(`${API.HOC_BA.GET_ALL_BY_MSSV}`, {
+        params: params
+      })
+      .then((response) => Promise.resolve(response.data))
+      .catch((error) => {
+        return Promise.reject(error.response?.data);
+      });
+  }
+
   static async getHocBaById(id: string | number | null) {
     return await authApi
       .get(`${API.HOC_BA.GET_BY_ID}`.replace(':id', `${id}`))
@@ -64,6 +75,7 @@ export class HocBaService {
     }
   }
 
+
   static async deleteHocBa(id: string | number | null) {
     try {
       const response = await authApi.delete(`${API.HOC_BA.GET_BY_ID.replace(':id', `${id}`)}`);
@@ -83,7 +95,7 @@ export class HocBaService {
   }
   static async nopDiemHocBa(data: any) {
     try {
-      const response = await authApi.put(`${API.HOC_BA.NOP_DIEM}`, data, {
+      const response = await authApi.post(`${API.HOC_BA.NOP_DIEM}`, data, {
         headers: {
           'Content-Type': 'application/json'
         }

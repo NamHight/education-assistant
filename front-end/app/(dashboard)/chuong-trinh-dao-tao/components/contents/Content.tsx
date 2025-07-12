@@ -188,10 +188,10 @@ const Content = ({ queryKey }: ContentProps) => {
       },
       {
         field: 'thoiGianDaoTao',
-        headerName: 'Thời gian đào tạo',
+        headerName: 'Thời gian',
         headerAlign: 'left',
         type: 'string',
-        minWidth: 180,
+        minWidth: 100,
         disableColumnMenu: true,
         sortable: false,
         display: 'flex',
@@ -252,20 +252,6 @@ const Content = ({ queryKey }: ContentProps) => {
         flex: 1,
         renderCell: (params: any) => {
           return formatType(params.value);
-        }
-      },
-      {
-        field: 'createdAt',
-        headerName: 'Ngày tạo',
-        headerAlign: 'left',
-        type: 'string',
-        minWidth: 100,
-        disableColumnMenu: true,
-        sortable: true,
-        display: 'flex',
-        flex: 1,
-        valueFormatter: (params: any) => {
-          return formatDateBirth(params);
         }
       }
     ];

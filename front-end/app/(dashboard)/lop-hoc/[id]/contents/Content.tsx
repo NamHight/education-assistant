@@ -32,7 +32,7 @@ const Content = ({ initialData, id, anotherData }: IContentProps) => {
     refetchOnWindowFocus: false,
     gcTime: 0
   });
-
+  console.log('data', data);
   const mutationUpdate = useMutation({
     mutationFn: async (data: FormData) => {
       const result = await LopHocService.updateLopHoc(id, data);
@@ -62,8 +62,7 @@ const Content = ({ initialData, id, anotherData }: IContentProps) => {
         onSubmit={handleSubmitForm}
         data={data}
         initialData={{
-          giangViens: anotherData?.giangViens,
-          nganhs: anotherData?.nganhs
+          khoas: anotherData?.khoas
         }}
       />
     </motion.div>

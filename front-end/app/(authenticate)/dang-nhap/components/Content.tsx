@@ -45,7 +45,7 @@ const Content = () => {
       actions?.login(data.user, data.accessToken, data.refreshToken);
       queryClient.clear();
       await queryClient.invalidateQueries({ queryKey: ['user'] });
-       window.location.href = '/';
+      window.location.href = '/';
     },
     onError: (error: any) => {
       notification.show(error?.Message, {

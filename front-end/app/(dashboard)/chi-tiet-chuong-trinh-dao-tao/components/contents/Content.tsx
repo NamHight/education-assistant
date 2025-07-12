@@ -131,25 +131,25 @@ const Content = ({ queryKey }: ContentProps) => {
     const formatType = (value: any) => {
       switch (value) {
         case LoaiMonHocEnum.CHUC_CHUNG_CHI:
-          return <Typography variant='body2'>Chức chung chi</Typography>;
+          return <Typography variant='body2'>CCH</Typography>;
         case LoaiMonHocEnum.DO_AN_TOT_NGHIEP:
-          return <Typography variant='body2'>Đồ án tốt nghiệp</Typography>;
+          return <Typography variant='body2'>ĐATN</Typography>;
         case LoaiMonHocEnum.KHOA_LUAN_TOT_NGHIEP:
-          return <Typography variant='body2'>Khóa luận tốt nghiệp</Typography>;
+          return <Typography variant='body2'>KLTN</Typography>;
         case LoaiMonHocEnum.KIEN_TAP:
-          return <Typography variant='body2'>Kiến tập</Typography>;
+          return <Typography variant='body2'>KT</Typography>;
         case LoaiMonHocEnum.MODUN:
-          return <Typography variant='body2'>Modun</Typography>;
+          return <Typography variant='body2'>Md</Typography>;
         case LoaiMonHocEnum.THI_TOT_NGHIEP_LY_THUYET:
-          return <Typography variant='body2'>Thi tốt nghiệp lý thuyết</Typography>;
+          return <Typography variant='body2'>TTNLT</Typography>;
         case LoaiMonHocEnum.THI_TOT_NGHIEP_THUC_HANH:
-          return <Typography variant='body2'>Thi tốt nghiệp thực hành</Typography>;
+          return <Typography variant='body2'>TTNTH</Typography>;
         case LoaiMonHocEnum.THUC_HANH:
-          return <Typography variant='body2'>Thực hành</Typography>;
+          return <Typography variant='body2'>TH</Typography>;
         case LoaiMonHocEnum.THUC_TAP_TOT_NGHIEP:
-          return <Typography variant='body2'>Thực tập tốt nghiệp</Typography>;
+          return <Typography variant='body2'>TTTN</Typography>;
         case LoaiMonHocEnum.LY_THUYET:
-          return <Typography variant='body2'>Lý thuyết</Typography>;
+          return <Typography variant='body2'>LT</Typography>;
         default:
           return null;
       }
@@ -160,7 +160,7 @@ const Content = ({ queryKey }: ContentProps) => {
         headerName: 'ID',
         type: 'string',
         headerAlign: 'left',
-        minWidth: 80,
+        minWidth: 50,
         flex: 0.4,
         sortable: true,
         display: 'flex',
@@ -179,7 +179,7 @@ const Content = ({ queryKey }: ContentProps) => {
         disableColumnMenu: true,
         sortable: false,
         display: 'flex',
-        flex: 1,
+        flex: 2,
         renderCell: (params: any) => {
           return !params?.value ? null : (
             <Link href={`${APP_ROUTE.MON_HOC.ROOT}/${params.value?.id}`} className='text-blue-500 hover:underline'>
@@ -245,7 +245,7 @@ const Content = ({ queryKey }: ContentProps) => {
         headerName: 'Học kỳ',
         headerAlign: 'left',
         type: 'number',
-        minWidth: 50,
+        minWidth: 80,
         disableColumnMenu: true,
         sortable: false,
         display: 'flex',
@@ -254,29 +254,15 @@ const Content = ({ queryKey }: ContentProps) => {
       },
       {
         field: 'loaiMonHoc',
-        headerName: 'Loại Môn học',
+        headerName: 'Loại',
         type: 'string',
-        minWidth: 100,
+        minWidth: 80,
         disableColumnMenu: true,
         sortable: false,
         display: 'flex',
-        flex: 1,
+        flex: 0.8,
         renderCell: (params: any) => {
           return formatType(params.value);
-        }
-      },
-      {
-        field: 'createdAt',
-        headerName: 'Ngày tạo',
-        headerAlign: 'left',
-        type: 'string',
-        minWidth: 130,
-        disableColumnMenu: true,
-        sortable: true,
-        display: 'flex',
-        flex: 1,
-        valueFormatter: (params: any) => {
-          return formatDateBirth(params);
         }
       }
     ];

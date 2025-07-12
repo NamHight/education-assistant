@@ -20,6 +20,14 @@ public class HocBaController : ControllerBase
         _serviceMaster = serviceMaster;
     }
 
+    [HttpPost("nop-diem")]
+    public async Task<ActionResult> UpdateListHocBaAsync([FromBody] RequestListUpdateHocbaDto model)
+    {
+        if (model == null) return BadRequest("Danh sách truyền lên bị null hoặc rỗng.");
+        await _serviceMaster.HocBa.UpdateListHocBaAsync(model);
+        return NoContent();
+    }
+
     [HttpGet("")]
     public async Task<ActionResult> GetAllHocBaAsync([FromQuery] ParamHocBaDto paramHocBaDto)
     {
@@ -27,12 +35,14 @@ public class HocBaController : ControllerBase
         Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(result.page));
         return Ok(result.data);
     }
+
     [HttpGet("by-sinh-vien")]
     public async Task<ActionResult> GetAllHocBaAsync([FromQuery] ParamHocBaBySinhVienDto param)
     {
         var result = await _serviceMaster.HocBa.GetAllHocBaBySinhVienAsync(param);
         return Ok(result);
     }
+
 
     [HttpGet("{id}")]
     public async Task<ActionResult> GetHocBaByIdAsync(Guid id)
@@ -51,20 +61,12 @@ public class HocBaController : ControllerBase
 
     [HttpPut("{id}")]
     [ServiceFilter(typeof(ValidationFilter))]
-    public async Task<ActionResult> UpdateHocBaAsync(Guid id, [FromForm] RequestUpdateHocbaDto model)
+    public async Task<ActionResult> UpdateHocBaAsync(Guid id, [FromBody] RequestUpdateHocbaDto model)
     {
         await _serviceMaster.HocBa.UpdateAsync(id, model);
         return NoContent();
     }
 
-    [HttpPut("nop-diem")]
-    public async Task<ActionResult> UpdateListHocBaAsync([FromBody] RequestListUpdateHocbaDto model)
-    {
-        Console.WriteLine(JsonSerializer.Serialize(model));
-        if (model == null) return BadRequest("Danh sách truyền lên bị null hoặc rỗng.");
-        await _serviceMaster.HocBa.UpdateListHocBaAsync(model);
-        return NoContent();
-    }
 
     [HttpDelete("{id}")]
     public async Task<ActionResult> DeleteHocBaAsync(Guid id)

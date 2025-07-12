@@ -68,7 +68,7 @@ const Search = ({ id, query }: ISearch) => {
     formData.append('SinhVienId', data.id);
     mutationAdd.mutate(formData);
   };
-    const handleKeyDown = (e: React.KeyboardEvent) => {
+  const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       e.preventDefault(); // ✅ Prevent Enter from submitting
       e.stopPropagation();
@@ -116,8 +116,7 @@ const Search = ({ id, query }: ISearch) => {
                     type='text'
                     value={searchValue}
                     onChange={(e: any) => {
-                      
-                      setSearchValue(e.target.value)
+                      setSearchValue(e.target.value);
                     }}
                     onKeyDown={handleKeyDown}
                   />

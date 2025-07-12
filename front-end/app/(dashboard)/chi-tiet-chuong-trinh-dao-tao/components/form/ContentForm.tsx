@@ -64,7 +64,7 @@ export interface IFormData {
   MonHoc: IOption;
   ChuongTrinhDaoTao: IOption;
   BoMon: IOption;
-  SoTinChi: string;
+  SoTinChi: number;
   DiemTichLuy: boolean;
   LoaiMonHoc: IOption;
   HocKy: IOption;
@@ -93,7 +93,7 @@ const ContentForm = forwardRef(({ onSubmit, data, initialData, setKhoas }: ICont
         .number()
         .required('Số tín chỉ là bắt buộc')
         .transform((value, originalValue) => (originalValue === '' ? null : value))
-        .min(0, 'Số tín chỉ không được nhỏ hơn 0')
+        .min(1, 'Số tín chỉ không được nhỏ hơn 1')
         .max(10, 'Số tín chỉ không được lớn hơn 10'),
       DiemTichLuy: yup.boolean().notRequired(),
       LoaiMonHoc: yup.object().required('Vui lòng chọn loại môn học'),
@@ -136,12 +136,8 @@ const ContentForm = forwardRef(({ onSubmit, data, initialData, setKhoas }: ICont
   const { data: khoas, isLoading: isLoadingKhoa } = useQuery({
     queryKey: ['khoas'],
     queryFn: async () => {
-      const response = await KhoaService.getAllKhoa({
-        limit: 99999999999,
-        sortBy: 'createdAt',
-        sortByOrder: 'desc'
-      });
-      return response?.data;
+      const response = await KhoaService.getKhoaNoPage();
+      return response;
     },
     initialData: initialData?.khoas,
     select: (data) => {
@@ -190,8 +186,7 @@ const ContentForm = forwardRef(({ onSubmit, data, initialData, setKhoas }: ICont
       MonHoc: null,
       ChuongTrinhDaoTao: null,
       BoMon: null,
-      SoTinChi: '',
-      DiemTichLuy: false,
+      DiemTichLuy: true,
       LoaiMonHoc: null,
       HocKy: null,
       SoTinChi: 0
@@ -201,7 +196,8 @@ const ContentForm = forwardRef(({ onSubmit, data, initialData, setKhoas }: ICont
   useImperativeHandle(
     ref,
     () => ({
-      handleResetForm: () => reset()
+      handleResetForm: (data: any) => reset(data),
+      setValue: (name: string, value: any) => setValue(name, value)
     }),
     [reset]
   );

@@ -1,5 +1,5 @@
 'use client';
-import React, { Dispatch, forwardRef, RefObject, useMemo, useState } from 'react';
+import React, { Dispatch, forwardRef, RefObject, useEffect, useMemo, useState } from 'react';
 import {
   DataGrid,
   GridRowId,
@@ -43,6 +43,9 @@ import { ChiTietLopHocPhanService } from '@/services/ChiTietLopHocPhanService';
 import { saveAs } from 'file-saver';
 import { useNotifications } from '@toolpad/core';
 import moment from 'moment';
+import { UseFormSetValue } from 'react-hook-form';
+import { IFilter } from './Content';
+import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 function TextInput(props: React.InputHTMLAttributes<HTMLInputElement>) {
   return (
     <input
@@ -219,8 +222,10 @@ interface ImportFileProps {
 }
 interface ITableEditProps {
   row: any[];
+  control?: any;
   columns: GridColDef[];
   apiRef?: any;
+  setValue: UseFormSetValue<IFilter>;
   isSaving?: boolean;
   isLoading?: boolean;
   setFilterModel?: (data: any) => void;
@@ -236,7 +241,7 @@ interface ITableEditProps {
         loaiMonHoc: number;
         monHocId: string;
         chuongTrinhDaoTaoId: string;
-      };
+      } | null;
       khoa: number;
     } | null>
   >;
@@ -256,17 +261,21 @@ interface ITableEditProps {
       loaiMonHoc: number;
       monHocId: string;
       chuongTrinhDaoTaoId: string;
-    };
+    } | null;
     khoa: number;
   } | null;
   queryKey: string;
+  isMutateSavingPending?: boolean;
+  isMutateNopDiemPending?: boolean;
 }
 
 const TableEdit = forwardRef(
   (
     {
       columns,
+      control,
       row,
+      setValue,
       isLoading,
       setFilterModel,
       setSortModel,
@@ -282,7 +291,9 @@ const TableEdit = forwardRef(
       lopHocPhan,
       filter,
       queryKey,
-      handleNopDiem
+      handleNopDiem,
+      isMutateSavingPending,
+      isMutateNopDiemPending
     }: ITableEditProps,
     ref
   ) => {
@@ -306,36 +317,10 @@ const TableEdit = forwardRef(
       return newRow;
     }, []);
     const queryClient = useQueryClient();
-    const handleCellClick = React.useCallback((params: GridCellParams, event: React.MouseEvent) => {
-      if (!params.isEditable) {
-        return;
-      }
-      if ((event.target as any).nodeType === 1 && !event.currentTarget.contains(event.target as Element)) {
-        return;
-      }
-      setCellModesModel((prevModel: any) => {
-        return {
-          ...Object.keys(prevModel).reduce(
-            (acc, id) => ({
-              ...acc,
-              [id]: Object.keys(prevModel[id]).reduce(
-                (acc2, field) => ({
-                  ...acc2,
-                  [field]: { mode: GridCellModes.View }
-                }),
-                {}
-              )
-            }),
-            {}
-          ),
-          [params.id]: {
-            ...Object.keys(prevModel[params.id] || {}).reduce(
-              (acc, field) => ({ ...acc, [field]: { mode: GridCellModes.View } }),
-              {}
-            ),
-            [params.field]: { mode: GridCellModes.Edit }
-          }
-        };
+    const handleCellClick = React.useCallback((params: GridCellParams) => {
+      if (!params.isEditable) return;
+      setCellModesModel({
+        [params.id]: { [params.field]: { mode: GridCellModes.Edit } }
       });
     }, []);
     const handleCellModesModelChange = React.useCallback((newModel: GridCellModesModel) => {
@@ -393,15 +378,15 @@ const TableEdit = forwardRef(
       }
     });
     const handleImportFileClick = (data: ImportFileProps) => {
-    const rowIds = apiRef.current?.getRowModels();
-    const allRows = Array.from(rowIds?.values() || []);
-    if(allRows.length === 0) {
-      notification.show('Không có dữ liệu để import', {
-        severity: 'warning',
-        autoHideDuration: 5000
-      });
-      return;
-    }
+      const rowIds = apiRef.current?.getRowModels();
+      const allRows = Array.from(rowIds?.values() || []);
+      if (allRows.length === 0) {
+        notification.show('Không có dữ liệu để import', {
+          severity: 'warning',
+          autoHideDuration: 5000
+        });
+        return;
+      }
       const formData = new FormData();
       formData.append('lopHocPhanId', data.LopHocPhanId);
       if (data.File && data.File instanceof File) {
@@ -413,7 +398,7 @@ const TableEdit = forwardRef(
       if (!event.target.files || event.target.files.length === 0) {
         return;
       }
-      if(event.target.files[0].type !== 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+      if (event.target.files[0].type !== 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
         notification.show('Vui lòng chọn file Excel (.xlsx)', {
           severity: 'error',
           autoHideDuration: 5000
@@ -434,11 +419,16 @@ const TableEdit = forwardRef(
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{
-          duration: 0.5,
-          ease: [0.22, 1, 0.36, 1]
+          duration: 0.1
         }}
-        className='flex flex-col gap-4'
-        style={{ height: 'calc(100vh - 200px)' }}
+        className='flex flex-col gap-4 relative'
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          minHeight: '500px', // ✅ Minimum height
+          maxHeight: '600px',
+          overflow: 'hidden'
+        }}
       >
         <Box className='flex w-full gap-4'>
           <Box className='flex-1 gap-4 flex flex-col p-4 border border-gray-200 rounded-lg shadow-sm light:bg-white'>
@@ -448,7 +438,8 @@ const TableEdit = forwardRef(
                 <Box className='flex-1'>
                   <InputSelect2
                     fullWidth
-                    name={'bac'}
+                    control={control}
+                    name={'loaiChuongTrinh'}
                     placeholder={'Chọn bậc'}
                     data={LoaiChuongTrinhDaoTao ?? []}
                     getOptionKey={(option) => option.id}
@@ -456,8 +447,10 @@ const TableEdit = forwardRef(
                     getOnChangeValue={(value) => {
                       setfilter((prev: any) => ({
                         ...prev,
-                        loaiChuongTrinh: value?.id
+                        loaiChuongTrinh: value?.id,
+                        lopHocPhan: null
                       }));
+                      setValue('lopHocPhan', null);
                     }}
                   />
                 </Box>
@@ -469,14 +462,17 @@ const TableEdit = forwardRef(
                     fullWidth
                     name={'khoa'}
                     placeholder={'Chọn Khoa'}
+                    control={control}
                     data={yearOptions ?? []}
                     getOptionKey={(option) => option.id}
                     getOptionLabel={(option: any) => option.name}
                     getOnChangeValue={(value) => {
                       setfilter((prev: any) => ({
                         ...prev,
-                        khoa: value?.id
+                        khoa: value?.id,
+                        lopHocPhan: null
                       }));
+                      setValue('lopHocPhan', null);
                     }}
                   />
                 </Box>
@@ -487,6 +483,7 @@ const TableEdit = forwardRef(
                   <InputSelect2
                     fullWidth
                     name={'hocKy'}
+                    control={control}
                     placeholder={'Chọn học kỳ'}
                     data={HocKyLopHocPhan ?? []}
                     getOptionKey={(option) => option.id}
@@ -494,8 +491,10 @@ const TableEdit = forwardRef(
                     getOnChangeValue={(value) => {
                       setfilter((prev: any) => ({
                         ...prev,
-                        hocKy: value?.id
+                        hocKy: value?.id,
+                        lopHocPhan: null
                       }));
+                      setValue('lopHocPhan', null);
                     }}
                   />
                 </Box>
@@ -507,8 +506,9 @@ const TableEdit = forwardRef(
                 <Box className='flex-1'>
                   <InputSelect2
                     fullWidth
-                    name={'LopHocPhan'}
-                    placeholder={'Chọn lớp'}
+                    name={'lopHocPhan'}
+                    control={control}
+                    placeholder={'Chọn lớp học phần'}
                     data={lopHocPhan ?? []}
                     isLoading={isLoadingLHP}
                     getOptionKey={(option) => option.id}
@@ -544,7 +544,7 @@ const TableEdit = forwardRef(
           <Box className='grid grid-cols-2 gap-4 p-4 border border-gray-200 rounded-lg shadow-sm light:bg-white'>
             <LoadingButton
               disabled={false}
-              loading={false}
+              loading={isMutateNopDiemPending}
               startIcon={<AddToPhotosIcon />}
               loadingPosition='start'
               onClick={() => handleNopDiem?.()}
@@ -554,7 +554,7 @@ const TableEdit = forwardRef(
             </LoadingButton>
             <LoadingButton
               disabled={false}
-              loading={false}
+              loading={isMutateSavingPending}
               startIcon={<SaveIcon />}
               loadingPosition='start'
               onClick={() => saveChanges()}
@@ -627,7 +627,7 @@ const TableEdit = forwardRef(
           showCellVerticalBorder
           showToolbar
           disableColumnResize
-          autoHeight={true}
+          autoHeight={false}
           disableColumnMenu
           hideFooter
           density='compact'
@@ -637,12 +637,39 @@ const TableEdit = forwardRef(
               noRowsVariant: 'linear-progress'
             }
           }}
-             className='!border-gray-200 shadow-sm'
+          className='!border-gray-200 shadow-sm'
           sx={(theme) => ({
+            flex: 1,
             height: '100%',
             overflowY: 'auto',
-            '& .MuiDataGrid-editInputCell': {
+            '& input[type=number]::-webkit-inner-spin-button, & input[type=number]::-webkit-outer-spin-button': {
+              WebkitAppearance: 'none',
               margin: 0
+            },
+            '& input[type=number]': {
+              MozAppearance: 'textfield'
+            },
+            '& .MuiInputBase-input': {
+              padding: '0 4px',
+              height: '100%',
+              boxSizing: 'border-box'
+            },
+            '& .MuiDataGrid-editInputCell': {
+              margin: 0,
+              cursor: 'pointer'
+            },
+            '& .MuiDataGrid-main': {
+              overflow: 'auto', // ✅ Enable scrolling
+              flex: 1
+            },
+            '& .MuiDataGrid-cell': {
+              whiteSpace: 'break-spaces',
+              wordBreak: 'break-word',
+              overflowWrap: 'break-word',
+              lineHeight: '1.5',
+              padding: '4px 3px',
+              display: 'flex',
+              alignItems: 'center'
             },
             [`& .${gridClasses.columnHeaders}`]: {
               borderBottom: `1px solid ${theme.palette.grey[600]}`
@@ -692,6 +719,32 @@ const TableEdit = forwardRef(
           })}
           loading={isSaving || isLoading}
         />
+        <Box
+          className='absolute flex items-center gap-2  right-0 top-43'
+          sx={{
+            background: 'rgba(255,255,255,0.95)',
+            borderRadius: 2,
+            boxShadow: 2,
+            px: 2,
+            py: 1,
+            zIndex: 20,
+            border: '1px solid #ffe082'
+          }}
+        >
+          <WarningAmberIcon sx={{ color: '#ff9800', fontSize: 18 }} />
+          <Typography
+            variant='body2'
+            sx={{
+              fontSize: 12,
+              color: '#b26a00',
+              fontWeight: 500,
+              letterSpacing: 0.1,
+              lineHeight: 1.4
+            }}
+          >
+            Cảnh báo: Lưu ý sau khi nhập điểm nhớ ấn ra ngoài bảng để lưu thao tác.
+          </Typography>
+        </Box>
       </motion.div>
     );
   }

@@ -15,10 +15,10 @@ import { ChuongTrinhDaoTaoService } from '@/services/ChuongTrinhDaoTaoService';
 import { LoaiMonHocEnum } from '@/models/MonHoc';
 import moment from 'moment';
 import { useNotifications } from '@toolpad/core';
-import { LoaiLopHocPhan, TrangThaiLopHocPhanEnum } from '@/types/options';
+import { IOption, LoaiLopHocPhan, TrangThaiLopHocPhanEnum } from '@/types/options';
 import InputSelect2 from '@/components/selects/InputSelect2';
 import { usePopoverLock } from '@/hooks/context/PopoverLock';
-import { set, sortBy } from 'lodash';
+import { get, set, sortBy } from 'lodash';
 import { ChiTietLopHocPhanService } from '@/services/ChiTietLopHocPhanService';
 import { useUser } from '@/stores/selectors';
 import Link from 'next/link';
@@ -27,6 +27,7 @@ import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import { fi } from 'zod/v4/locales';
 import { ChiTietLopHocPhan } from '@/models/ChiTietLopHocPhan';
 import { HocBaService } from '@/services/HocBaService';
+import { useForm } from 'react-hook-form';
 const TableEdit = dynamic(() => import('./TableEdit'), {
   ssr: false
 });
@@ -34,8 +35,28 @@ const TableEdit = dynamic(() => import('./TableEdit'), {
 interface IContentProps {
   queryKey: string;
 }
+export interface IFilter {
+  hocKy: IOption | null;
+  loaiChuongTrinh: IOption | null;
+  lopHocPhan: {
+    id: string | null;
+    name: string | null;
+    monHocId: string | null;
+    chuongTrinhDaoTaoId: string | null;
+    loaiMonHoc: number | null;
+  } | null;
+  khoa: IOption | null;
+}
 
 const Content = ({ queryKey }: IContentProps) => {
+  const { control, getValues, setValue } = useForm<IFilter>({
+    defaultValues: {
+      hocKy: null,
+      loaiChuongTrinh: null,
+      lopHocPhan: null,
+      khoa: null
+    }
+  });
   const notification = useNotifications();
   const queryClient = useQueryClient();
   const user = useUser();
@@ -51,7 +72,7 @@ const Content = ({ queryKey }: IContentProps) => {
       monHocId: string;
       chuongTrinhDaoTaoId: string;
       loaiMonHoc: number;
-    };
+    } | null;
     khoa: number;
   } | null>(null);
   const filterRef = useRef(filter);
@@ -59,12 +80,12 @@ const Content = ({ queryKey }: IContentProps) => {
     items: []
   });
   const [isOpenPopover, setisOpenPopover] = useState<boolean>(false);
-  const { data, isLoading } = useQuery({
+  const { data: queryData, isLoading } = useQuery({
     queryKey: [queryKey, filterModel, filter?.lopHocPhan?.id],
     queryFn: async () => {
       const searchKeyWord = handleTextSearch(filterModel?.quickFilterValues as any[]);
       let params: IParamChiTietLopHocPhan = {
-        lopHocPhanId: filter?.lopHocPhan?.id
+        lopHocPhanId: filter?.lopHocPhan?.id as any
       };
       if (searchKeyWord) {
         params = {
@@ -73,16 +94,24 @@ const Content = ({ queryKey }: IContentProps) => {
         };
       }
       const result = await ChiTietLopHocPhanService.getAllChiTietLopHocPhanByLopHocPhanId(
-        filter?.lopHocPhan?.id as any,
+        getValues('lopHocPhan')?.id as any,
         params
       );
       return result;
     },
     enabled: !!filter?.lopHocPhan?.id && !!filter?.khoa && !!filter?.hocKy && !!filter?.loaiChuongTrinh,
-    placeholderData: (prev) => prev,
     refetchOnWindowFocus: false,
     gcTime: 0
   });
+  const data = useMemo(() => {
+    const hasRequiredValues =
+      !!filter?.lopHocPhan?.id && !!filter?.khoa && !!filter?.hocKy && !!filter?.loaiChuongTrinh;
+
+    if (!hasRequiredValues) {
+      return { data: [] };
+    }
+    return queryData || [];
+  }, [queryData, filter?.lopHocPhan?.id, filter?.khoa, filter?.hocKy, filter?.loaiChuongTrinh]);
   const { data: lhp, isLoading: isLoadingLHP } = useQuery({
     queryKey: ['lhp-list', filter?.khoa, filter?.hocKy, filter?.loaiChuongTrinh, user?.id],
     queryFn: async () => {
@@ -96,19 +125,18 @@ const Content = ({ queryKey }: IContentProps) => {
       return result;
     },
     select: (data) => {
-      console.log("data",data);
       return data?.map((item: any) => ({
         id: item.id,
-        name: item.maHocPhan,
+        name: item.maHocPhan.split('_')[0],
         loaiMonHoc: item.monHoc?.chiTietChuongTrinhDaoTao?.loaiMonHoc,
         monHocId: item.monHocId,
         chuongTrinhDaoTaoId: item.monHoc?.chiTietChuongTrinhDaoTao?.chuongTrinhDaoTao?.id
       }));
     },
-    placeholderData: (prev) => prev,
     refetchOnWindowFocus: false,
     enabled: !!user && !!filter?.khoa && !!filter?.hocKy && !!filter?.loaiChuongTrinh
   });
+
   useEffect(() => {
     filterRef.current = filter;
   }, [filter]);
@@ -145,8 +173,8 @@ const Content = ({ queryKey }: IContentProps) => {
         autoHideDuration: 5000
       });
     },
-    onError: (error) => {
-      notification.show('Nộp điểm thất bại', {
+    onError: (error: any) => {
+      notification.show(error?.Message || 'Nộp điểm thất bại', {
         severity: 'error',
         autoHideDuration: 5000
       });
@@ -162,11 +190,11 @@ const Content = ({ queryKey }: IContentProps) => {
         headerName: 'STT',
         type: 'number',
         headerAlign: 'left',
-        minWidth: 80,
+        minWidth: 50,
         flex: 0.4,
         sortable: false,
         display: 'flex',
-        align: 'left',
+        align: 'center',
         editable: false,
         disableColumnMenu: true
       },
@@ -175,7 +203,7 @@ const Content = ({ queryKey }: IContentProps) => {
         headerName: 'Mã số',
         type: 'string',
         headerAlign: 'left',
-        minWidth: 100,
+        minWidth: 120,
         flex: 1,
         sortable: false,
         display: 'flex',
@@ -196,7 +224,7 @@ const Content = ({ queryKey }: IContentProps) => {
         headerName: 'Họ tên',
         type: 'string',
         headerAlign: 'left',
-        minWidth: 100,
+        minWidth: 120,
         flex: 1,
         sortable: false,
         display: 'flex',
@@ -249,33 +277,34 @@ const Content = ({ queryKey }: IContentProps) => {
         type: 'number',
         sortable: false,
         display: 'flex',
-        align: 'left',
+        align: 'center',
         editable: true,
         disableColumnMenu: true,
         preProcessEditCellProps: (params) => {
-          const value = Number(params.props.value);
-          return { ...params.props, error: isNaN(value) || value < 1 || value > 10 };
+          const rawValue = params.props.value;
+          if (rawValue === '' || rawValue === null || rawValue === undefined) {
+            return { ...params.props, value: null, error: false };
+          }
+          const value = Number(rawValue);
+          console.log('value', params.hasChanged);
+          if (isNaN(value) || value < 1 || value > 10) {
+            return { ...params.props, value: null, error: false };
+          }
+          return { ...params.props, value, error: false };
         },
-        renderEditCell: (params) => (
-          <Box className='w-full h-full relative'>
-            <input
-              type='number'
-              value={params.value ?? ''}
-              onChange={(e) =>
-                params.api.setEditCellValue({ id: params.id, field: params.field, value: e.target.value })
-              }
-              style={{
-                width: '100%',
-                height: '100%',
-                padding: '8px',
-                MozAppearance: 'textfield',
-                border: params.error ? '2px solid red' : undefined
-              }}
-              className='hide-number-spin'
-            />
-            {params.error ? <WarningAmberIcon className='absolute top-1 right-1 text-red-500 h-4 w-4' /> : null}
-          </Box>
-        )
+        valueGetter: (params) => {
+          if (params === null || params === '' || params === undefined) {
+            return null;
+          }
+          const convertNumber = Number(params);
+          if (isNaN(convertNumber) || convertNumber < 1 || convertNumber > 10) {
+            return null;
+          }
+          return params;
+        },
+        cellClassName: (params) => {
+          return 'cursor-pointer hover:bg-gray-100 transition-colors duration-200 ease-in-out';
+        }
       },
       {
         field: 'diemTrungBinh',
@@ -286,33 +315,34 @@ const Content = ({ queryKey }: IContentProps) => {
         type: 'number',
         sortable: false,
         display: 'flex',
-        align: 'left',
+        align: 'center',
         editable: true,
         disableColumnMenu: true,
-        preProcessEditCellProps: (params) => {
-          const value = Number(params.props.value);
-          return { ...params.props, error: isNaN(value) || value < 1 || value > 10 };
+        cellClassName: (params) => {
+          return 'cursor-pointer hover:bg-gray-100 transition-colors duration-200 ease-in-out';
         },
-        renderEditCell: (params) => (
-          <Box className='w-full h-full relative'>
-            <input
-              type='number'
-              value={params.value ?? ''}
-              onChange={(e) =>
-                params.api.setEditCellValue({ id: params.id, field: params.field, value: e.target.value })
-              }
-              style={{
-                width: '100%',
-                height: '100%',
-                padding: '8px',
-                MozAppearance: 'textfield',
-                border: params.error ? '2px solid red' : undefined
-              }}
-              className='hide-number-spin'
-            />
-            {params.error ? <WarningAmberIcon className='absolute top-1 right-1 text-red-500 h-4 w-4' /> : null}
-          </Box>
-        )
+        preProcessEditCellProps: (params) => {
+          const rawValue = params.props.value;
+          if (rawValue === '' || rawValue === null || rawValue === undefined) {
+            return { ...params.props, value: null, error: false };
+          }
+          const value = Number(rawValue);
+          console.log('value', params.hasChanged);
+          if (isNaN(value) || value < 1 || value > 10) {
+            return { ...params.props, value: null, error: false };
+          }
+          return { ...params.props, value, error: false };
+        },
+        valueGetter: (params) => {
+          if (params === null || params === '' || params === undefined) {
+            return null;
+          }
+          const convertNumber = Number(params);
+          if (isNaN(convertNumber) || convertNumber < 1 || convertNumber > 10) {
+            return null;
+          }
+          return params;
+        }
       },
       {
         field: 'diemThi1',
@@ -323,33 +353,34 @@ const Content = ({ queryKey }: IContentProps) => {
         type: 'number',
         sortable: false,
         display: 'flex',
-        align: 'left',
+        align: 'center',
         editable: true,
         disableColumnMenu: true,
         preProcessEditCellProps: (params) => {
-          const value = Number(params.props.value);
-          return { ...params.props, error: isNaN(value) || value < 1 || value > 10 };
+          const rawValue = params.props.value;
+          if (rawValue === '' || rawValue === null || rawValue === undefined) {
+            return { ...params.props, value: null, error: false };
+          }
+          const value = Number(rawValue);
+          console.log('value', params.hasChanged);
+          if (isNaN(value) || value < 1 || value > 10) {
+            return { ...params.props, value: null, error: false };
+          }
+          return { ...params.props, value, error: false };
         },
-        renderEditCell: (params) => (
-          <Box className='w-full h-full relative'>
-            <input
-              type='number'
-              value={params.value ?? ''}
-              onChange={(e) =>
-                params.api.setEditCellValue({ id: params.id, field: params.field, value: e.target.value })
-              }
-              style={{
-                width: '100%',
-                height: '100%',
-                padding: '8px',
-                MozAppearance: 'textfield',
-                border: params.error ? '2px solid red' : undefined
-              }}
-              className='hide-number-spin'
-            />
-            {params.error ? <WarningAmberIcon className='absolute top-1 right-1 text-red-500 h-4 w-4' /> : null}
-          </Box>
-        )
+        valueGetter: (params) => {
+          if (params === null || params === '' || params === undefined) {
+            return null;
+          }
+          const convertNumber = Number(params);
+          if (isNaN(convertNumber) || convertNumber < 1 || convertNumber > 10) {
+            return null;
+          }
+          return params;
+        },
+        cellClassName: (params) => {
+          return 'cursor-pointer hover:bg-gray-100 transition-colors duration-200 ease-in-out';
+        }
       },
       {
         field: 'diemThi2',
@@ -360,33 +391,34 @@ const Content = ({ queryKey }: IContentProps) => {
         type: 'number',
         sortable: false,
         display: 'flex',
-        align: 'left',
+        align: 'center',
         editable: true,
         disableColumnMenu: true,
         preProcessEditCellProps: (params) => {
-          const value = Number(params.props.value);
-          return { ...params.props, error: isNaN(value) || value < 1 || value > 10 };
+          const rawValue = params.props.value;
+          if (rawValue === '' || rawValue === null || rawValue === undefined) {
+            return { ...params.props, value: null, error: false };
+          }
+          const value = Number(rawValue);
+          console.log('value', params.hasChanged);
+          if (isNaN(value) || value < 1 || value > 10) {
+            return { ...params.props, value: null, error: false };
+          }
+          return { ...params.props, value, error: false };
         },
-        renderEditCell: (params) => (
-          <Box className='w-full h-full relative'>
-            <input
-              type='number'
-              value={params.value ?? ''}
-              onChange={(e) =>
-                params.api.setEditCellValue({ id: params.id, field: params.field, value: e.target.value })
-              }
-              style={{
-                width: '100%',
-                height: '100%',
-                padding: '8px',
-                MozAppearance: 'textfield',
-                border: params.error ? '2px solid red' : undefined
-              }}
-              className='hide-number-spin'
-            />
-            {params.error ? <WarningAmberIcon className='absolute top-1 right-1 text-red-500 h-4 w-4' /> : null}
-          </Box>
-        )
+        valueGetter: (params) => {
+          if (params === null || params === '' || params === undefined) {
+            return null;
+          }
+          const convertNumber = Number(params);
+          if (isNaN(convertNumber) || convertNumber < 1 || convertNumber > 10) {
+            return null;
+          }
+          return params;
+        },
+        cellClassName: (params) => {
+          return 'cursor-pointer hover:bg-gray-100 transition-colors duration-200 ease-in-out';
+        }
       },
       {
         field: 'diemTongKet1',
@@ -397,7 +429,7 @@ const Content = ({ queryKey }: IContentProps) => {
         type: 'number',
         sortable: false,
         display: 'flex',
-        align: 'left',
+        align: 'center',
         editable: false,
         disableColumnMenu: true,
         renderCell: (params) => {
@@ -428,7 +460,7 @@ const Content = ({ queryKey }: IContentProps) => {
         type: 'number',
         sortable: false,
         display: 'flex',
-        align: 'left',
+        align: 'center',
         editable: false,
         disableColumnMenu: true,
         renderCell: (params) => {
@@ -479,6 +511,8 @@ const Content = ({ queryKey }: IContentProps) => {
               onChange={(e) =>
                 params.api.setEditCellValue({ id: params.id, field: params.field, value: e.target.value })
               }
+              className='
+              !border-0 outline-none w-full h-full bg-transparent'
               style={{
                 width: '100%',
                 height: '100%',
@@ -525,55 +559,64 @@ const Content = ({ queryKey }: IContentProps) => {
   //     </Fragment>
   //   );
   // }, [loaiLopHocPhan]);
-  const handleSave = (item: any) => {
-     if (
-      !filter?.lopHocPhan?.id ||
-      !filter?.khoa ||
-      !filter?.hocKy ||
-      !filter?.loaiChuongTrinh ||
-      !filter?.lopHocPhan?.monHocId ||
-      !filter?.lopHocPhan?.chuongTrinhDaoTaoId ||
-      (data && data?.data?.length === 0)
-    ) {
-      notification.show('Vui lòng chọn đầy đủ thông tin trước khi nộp điểm', {
-        severity: 'warning',
-        autoHideDuration: 5000
-      });
-      return;
-    }
-    if (item && item.length === 0) {
-      notification.show('Không có dữ liệu để lưu', {
-        severity: 'warning',
-        autoHideDuration: 5000
-      });
-      return;
-    }
-    const currentFilter = filterRef.current;
-    const convertData = item?.map((item: any) => ({
-      id: item.id,
-      diemChuyenCan: item.diemChuyenCan,
-      diemTrungBinh: item.diemTrungBinh,
-      diemThi1: item.diemThi1,
-      diemThi2: item.diemThi2,
-      diemTongKet1: item.diemTongKet1,
-      diemTongKet2: item.diemTongKet2,
-      ghiChu: item?.ghiChu || ''
-    }));
-    const finalData = {
-      listDiemSo: convertData,
-      loaiMonHoc: currentFilter?.lopHocPhan?.loaiMonHoc 
-    };
-    mutateSaving.mutate(finalData);
-  };
+  const handleSave = useCallback(
+    (item: any) => {
+      const lopHocPhan = getValues('lopHocPhan');
+      const khoa = getValues('khoa');
+      const hocKy = getValues('hocKy');
+      const loaiChuongTrinh = getValues('loaiChuongTrinh');
+      if (
+        !lopHocPhan?.id ||
+        !khoa?.id ||
+        !hocKy?.id ||
+        !loaiChuongTrinh?.id ||
+        !lopHocPhan?.monHocId ||
+        !lopHocPhan?.chuongTrinhDaoTaoId
+      ) {
+        notification.show('Vui lòng chọn đầy đủ thông tin trước khi lưu điểm', {
+          severity: 'warning',
+          autoHideDuration: 5000
+        });
+        return;
+      }
+      if (item && item.length === 0) {
+        notification.show('Không có dữ liệu để lưu', {
+          severity: 'warning',
+          autoHideDuration: 5000
+        });
+        return;
+      }
+      const convertData = item?.map((item: any) => ({
+        id: item.id,
+        diemChuyenCan: item.diemChuyenCan,
+        diemTrungBinh: item.diemTrungBinh,
+        diemThi1: item.diemThi1,
+        diemThi2: item.diemThi2,
+        diemTongKet1: item.diemTongKet1,
+        diemTongKet2: item.diemTongKet2,
+        ghiChu: item?.ghiChu || ''
+      }));
+      const finalData = {
+        listDiemSo: convertData,
+        loaiMonHoc: lopHocPhan?.loaiMonHoc
+      };
+      mutateSaving.mutate(finalData);
+    },
+    [data, notification, mutateSaving]
+  );
 
   const handleNopDiem = async () => {
+    const lopHocPhan = getValues('lopHocPhan');
+    const khoa = getValues('khoa');
+    const hocKy = getValues('hocKy');
+    const loaiChuongTrinh = getValues('loaiChuongTrinh');
     if (
-      !filter?.lopHocPhan?.id ||
-      !filter?.khoa ||
-      !filter?.hocKy ||
-      !filter?.loaiChuongTrinh ||
-      !filter?.lopHocPhan?.monHocId ||
-      !filter?.lopHocPhan?.chuongTrinhDaoTaoId ||
+      !lopHocPhan?.id ||
+      !khoa?.id ||
+      !hocKy?.id ||
+      !loaiChuongTrinh?.id ||
+      !lopHocPhan?.monHocId ||
+      !lopHocPhan?.chuongTrinhDaoTaoId ||
       (data && data?.data?.length === 0)
     ) {
       notification.show('Vui lòng chọn đầy đủ thông tin trước khi nộp điểm', {
@@ -582,26 +625,36 @@ const Content = ({ queryKey }: IContentProps) => {
       });
       return;
     }
-    const currentFilter = filterRef.current;
     const rowIds = apiRef.current?.getRowModels();
     const allRows = Array.from(rowIds?.values() || []);
-    const convertData = allRows?.filter(item => item?.sinhVienId)?.map((item) => ({
-      diemTongKet1: item?.diemTongKet1,
-      diemTongKet2: item?.diemTongKet2,
-      sinhVienId: item?.sinhVienId
-    }));
+    const convertData = allRows
+      ?.filter((item) => item?.sinhVienId)
+      ?.map((item) => ({
+        DiemTongKet1: item?.diemTongKet1 || 0,
+        DiemTongKet2: item?.diemTongKet2 || 0,
+        SinhVienId: item?.sinhVienId
+      }));
+    const checkIsDiemTongKet1 = convertData?.some(
+      (item) => item?.DiemTongKet1 === 0 || item?.DiemTongKet1 === undefined
+    );
+    if (checkIsDiemTongKet1) {
+      notification.show('Vui lòng nhập điểm tổng kết hoặc lưu điểm trước khi nộp', {
+        severity: 'warning',
+        autoHideDuration: 4000
+      });
+      return;
+    }
     if (convertData.length === 0) {
       notification.show('Không có dữ liệu để nộp điểm', {
         severity: 'warning',
-        autoHideDuration: 5000
+        autoHideDuration: 4000
       });
       return;
     }
     const finalData = {
-      listDiemSo: convertData,
-      lopHocPhanId: currentFilter?.lopHocPhan?.id,
-      monHocId: currentFilter?.lopHocPhan?.monHocId,
-      chuongTrinhDaoTaoId: currentFilter?.lopHocPhan?.chuongTrinhDaoTaoId
+      ListDiemSo: convertData,
+      LopHocPhanId: lopHocPhan?.id,
+      MonHocId: lopHocPhan?.monHocId
     };
     mutationNopDiem.mutate(finalData);
   };
@@ -620,6 +673,10 @@ const Content = ({ queryKey }: IContentProps) => {
         handleNopDiem={handleNopDiem}
         setfilter={setfilter}
         filter={filter}
+        control={control}
+        setValue={setValue}
+        isMutateSavingPending={mutateSaving.isPending}
+        isMutateNopDiemPending={mutationNopDiem.isPending}
         // contentPopover={handleShowFilter}
         // isOpen={isOpenPopover}
         // handleClick={handleOpenPopover}

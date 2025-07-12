@@ -155,11 +155,32 @@ const Content = ({ queryKey }: ContentProps) => {
         headerName: 'Mã ngành',
         headerAlign: 'left',
         type: 'string',
-        minWidth: 180,
+        minWidth: 130,
         disableColumnMenu: true,
         sortable: false,
         display: 'flex',
         flex: 1
+      },
+      {
+        field: 'nganhChaId',
+        headerName: 'Thuộc ngành',
+        headerAlign: 'left',
+        type: 'string',
+        minWidth: 180,
+        disableColumnMenu: true,
+        sortable: false,
+        display: 'flex',
+        flex: 1,
+        renderCell: (params) => {
+          return !params.row?.nganhCha ? null : (
+            <Link
+              href={`${APP_ROUTE.NGANH.EDIT(params.row.nganhCha.id)}`}
+              className='flex items-center gap-2 text-blue-500 hover:text-blue-700 hover:underline'
+            >
+              <Typography variant='body2'>{params.row.nganhCha.tenNganh}</Typography>
+            </Link>
+          );
+        }
       },
       {
         field: 'khoa',

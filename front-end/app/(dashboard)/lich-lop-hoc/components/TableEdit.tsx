@@ -26,8 +26,8 @@ import SaveIcon from '@mui/icons-material/Save';
 import { darken } from '@mui/material/styles';
 import { GridApiCommunity } from '@mui/x-data-grid/internals';
 import { motion } from 'motion/react';
-import { Box, Popover, Typography } from '@mui/material';
-import { HocKyLopHocPhan, LoaiChuongTrinhDaoTao, LoaiMonHoc, weekOptions, yearOptions } from '@/types/options';
+import { Box, Grid, Popover, Typography } from '@mui/material';
+import { HocKyLopHocPhan, IOption, LoaiChuongTrinhDaoTao, LoaiMonHoc, weekOptions, yearOptions } from '@/types/options';
 import { ToolbarButton } from '@mui/x-data-grid';
 import SearchIcon from '@mui/icons-material/Search';
 import clsx from 'clsx';
@@ -49,6 +49,7 @@ import { fi } from 'zod/v4/locales';
 import { Add } from '@mui/icons-material';
 import { CalendarFold } from 'lucide-react';
 import { LichBieuService } from '@/services/LichBieuService';
+import { useForm } from 'react-hook-form';
 function TextInput(props: React.InputHTMLAttributes<HTMLInputElement>) {
   return (
     <input
@@ -221,6 +222,7 @@ interface ImportFileProps {
   File: File | null;
 }
 interface ITableEditProps {
+  isLoadingMutationCopy?: boolean;
   row: any[];
   columns: GridColDef[];
   apiRef?: any;
@@ -297,9 +299,17 @@ interface ITableEditProps {
   handleOpenModal?: () => void;
 }
 
+interface IFormData {
+  NamHoc: IOption | null;
+  Tuan: IOption | null;
+  HocKy: IOption | null;
+  LopHoc: IOption | null;
+}
+
 const TableEdit = forwardRef(
   (
     {
+      isLoadingMutationCopy,
       columns,
       row,
       isLoading,
@@ -405,7 +415,9 @@ const TableEdit = forwardRef(
         }));
       }
     }, [user]);
-
+    const { setValue, control } = useForm<IFormData>({
+      mode: 'onChange'
+    });
     return (
       <motion.div
         initial={{ opacity: 0 }}
@@ -415,20 +427,26 @@ const TableEdit = forwardRef(
           ease: [0.22, 1, 0.36, 1]
         }}
         className='flex flex-col gap-4'
-        style={{ height: 'calc(100vh - 200px)', minHeight: '600px', // ✅ Add minimum height
-      display: 'flex',
-      flexDirection: 'column' }}
+        style={{
+          height: 'calc(100vh - 200px)',
+          minHeight: '600px', // ✅ Add minimum height
+          display: 'flex',
+          flexDirection: 'column'
+        }}
       >
         <Box className='flex w-full gap-4 '>
           <Box className='flex-1 gap-4 flex justify-center items-center p-4 border border-gray-200 rounded-lg shadow-sm light:bg-white'>
             <Box className='flex flex-col gap-4 w-full'>
               <Box className='flex gap-4 w-full'>
-                <Box className='flex justify-center items-center gap-3 w-full'>
-                  <Typography className='!text-[16px] !leading-6 !font-semibold'>Năm học</Typography>
-                  <Box className='flex-1'>
+                <Grid container className='flex justify-center items-center gap-3 w-full'>
+                  <Grid size={3}>
+                    <Typography className='!text-[16px] !leading-6 !font-semibold'>Năm học</Typography>
+                  </Grid>
+                  <Grid size={9} className='flex-1'>
                     <InputSelect2
                       fullWidth
-                      name={'Năm'}
+                      name={'NamHoc'}
+                      control={control}
                       placeholder={'Chọn năm học'}
                       data={yearOptions ?? []}
                       getOptionKey={(option) => option.id}
@@ -441,16 +459,24 @@ const TableEdit = forwardRef(
                             name: value?.name
                           }
                         }));
+                        setfilter((prev: any) => ({
+                          ...prev,
+                          tuan: null
+                        }));
+                        setValue('Tuan', null);
                       }}
                     />
-                  </Box>
-                </Box>
-                <Box className='flex justify-center items-center gap-3 w-full'>
-                  <Typography className='!text-[16px] !leading-6 !font-semibold'>Tuần</Typography>
-                  <Box className='flex-1'>
+                  </Grid>
+                </Grid>
+                <Grid container className='flex justify-center items-center gap-3 w-full'>
+                  <Grid size={3}>
+                    <Typography className='!text-[16px] !leading-6 !font-semibold'>Tuần</Typography>
+                  </Grid>
+                  <Grid size={9}>
                     <InputSelect2
                       fullWidth
                       name={'Tuan'}
+                      control={control}
                       placeholder={'Chọn tuần'}
                       data={tuans ?? []}
                       isLoading={isLoadingTuan}
@@ -466,15 +492,18 @@ const TableEdit = forwardRef(
                         }));
                       }}
                     />
-                  </Box>
-                </Box>
+                  </Grid>
+                </Grid>
               </Box>
               <Box className='flex gap-4 w-full'>
-                <Box className='flex justify-start items-center gap-3 w-full'>
-                  <Typography className='!text-[16px] !leading-6 !font-semibold'>Học kỳ</Typography>
-                  <Box className='flex-1'>
+                <Grid container className='flex justify-start items-center gap-3 w-full'>
+                  <Grid size={3}>
+                    <Typography className='!text-[16px] !leading-6 !font-semibold'>Học kỳ</Typography>
+                  </Grid>
+                  <Grid size={9} className='flex-1'>
                     <InputSelect2
                       fullWidth
+                      control={control}
                       isDisabled={!isAdmin}
                       name={'HocKy'}
                       placeholder={'Chọn học kỳ'}
@@ -488,14 +517,17 @@ const TableEdit = forwardRef(
                         }));
                       }}
                     />
-                  </Box>
-                </Box>
-                <Box className='flex justify-center items-center gap-3 w-full'>
-                  <Typography className='!text-[16px] !leading-6 !font-semibold'>Lớp học</Typography>
-                  <Box className='flex-1'>
+                  </Grid>
+                </Grid>
+                <Grid container className='flex justify-center items-center gap-3 w-full'>
+                  <Grid size={3}>
+                    <Typography className='!text-[16px] !leading-6 !font-semibold'>Lớp học</Typography>
+                  </Grid>
+                  <Grid size={9}>
                     <InputSelect2
                       fullWidth
                       name={'LopHoc'}
+                      control={control}
                       placeholder={'Chọn lớp học'}
                       data={lophocs ?? []}
                       isLoading={isLoadingLH}
@@ -511,8 +543,8 @@ const TableEdit = forwardRef(
                         }));
                       }}
                     />
-                  </Box>
-                </Box>
+                  </Grid>
+                </Grid>
               </Box>
             </Box>
             <Box className='flex flex-col gap-4 items-center h-full justify-start'>
@@ -538,9 +570,11 @@ const TableEdit = forwardRef(
             </Box>
             <Box className='flex flex-[3] items-center justify-start w-full gap-3'>
               <Box className='flex flex-col gap-2 flex-2 w-full'>
-                <Box className='flex justify-center items-center gap-3 w-full'>
-                  <Typography className='!text-[16px] !leading-6 !font-semibold'>Vào</Typography>
-                  <Box className='flex-1'>
+                <Grid container className='flex justify-center items-center gap-3 w-full'>
+                  <Grid size={3}>
+                    <Typography className='!text-[16px] !leading-6 !font-semibold'>Từ</Typography>
+                  </Grid>
+                  <Grid size={9} className='flex-1'>
                     <InputSelect2
                       fullWidth
                       name={'TuanVao'}
@@ -556,11 +590,13 @@ const TableEdit = forwardRef(
                         }));
                       }}
                     />
-                  </Box>
-                </Box>
-                <Box className='flex justify-center items-center gap-3 w-full'>
-                  <Typography className='!text-[16px] !leading-6 !font-semibold'>Đến</Typography>
-                  <Box className='flex-1'>
+                  </Grid>
+                </Grid>
+                <Grid container className='flex justify-center items-center gap-3 w-full'>
+                  <Grid size={3}>
+                    <Typography className='!text-[16px] !leading-6 !font-semibold'>Đến</Typography>
+                  </Grid>
+                  <Grid size={9} className='flex-1'>
                     <InputSelect2
                       fullWidth
                       name={'TuanDen'}
@@ -576,157 +612,158 @@ const TableEdit = forwardRef(
                         }));
                       }}
                     />
-                  </Box>
-                </Box>
+                  </Grid>
+                </Grid>
               </Box>
               <Box className='flex-1 w-full min-md:flex'>
-                <Button
+                <LoadingButton
+                  loading={isLoadingMutationCopy}
                   onClick={() => handleCopy?.()}
                   className='!border !border-gray-300 !rounded-md !bg-blue-500 !text-white hover:!bg-blue-600 transition-all !duration-200 !ease-in-out !shadow-sm !leading-6 hover:transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed'
                 >
                   Sao chép
-                </Button>
+                </LoadingButton>
               </Box>
             </Box>
           </Box>
         </Box>
- <Box 
-      sx={{ 
-        flex: 1, // ✅ Take remaining space
-        minHeight: '400px', // ✅ Minimum height for DataGrid
-        display: 'flex',
-        flexDirection: 'column',
-        height: '100%'
-      }}
-    >
-        <DataGrid
-          apiRef={apiRef}
-          rows={row}
-          columns={columns}
-          hideFooterPagination
-          hideFooterSelectedRowCount
-          cellModesModel={cellModesModel}
-          onCellClick={handleCellClick}
-          onCellModesModelChange={handleCellModesModelChange}
-          processRowUpdate={processRowUpdate}
-          ignoreValueFormatterDuringExport
-          filterDebounceMs={600}
-          editMode='cell'
-          virtualizeColumnsWithAutoRowHeight
-          onFilterModelChange={setFilterModel}
-          slots={{
-            toolbar: () => CustomToolbar({ contentPopover, isOpen, onClose, handleClick }),
-            noRowsOverlay: noRowsOverlay
+        <Box
+          sx={{
+            flex: 1, // ✅ Take remaining space
+            minHeight: '400px', // ✅ Minimum height for DataGrid
+            display: 'flex',
+            flexDirection: 'column',
+            height: '100%'
           }}
-          onSortModelChange={(model) => {
-            if (model.length > 0) {
-              return (
-                setSortModel &&
-                setSortModel({
-                  field: model[0].field,
-                  sort: model[0].sort || 'asc'
-                })
-              );
-            }
-          }}
-          getRowHeight={() => 'auto'}
-          sortingMode='server'
-          filterMode='server'
-          showCellVerticalBorder
-          showToolbar
-          disableColumnResize
-          autoHeight={false}
-          disableColumnMenu
-          hideFooter
-          density='compact'
-          slotProps={{
-            loadingOverlay: {
-              variant: 'linear-progress',
-              noRowsVariant: 'linear-progress'
-            }
-          }}
-          className='!border-gray-200 shadow-sm'
-          sx={(theme) => ({
-          height: '100%', 
-          flex: 1, 
-          minHeight: '400px',
-            overflowY: 'auto',
-            '& .MuiDataGrid-editInputCell': {
-              margin: 0
-            },
-            '& .MuiDataGrid-cell.actions-cell': {
-              backgroundColor: '#fafafa',
-              '&:focus, &:focus-within': {
+        >
+          <DataGrid
+            apiRef={apiRef}
+            rows={row}
+            columns={columns}
+            hideFooterPagination
+            hideFooterSelectedRowCount
+            cellModesModel={cellModesModel}
+            onCellClick={handleCellClick}
+            onCellModesModelChange={handleCellModesModelChange}
+            processRowUpdate={processRowUpdate}
+            ignoreValueFormatterDuringExport
+            filterDebounceMs={600}
+            editMode='cell'
+            virtualizeColumnsWithAutoRowHeight
+            onFilterModelChange={setFilterModel}
+            slots={{
+              toolbar: () => CustomToolbar({ contentPopover, isOpen, onClose, handleClick }),
+              noRowsOverlay: noRowsOverlay
+            }}
+            onSortModelChange={(model) => {
+              if (model.length > 0) {
+                return (
+                  setSortModel &&
+                  setSortModel({
+                    field: model[0].field,
+                    sort: model[0].sort || 'asc'
+                  })
+                );
+              }
+            }}
+            getRowHeight={() => 'auto'}
+            sortingMode='server'
+            filterMode='server'
+            showCellVerticalBorder
+            showToolbar
+            disableColumnResize
+            autoHeight={false}
+            disableColumnMenu
+            hideFooter
+            density='compact'
+            slotProps={{
+              loadingOverlay: {
+                variant: 'linear-progress',
+                noRowsVariant: 'linear-progress'
+              }
+            }}
+            className='!border-gray-200 shadow-sm'
+            sx={(theme) => ({
+              height: '100%',
+              flex: 1,
+              minHeight: '400px',
+              overflowY: 'auto',
+              '& .MuiDataGrid-editInputCell': {
+                margin: 0
+              },
+              '& .MuiDataGrid-cell.actions-cell': {
+                backgroundColor: '#fafafa',
+                '&:focus, &:focus-within': {
+                  outline: 'none !important',
+                  border: 'none !important',
+                  backgroundColor: '#fafafa !important'
+                },
+                '&.Mui-selected': {
+                  backgroundColor: '#fafafa !important',
+                  border: 'none !important'
+                }
+              },
+              '& .MuiDataGrid-cell': {
+                whiteSpace: 'normal',
+                wordBreak: 'break-word',
+                overflowWrap: 'break-word',
+                lineHeight: '1.5',
+                padding: '10px 8px',
+                display: '-webkit-box', // Sử dụng flexbox webkit
+                WebkitBoxOrient: 'vertical',
+                WebkitLineClamp: 3, // Giới hạn tối đa 3 dòng
+                overflow: 'hidden',
+                alignItems: 'flex-start',
+                '@media (min-width: 728px)': { fontSize: '14px' }
+              },
+              [`& .${gridClasses.columnHeaders}`]: {
+                borderBottom: `1px solid ${theme.palette.grey[600]}`
+              },
+              [`& .${gridClasses.columnSeparator}`]: {
+                borderColor: '#1976d2 !important'
+              },
+              [`& .${gridClasses.columnHeader}:focus, & .${gridClasses.columnHeader}:focus-within`]: {
                 outline: 'none !important',
-                border: 'none !important',
-                backgroundColor: '#fafafa !important'
+                boxShadow: 'none !important'
               },
-              '&.Mui-selected': {
-                backgroundColor: '#fafafa !important',
-                border: 'none !important'
-              }
-            },
-            '& .MuiDataGrid-cell': {
-              whiteSpace: 'normal',
-              wordBreak: 'break-word',
-              overflowWrap: 'break-word',
-              lineHeight: '1.5',
-              padding: '10px 8px',
-              display: '-webkit-box', // Sử dụng flexbox webkit
-              WebkitBoxOrient: 'vertical',
-              WebkitLineClamp: 3, // Giới hạn tối đa 3 dòng
-              overflow: 'hidden',
-              alignItems: 'flex-start',
-              '@media (min-width: 728px)': { fontSize: '14px' }
-            },
-            [`& .${gridClasses.columnHeaders}`]: {
-              borderBottom: `1px solid ${theme.palette.grey[600]}`
-            },
-            [`& .${gridClasses.columnSeparator}`]: {
-              borderColor: '#1976d2 !important'
-            },
-            [`& .${gridClasses.columnHeader}:focus, & .${gridClasses.columnHeader}:focus-within`]: {
-              outline: 'none !important',
-              boxShadow: 'none !important'
-            },
-            [`& .${gridClasses.main}`]: {
-              paddingY: '10px'
-            },
-            [`& .${gridClasses.cell}.Mui-selected, & .${gridClasses.cell}:focus, & .${gridClasses.cell}.MuiDataGrid-cell--editing`]:
-              {
-                border: '2px solid #1976d2',
-                backgroundColor: 'rgba(25, 118, 210, 0.08)', // xanh nhạt
-                zIndex: 1
+              [`& .${gridClasses.main}`]: {
+                paddingY: '10px'
               },
-            [`& .${gridClasses.cell}.MuiDataGrid-cell--editing .MuiInputBase-root, 
+              [`& .${gridClasses.cell}.Mui-selected, & .${gridClasses.cell}:focus, & .${gridClasses.cell}.MuiDataGrid-cell--editing`]:
+                {
+                  border: '2px solid #1976d2',
+                  backgroundColor: 'rgba(25, 118, 210, 0.08)', // xanh nhạt
+                  zIndex: 1
+                },
+              [`& .${gridClasses.cell}.MuiDataGrid-cell--editing .MuiInputBase-root, 
                 & .${gridClasses.cell}.MuiDataGrid-cell--editing select`]: {
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              textAlign: 'center'
-            },
-            '& .MuiOutlinedInput-root': {
-              margin: 0
-            },
-            [`& .${gridClasses.row}.row--removed`]: {
-              backgroundColor: (theme) => {
-                if (theme.palette.mode === 'light') {
-                  return 'rgba(255, 170, 170, 0.3)';
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                textAlign: 'center'
+              },
+              '& .MuiOutlinedInput-root': {
+                margin: 0
+              },
+              [`& .${gridClasses.row}.row--removed`]: {
+                backgroundColor: (theme) => {
+                  if (theme.palette.mode === 'light') {
+                    return 'rgba(255, 170, 170, 0.3)';
+                  }
+                  return darken('rgba(255, 170, 170, 1)', 0.7);
                 }
-                return darken('rgba(255, 170, 170, 1)', 0.7);
-              }
-            },
-            [`& .${gridClasses.row}.row--edited`]: {
-              backgroundColor: (theme) => {
-                if (theme.palette.mode === 'light') {
-                  return 'rgba(255, 254, 176, 0.3)';
+              },
+              [`& .${gridClasses.row}.row--edited`]: {
+                backgroundColor: (theme) => {
+                  if (theme.palette.mode === 'light') {
+                    return 'rgba(255, 254, 176, 0.3)';
+                  }
+                  return darken('rgba(255, 254, 176, 1)', 0.6);
                 }
-                return darken('rgba(255, 254, 176, 1)', 0.6);
               }
-            }
-          })}
-          loading={isSaving || isLoading}
-        />
+            })}
+            loading={isSaving || isLoading}
+          />
         </Box>
       </motion.div>
     );

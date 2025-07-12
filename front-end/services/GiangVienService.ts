@@ -19,11 +19,11 @@ export class GiangVienService {
   }
   static async getGiangVienTinhTrang(params: IParamGiangVien) {
     try {
-      const response = await authApi.get(`${process.env.NEXT_PUBLIC_API_URL}/giangviens/tinh-trang-lam-viec`,{
+      const response = await authApi.get(`${process.env.NEXT_PUBLIC_API_URL}/giangviens/tinh-trang-lam-viec`, {
         params: params
-      })
+      });
       return response.data;
-    } catch (error:any) {
+    } catch (error: any) {
       throw error.response?.data;
     }
   }
@@ -39,7 +39,7 @@ export class GiangVienService {
       .then((response) => response.data)
       .catch((error) => error.response?.data);
   }
-   static async getGiangVienTinhTrangServer(params: IParamGiangVien) {
+  static async getGiangVienTinhTrangServer(params: IParamGiangVien) {
     return await authApiServer
       .get(`${API.GIANG_VIEN.TINH_TRANG}`, {
         params: params

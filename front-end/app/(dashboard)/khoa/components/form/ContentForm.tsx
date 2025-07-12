@@ -81,7 +81,10 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
           const username = value.split('@')[0];
           return /^[a-zA-Z0-9._-]+$/.test(username) && username.length >= 3;
         }),
-      ViTriPhong: yup.string().required('Vị trí phòng không được để trống').max(100, 'Vị trí phòng không được quá 100 ký tự'),
+      ViTriPhong: yup
+        .string()
+        .required('Vị trí phòng không được để trống')
+        .max(100, 'Vị trí phòng không được quá 100 ký tự'),
       Website: yup.string().notRequired().max(200, 'Website không được quá 200 ký tự')
     });
   }, [data]);

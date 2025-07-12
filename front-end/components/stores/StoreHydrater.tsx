@@ -21,8 +21,8 @@ interface StoreHydraterProps {
 
 const StoreHydrater = ({ auth, setting }: StoreHydraterProps) => {
   'use client';
-    const [isClient, setIsClient] = useState(false);
-     useEffect(() => {
+  const [isClient, setIsClient] = useState(false);
+  useEffect(() => {
     setIsClient(true);
   }, []);
   const actions = useUserActions();
@@ -37,24 +37,24 @@ const StoreHydrater = ({ auth, setting }: StoreHydraterProps) => {
     enabled: isClient && !hasUser,
     gcTime: Infinity,
     staleTime: Infinity,
-    retry: false,
+    retry: false
   });
   useEffect(() => {
     if (!isClient) return;
-  if (setting) {
+    if (setting) {
       useAppStore.setState({
         theme: setting.theme
       });
     }
     if (auth?.user) {
-      if(auth?.user?.deletedAt) {
+      if (auth?.user?.deletedAt) {
         actions?.logout();
 
         return;
       }
       useAuthStore.setState({ user: auth.user });
     } else if (user) {
-      if(user?.deletedAt) {
+      if (user?.deletedAt) {
         actions?.logout();
         return;
       }

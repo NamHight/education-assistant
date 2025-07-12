@@ -65,8 +65,11 @@ interface IContentFormProps {
 const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => {
   const schema = useMemo(() => {
     return yup.object().shape({
-      TenPhong: yup.string().max(225,"Tên phòng học không được vượt quá 225 ký tự").required('Tên phòng học không được để trống'),
-      ToaNha: yup.string().max(100,"Tòa nhà không được vượt quá 100 ký tự").required('Tòa nhà không được để trống'),
+      TenPhong: yup
+        .string()
+        .max(225, 'Tên phòng học không được vượt quá 225 ký tự')
+        .required('Tên phòng học không được để trống'),
+      ToaNha: yup.string().max(100, 'Tòa nhà không được vượt quá 100 ký tự').required('Tòa nhà không được để trống'),
       SucChua: yup
         .number()
         .min(0, 'Sức chứa phải là một số dương')

@@ -1,9 +1,7 @@
-using System;
 using Education_assistant.Modules.ModuleNganh.DTOs.Param;
 using Education_assistant.Modules.ModuleNganh.DTOs.Request;
 using Education_assistant.Modules.ModuleNganh.DTOs.Response;
 using Education_assistant.Repositories.Paginations;
-using Education_assistant.Services.BaseDtos;
 
 namespace Education_assistant.Modules.ModuleNganh.Services;
 
@@ -14,4 +12,9 @@ public interface IServiceNganh
     Task<ResponseNganhDto> CreateAsync(RequestAddNganhDto request);
     Task UpdateAsync(Guid id, RequestUpdateNganhDto request);
     Task DeleteAsync(Guid id);
+
+    Task<IEnumerable<ResponseNganhDto>?> GetAllNganhNoPage();
+
+    Task<IEnumerable<ResponseNganhDto>?> GetALlNganhNoPageNoParentByKhoaIdAsync(Guid khoaId);
+    Task<IEnumerable<ResponseNganhDto>?> GetALlNganhByKhoaIdAsync(Guid KhoaId);
 }
