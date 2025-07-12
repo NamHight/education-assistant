@@ -61,7 +61,7 @@ public class RepositoryGiangVien : RepositoryBase<GiangVien>, IRepositoryGiangVi
         return await PagedListAsync<GiangVien>.ToPagedListAsync(query
             .SearchBy(search, item => item.HoTen!)
             .IgnoreQueryFilters()
-            .OrderBy(item => item.DeletedAt != null)
+            .OrderBy(item => item.TrangThai == (int)TrangThaiGiangVienEnum.NGHI_VIEC)
             .SortByOptions(sortBy, sortByOrder, new Dictionary<string, Expression<Func<GiangVien, object>>>
             {
                 ["createdat"] = item => item.CreatedAt,

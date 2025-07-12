@@ -87,7 +87,12 @@ public class ServiceMonHoc : IServiceMonHoc
 
     public async Task<(IEnumerable<ResponseMonHocDto> data, PageInfo page)> GetAllPaginationAndSearchAsync(ParamMonHocDto paramMonHocDto)
     {
-        var monHocs = await _repositoryMaster.MonHoc.GetAllPaginatedAndSearchOrSortAsync(paramMonHocDto.page, paramMonHocDto.limit, paramMonHocDto.search, paramMonHocDto.sortBy, paramMonHocDto.sortByOrder);
+        var monHocs = await _repositoryMaster.MonHoc.GetAllPaginatedAndSearchOrSortAsync(paramMonHocDto.page,
+                                                                                        paramMonHocDto.limit,
+                                                                                        paramMonHocDto.search,
+                                                                                        paramMonHocDto.sortBy,
+                                                                                        paramMonHocDto.sortByOrder,
+                                                                                        paramMonHocDto.khoaId);
         var monHocDto = _mapper.Map<IEnumerable<ResponseMonHocDto>>(monHocs);
         return (data: monHocDto, page: monHocs!.PageInfo);
     }

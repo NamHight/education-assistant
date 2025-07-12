@@ -3,6 +3,7 @@ using Education_assistant.Contracts.LoggerServices;
 using Education_assistant.Exceptions.ThrowError.LopHocExceptions;
 using Education_assistant.Exceptions.ThrowError.PhongHocExceptions;
 using Education_assistant.Models;
+using Education_assistant.Models.Enums;
 using Education_assistant.Modules.ModulePhongHoc.DTOs.Param;
 using Education_assistant.Modules.ModulePhongHoc.DTOs.Request;
 using Education_assistant.Modules.ModulePhongHoc.DTOs.Response;
@@ -178,7 +179,7 @@ public class ServicePhongHoc : IServicePhongHoc
             ToaNha = request.ToaNha,
             SucChua = request.SucChua,
             LoaiPhongHoc = request.LoaiPhongHoc,
-            TrangThaiPhongHoc = request.TrangThaiPhongHoc,
+            TrangThaiPhongHoc = (int)TrangThaiPhongHocEnum.HOAT_DONG,
             CreatedAt = DateTime.Now
         }).ToList();
         if (!danhSachPhongMoi.Any())
@@ -196,7 +197,7 @@ public class ServicePhongHoc : IServicePhongHoc
             ToaNha = request.ToaNha,
             SucChua = request.SucChua,
             LoaiPhongHoc = request.LoaiPhongHoc,
-            TrangThaiPhongHoc = request.TrangThaiPhongHoc
+            TrangThaiPhongHoc = (int)TrangThaiPhongHocEnum.HOAT_DONG
         };   
     }
 

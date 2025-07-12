@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
 using Education_assistant.Contracts.LoggerServices;
 using Education_assistant.Exceptions.ThrowError.GiangVienExceptions;
+using Education_assistant.Exceptions.ThrowError.TaiKhoanExceptions;
+using Education_assistant.Extensions;
 using Education_assistant.helpers.implements;
 using Education_assistant.Models;
+using Education_assistant.Models.Enums;
 using Education_assistant.Modules.ModuleGiangVien.Dtos.Param;
 using Education_assistant.Modules.ModuleGiangVien.DTOs.Request;
 using Education_assistant.Modules.ModuleGiangVien.DTOs.Response;
@@ -90,16 +93,37 @@ public sealed class ServiceGiangVien : IServiceGiangVien
 
     public async Task DeleteAsync(Guid id)
     {
+        var taiKhoanIdUser = _httpContextAccessor.HttpContext!.User.GetUserId();
+        if (taiKhoanIdUser == Guid.Empty) throw new TaiKhoanBadRequestException("Thông tin tài khoản id không đầy đủ");
+        var giangVienUser = await _repositoryMaster.GiangVien.GetGiangVienByTaiKhoanIdAsync(taiKhoanIdUser, false);
+        if (giangVienUser is null) throw new TaiKhoanNotFoundException(taiKhoanIdUser);
+
         if (id == Guid.Empty) throw new GiangVienBadRequestException($"Khoa với {id} không được bỏ trống!");
         var giangVien = await _repositoryMaster.GiangVien.GetGiangVienByIdAsync(id, false);
         if (giangVien is null) throw new GiangVienNotFoundException(id);
-        giangVien.DeletedAt = DateTime.Now;
-        await _repositoryMaster.ExecuteInTransactionAsync(async () =>
+
+        if (giangVienUser.TaiKhoan.LoaiTaiKhoan < giangVien.TaiKhoan.LoaiTaiKhoan)
         {
-            _repositoryMaster.GiangVien.UpdateGiangVien(giangVien);
-            await Task.CompletedTask;
-        });
-        _loggerService.LogInfo("Xóa giảng viên thành công.");
+            if (giangVien.TrangThai != (int)TrangThaiGiangVienEnum.DANG_CONG_TAC)
+            {
+                giangVien.DeletedAt = DateTime.Now;
+                await _repositoryMaster.ExecuteInTransactionAsync(async () =>
+                {
+                    _repositoryMaster.GiangVien.UpdateGiangVien(giangVien);
+                    await Task.CompletedTask;
+                });
+                _loggerService.LogInfo("Xóa giảng viên thành công.");
+            }
+            else
+            { 
+                throw new GiangVienBadRequestException($"Không thể xóa tài khoản đang ở trạng thái đang công tác");
+            }
+            
+        }
+        else
+        {
+            throw new GiangVienBadRequestException($"Không có quyền xóa tài khoản cùng cấp hay cấp cao hơn");
+        }  
     }
 
     public async Task<(IEnumerable<ResponseGiangVienDto> data, PageInfo page)> GetAllGiangVienAsync(
@@ -143,38 +167,45 @@ public sealed class ServiceGiangVien : IServiceGiangVien
 
     public async Task UpdateAsync(Guid id, RequestUpdateGiangVienDto request)
     {
+        var taiKhoanIdUser = _httpContextAccessor.HttpContext!.User.GetUserId();
+        if (taiKhoanIdUser == Guid.Empty) throw new TaiKhoanBadRequestException("Thông tin tài khoản id không đầy đủ");
+        var giangVienUser = await _repositoryMaster.GiangVien.GetGiangVienByTaiKhoanIdAsync(taiKhoanIdUser, false);
+        if (giangVienUser is null) throw new TaiKhoanNotFoundException(taiKhoanIdUser);
+        
         var giangVien = await _repositoryMaster.GiangVien.GetGiangVienByIdAsync(id, true);
         if (giangVien is null) throw new GiangVienNotFoundException(id);
-        if (request.File != null && request.File.Length > 0)
-        {
-            var hinhDaiDien = await _serviceFIle.UpLoadFile(request.File!, "giangvien");
-            var context = _httpContextAccessor.HttpContext;
-            hinhDaiDien = $"{context!.Request.Scheme}://{context.Request.Host}/uploads/{hinhDaiDien}";
-            giangVien.AnhDaiDien = hinhDaiDien;
-        }
+        if (giangVienUser.TaiKhoan.LoaiTaiKhoan < giangVien.TaiKhoan.LoaiTaiKhoan) {
+            if (request.File != null && request.File.Length > 0)
+            {
+                var hinhDaiDien = await _serviceFIle.UpLoadFile(request.File!, "giangvien");
+                var context = _httpContextAccessor.HttpContext;
+                hinhDaiDien = $"{context!.Request.Scheme}://{context.Request.Host}/uploads/{hinhDaiDien}";
+                giangVien.AnhDaiDien = hinhDaiDien;
+            }
 
-        Console.WriteLine($"test 9999999999999 {giangVien.TaiKhoan.LoaiTaiKhoan}");
-        giangVien.UpdatedAt = DateTime.Now;
-        await _repositoryMaster.ExecuteInTransactionAsync(async () =>
-        {
-            if (!string.IsNullOrWhiteSpace(request.Email)) giangVien.Email = request.Email;
-            if (!string.IsNullOrWhiteSpace(request.HoTen)) giangVien.HoTen = request.HoTen;
-            if (!string.IsNullOrWhiteSpace(request.CCCD)) giangVien.CCCD = request.CCCD;
-            giangVien.NgaySinh = request.NgaySinh;
-            giangVien.GioiTinh = request.GioiTinh;
-            giangVien.NgayVaoTruong = request.NgayVaoTruong;
-            if (!string.IsNullOrWhiteSpace(request.KhoaId.ToString())) giangVien.KhoaId = request.KhoaId;
-            if (!string.IsNullOrWhiteSpace(request.BoMonId.ToString())) giangVien.BoMonId = request.BoMonId;
-            if (!string.IsNullOrWhiteSpace(request.SoDienThoai)) giangVien.SoDienThoai = request.SoDienThoai;
-            if (!string.IsNullOrWhiteSpace(request.DiaChi)) giangVien.DiaChi = request.DiaChi;
-            if (!string.IsNullOrWhiteSpace(request.TrinhDo)) giangVien.TrinhDo = request.TrinhDo;
-            if (!string.IsNullOrWhiteSpace(request.ChuyenNganh)) giangVien.ChuyenNganh = request.ChuyenNganh;
-            if (request.ChucVu is not null) giangVien.ChucVu = request.ChucVu;
-            if (request.TrangThai is not null) giangVien.TrangThai = request.TrangThai;
-            if (request.LoaiTaiKhoan is not null) giangVien.TaiKhoan.LoaiTaiKhoan = request.LoaiTaiKhoan;
-            await Task.CompletedTask;
-        });
-        _loggerService.LogInfo("Cập nhật giảng viên thành công.");
+            giangVien.UpdatedAt = DateTime.Now;
+            await _repositoryMaster.ExecuteInTransactionAsync(async () =>
+            {
+                if (!string.IsNullOrWhiteSpace(request.Email)) giangVien.Email = request.Email;
+                if (!string.IsNullOrWhiteSpace(request.HoTen)) giangVien.HoTen = request.HoTen;
+                if (!string.IsNullOrWhiteSpace(request.CCCD)) giangVien.CCCD = request.CCCD;
+                giangVien.NgaySinh = request.NgaySinh;
+                giangVien.GioiTinh = request.GioiTinh;
+                giangVien.NgayVaoTruong = request.NgayVaoTruong;
+                if (!string.IsNullOrWhiteSpace(request.KhoaId.ToString())) giangVien.KhoaId = request.KhoaId;
+                if (!string.IsNullOrWhiteSpace(request.BoMonId.ToString())) giangVien.BoMonId = request.BoMonId;
+                if (!string.IsNullOrWhiteSpace(request.SoDienThoai)) giangVien.SoDienThoai = request.SoDienThoai;
+                if (!string.IsNullOrWhiteSpace(request.DiaChi)) giangVien.DiaChi = request.DiaChi;
+                if (!string.IsNullOrWhiteSpace(request.TrinhDo)) giangVien.TrinhDo = request.TrinhDo;
+                if (!string.IsNullOrWhiteSpace(request.ChuyenNganh)) giangVien.ChuyenNganh = request.ChuyenNganh;
+                if (request.ChucVu is not null) giangVien.ChucVu = request.ChucVu;
+                if (request.TrangThai is not null) giangVien.TrangThai = request.TrangThai;
+                if (request.LoaiTaiKhoan is not null) giangVien.TaiKhoan.LoaiTaiKhoan = request.LoaiTaiKhoan;
+                await Task.CompletedTask;
+            });
+            _loggerService.LogInfo("Cập nhật giảng viên thành công.");
+        }
+        
     }
 
     public async Task<IEnumerable<GiangVienSummaryDto>?> GetAllGiangVienByBoMonAsync(Guid boMonId)

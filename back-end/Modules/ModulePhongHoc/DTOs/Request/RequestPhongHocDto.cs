@@ -54,6 +54,8 @@ namespace Education_assistant.Modules.ModulePhongHoc.DTOs.Request
     { 
         [Required(ErrorMessage = "Tên phòng không được để trống")]
         public List<string>? TenPhongs { get; set; }
+        [Required(ErrorMessage = "Toà nhà không được để trống")]
+        [MaxLength(255, ErrorMessage = "Toà nhà không được quá 255 ký tự")]
         public string ToaNha { get; set; } = string.Empty;
         [Required(ErrorMessage = "Sức chứa không được để trống")]
         [Range(1, 500, ErrorMessage = "Sức chứa phải lớn hơn 0")]
@@ -61,9 +63,6 @@ namespace Education_assistant.Modules.ModulePhongHoc.DTOs.Request
         [Required(ErrorMessage = "Loại phòng học không được để trống")]
         [Range(1, 3, ErrorMessage = "Loại phòng học không hợp lệ")]
         public int LoaiPhongHoc { get; set; }
-        [Required(ErrorMessage = "Trạng thái phòng học không được để trống")]
-        [Range(1, 3, ErrorMessage = "Trạng thái phòng học không hợp lệ")]
-        public int TrangThaiPhongHoc { get; set; }
     }
     public class RequestUpdatePhongHocDto
     {
