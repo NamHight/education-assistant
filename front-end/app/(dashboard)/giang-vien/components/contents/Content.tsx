@@ -233,6 +233,7 @@ const Content = ({ queryKey, khoaData, tinhTrangServer }: ContentProps) => {
       </MenuItem>
     );
   }, []);
+  console.log("user",user);
   const columns = useMemo((): GridColDef[] => {
     const formatDateBirth = (date: string) => {
       return moment(date).format('DD/MM/YYYY');
@@ -339,7 +340,8 @@ const Content = ({ queryKey, khoaData, tinhTrangServer }: ContentProps) => {
         display: 'flex',
         flex: 1,
         renderCell: (params: any) => {
-          return (
+          return (user?.id === params.row?.id) ? 
+            <span>{params.value}</span> :  (
                 !(user?.taiKhoan?.loaiTaiKhoan === LoaiTaiKhoanEnum.ADMIN) &&
                 !(params?.row?.taiKhoan?.loaiTaiKhoan === LoaiTaiKhoanEnum.ADMIN)
               ) ||
@@ -498,7 +500,9 @@ const Content = ({ queryKey, khoaData, tinhTrangServer }: ContentProps) => {
             <ButtonRedirect />
           </Box>
           <Box className='flex gap-3'>
-            <Box className='flex-2 gap-1 flex flex-col'>
+            {
+              user?.taiKhoan?.loaiTaiKhoan === LoaiTaiKhoanEnum.ADMIN && (
+                <Box className='flex-2 gap-1 flex flex-col'>
               <Typography className='!font-semibold'>Khoa</Typography>
               <InputSelect2
                 fullWidth
@@ -519,6 +523,8 @@ const Content = ({ queryKey, khoaData, tinhTrangServer }: ContentProps) => {
                 }}
               />
             </Box>
+              )
+            }
             <Box className='flex-2 gap-1 flex flex-col'>
               <Typography className='!font-semibold'>Trạng thái</Typography>
               <InputSelect2
@@ -578,6 +584,7 @@ const Content = ({ queryKey, khoaData, tinhTrangServer }: ContentProps) => {
         setPaginationModel={setPaginationModel}
         paginationModel={paginationModel}
         customToolBar
+        isDiableActions={user?.taiKhoan?.loaiTaiKhoan === LoaiTaiKhoanEnum.GIANG_VIEN || user?.taiKhoan?.loaiTaiKhoan === LoaiTaiKhoanEnum.QUAN_LY_KHOA_BO_MON}
         urlNavigate='giang-vien'
         placeholderSearch='Tìm kiếm giảng viên...'
       />

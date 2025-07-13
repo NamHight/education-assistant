@@ -33,6 +33,8 @@ import { MonHocService } from '@/services/MonHocService';
 import EditModal from '../modals/EditModal';
 import AddModal from '../modals/AddModal';
 import { useBreadcrumb } from '@/hooks/context/BreadCrumbContext';
+import { LoaiMonHocEnum } from '@/models/MonHoc';
+import { ArrowUpWideNarrow } from 'lucide-react';
 const Table = dynamic(() => import('@/components/tables/Table'), {
   ssr: false
 });
@@ -228,16 +230,32 @@ const Content = ({ queryKey }: ContentProps) => {
           return '';
       }
     };
-    const formatType = (type: number) => {
-      switch (type) {
-        case LoaiLopHocEnum.LOP_HOC_KY_PHU:
-          return <ChipOption title='Lớp học kỳ phụ' color='success' />;
-        case LoaiLopHocEnum.LOP_HOC_PHAN:
-          return <ChipOption title='Lớp học phần' color='info' />;
-        default:
-          return '';
-      }
-    };
+     const formatType = (value: any) => {
+                  switch (value) {
+                    case LoaiMonHocEnum.CHUC_CHUNG_CHI:
+                      return <Typography variant='body2'>CCH</Typography>;
+                    case LoaiMonHocEnum.DO_AN_TOT_NGHIEP:
+                      return <Typography variant='body2'>ĐATN</Typography>;
+                    case LoaiMonHocEnum.KHOA_LUAN_TOT_NGHIEP:
+                      return <Typography variant='body2'>KLTN</Typography>;
+                    case LoaiMonHocEnum.KIEN_TAP:
+                      return <Typography variant='body2'>KT</Typography>;
+                    case LoaiMonHocEnum.MODUN:
+                      return <Typography variant='body2'>Md</Typography>;
+                    case LoaiMonHocEnum.THI_TOT_NGHIEP_LY_THUYET:
+                      return <Typography variant='body2'>TTNLT</Typography>;
+                    case LoaiMonHocEnum.THI_TOT_NGHIEP_THUC_HANH:
+                      return <Typography variant='body2'>TTNTH</Typography>;
+                    case LoaiMonHocEnum.THUC_HANH:
+                      return <Typography variant='body2'>TH</Typography>;
+                    case LoaiMonHocEnum.THUC_TAP_TOT_NGHIEP:
+                      return <Typography variant='body2'>TTTN</Typography>;
+                    case LoaiMonHocEnum.LY_THUYET:
+                      return <Typography variant='body2'>LT</Typography>;
+                    default:
+                      return null;
+                  }
+                };
     return [
       {
         field: 'stt',
@@ -325,20 +343,6 @@ const Content = ({ queryKey }: ContentProps) => {
         }
       },
       {
-        field: 'createdAt',
-        headerName: 'Ngày tạo',
-        headerAlign: 'left',
-        type: 'string',
-        minWidth: 100,
-        disableColumnMenu: true,
-        sortable: true,
-        display: 'flex',
-        flex: 0.8,
-        valueFormatter: (params: any) => {
-          return formatDateBirth(params);
-        }
-      },
-      {
         field: 'loai',
         headerName: 'Loại',
         type: 'string',
@@ -348,7 +352,7 @@ const Content = ({ queryKey }: ContentProps) => {
         display: 'flex',
         flex: 0.8,
         renderCell: (params: any) => {
-          return formatType(params.value);
+          return formatType(params.row?.monHoc?.chiTietChuongTrinhDaoTao?.loaiMonHoc);
         }
       },
       {
@@ -369,6 +373,7 @@ const Content = ({ queryKey }: ContentProps) => {
 
   return (
     <Box className='flex flex-col gap-4'>
+  
       <Box className='flex justify-start gap-4 border border-gray-200 rounded-lg p-4 shadow-sm'>
          <Box className='flex-1'>
           <InputSelect2

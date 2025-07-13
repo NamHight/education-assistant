@@ -73,4 +73,12 @@ export class ChiTietLopHocPhanService {
       throw error.response?.data;
     }
   }
+  static async updateNopDiem(id: string | number | null){
+    try {
+      const response = await authApi.put(`${API.CHI_TIET_LOP_HOC_PHAN.UPDATE_NOP_DIEM}`.replace(':id', `${id}`));
+      return response.data;
+    } catch (error: any) {
+      throw error.response?.data;
+    }
+  }
 }

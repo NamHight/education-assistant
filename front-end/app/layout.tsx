@@ -40,7 +40,6 @@ export default async function RootLayout({
 }>) {
   const cookie = await cookies();
   const role = cookie.get(ROLE)?.value;
-
   return (
     <html lang='en' data-toolpad-color-scheme='light'>
       <body className={`antialiased`} style={{ fontFamily: 'Roboto, Arial, sans-serif' }}>

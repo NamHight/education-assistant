@@ -221,6 +221,8 @@ interface TableProps {
   isDisableDelete?: boolean;
   isOpenOption?: () => void;
   isMoreCellAction?: boolean;
+  isDiableActions?: boolean;
+  isDisableActionOption?: boolean;
   user?: GiangVien;
   [key: string]: any;
 }
@@ -248,6 +250,8 @@ const Table = React.forwardRef<any, TableProps>(function table(
     isOpenOption,
     isMoreCellAction,
     isDisableEdit,
+    isDiableActions,
+    isDisableActionOption,
     user,
     editMode = 'row',
     ...rest
@@ -296,9 +300,12 @@ const Table = React.forwardRef<any, TableProps>(function table(
     [moreActions]
   );
   const columnsMemo = useMemo((): GridColDef[] => {
+    if(isDiableActions){
+      return columns;
+    }
     return [
       ...columns,
-      {
+    {
         field: 'actions',
         type: 'actions',
         headerName: 'Thao tác',
@@ -356,7 +363,7 @@ const Table = React.forwardRef<any, TableProps>(function table(
                   }}
                   color='inherit'
                 />,
-                <GridActionsCellItem
+              {...(!isDisableActionOption ?  <GridActionsCellItem
                   key={id}
                   icon={<MoreVertIcon />}
                   label='Edit'
@@ -370,7 +377,7 @@ const Table = React.forwardRef<any, TableProps>(function table(
                     });
                   }}
                   color='inherit'
-                />
+                /> : <></>)}
               ]
             : [
                 <GridActionsCellItem
@@ -391,7 +398,7 @@ const Table = React.forwardRef<any, TableProps>(function table(
         }
       }
     ];
-  }, [columns]);
+  }, [columns, isDiableActions]);
 
   return (
     <motion.div
