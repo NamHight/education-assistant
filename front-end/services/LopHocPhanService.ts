@@ -31,7 +31,17 @@ export class LopHocPhanService {
       )
       .catch((error) => error.response?.data);
   }
-
+  static async getLopHocPhanDaNop(params: IParamLopHocPhan){
+    return await authApi
+      .get(`${API.LOP_HOC_PHAN.GET_DA_NOP}`, {
+        params: params
+      })
+      .then((response) => Promise.resolve({
+          data: response.data,
+          meta: response.headers['x-pagination'] ? JSON.parse(response.headers['x-pagination'] || '{}') : {}
+        }))
+      .catch((error) => error.response?.data);
+  }
   static async getLopHocPhanByLopHocAndHocKy(params: IParamLopHocPhan2) {
     return await authApi
       .get(`${API.LOP_HOC_PHAN.GET_BY_LOP_HOC_AND_HOC_KY}`, {

@@ -163,7 +163,8 @@ public class RepositoryGiangVien : RepositoryBase<GiangVien>, IRepositoryGiangVi
     }
 
     public async Task<PagedListAsync<GiangVien>?> GetAllGiangVienAsync(int page, int limit, string? search,
-        string? sortBy, string? sortByOrder, Guid? khoaId, Guid? boMonId, bool? active, int? trangThai, int? vaiTro)
+        string? sortBy, string? sortByOrder, Guid? khoaId, Guid? boMonId, bool? active, int? trangThai, int? vaiTro,
+        Guid? khoaGV)
     {
         var query = _context.GiangViens!
             .AsNoTracking()
@@ -175,10 +176,11 @@ public class RepositoryGiangVien : RepositoryBase<GiangVien>, IRepositoryGiangVi
         if (boMonId.HasValue && boMonId != Guid.Empty) query = query.Where(item => item.BoMonId == boMonId);
         if (vaiTro.HasValue && vaiTro != 0)
             query = query.Where(gv => gv.TaiKhoan.LoaiTaiKhoan == vaiTro);
+        if (khoaGV.HasValue && khoaGV != Guid.Empty)
+            query = query.Where(gv => gv.KhoaId == khoaGV);
         if (active.HasValue)
             if (active == true)
                 query = query.Where(item => item.DeletedAt == null);
-
         if (trangThai.HasValue && trangThai != 0) query = query.Where(item => item.TrangThai == trangThai);
         return await PagedListAsync<GiangVien>.ToPagedListAsync(query
             .SearchBy(search, item => item.HoTen!)
