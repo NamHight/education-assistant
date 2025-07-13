@@ -14,7 +14,6 @@ namespace Education_assistant.Modules.ModuleBoMon
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Policy = "GiangVien")]
     public class BoMonController : ControllerBase
     {
         private readonly IServiceMaster _serviceMaster;
@@ -23,6 +22,7 @@ namespace Education_assistant.Modules.ModuleBoMon
         {
             _serviceMaster = serviceMaster;
         }
+        [Authorize(Policy = "GiangVien")]
         [HttpGet("")]
         public async Task<ActionResult> GetAllBoMonAsync([FromQuery] ParamBoMonDto paramBoMonDto)
         {
@@ -30,18 +30,21 @@ namespace Education_assistant.Modules.ModuleBoMon
             Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(result.page));
             return Ok(result.data);
         }
+        [Authorize(Policy = "GiangVien")]
         [HttpGet("no-page")]
         public async Task<ActionResult> GetAllBoMonNoPageAsync()
         {
             var result = await _serviceMaster.BoMon.GetAllBoMonNoPageAsync();
             return Ok(result);
         }
+        [Authorize(Policy = "GiangVien")]
         [HttpGet("{id}")]
         public async Task<ActionResult> GetBoMonByIdAsync(Guid id)
         {
             var result = await _serviceMaster.BoMon.GetBoMonByIdAsync(id, false);
             return Ok(result);
         }
+        [Authorize(Policy = "Admin")]
         [HttpPost]
         [ServiceFilter(typeof(ValidationFilter))]
         public async Task<ActionResult> AddBoMonAsync([FromForm] RequestAddBoMonDto model)
@@ -49,6 +52,7 @@ namespace Education_assistant.Modules.ModuleBoMon
             var result = await _serviceMaster.BoMon.CreateAsync(model);
             return Ok(result);
         }
+        [Authorize(Policy = "Admin")]
         [HttpPut("{id}")]
         [ServiceFilter(typeof(ValidationFilter))]
         public async Task<ActionResult> UpdateBoMonAsync(Guid id, [FromForm] RequestUpdateBoMonDto model)
@@ -56,13 +60,14 @@ namespace Education_assistant.Modules.ModuleBoMon
             await _serviceMaster.BoMon.UpdateAsync(id, model);
             return NoContent();
         }
+        [Authorize(Policy = "Admin")]
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteBoMonAsync(Guid id)
         {
             await _serviceMaster.BoMon.DeleteAsync(id);
             return NoContent();
         }
-
+        [Authorize(Policy = "GiangVien")]
         [HttpGet("by-khoa/{khoaId}")]
         public async Task<ActionResult> GetBoMonByKhoaIdAsync(Guid khoaId)
         {

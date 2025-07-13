@@ -10,7 +10,6 @@ namespace Education_assistant.Modules.ModulePhongHoc;
 
 [Route("api/[controller]")]
 [ApiController]
-[Authorize(Policy = "GiangVien")]
 public class PhongHocController : ControllerBase
 {
     private readonly IServiceMaster _serviceMaster;
@@ -19,7 +18,7 @@ public class PhongHocController : ControllerBase
     {
         _serviceMaster = serviceMaster;
     }
-
+    [Authorize(Policy = "GiangVien")]
     [HttpGet]
     public async Task<ActionResult> GetAllPhongHocAsync([FromQuery] ParamPhongHocDto paramPhongHocDto)
     {
@@ -27,7 +26,7 @@ public class PhongHocController : ControllerBase
         Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(result.page));
         return Ok(result.data);
     }
-
+    [Authorize(Policy = "GiangVien")]
     [HttpGet("no-page")]
     public async Task<ActionResult> GetAllPhongHocNoPageAsync()
     {
@@ -41,13 +40,14 @@ public class PhongHocController : ControllerBase
     //     var result = await _serviceMaster.PhongHoc.GetAllToaNhaAsync();
     //     return Ok(result);
     // }
+    [Authorize(Policy = "GiangVien")]
     [HttpGet("{id}")]
     public async Task<ActionResult> GetPhongHocByIdAsync(Guid id)
     {
         var result = await _serviceMaster.PhongHoc.GetPhongHocByIdAsync(id, false);
         return Ok(result);
     }
-
+    [Authorize(Policy = "Admin")]
     [HttpPost]
     [ServiceFilter(typeof(ValidationFilter))]
     public async Task<ActionResult> AddPhongHocAsync([FromBody] RequestAddPhongHocDto model)
@@ -63,6 +63,7 @@ public class PhongHocController : ControllerBase
     //     var result = await _serviceMaster.PhongHoc.GenericPhongHocAutoVirtualListAsync(model);
     //     return Ok(result);
     // }
+    [Authorize(Policy = "Admin")]
     [HttpPost("create-list")]
     [ServiceFilter(typeof(ValidationFilter))]
     public async Task<ActionResult> GenericPhongHocAutoVirtualListAsync([FromBody] RequestAddPhongHocAutoDto model)
@@ -70,7 +71,7 @@ public class PhongHocController : ControllerBase
         var result = await _serviceMaster.PhongHoc.CreateListPhongHocAsync(model);
         return Ok(result);
     }
-
+    [Authorize(Policy = "Admin")]
     [HttpPut("{id}")]
     [ServiceFilter(typeof(ValidationFilter))]
     public async Task<ActionResult> UpdatePhongHocAsync(Guid id, [FromForm] RequestUpdatePhongHocDto model)
@@ -78,7 +79,7 @@ public class PhongHocController : ControllerBase
         await _serviceMaster.PhongHoc.UpdateAsync(id, model);
         return NoContent();
     }
-
+    [Authorize(Policy = "Admin")]
     [HttpPut("{id}/update-option")]
     [ServiceFilter(typeof(ValidationFilter))]
     public async Task<ActionResult> UpdatePhongHocOptionAsync(Guid id, [FromForm] RequestUpdatePhongHocOptionDto model)
@@ -87,14 +88,14 @@ public class PhongHocController : ControllerBase
         return NoContent();
     }
 
-
+    [Authorize(Policy = "Admin")]
     [HttpPatch("{id}/update-trang-thai")]
     public async Task<ActionResult> UpdateTrangThaiLopHocPhanAsync(Guid id, [FromForm] int trangThai)
     {
         await _serviceMaster.PhongHoc.UpdateTrangThaiAsync(id, trangThai);
         return NoContent();
     }
-
+    [Authorize(Policy = "Admin")]
     [HttpDelete("{id}")]
     public async Task<ActionResult> DeletePhongHocAsync(Guid id)
     {
