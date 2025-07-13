@@ -13,7 +13,7 @@ namespace Education_assistant.Modules.ModuleMonHoc
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Policy = "GiangVien")]
+    [Authorize(Policy = "Admin")]
     public class MonHocController : ControllerBase
     {
         private readonly IServiceMaster _serviceMaster;
@@ -22,6 +22,7 @@ namespace Education_assistant.Modules.ModuleMonHoc
         {
             _serviceMaster = serviceMaster;
         }
+        [Authorize(Policy = "GiangVien")]
         [HttpGet]
         public async Task<ActionResult> GetAllMonHocAsync([FromQuery] ParamMonHocDto paramMonHocDto)
         {
@@ -29,12 +30,14 @@ namespace Education_assistant.Modules.ModuleMonHoc
             Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(result.page));
             return Ok(result.data);
         }
+        [Authorize(Policy = "GiangVien")]
         [HttpGet("{id}")]
         public async Task<ActionResult> GetMonHocByIdAsync(Guid id)
         {
             var result = await _serviceMaster.MonHoc.GetMonHocByIdAsync(id, false);
             return Ok(result);
         }
+        [Authorize(Policy = "Admin")]
         [HttpPost("")]
         [ServiceFilter(typeof(ValidationFilter))]
         public async Task<ActionResult> AddMonHocAsync([FromForm] RequestAddMonHocDto model)
@@ -42,6 +45,7 @@ namespace Education_assistant.Modules.ModuleMonHoc
             var result = await _serviceMaster.MonHoc.CreateAsync(model);
             return Ok(result);
         }
+        [Authorize(Policy = "Admin")]
         [HttpPut("{id}")]
         [ServiceFilter(typeof(ValidationFilter))]
         public async Task<ActionResult> UpdateMonHocAsync(Guid id, [FromForm] RequestUpdateMonHocDto model)
@@ -49,13 +53,14 @@ namespace Education_assistant.Modules.ModuleMonHoc
             await _serviceMaster.MonHoc.UpdateAsync(id, model);
             return NoContent();
         }
+        [Authorize(Policy = "Admin")]
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteMonHocAsync(Guid id)
         {
             await _serviceMaster.MonHoc.DeleteAsync(id);
             return NoContent();
         }
-
+        [Authorize(Policy = "GiangVien")]
         [HttpGet("by-khoa/{khoaId}")]
         public async Task<ActionResult> GetMonHocByKhoaIdAsync(Guid khoaId)
         {

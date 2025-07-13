@@ -12,7 +12,7 @@ namespace Education_assistant.Modules.ModuleChiTietChuongTrinhDaoTao
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Policy = "GiangVien")]
+    [Authorize(Policy = "Admin")]
     public class ChiTietChuongTrinhDaoTaoController : ControllerBase
     {
         private readonly IServiceMaster _serviceMaster;

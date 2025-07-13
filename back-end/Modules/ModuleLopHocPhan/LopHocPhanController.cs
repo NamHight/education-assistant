@@ -12,7 +12,6 @@ namespace Education_assistant.Modules.ModuleLopHocPhan
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Policy = "GiangVien")]
     public class LopHocPhanController : ControllerBase
     {
         private readonly IServiceMaster _serviceMaster;
@@ -21,6 +20,7 @@ namespace Education_assistant.Modules.ModuleLopHocPhan
         {
             _serviceMaster = serviceMaster;
         }
+        [Authorize(Policy = "QLKhoa")]
         [HttpGet]
         public async Task<ActionResult> GetAllLopHocPhanAsync([FromQuery] ParamLopHocPhanDto paramLopHocPhanDto)
         {
@@ -28,6 +28,7 @@ namespace Education_assistant.Modules.ModuleLopHocPhan
             Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(result.page));
             return Ok(result.data);
         }
+        [Authorize(Policy = "Admin")]
         [HttpGet("lop-da-nop")]
         public async Task<ActionResult> GetAllLopHocPhanDaNopDiemAsync([FromQuery] ParamLopHocPhanDaNopDto param)
         {
@@ -35,31 +36,35 @@ namespace Education_assistant.Modules.ModuleLopHocPhan
             Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(result.page));
             return Ok(result.data);
         }
-
+        [Authorize(Policy = "GiangVien")]
         [HttpGet("by-giang-vien")]
         public async Task<ActionResult> GetAllLopHocPhanByGiangVienAsync([FromQuery] ParamLopHocPhanSimpleDto paramLopHocPhanSimpleDto)
         {
             var result = await _serviceMaster.LopHocPhan.GetAllLopHocPhanByGiangVienAsync(paramLopHocPhanSimpleDto);
             return Ok(result);
         }
+        [Authorize(Policy = "QLKhoa")]
         [HttpGet("by-lop-hoc-and-hoc-ky")]
         public async Task<ActionResult> GetAllLopHocPhanByLopHocAndHocKyAsync([FromQuery] ParamLopHocPhanForLichBieuDto paramLopHocPhanForLichBieuDto)
         {
             var result = await _serviceMaster.LopHocPhan.GetAllLopHocPhanByLopHocAndHocKyAsync(paramLopHocPhanForLichBieuDto);
             return Ok(result);
         }
+        [Authorize(Policy = "GiangVien")]
         [HttpGet("no-page")]
         public async Task<ActionResult> GetAllLopHocPhanNoPageAsync()
         {
             var result = await _serviceMaster.LopHocPhan.GetAllLopHocPhanNoPageAsync();
             return Ok(result);
         }
+        [Authorize(Policy = "GiangVien")]
         [HttpGet("{id}")]
         public async Task<ActionResult> GetLopHocPhanByIdAsync(Guid id)
         {
             var result = await _serviceMaster.LopHocPhan.GetLopHocPhanByIdAsync(id, false);
             return Ok(result);
         }
+        [Authorize(Policy = "Admin")]
         [HttpPost("them-lop-hkp")]
         [ServiceFilter(typeof(ValidationFilter))]
         public async Task<ActionResult> AddLopHocPhanAsync([FromForm] RequestAddLopHocPhanDto model)
@@ -67,6 +72,7 @@ namespace Education_assistant.Modules.ModuleLopHocPhan
             var result = await _serviceMaster.LopHocPhan.CreateAsync(model);
             return Ok(result);
         }
+        [Authorize(Policy = "Admin")]
         [HttpPost("them-auto")]
         [ServiceFilter(typeof(ValidationFilter))]
         public async Task<ActionResult> AddAutoLopHocPhanAsync([FromForm] RequestGenerateLopHocPhanDto model)
@@ -74,6 +80,7 @@ namespace Education_assistant.Modules.ModuleLopHocPhan
             await _serviceMaster.LopHocPhan.CreateAutoLopHocPhanAsync(model);
             return Ok("created successfully.");
         }
+        [Authorize(Policy = "Admin")]
         [HttpPut("{id}")]
         [ServiceFilter(typeof(ValidationFilter))]
         public async Task<ActionResult> UpdateLopHocPhanAsync(Guid id, [FromForm] RequestUpdateSimpleLopHocPhanDto model)
@@ -81,7 +88,7 @@ namespace Education_assistant.Modules.ModuleLopHocPhan
             await _serviceMaster.LopHocPhan.UpdateAsync(id, model); 
             return NoContent();
         }
-        
+        [Authorize(Policy = "Admin")]
         [HttpPut("{id}/update-trang-thai")]
         public async Task<ActionResult> UpdateTrangThaiLopHocPhanAsync(Guid id, [FromForm] int trangThai)
         {
@@ -89,6 +96,7 @@ namespace Education_assistant.Modules.ModuleLopHocPhan
             await _serviceMaster.LopHocPhan.UpdateTrangThaiAsync(id, trangThai); 
             return NoContent();
         }
+        [Authorize(Policy = "QLKhoa")]
         [HttpPut("list-phan-cong")]
         [ServiceFilter(typeof(ValidationFilter))]
         public async Task<ActionResult> UpdateListLopHocPhanAsync([FromBody] List<RequestUpdateLopHocPhanDto> listRequest)
@@ -96,6 +104,7 @@ namespace Education_assistant.Modules.ModuleLopHocPhan
             await _serviceMaster.LopHocPhan.UpdateListLophocPhanAsync(listRequest);
             return NoContent();
         }
+        [Authorize(Policy = "Admin")]
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteLopHocPhanAsync(Guid id)
         {

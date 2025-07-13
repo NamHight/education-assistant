@@ -12,7 +12,7 @@ namespace Education_assistant.Modules.ModuleLichBieu
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Policy = "GiangVien")]
+    [Authorize(Policy = "QLKhoa")]
     public class LichBieuController : ControllerBase
     {
         private readonly IServiceMaster _serviceMaster;
