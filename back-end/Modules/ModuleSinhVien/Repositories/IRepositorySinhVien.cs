@@ -7,7 +7,7 @@ namespace Education_assistant.Modules.ModuleSinhVien.Repositories;
 public interface IRepositorySinhVien
 {
     Task<PagedListAsync<SinhVien>?> GetAllSinhVienAsync(int page, int limit, string? search, string? sortBy,
-        string? sortByOrder, Guid? lopId, int? tinhTrangHocTap);
+        string? sortByOrder, Guid? lopId, int? tinhTrangHocTap, int? trangThai);
 
     Task<IEnumerable<SinhVien>> GetAllSinhVienByLopHoc(Guid lopHocId);
     Task<int> GetAllTongSoAsync(Guid? lopHocId);
@@ -16,7 +16,7 @@ public interface IRepositorySinhVien
     Task<int> GetAllSoCanCaiThienAsync(Guid? lopHocId);
     Task<int> GetAllSoDangHocAsync(Guid? lopHocId);
     Task<int> GetAllSoDaTotNghiepAsync(Guid? lopHocId);
-    Task<int> GetAllSoTamNghiAsync(Guid? lopHocId);
+    Task<int> GetAllBuocThoiHocAsync(Guid? lopHocId);
     Task<List<ResponseExportFileSinhVienDto>> GetAllSinhVienExportFileAsync(Guid lopHocId);
     Task<SinhVien?> GetSinhVienByIdAsync(Guid id, bool trackChanges);
     Task<SinhVien?> GetSinhVienByMssvAsync(string mssv, bool trackChanges);

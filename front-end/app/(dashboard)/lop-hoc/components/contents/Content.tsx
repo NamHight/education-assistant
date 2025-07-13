@@ -3,7 +3,7 @@
 import ToolTipImage from '@/components/tooltips/ToolTipImage';
 import { Box, MenuItem, Popover, Typography } from '@mui/material';
 import { GridActionsCellItem, GridColDef, GridFilterModel } from '@mui/x-data-grid';
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { motion } from 'motion/react';
 import Image from 'next/image';
 import moment from 'moment';
@@ -41,6 +41,7 @@ import { PhongHocService } from '@/services/PhongHocService';
 import ChangeCircleOutlinedIcon from '@mui/icons-material/ChangeCircleOutlined';
 import { LoaiPhongHocEnum } from '@/models/PhongHoc';
 import { LopHocService } from '@/services/LopHocService';
+import { useBreadcrumb } from '@/hooks/context/BreadCrumbContext';
 const Table = dynamic(() => import('@/components/tables/Table'), {
   ssr: false
 });
@@ -65,8 +66,8 @@ const Content = ({ queryKey }: ContentProps) => {
   const [filterModel, setFilterModel] = useState<GridFilterModel>({
     items: []
   });
+  const {setTitle} = useBreadcrumb();
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
-
   const open = Boolean(anchorEl);
   const id = open ? 'simple-popover' : undefined;
   const queryClient = useQueryClient();
@@ -136,7 +137,10 @@ const Content = ({ queryKey }: ContentProps) => {
   const handleDelete = (id: string | number | null) => {
     mutationDelete.mutate(id);
   };
-
+  useEffect(() => {
+    setTitle('Lớp học');
+    return () => setTitle('');
+},[setTitle])
   const columns = useMemo((): GridColDef[] => {
     const formatDateBirth = (date: string) => {
       return moment(date).utc().format('DD/MM/YYYY');
@@ -179,19 +183,16 @@ const Content = ({ queryKey }: ContentProps) => {
     };
     return [
       {
-        field: 'id',
-        headerName: 'ID',
+        field: 'stt',
+        headerName: 'STT',
         type: 'string',
-        headerAlign: 'left',
+        headerAlign: 'center',
         minWidth: 80,
         flex: 0.4,
         sortable: true,
         display: 'flex',
-        align: 'left',
+        align: 'center',
         disableColumnMenu: true,
-        valueFormatter: (params: any) => {
-          return `#${params.slice(0, 2)}`;
-        }
       },
       {
         field: 'maLopHoc',
@@ -205,7 +206,7 @@ const Content = ({ queryKey }: ContentProps) => {
         flex: 1,
         renderCell: (params: any) => {
           return (
-            <Link href={`${APP_ROUTE.LOP_HOC.EDIT(params.row.id)}`} className='text-blue-500 hover:underline'>
+            <Link href={`${APP_ROUTE.LOP_HOC.EDIT(params.row?.id)}`} className='text-blue-500 hover:underline'>
               {params.value}
             </Link>
           );
@@ -214,8 +215,9 @@ const Content = ({ queryKey }: ContentProps) => {
       {
         field: 'namHoc',
         headerName: 'Năm học',
-        headerAlign: 'left',
+        headerAlign: 'center',
         type: 'string',
+        align: 'center',
         minWidth: 180,
         disableColumnMenu: true,
         sortable: false,
@@ -235,7 +237,7 @@ const Content = ({ queryKey }: ContentProps) => {
         flex: 1,
         renderCell: (params: any) => {
           return (
-            <Link href={`${APP_ROUTE.NGANH.EDIT(params.row.nganh.id)}`} className='text-blue-500 hover:underline'>
+            <Link href={`${APP_ROUTE.NGANH.EDIT(params.row?.nganh?.id)}`} className='text-blue-500 hover:underline'>
               {params.row.nganh?.tenNganh}
             </Link>
           );

@@ -133,7 +133,15 @@ export class GiangVienService {
       throw error.response?.data;
     }
   }
-
+  static async changeStatusGiangVien(id: string | number | null, data: any) {
+    try {
+      const response = await authApi.put(`${API.GIANG_VIEN.CHANGE_STATUS}`.replace(':id', `${id}`), 
+      {TrangThai:data});
+      return response.data;
+    } catch (error: any) {
+      throw error.response?.data;
+    }
+  }
   static async updateProfile(id: string | number | null, data: FormData) {
     try {
       const response = await authApi.put(`${API.GIANG_VIEN.UPDATE_PROFILE.replace(':id', `${id}`)}`, data);

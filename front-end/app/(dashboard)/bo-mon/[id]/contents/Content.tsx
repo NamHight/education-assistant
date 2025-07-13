@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useEffect } from 'react';
 import ContentForm from '../../components/form/ContentForm';
 import { useNotifications } from '@toolpad/core';
 import { useRouter } from 'next/navigation';
@@ -11,6 +11,8 @@ import { KhoaService } from '@/services/KhoaService';
 import { MonHocService } from '@/services/MonHocService';
 import { NganhService } from '@/services/NganhService';
 import { BoMonService } from '@/services/BoMonService';
+import { useBreadcrumb } from '@/hooks/context/BreadCrumbContext';
+import { Typography } from '@mui/material';
 interface IContentProps {
   initialData: any;
   anotherData?: any;
@@ -19,6 +21,7 @@ interface IContentProps {
 const Content = ({ initialData, id, anotherData }: IContentProps) => {
   const notifications = useNotifications();
   const router = useRouter();
+    const {setTitle,setBreadcrumbs} = useBreadcrumb();
   const queryClient = useQueryClient();
   const { data } = useQuery({
     queryKey: ['bo-mon', { id: id }],
@@ -51,6 +54,25 @@ const Content = ({ initialData, id, anotherData }: IContentProps) => {
       });
     }
   });
+  useEffect(() => {
+    if(data){
+      setTitle(`Chỉnh sửa: ${data?.tenBoMon}`);
+      setBreadcrumbs(
+          <Typography className="relative text-[14px] flex gap-1 items-center">
+          <Typography component={'span'} sx={(theme) => ({
+            color: theme.palette.mode === 'dark' ? 'white !important' : 'black !important',
+            fontWeight: 500
+          })}>
+            {data?.tenBoMon}
+          </Typography>
+          </Typography>
+      )
+      return () => {
+        setTitle('')
+        setBreadcrumbs(null);
+      };
+    }
+  },[data, setTitle])
   const handleSubmitForm = (formData: any) => {
     mutationUpdate.mutate(formData);
   };

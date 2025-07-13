@@ -26,7 +26,8 @@ import { SettingsIcon } from 'lucide-react';
 
 export const NAVIGATION = (role?: string): Navigation => {
   console.log('role', role);
-  const isAdmin = Number(role) === LoaiTaiKhoaEnum.ADMIN || Number(role) === LoaiTaiKhoaEnum.QUAN_LY_KHOA_BO_MON;
+  const isAdmin = Number(role) === LoaiTaiKhoaEnum.ADMIN 
+  const isQuanLyBoMon = Number(role) === LoaiTaiKhoaEnum.QUAN_LY_KHOA_BO_MON;
   const allNavigate = [
     {
       segment: '/',
@@ -107,12 +108,6 @@ export const NAVIGATION = (role?: string): Navigation => {
       pattern: `chuong-trinh-dao-tao/:rest*`,
     },
     {
-      segment: 'chi-tiet-chuong-trinh-dao-tao',
-      title: 'Chi tiết chương trình đào tạo',
-      icon: <AddchartIcon />,
-      pattern: `chi-tiet-chuong-trinh-dao-tao/:rest*`
-    },
-    {
       segment: 'phong-hoc',
       title: 'Phòng học',
       icon: <HotelClassIcon />,
@@ -139,12 +134,14 @@ export const NAVIGATION = (role?: string): Navigation => {
   ];
 
   return allNavigate.filter((item) => {
-    const adminOnlyRoutes = ['giang-vien', 'sinh-vien', 'khoa', 'mon-hoc', 'nganh', 'bo-mon'];
-
+    const adminOnlyRoutes = ['bo-mon','chuyen-lop','chuong-trinh-dao-tao','khoa','lop-hoc','lop-hoc-phan','mon-hoc','nganh','phong-hoc','phan-cong'];
+    const quanLyRoutes = ['phan-cong']
     if (!isAdmin && adminOnlyRoutes.includes(item.segment)) {
+      if(isQuanLyBoMon && quanLyRoutes.includes(item.segment)) {
+        return true;
+      }
       return false;
     }
-
     return true;
   });
 };

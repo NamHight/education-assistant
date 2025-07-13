@@ -1,4 +1,5 @@
 'use client';
+import React from 'react';
 import InputSelect2 from '@/components/selects/InputSelect2';
 import { LopHocService } from '@/services/LopHocService';
 import { SinhVienService } from '@/services/SinhVienService';
@@ -12,6 +13,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import CheckBoxOutlineBlankOutlinedIcon from '@mui/icons-material/CheckBoxOutlineBlankOutlined';
 import CheckIcon from '@mui/icons-material/Check';
 import { error } from 'console';
+import { useBreadcrumb } from '@/hooks/context/BreadCrumbContext';
 
 interface ContentProps {
   query?: string;
@@ -26,6 +28,7 @@ const Content = ({ query, initialData }: ContentProps) => {
   const [lopHocChuyenDenId, setLopHocChuyenDenId] = useState('');
   const [sinhVienDaChonIds, setSinhVienDaChonIds] = useState<string[]>([]);
   const [sinhVienDaChon, setSinhVienDaChon] = useState<any[]>([]);
+  const {setTitle} = useBreadcrumb();
   const { data: lopHocs, isLoading: isLoadingLopHoc } = useQuery({
     queryKey: ['lophocs-chuyen-lop'],
     queryFn: async () => {
@@ -54,7 +57,7 @@ const Content = ({ query, initialData }: ContentProps) => {
       return result;
     },
     refetchOnWindowFocus: false,
-    placeholderData: (prev) => prev
+    enabled: !!lopHocHienTaiId,
   });
 
   const mutationChuyenLop = useMutation({
@@ -120,7 +123,10 @@ const Content = ({ query, initialData }: ContentProps) => {
     };
     mutationChuyenLop.mutate(formData);
   };
-
+  useEffect(() => {
+    setTitle('Chuyển lớp');
+    return () => setTitle('');
+  },[setTitle]);
   return (
     <Box className='flex flex-col gap-4'>
       <Box display='flex' gap={2} className='border border-gray-200 rounded-lg p-4 shadow-sm'>
@@ -152,7 +158,9 @@ const Content = ({ query, initialData }: ContentProps) => {
           <Typography className='mb-6'>Danh sách sinh viên</Typography>
           {
             <Box className='flex flex-col mt-4 gap-2 h-[300px] overflow-y-auto'>
-              {sinhViens &&
+              {isLoadingSinhVien ? <Box>
+                <Typography className='text-gray-500'>Đang tải danh sách sinh viên...</Typography>
+              </Box> : sinhViens?.length > 0 ?
                 sinhViens.map((sv: any) => (
                   <Box
                     key={sv.id}
@@ -180,7 +188,12 @@ const Content = ({ query, initialData }: ContentProps) => {
                       </Button>
                     )}
                   </Box>
-                ))}
+                )) : (
+                  <Box className='flex items-center justify-center h-full'>
+                    <Typography className='text-gray-500'>Không có sinh viên nào</Typography>
+                  </Box>
+                )
+              }
             </Box>
           }
         </Box>

@@ -115,15 +115,14 @@ public sealed class ServiceGiangVien : IServiceGiangVien
                 _loggerService.LogInfo("Xóa giảng viên thành công.");
             }
             else
-            { 
-                throw new GiangVienBadRequestException($"Không thể xóa tài khoản đang ở trạng thái đang công tác");
+            {
+                throw new GiangVienBadRequestException("Không thể xóa tài khoản đang ở trạng thái đang công tác");
             }
-            
         }
         else
         {
-            throw new GiangVienBadRequestException($"Không có quyền xóa tài khoản cùng cấp hay cấp cao hơn");
-        }  
+            throw new GiangVienBadRequestException("Không có quyền xóa tài khoản cùng cấp hay cấp cao hơn");
+        }
     }
 
     public async Task<(IEnumerable<ResponseGiangVienDto> data, PageInfo page)> GetAllGiangVienAsync(
@@ -131,7 +130,8 @@ public sealed class ServiceGiangVien : IServiceGiangVien
     {
         var giangViens = await _repositoryMaster.GiangVien.GetAllGiangVienAsync(paramGiangVienDto.page,
             paramGiangVienDto.limit, paramGiangVienDto.search, paramGiangVienDto.sortBy, paramGiangVienDto.sortByOrder,
-            paramGiangVienDto.KhoaId, paramGiangVienDto.BoMonId, paramGiangVienDto.active, paramGiangVienDto.trangThai);
+            paramGiangVienDto.KhoaId, paramGiangVienDto.BoMonId, paramGiangVienDto.active, paramGiangVienDto.trangThai,
+            paramGiangVienDto.vaiTro);
         var giangVienDtos = _mapper.Map<IEnumerable<ResponseGiangVienDto>>(giangViens);
         return (data: giangVienDtos, page: giangViens!.PageInfo);
     }
@@ -165,16 +165,40 @@ public sealed class ServiceGiangVien : IServiceGiangVien
         return giangVienDto;
     }
 
+    public async Task updateGiangVienStatusAsync(Guid id, int trangThai)
+    {
+        var giangVien = await _repositoryMaster.GiangVien.GetGiangVienByIdAsync(id, true);
+        if (giangVien is null) throw new GiangVienNotFoundException(id);
+        if (trangThai == (int)TrangThaiGiangVienEnum.DANG_CONG_TAC ||
+            trangThai == (int)TrangThaiGiangVienEnum.NGHI_VIEC ||
+            trangThai == (int)TrangThaiGiangVienEnum.NGHI_HUU)
+        {
+            giangVien.TrangThai = trangThai;
+            giangVien.UpdatedAt = DateTime.Now;
+            await _repositoryMaster.ExecuteInTransactionAsync(async () =>
+            {
+                _repositoryMaster.GiangVien.UpdateGiangVien(giangVien);
+                await Task.CompletedTask;
+            });
+            _loggerService.LogInfo("Cập nhật trạng thái giảng viên thành công.");
+        }
+        else
+        {
+            throw new GiangVienBadRequestException("Trạng thái giảng viên không hợp lệ");
+        }
+    }
+
     public async Task UpdateAsync(Guid id, RequestUpdateGiangVienDto request)
     {
         var taiKhoanIdUser = _httpContextAccessor.HttpContext!.User.GetUserId();
         if (taiKhoanIdUser == Guid.Empty) throw new TaiKhoanBadRequestException("Thông tin tài khoản id không đầy đủ");
         var giangVienUser = await _repositoryMaster.GiangVien.GetGiangVienByTaiKhoanIdAsync(taiKhoanIdUser, false);
         if (giangVienUser is null) throw new TaiKhoanNotFoundException(taiKhoanIdUser);
-        
+
         var giangVien = await _repositoryMaster.GiangVien.GetGiangVienByIdAsync(id, true);
         if (giangVien is null) throw new GiangVienNotFoundException(id);
-        if (giangVienUser.TaiKhoan.LoaiTaiKhoan < giangVien.TaiKhoan.LoaiTaiKhoan) {
+        if (giangVienUser.TaiKhoan.LoaiTaiKhoan < giangVien.TaiKhoan.LoaiTaiKhoan)
+        {
             if (request.File != null && request.File.Length > 0)
             {
                 var hinhDaiDien = await _serviceFIle.UpLoadFile(request.File!, "giangvien");
@@ -205,7 +229,6 @@ public sealed class ServiceGiangVien : IServiceGiangVien
             });
             _loggerService.LogInfo("Cập nhật giảng viên thành công.");
         }
-        
     }
 
     public async Task<IEnumerable<GiangVienSummaryDto>?> GetAllGiangVienByBoMonAsync(Guid boMonId)

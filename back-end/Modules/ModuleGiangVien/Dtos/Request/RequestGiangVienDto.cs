@@ -90,3 +90,10 @@ public class RequestUpdateGiangVienOptionDto
     public string? DiaChi { get; set; }
     public IFormFile? File { get; set; }
 }
+
+public class RequestUpdateStatusGiangVienDto
+{
+    [Required(ErrorMessage = "Trạng thái không được để trống")]
+    [Range(1, 3, ErrorMessage = "Trạng thái không hợp lệ")]
+    public int TrangThai { get; set; }
+}

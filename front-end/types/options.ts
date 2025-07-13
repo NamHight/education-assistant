@@ -1,7 +1,7 @@
 import moment from 'moment';
 
 export interface IOption {
-  id: number;
+  id: number | string;
   name: string;
 }
 
@@ -63,6 +63,11 @@ export const loaiTaiKhoanOptions: IOption[] = [
   { id: LoaiTaiKhoanEnum.GIANG_VIEN, name: 'giảng viên' }
 ];
 
+export const loaiTaiKhoanAdminOptions: IOption[] = [
+  { id: LoaiTaiKhoanEnum.ADMIN, name: 'admin' },
+  { id: LoaiTaiKhoanEnum.QUAN_LY_KHOA_BO_MON, name: 'quản lý khoa bộ môn' },
+];
+
 export enum TrangThaiEnum {
   DANG_CONG_TAC = 1,
   NGHI_VIEC = 2,
@@ -97,20 +102,22 @@ export const HocKyLopHocPhan: IOption[] = [
 
 export enum TrangThaiSinhVienEnum {
   DANG_HOC = 1,
-  TAM_NGHI = 2,
-  DA_TOT_NGHIEP = 3,
-  BO_HOC = 4,
-  BUOC_THOI_HOC = 5
+  DA_TOT_NGHIEP = 2,
+  BO_HOC = 3,
+  BUOC_THOI_HOC = 4
 }
 
 export const TrangThaiSinhVien: IOption[] = [
   { id: TrangThaiSinhVienEnum.DANG_HOC, name: 'Đang học' },
-  { id: TrangThaiSinhVienEnum.TAM_NGHI, name: 'Tạm nghỉ' },
   { id: TrangThaiSinhVienEnum.DA_TOT_NGHIEP, name: 'Đã tốt nghiệp' },
   { id: TrangThaiSinhVienEnum.BO_HOC, name: 'Bỏ học' },
   { id: TrangThaiSinhVienEnum.BUOC_THOI_HOC, name: 'Buộc thôi học' }
 ];
-
+export const TrangThaiSinhVien2: IOption[] = [
+  { id: TrangThaiSinhVienEnum.DANG_HOC, name: 'Đang học' },
+  { id: TrangThaiSinhVienEnum.BO_HOC, name: 'Bỏ học' },
+  { id: TrangThaiSinhVienEnum.BUOC_THOI_HOC, name: 'Buộc thôi học' }
+];
 export enum TrangThaiPhongHocEnum {
   HOAT_DONG = 1,
   BAO_TRI = 2,
@@ -235,4 +242,22 @@ export const ThuTrongTuan: IOption[] = [
   { id: 6, name: 'Thứ 6' },
   { id: 7, name: 'Thứ 7' },
   { id: 8, name: 'Chủ nhật' }
+];
+
+export enum ToaNhaEnum {
+  A = 'A',
+  B = 'B',
+  C = 'C',
+  D = 'D',
+  E = 'E',
+  F = 'F',
+}
+
+export const ToaNha: IOption[] = [
+  { id: ToaNhaEnum.A, name: 'A' },
+  { id: ToaNhaEnum.B, name: 'B' },
+  { id: ToaNhaEnum.C, name: 'C' },
+  { id: ToaNhaEnum.D, name: 'D' },
+  { id: ToaNhaEnum.E, name: 'E' },
+  { id: ToaNhaEnum.F, name: 'F' }
 ];

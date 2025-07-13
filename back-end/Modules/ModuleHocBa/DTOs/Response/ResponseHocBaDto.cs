@@ -35,6 +35,7 @@ public class ResponseHocBaSummaryDto
 
 public class ResponseHocBaProfileDto
 {
+    public SinhVienSimpleWithLopHocDto? SinhVien { get; set; }
     public int HocKy { get; set; }
     public List<HocBa> ListHocBa { get; set; } = new();
 

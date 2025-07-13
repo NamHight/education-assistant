@@ -1,6 +1,6 @@
 'use client';
 import { alpha, Box, FormControl, Grid, TextField, Typography } from '@mui/material';
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import ContentForm from '../../components/form/ContentForm';
 import { motion } from 'motion/react';
@@ -8,6 +8,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNotifications } from '@toolpad/core';
 import { GiangVienService } from '@/services/GiangVienService';
 import { useRouter } from 'next/navigation';
+import { useBreadcrumb } from '@/hooks/context/BreadCrumbContext';
 interface ContentProps {
   initialData?: any;
   khoas?: any[];
@@ -18,6 +19,7 @@ const Content: FC<ContentProps> = ({ initialData, khoas, boMons }) => {
   const notification = useNotifications();
   const router = useRouter();
   const queryClient = useQueryClient();
+  const { setTitle } = useBreadcrumb();
   const mutationCreate = useMutation({
     mutationFn: async (formData: any) => {
       const response = await GiangVienService.themMoiGiangVien(formData);
@@ -41,7 +43,10 @@ const Content: FC<ContentProps> = ({ initialData, khoas, boMons }) => {
       });
     }
   });
-
+  useEffect(() => {
+    setTitle('Thêm mới giảng viên');
+    return () => setTitle('');
+  }, []);
   const handleSubmitForm = (formData: any) => {
     mutationCreate.mutate(formData);
   };

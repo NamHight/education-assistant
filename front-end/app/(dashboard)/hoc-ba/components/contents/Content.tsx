@@ -3,7 +3,7 @@
 import ToolTipImage from '@/components/tooltips/ToolTipImage';
 import { alpha, Autocomplete, Box, Dialog, DialogActions, DialogContent, DialogTitle, Grid, IconButton, MenuItem, Modal, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from '@mui/material';
 import { GridActionsCellItem, GridColDef, GridFilterModel } from '@mui/x-data-grid';
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { motion } from 'motion/react';
 import Image from 'next/image';
 import moment from 'moment';
@@ -32,6 +32,7 @@ import RestoreIcon from '@mui/icons-material/Restore';
 import { SinhVienService } from '@/services/SinhVienService';
 import Link from 'next/link';
 import {
+  gioiTinhOptions,
   HocKyLopHocPhan,
   IOption,
   TrangThaiLopHocPhanEnum,
@@ -53,10 +54,11 @@ import Input2 from '@/components/inputs/Input2';
 import { Controller, useForm } from 'react-hook-form';
 import LoadingButton from '@mui/lab/LoadingButton';
 import { LoaiMonHocEnum } from '@/models/MonHoc';
-import { Trash2 } from 'lucide-react';
+import { PrinterIcon, Trash2 } from 'lucide-react';
 import useCheckPermission from '@/helper/useCheckPermission';
-import ModalEdit from '../Modals/ModalEdit';
-
+import ModalEdit from '../../../phong-hoc/components/Modals/ModalEdit';
+import { useBreadcrumb } from '@/hooks/context/BreadCrumbContext';
+import { useReactToPrint } from "react-to-print";
 interface ContentProps {
   queryKey: string;
 }
@@ -66,8 +68,10 @@ interface IFormData {
 }
 const Content = ({ queryKey }: ContentProps) => {
   const router = useRouter();
-  const [idHocBa, setIdHocBa] = useState<string | null>(null);
+   const {setTitle} = useBreadcrumb();
   const notification = useNotifications();
+  const printRef = useRef<HTMLDivElement>(null);
+
   const { isAdmin } = useCheckPermission();
   const refTable = useRef<{ handleClose: () => void; handleOpenDelete: () => void; handleCloseDelete: () => void }>(
     null
@@ -106,25 +110,12 @@ const Content = ({ queryKey }: ContentProps) => {
     enabled: !!getMssv
   });
   
-  const mutationDelete = useMutation({
-    mutationFn: async (id: string | number | null) => {
-      const result = await HocBaService.deleteHocBa(id);
-      return result;
-    },
-    onSuccess: () => {
-      notification.show('Xoá học bạ thành công', {
-        severity: 'success',
-        autoHideDuration: 4000
-      });
-      queryClient.invalidateQueries({ queryKey: [queryKey], exact: false });
-    },
-    onError: (error: any) => {
-      notification.show(error?.Message || 'Xoá học bạ thất bại', {
-        severity: 'error',
-        autoHideDuration: 4000
-      });
-    }
-  });
+    useEffect(() => {
+      setTitle('Học bạ');
+      return () => {
+        setTitle('');
+      };
+    },[])
   const formatLoaiMonHoc = (loaiMonHoc: number) => {
       switch (loaiMonHoc) {
         case LoaiMonHocEnum.CHUC_CHUNG_CHI:
@@ -151,11 +142,6 @@ const Content = ({ queryKey }: ContentProps) => {
           return '';
       }
     };
-
-  console.log('data', data);
-  const handleDelete = (id: string | number | null) => {
-    mutationDelete.mutate(id);
-  };
   const handleSubmitSearch = (data: IFormData) => {
     if (data.mssv) {
       setMssv(data.mssv);
@@ -166,9 +152,28 @@ const Content = ({ queryKey }: ContentProps) => {
       refTable.current.handleClose();
     }
   };
+    const reactToPrintFn = useReactToPrint({ contentRef: printRef ,
+    documentTitle: `Học Bạ sinh viên ${getMssv}`,
+    onAfterPrint: () => {
+      notification.show('In học bạ thành công', {
+        severity: 'success',
+        autoHideDuration: 2000
+      });
+    },
+  });
+  const handlePrint = useCallback(() => {
+    if(!data || data?.length === 0) {
+      notification.show('Không có dữ liệu để in', {
+        severity: 'warning',
+        autoHideDuration: 3000
+      });
+      return;
+    }
+    reactToPrintFn();
+  }, [data, reactToPrintFn, notification]);
+  console.log('data', data);
   return (
     <Box className='flex flex-col gap-4'>
-      <ModalEdit open={open} handleClose={handleClose} idHocBa={idHocBa} />
       <Box className='flex justify-between gap-4 flex-row  border border-gray-200 rounded-lg py-3 px-4 shadow-sm'>
         <form
           className='max-w-md w-full flex justify-center gap-2 items-center'
@@ -185,19 +190,17 @@ const Content = ({ queryKey }: ContentProps) => {
             Tìm kiếm
           </LoadingButton>
         </form>
-        {
-          isAdmin && (
-            <Box className='flex justify-end items-center gap-4 w-full'>
-          <Box className='flex items-center justify-center'>
-            <Button title={'Thêm mới'} onClick={() => router.push(APP_ROUTE.HOC_BA.ADD)} />
-          </Box>
+        <Box>
+          <Button onClick={() => handlePrint()} title='In học bạ' icon={<PrinterIcon className="text-white"/>} className='flex gap-2' />
         </Box>
-          )
-        }
       </Box>
-      <Grid container spacing={2} sx={{ width: '100%' }}>
+      <Grid container spacing={2} sx={{ width: '100%',
+        '@media print': {
+              padding: '32px !important'
+        }
+       }} ref={printRef} >
       {
-      isLoading ?  <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', py: 6 }}>
+    isLoading ? <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', py: 6 }}>
           <Box
             sx={{
               width: 48,
@@ -212,12 +215,50 @@ const Content = ({ queryKey }: ContentProps) => {
               },
             }}
           />
-        </Box> : data?.length > 0 ?  data?.map((item: any, index: number) => (
+        </Box> : data?.length > 0 ?  <>
+        <Grid container spacing={2} size={12}>
+        <Grid size={6}>
+          <Box>
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+              <Typography sx={{ minWidth: 110,fontSize: 15 }}>Họ Tên:</Typography>
+              <Box sx={{ bgcolor: '#f9fafb', px: 2, py: 0.5, borderRadius: 1, width: '100%' }}>
+                <Typography sx={{ fontWeight: 700, fontSize: 18 }}>{data[0]?.sinhVien?.hoTen}</Typography>
+              </Box>
+            </Box>
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+              <Typography sx={{ minWidth: 110,fontSize: 15 }}>Ngày Sinh:</Typography>
+              <Box sx={{ bgcolor: '#f9fafb', px: 2, py: 0.5, borderRadius: 1, width: '100%' }}>
+                <Typography sx={{ fontWeight: 700 }}>{moment(data[0]?.sinhVien?.ngaySinh).format('DD/MM/YYYY')}</Typography>
+              </Box>
+            </Box>
+          </Box>
+          </Grid>
+          <Grid  size={6}>
+            <Box>
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                <Typography sx={{ minWidth: 110,fontSize: 15 }}>Lớp:</Typography>
+                <Box sx={{ bgcolor: '#f9fafb', px: 2, py: 0.5, borderRadius: 1, width: '100%' }}>
+                  <Typography sx={{ fontWeight: 700 }}>{data[0]?.sinhVien?.lopHoc?.maLopHoc}</Typography>
+                </Box>
+              </Box>
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                <Typography sx={{ minWidth: 110,fontSize: 15 }}>Giới Tính:</Typography>
+                <Box sx={{ bgcolor: '#f9fafb', px: 2, py: 0.5, borderRadius: 1, width: '100%' }}>
+                  <Typography sx={{ fontWeight: 700 }}>{gioiTinhOptions.find(option => option?.id === data[0]?.sinhVien?.gioiTinh)?.name}</Typography>
+                </Box>
+              </Box>
+            </Box>
+        </Grid>
+        </Grid>
+        
+        {
+          data?.map((item: any, index: number) => (
           <Grid size={12} key={item.hocKy}>
         <Typography variant="h6" sx={{ fontWeight: 700, color: '#d32f2f', mb: 1 }}>
-        Học Kỳ {item.hocKy}
+        Học Kỳ {item?.hocKy}
       </Typography>
-      <TableContainer
+      
+  <TableContainer
         component={Paper}
         className="group"
         sx={{
@@ -266,11 +307,6 @@ const Content = ({ queryKey }: ContentProps) => {
               <TableCell align="center" sx={{ width: 60, fontWeight: 700 }}>ĐVHP</TableCell>
               <TableCell align="center" sx={{ width: 60, fontWeight: 700 }}>Tổng Kết</TableCell>
               <TableCell align="center" sx={{ width: 80, fontWeight: 700 }}>Ghi Chú</TableCell>
-             {
-                isAdmin && (
-                  <TableCell align="center" sx={{ width: 80, fontWeight: 700 }}>Hành Động</TableCell>
-                )
-             }
             </TableRow>
           </TableHead>
           <TableBody>
@@ -301,23 +337,6 @@ const Content = ({ queryKey }: ContentProps) => {
                 </TableCell>
                 <TableCell align="center">{row?.diemTongKet}</TableCell>
                 <TableCell align="center">{row?.moTa}</TableCell>
-                {
-                  isAdmin && (
-<TableCell align="center" className="!flex !justify-center !items-center !gap-3">
-                  <button onClick={() => {
-                    console.log('row', row);
-                    setIdHocBa(row.id);
-                    handleClickOpen();
-                  }} className="p-1 cursor-pointer hover:text-blue-600 bg-gray-100 border-amber-50 hover:bg-gray-200 border rounded-md flex items-center justify-center">
-                    <EditIcon className="!h-4 !w-4 text-blue-500" />
-                  </button>
-                  <button onClick={() => handleDelete(row.id)} className="p-1 cursor-pointer hover:text-blue-600 bg-gray-100 border-amber-50 hover:bg-gray-200 border rounded-md flex items-center justify-center">
-                    <Trash2 className="h-4 w-4 text-red-500" />
-                  </button>
-                </TableCell>
-              
-                  )
-                }
                 </TableRow>
             ))}
             <TableRow>
@@ -363,8 +382,13 @@ const Content = ({ queryKey }: ContentProps) => {
           </TableBody>
         </Table>
       </TableContainer>
+
+    
       </Grid>
-        )) : (
+        )
+      )
+        }
+        </> : (
           <Grid size={12} className="flex flex-col items-center justify-center h-full mt-20">
             <Typography variant="body1" color="textSecondary" align="center">
               Không có dữ liệu học bạ cho sinh viên này.

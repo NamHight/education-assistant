@@ -54,6 +54,7 @@ import { LopHocService } from '@/services/LopHocService';
 import { Delete, Edit, Trash2 } from 'lucide-react';
 import { motion } from 'motion/react';
 import ModalEdit from './ModalEdit';
+import { useBreadcrumb } from '@/hooks/context/BreadCrumbContext';
 const TableEdit = dynamic(() => import('./TableEdit'), {
   ssr: false
 });
@@ -69,6 +70,7 @@ const Content = ({ queryKey, lopHocServer, boMonServer }: IContentProps) => {
   const queryClient = useQueryClient();
   const user = useUser();
   const apiRef = useGridApiRef();
+  const { setTitle } = useBreadcrumb();
   const [anchorElConfirmDelete, setAnchorElConfirmDelete] = useState<boolean>(false);
   const [giangVienOptions, setGiangVienOptions] = useState<{ [khoaId: string]: any[] }>({});
   const refModal = useRef<{ reset: () => void }>(null);
@@ -188,6 +190,7 @@ const Content = ({ queryKey, lopHocServer, boMonServer }: IContentProps) => {
     initialData: lopHocServer,
     refetchOnWindowFocus: false
   });
+
   const { data: tuans, isLoading: isLoadingTuan } = useQuery({
     queryKey: ['tuan-list', filter?.namHoc],
     queryFn: async () => {
@@ -250,6 +253,10 @@ const Content = ({ queryKey, lopHocServer, boMonServer }: IContentProps) => {
   useEffect(() => {
     filterRef.current = filter;
   }, [filter]);
+  useEffect(() => {
+    setTitle('Lịch lớp học');
+    return () => setTitle('');
+  },[])
   const mutationDelete = useMutation({
     mutationFn: async (id: string | number | null) => {
       const result = await LichBieuService.deleteLichBieu(id);

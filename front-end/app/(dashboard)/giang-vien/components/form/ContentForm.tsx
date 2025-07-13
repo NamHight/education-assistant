@@ -36,6 +36,8 @@ import { BoMonService } from '@/services/BoMonService';
 import UploadImage from '@/components/uploads/UploadImage';
 import clsx from 'clsx';
 import moment from 'moment';
+import { useUser } from '@/stores/selectors';
+import { LoaiTaiKhoaEnum } from '@/models/TaiKhoan';
 
 export interface IFormData {
   HoTen: string;
@@ -63,6 +65,7 @@ interface IContentFormProps {
 }
 
 const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => {
+  const user = useUser();
   const schema = useMemo(() => {
     return yup.object().shape({
       HoTen: yup.string().required('Họ và tên là bắt buộc'),
@@ -211,6 +214,23 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
       });
     }
   }, [reset, data]);
+  const isAdmin = user?.taiKhoan?.loaiTaiKhoan === 1;
+  const filteredLoaiTaiKhoanOptions = useMemo(() => {
+
+  if (isAdmin) {
+    return loaiTaiKhoanOptions;
+  }
+  if(!user){
+    return loaiTaiKhoanOptions;
+  }
+  if(user?.taiKhoan?.loaiTaiKhoan === LoaiTaiKhoaEnum.QUAN_LY_KHOA_BO_MON){
+      return loaiTaiKhoanOptions.filter(
+        (item: any) =>
+          !(item?.id === LoaiTaiKhoaEnum.ADMIN)
+      );
+    }
+  return loaiTaiKhoanOptions;
+}, [user, loaiTaiKhoanOptions]);
   return (
     <FormControl fullWidth component={'form'} onSubmit={handleSubmit(handleSubmitForm)} className='flex flex-col gap-4'>
       <Grid container spacing={2} rowSpacing={1}>
@@ -397,7 +417,7 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
               name={'LoaiTaiKhoan'}
               placeholder={'Loại tài khoản'}
               title={'Loại tài khoản'}
-              data={loaiTaiKhoanOptions ?? []}
+              data={filteredLoaiTaiKhoanOptions ?? []}
               getOptionKey={(option) => option.id}
               getOptionLabel={(option: any) => option.name}
               error={(errors.LoaiTaiKhoan as any)?.message}
@@ -417,7 +437,6 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
             />
           </Grid>
         </Grid>
-
         <Grid size={{ xs: 12, sm: 12, md: 12, lg: 12 }}>
           <Input2
             {...register('DiaChi')}

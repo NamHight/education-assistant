@@ -63,6 +63,13 @@ public class GiangVienController : ControllerBase
         return Ok(result);
     }
 
+    [HttpPut("{id}/change-status")]
+    public async Task<ActionResult> ChangeStatusAsync(Guid id, [FromBody] RequestUpdateStatusGiangVienDto request)
+    {
+        await _serviceMaster.GiangVien.updateGiangVienStatusAsync(id, request.TrangThai);
+        return NoContent();
+    }
+
     [HttpPut("{id}/restore")]
     public async Task<ActionResult> GetReStoreGiangVienAsync(Guid id)
     {

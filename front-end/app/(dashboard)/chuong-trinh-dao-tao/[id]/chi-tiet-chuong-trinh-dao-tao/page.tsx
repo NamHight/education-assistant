@@ -16,28 +16,32 @@ import { PhongHocService } from '@/services/PhongHocService';
 import { ChuongTrinhDaoTaoService } from '@/services/ChuongTrinhDaoTaoService';
 import { ChitietChuongTrinhDaoTaoService } from '@/services/ChitietChuongTrinhDaoTaoService';
 
-export default async function Page() {
+interface IPageProps{
+  params: Promise<{id: string}>;
+}
+
+export default async function Page({ params }: IPageProps) {
+  const { id } = await params;
   const queryClient = getQueryClient();
   const queryKey = 'chi-tiet-chuong-trinh-dao-tao-list';
-  try {
-    const result = await ChitietChuongTrinhDaoTaoService.getChitietChuongTrinhDaoTaoServer({
+  await queryClient.prefetchQuery({
+    queryKey: [queryKey, { page: 0, pageSize: 10 }, { field: '', sort: '' }, { items: [] },id],
+    queryFn: async () => {
+      const result =await  ChitietChuongTrinhDaoTaoService.getChiTietChuongTrinhDaoTaoServer({
       page: 1,
       limit: 10,
       sortBy: 'createdAt',
-      sortByOrder: 'desc'
+      sortByOrder: 'desc',
+      chuongTrinhDaoTaoId: id
     }).catch(() => ({ data: [] }));
-    await queryClient.prefetchQuery({
-      queryKey: [queryKey, { page: 0, pageSize: 10 }, { field: '', sort: '' }, { items: [] }],
-      queryFn: async () => {
-        return result?.data?.length > 0 ? result : undefined;
-      }
-    });
-  } catch (error) {
-    console.log('Error fetching Chuong Trinh Dao Tao:', error);
-  }
+
+      return result?.data?.length > 0 ? result : undefined;
+    }
+  });
+  const khoas = await KhoaService.getKhoaNoPageServer().catch(() => undefined);
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <Content queryKey={queryKey} />
+      <Content queryKey={queryKey} id={id} khoas={khoas} />
     </HydrationBoundary>
   );
 }

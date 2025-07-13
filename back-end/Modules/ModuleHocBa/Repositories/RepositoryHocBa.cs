@@ -3,6 +3,8 @@ using Education_assistant.Context;
 using Education_assistant.Extensions;
 using Education_assistant.Models;
 using Education_assistant.Modules.ModuleHocBa.DTOs.Response;
+using Education_assistant.Modules.ModuleLopHoc.DTOs.Response;
+using Education_assistant.Modules.ModuleSinhVien.DTOs.Response;
 using Education_assistant.Repositories;
 using Education_assistant.Repositories.Paginations;
 using Microsoft.EntityFrameworkCore;
@@ -83,6 +85,20 @@ public class RepositoryHocBa : RepositoryBase<HocBa>, IRepositoryHocBa
         return await query.GroupBy(hb => hb.ChiTietChuongTrinhDaoTao!.HocKy).Select(x => new ResponseHocBaProfileDto
         {
             HocKy = x.Key,
+            SinhVien = new SinhVienSimpleWithLopHocDto
+            {
+                Id = x.First().SinhVien!.Id,
+                HoTen = x.First().SinhVien!.HoTen,
+                MSSV = x.First().SinhVien!.MSSV,
+                AnhDaiDien = x.First().SinhVien!.AnhDaiDien,
+                GioiTinh = x.First().SinhVien!.GioiTinh,
+                NgaySinh = x.First().SinhVien!.NgaySinh,
+                LopHoc = new LopHocSimpleDto
+                {
+                    Id = x.First().SinhVien!.LopHoc!.Id,
+                    MaLopHoc = x.First().SinhVien!.LopHoc!.MaLopHoc
+                }
+            },
             ListHocBa = x.ToList(),
             DiemTongKet = Math.Round(x.ToList()
                     .Where(hb => hb.DiemTongKet != null && hb.UpdatedAt != null)

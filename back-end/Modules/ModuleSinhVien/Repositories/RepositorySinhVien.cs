@@ -26,38 +26,10 @@ public class RepositorySinhVien : RepositoryBase<SinhVien>, IRepositorySinhVien
         Delete(sinhVien);
     }
 
-    public async Task<PagedListAsync<SinhVien>?> GetAllSinhVienAsync(int page, int limit, string? search,
-        string? sortBy, string? sortByOrder, Guid? lopId, int? tinhTrangHocTap)
-    {
-        var query = _context.SinhViens!
-            .AsNoTracking()
-            .Include(item => item.LopHoc)
-            .AsQueryable();
-        if (lopId.HasValue && lopId != Guid.Empty) query = query.Where(lh => lh.LopHocId == lopId);
-        if (tinhTrangHocTap.HasValue && tinhTrangHocTap != 0)
-            query = query.Where(sv => sv.TinhTrangHocTap == tinhTrangHocTap);
-        if (!string.IsNullOrWhiteSpace(search))
-        {
-            if (int.TryParse(search, out var mssv))
-                query = query.SearchBy(mssv.ToString(), item => item.MSSV);
-            else
-                query = query.SearchBy(search, item => item.HoTen);
-        }
-
-        return await PagedListAsync<SinhVien>.ToPagedListAsync(query
-                .IgnoreQueryFilters()
-                .OrderBy(item => item.DeletedAt != null)
-                .SortByOptions(sortBy, sortByOrder, new Dictionary<string, Expression<Func<SinhVien, object>>>
-                {
-                    ["createdat"] = item => item.CreatedAt,
-                    ["updatedat"] = item => item.UpdatedAt!
-                }).AsNoTracking()
-            , page, limit);
-    }
-
     public async Task<IEnumerable<SinhVien>> GetAllSinhVienByLopHoc(Guid lopHocId)
     {
-        return await FindAll(false).Where(item => item.TrangThaiSinhVien == (int)TrangThaiSinhVienEnum.DANG_HOC && item.LopHocId == lopHocId).ToListAsync();
+        return await FindAll(false).Where(item =>
+            item.TrangThaiSinhVien == (int)TrangThaiSinhVienEnum.DANG_HOC && item.LopHocId == lopHocId).ToListAsync();
     }
 
     public async Task<PagedListAsync<SinhVien>> GetAllSinhVienByLopHocPhanIdAsync(int page, int limit, string? search,
@@ -159,11 +131,11 @@ public class RepositorySinhVien : RepositoryBase<SinhVien>, IRepositorySinhVien
         return await query.CountAsync();
     }
 
-    public async Task<int> GetAllSoTamNghiAsync(Guid? lopHocId)
+    public async Task<int> GetAllBuocThoiHocAsync(Guid? lopHocId)
     {
         var query = _context.SinhViens!
             .AsNoTracking()
-            .Where(sv => sv.TrangThaiSinhVien == (int)TrangThaiSinhVienEnum.TAM_NGHI)
+            .Where(sv => sv.TrangThaiSinhVien == (int)TrangThaiSinhVienEnum.BUOC_THOI_HOC)
             .IgnoreQueryFilters()
             .AsQueryable();
         if (lopHocId.HasValue && lopHocId != Guid.Empty) query = query.Where(item => item.LopHocId == lopHocId);
@@ -227,5 +199,34 @@ public class RepositorySinhVien : RepositoryBase<SinhVien>, IRepositorySinhVien
     public void UpdateSinhVien(SinhVien sinhVien)
     {
         Update(sinhVien);
+    }
+
+    public async Task<PagedListAsync<SinhVien>?> GetAllSinhVienAsync(int page, int limit, string? search,
+        string? sortBy, string? sortByOrder, Guid? lopId, int? tinhTrangHocTap, int? trangThai)
+    {
+        var query = _context.SinhViens!
+            .AsNoTracking()
+            .Include(item => item.LopHoc)
+            .AsQueryable();
+        if (lopId.HasValue && lopId != Guid.Empty) query = query.Where(lh => lh.LopHocId == lopId);
+        if (tinhTrangHocTap.HasValue && tinhTrangHocTap != 0)
+            query = query.Where(sv => sv.TinhTrangHocTap == tinhTrangHocTap);
+        if (trangThai.HasValue && trangThai != 0)
+            query = query.Where(sv => sv.TrangThaiSinhVien == trangThai);
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            if (int.TryParse(search, out var mssv))
+                query = query.SearchBy(mssv.ToString(), item => item.MSSV);
+            else
+                query = query.SearchBy(search, item => item.HoTen);
+        }
+
+        return await PagedListAsync<SinhVien>.ToPagedListAsync(query
+                .IgnoreQueryFilters()
+                .OrderBy(item => item.DeletedAt != null)
+                .ThenByDescending(item => item.TrangThaiSinhVien == (int)TrangThaiSinhVienEnum.DANG_HOC)
+                .ThenByDescending(item => item.CreatedAt)
+                .AsNoTracking()
+            , page, limit);
     }
 }

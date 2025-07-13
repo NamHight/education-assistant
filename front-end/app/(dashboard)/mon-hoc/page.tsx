@@ -26,9 +26,10 @@ export default async function Page() {
       return result?.data?.length > 0 ? result : undefined;
     }
   });
+  const khoa = await KhoaService.getKhoaNoPageServer().catch(() => []);
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <Content queryKey={queryKey} />
+      <Content queryKey={queryKey} khoas={khoa?.length > 0 ? khoa : undefined} />
     </HydrationBoundary>
   );
 }

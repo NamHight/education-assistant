@@ -1,6 +1,6 @@
 'use client';
 import { alpha, Box, FormControl, Grid, TextField, Typography } from '@mui/material';
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import ContentForm from '../../components/form/ContentForm';
 import { motion } from 'motion/react';
@@ -14,6 +14,7 @@ import { MonHocService } from '@/services/MonHocService';
 import { NganhService } from '@/services/NganhService';
 import { BoMonService } from '@/services/BoMonService';
 import { PhongHocService } from '@/services/PhongHocService';
+import { useBreadcrumb } from '@/hooks/context/BreadCrumbContext';
 interface ContentProps {
   initialData?: any;
   anotherData?: any;
@@ -23,9 +24,10 @@ const Content: FC<ContentProps> = ({ initialData, anotherData }) => {
   const notification = useNotifications();
   const router = useRouter();
   const queryClient = useQueryClient();
+     const {setBreadcrumbs,setTitle} = useBreadcrumb();
   const mutationCreate = useMutation({
     mutationFn: async (formData: any) => {
-      const response = await PhongHocService.createPhongHoc(formData);
+      const response = await PhongHocService.createPhongHocList(formData);
       return response;
     },
     onSuccess: (data) => {
@@ -46,7 +48,12 @@ const Content: FC<ContentProps> = ({ initialData, anotherData }) => {
       });
     }
   });
-
+  useEffect(() => {
+    setTitle(`Thêm mới phòng học`)
+    return () => {
+      setTitle('');
+    };
+  },[])
   const handleSubmitForm = (formData: any) => {
     mutationCreate.mutate(formData);
   };

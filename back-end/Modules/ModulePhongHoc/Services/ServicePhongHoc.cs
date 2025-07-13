@@ -78,26 +78,27 @@ public class ServicePhongHoc : IServicePhongHoc
         var page = paramPhongHocDto.page;
         var limit = paramPhongHocDto.limit;
         var phongHocs = await _repositoryMaster.PhongHoc.GetAllPhongHocAsync(paramPhongHocDto.page,
-                                                        paramPhongHocDto.limit,
-                                                        paramPhongHocDto.search,
-                                                        paramPhongHocDto.sortBy,
-                                                        paramPhongHocDto.sortByOrder,
-                                                        paramPhongHocDto.loaiPhongHoc,
-                                                        paramPhongHocDto.trangThai,
-                                                        paramPhongHocDto.toaNha);
-        var startIndex = (page - 1) * limit;                                                
+            paramPhongHocDto.limit,
+            paramPhongHocDto.search,
+            paramPhongHocDto.sortBy,
+            paramPhongHocDto.sortByOrder,
+            paramPhongHocDto.loaiPhongHoc,
+            paramPhongHocDto.trangThai,
+            paramPhongHocDto.toaNha);
+        var startIndex = (page - 1) * limit;
         var phongHocDto = _mapper.Map<IEnumerable<ResponsePhongHocDto>>(phongHocs)
-                .Select((item, index) =>
-                {
-                    item.STT = startIndex + index + 1;
-                    return item;
-                });
+            .Select((item, index) =>
+            {
+                item.STT = startIndex + index + 1;
+                return item;
+            });
         return (data: phongHocDto, page: phongHocs!.PageInfo);
     }
 
     public Task<ResponsePhongHocAutoDto> GenericPhongHocAutoVirtualListAsync(RequestAddPhongHocVirtualListDto request)
     {
-        var danhSachTenPhong = Enumerable.Range(1, request.SoPhong).Select(soPhong => $"{request.ToaNha.ToUpper()}{request.Lau}.{soPhong}").ToList();
+        var danhSachTenPhong = Enumerable.Range(1, request.SoPhong)
+            .Select(soPhong => $"{request.ToaNha.ToUpper()}{request.Lau}.{soPhong}").ToList();
         var result = new ResponsePhongHocAutoDto
         {
             TenPhongs = danhSachTenPhong,
@@ -191,12 +192,11 @@ public class ServicePhongHoc : IServicePhongHoc
             CreatedAt = DateTime.Now
         }).ToList();
         if (!danhSachPhongMoi.Any())
-        {
-            throw new PhongHocBadRequestException($"Danh sách phong học đã tạo trước đó rồi, hãy tạo danh sách phòng khác");
-        }
+            throw new PhongHocBadRequestException(
+                "Danh sách phong học đã tạo trước đó rồi, hãy tạo danh sách phòng khác");
         await _repositoryMaster.ExecuteInTransactionBulkEntityAsync(async () =>
         {
-            await _repositoryMaster.BulkAddEntityAsync<PhongHoc>(danhSachPhongMoi);
+            await _repositoryMaster.BulkAddEntityAsync(danhSachPhongMoi);
         });
         _loggerService.LogInfo("Thêm thành công list phòng học");
         return new ResponsePhongHocAutoDto
@@ -206,12 +206,34 @@ public class ServicePhongHoc : IServicePhongHoc
             SucChua = request.SucChua,
             LoaiPhongHoc = request.LoaiPhongHoc,
             TrangThaiPhongHoc = (int)TrangThaiPhongHocEnum.HOAT_DONG
-        };   
+        };
     }
 
     public async Task<List<string>?> GetAllToaNhaAsync()
     {
         var toaNhas = await _repositoryMaster.PhongHoc.GetAllToaNhaAsync();
         return toaNhas;
+    }
+
+    public async Task UpdateOptionalAsync(Guid id, RequestUpdatePhongHocOptionDto request)
+    {
+        try
+        {
+            var phongHoc = await _repositoryMaster.PhongHoc.GetPhongHocByIdAsync(id, true);
+            if (phongHoc is null) throw new PhongHocNotFoundException(id);
+            await _repositoryMaster.ExecuteInTransactionAsync(async () =>
+            {
+                phongHoc.SucChua = request.SucChua;
+                phongHoc.LoaiPhongHoc = request.LoaiPhongHoc;
+                phongHoc.TrangThaiPhongHoc = request.TrangThaiPhongHoc;
+                phongHoc.UpdatedAt = DateTime.Now;
+                await Task.CompletedTask;
+            });
+            _loggerService.LogInfo($"Cập nhật phòng học có id = {id} thành công.");
+        }
+        catch (DbUpdateException ex)
+        {
+            throw new Exception($"Lỗi hệ thống!: {ex.Message}");
+        }
     }
 }

@@ -19,6 +19,7 @@ import { LoaiLopHocPhan, TrangThaiLopHocPhanEnum } from '@/types/options';
 import InputSelect2 from '@/components/selects/InputSelect2';
 import { usePopoverLock } from '@/hooks/context/PopoverLock';
 import { set } from 'lodash';
+import { useBreadcrumb } from '@/hooks/context/BreadCrumbContext';
 
 const TableEdit = dynamic(() => import('@/app/(dashboard)/phan-cong/tables/TableEdit'), {
   ssr: false
@@ -47,6 +48,7 @@ const Content = ({ queryKey, ctdtServer }: IContentProps) => {
   const [filterModel, setFilterModel] = useState<GridFilterModel>({
     items: []
   });
+  const {setTitle} = useBreadcrumb();
   const [isOpenPopover, setisOpenPopover] = useState<boolean>(false);
   const { data, isLoading } = useQuery({
     queryKey: [
@@ -127,6 +129,10 @@ const Content = ({ queryKey, ctdtServer }: IContentProps) => {
       });
     }
   });
+  useEffect(() => {
+    setTitle('Phân công');
+    return () => setTitle('');
+  }, []);
   const fetchGiangVienByKhoaId = async (khoaId: string) => {
     if (giangVienOptions[khoaId]) return giangVienOptions[khoaId];
     const result = await GiangVienService.getGiangVienByKhoaId(khoaId);

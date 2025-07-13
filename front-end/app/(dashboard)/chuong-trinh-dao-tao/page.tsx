@@ -30,9 +30,10 @@ export default async function Page() {
       return result?.data?.length > 0 ? result : undefined;
     }
   });
+  const nganhs = await NganhService.getAllNganhNoPageServer().catch(() => undefined);
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <Content queryKey={queryKey} />
+      <Content queryKey={queryKey} nganhs={nganhs} />
     </HydrationBoundary>
   );
 }

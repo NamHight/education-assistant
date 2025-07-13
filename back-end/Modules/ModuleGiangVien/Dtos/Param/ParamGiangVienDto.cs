@@ -11,4 +11,6 @@ public class ParamGiangVienDto
     public Guid? BoMonId { get; set; }
     public bool? active { get; set; }
     public int trangThai { get; set; }
+
+    public int vaiTro { get; set; }
 }

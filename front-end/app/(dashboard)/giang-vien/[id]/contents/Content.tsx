@@ -1,11 +1,13 @@
 'use client';
-import React from 'react';
+import React, { useEffect } from 'react';
 import ContentForm from '../../components/form/ContentForm';
 import { useNotifications } from '@toolpad/core';
 import { useRouter } from 'next/navigation';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { AnimatePresence, motion } from 'motion/react';
 import { GiangVienService } from '@/services/GiangVienService';
+import { useBreadcrumb } from '@/hooks/context/BreadCrumbContext';
+import { Typography } from '@mui/material';
 interface IContentProps {
   initialData: any;
   anotherData?: any;
@@ -15,6 +17,7 @@ const Content = ({ initialData, id, anotherData }: IContentProps) => {
   const notifications = useNotifications();
   const router = useRouter();
   const queryClient = useQueryClient();
+  const { setTitle, setBreadcrumbs } = useBreadcrumb();
   const { data } = useQuery({
     queryKey: ['giang-vien', { id: id }],
     queryFn: async () => {
@@ -25,6 +28,25 @@ const Content = ({ initialData, id, anotherData }: IContentProps) => {
     refetchOnWindowFocus: false,
     gcTime: 0
   });
+  useEffect(() => {
+    if(data){
+      setTitle(`Chỉnh sửa: ${data?.hoTen}`);
+      setBreadcrumbs(
+          <Typography className="relative text-[14px] flex gap-1 items-center">
+          <Typography component={'span'} sx={(theme) => ({
+            color: theme.palette.mode === 'dark' ? 'white !important' : 'black !important',
+            fontWeight: 500
+          })}>
+            {data?.hoTen}
+          </Typography>
+          </Typography>
+      )
+      return () => {
+        setTitle('')
+        setBreadcrumbs(null);
+      };
+    }
+  }, [data, setTitle, setBreadcrumbs]);
 
   const mutationUpdate = useMutation({
     mutationKey: ['edit-giang-vien', { id: id }],

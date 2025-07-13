@@ -32,6 +32,20 @@ export class ChitietChuongTrinhDaoTaoService {
       )
       .catch((error) => error.response?.data);
   }
+
+  static async getChiTietChuongTrinhDaoTaoServer(params: IParamChiTietChuongTrinhDaoTao) {
+    return await authApiServer
+      .get(`${API.CHI_TIET_CHUONG_TRINH_DAO_TAO.GET_ALL}`, {
+        params: params
+      })
+      .then((response) =>
+        Promise.resolve({
+          data: response.data,
+          meta: response.headers['x-pagination'] ? JSON.parse(response.headers['x-pagination'] || '{}') : {}
+        })
+      )
+      .catch((error) => error.response?.data);
+  }
   static async getChiTietChuongTrinhDaoTaoMonHoc(id: string, params: IParamChiTietChuongTrinhDaoTao) {
     return await authApi
       .get(`${API.CHI_TIET_CHUONG_TRINH_DAO_TAO.CHUONG_TRINH_MON_HOC}`.replace(':id', id), {

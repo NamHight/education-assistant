@@ -102,7 +102,7 @@ public class ServiceHocBa : IServiceHocBa
             throw new SinhVienNotFoundException2();
         var hocBas =
             await _repositoryMaster.HocBa.GetAllHocBaBySinhVienAsync(param.sortBy, param.sortByOrder, sinhVien.Id);
-        var GPA = await _repositoryMaster.HocBa.TinhGPAAsync(sinhVien.Id);
+        //var GPA = await _repositoryMaster.HocBa.TinhGPAAsync(sinhVien.Id);
         return hocBas;
     }
 
