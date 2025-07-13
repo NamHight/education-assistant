@@ -46,6 +46,7 @@ import moment from 'moment';
 import { UseFormSetValue } from 'react-hook-form';
 import { IFilter } from './Content';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
+import useCheckPermission from '@/helper/useCheckPermission';
 function TextInput(props: React.InputHTMLAttributes<HTMLInputElement>) {
   return (
     <input
@@ -196,8 +197,6 @@ const noRowsOverlay = () => (
       width: '100%',
       color: '#888',
       background: '#f9fafb',
-      borderRadius: 2,
-      border: '1px dashed #e0e0e0',
       mt: 2
     }}
   >

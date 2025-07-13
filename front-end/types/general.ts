@@ -36,7 +36,8 @@ export const API = {
     GET_BY_LOP_HOC_PHAN_ID: '/ChiTietLopHocPhan/:id/by-lop-hoc-phan',
     UPDATE_POINT: '/ChiTietLopHocPhan/update-list',
     EXPORT_FILE: '/ChiTietLopHocPhan/:id/export',
-    IMPORT_FILE: '/ChiTietLopHocPhan/import'
+    IMPORT_FILE: '/ChiTietLopHocPhan/import',
+    UPDATE_NOP_DIEM: '/ChiTietLopHocPhan/:id/update-nop-diem',
   },
   HOC_BA: {
     GET_ALL: '/HocBa',
@@ -114,7 +115,8 @@ export const API = {
     ADD_AUTO: '/LopHocPhan/them-auto',
     GET_BY_GIANG_VIEN_ID: '/LopHocPhan/by-giang-vien',
     GET_ALL_NO_PAGE: '/LopHocPhan/no-page',
-    GET_BY_LOP_HOC_AND_HOC_KY: '/LopHocPhan/by-lop-hoc-and-hoc-ky'
+    GET_BY_LOP_HOC_AND_HOC_KY: '/LopHocPhan/by-lop-hoc-and-hoc-ky',
+    GET_DA_NOP: '/LopHocPhan/lop-da-nop',
   },
   MON_HOC: {
     GET_ALL: '/MonHoc',

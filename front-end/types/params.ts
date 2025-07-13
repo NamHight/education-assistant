@@ -23,6 +23,7 @@ export interface IParamLopHocPhan extends IBaseParams {
   trangThai?: number;
   loaiLopHoc?: number;
   giangVienId?: string;
+  khoaId?: string;
 }
 
 export interface IParamMonHoc extends IBaseParams {
@@ -74,6 +75,7 @@ export interface IParamLopHocPhan2 {
   lopHocPhanid?: string;
   lopHocId?: string;
   hocKy?: number | string;
+  khoaId?:string;
 }
 
 export interface IParamLichBieu extends IBaseParams {

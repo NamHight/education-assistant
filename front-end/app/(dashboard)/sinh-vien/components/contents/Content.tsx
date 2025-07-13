@@ -24,6 +24,7 @@ import RestoreIcon from '@mui/icons-material/Restore';
 import { SinhVienService } from '@/services/SinhVienService';
 import Link from 'next/link';
 import {
+  LoaiTaiKhoanEnum,
   TinhTrangHocTapSinhVien,
   TinhTrangHocTapSinhVienEnum,
   TrangThaiSinhVien,
@@ -51,6 +52,7 @@ import InputSelect2 from '@/components/selects/InputSelect2';
 import { LopHocService } from '@/services/LopHocService';
 import { saveAs } from 'file-saver';
 import { useBreadcrumb } from '@/hooks/context/BreadCrumbContext';
+import { useUser } from '@/stores/selectors';
 const Table = dynamic(() => import('@/components/tables/Table'), {
   ssr: false
 });
@@ -114,6 +116,7 @@ const Content = ({ queryKey, lopHocServers, tinhTrangHocTapServer }: ContentProp
       id: null,
       row: {}
     });
+    const user = useUser();
    const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
    const openPopover = Boolean(anchorEl);
   const id = openPopover ? 'simple-popover' : undefined;
@@ -861,6 +864,7 @@ const handleChangeStatus = (id: string | number | null, trangThai: number | stri
         customToolBar
         isOpenOption={handleOpen}
         isMoreCellAction
+        isDisableActionOption={user?.taiKhoan?.loaiTaiKhoan !== LoaiTaiKhoanEnum.ADMIN}
         isDisableDelete
         handleChooseRow={handleChooseRow}
         urlNavigate='sinh-vien'

@@ -25,7 +25,6 @@ import { LoaiTaiKhoaEnum } from '@/models/TaiKhoan';
 import { SettingsIcon } from 'lucide-react';
 
 export const NAVIGATION = (role?: string): Navigation => {
-  console.log('role', role);
   const isAdmin = Number(role) === LoaiTaiKhoaEnum.ADMIN 
   const isQuanLyBoMon = Number(role) === LoaiTaiKhoaEnum.QUAN_LY_KHOA_BO_MON;
   const allNavigate = [

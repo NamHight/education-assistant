@@ -128,10 +128,17 @@ public sealed class ServiceGiangVien : IServiceGiangVien
     public async Task<(IEnumerable<ResponseGiangVienDto> data, PageInfo page)> GetAllGiangVienAsync(
         ParamGiangVienDto paramGiangVienDto)
     {
+        var taiKhoanIdUser = _httpContextAccessor.HttpContext!.User.GetUserId();
+        if (taiKhoanIdUser == Guid.Empty) throw new TaiKhoanBadRequestException("Thông tin tài khoản id không đầy đủ");
+        var giangVienUser = await _repositoryMaster.GiangVien.GetGiangVienByTaiKhoanIdAsync(taiKhoanIdUser, false);
+        if (giangVienUser is null) throw new TaiKhoanNotFoundException(taiKhoanIdUser);
+        var isAdmin = giangVienUser.TaiKhoan!.LoaiTaiKhoan == (int)LoaiTaiKhoaEnum.ADMIN;
+        var khoaGV = Guid.Empty;
+        if (!isAdmin) khoaGV = giangVienUser.KhoaId ?? Guid.Empty;
         var giangViens = await _repositoryMaster.GiangVien.GetAllGiangVienAsync(paramGiangVienDto.page,
             paramGiangVienDto.limit, paramGiangVienDto.search, paramGiangVienDto.sortBy, paramGiangVienDto.sortByOrder,
             paramGiangVienDto.KhoaId, paramGiangVienDto.BoMonId, paramGiangVienDto.active, paramGiangVienDto.trangThai,
-            paramGiangVienDto.vaiTro);
+            paramGiangVienDto.vaiTro, khoaGV);
         var giangVienDtos = _mapper.Map<IEnumerable<ResponseGiangVienDto>>(giangViens);
         return (data: giangVienDtos, page: giangViens!.PageInfo);
     }

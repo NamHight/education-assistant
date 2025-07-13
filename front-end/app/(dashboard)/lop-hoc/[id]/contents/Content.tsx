@@ -39,7 +39,8 @@ const Content = ({ initialData, id, anotherData }: IContentProps) => {
   useEffect(() => {
       setTitle(`Chỉnh sửa ${data?.maLopHoc}`)
       setBreadcrumbs(
-        <Typography className="relative text-[14px] flex gap-1 items-center">
+       [
+         <Typography className="relative text-[14px] flex gap-1 items-center">
           <Typography component={'span'} sx={(theme) => ({
             color: theme.palette.mode === 'dark' ? 'white !important' : 'black !important',
             fontWeight: 500
@@ -47,10 +48,11 @@ const Content = ({ initialData, id, anotherData }: IContentProps) => {
             {data?.maLopHoc}
           </Typography>
           </Typography>
+       ]
       )
       return () => {
         setTitle('');
-        setBreadcrumbs(null);
+        setBreadcrumbs([]);
       };
     },[data, setTitle, setBreadcrumbs]);
   const mutationUpdate = useMutation({
