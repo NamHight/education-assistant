@@ -179,14 +179,15 @@ public class RepositoryChiTietLopHocPhan : RepositoryBase<ChiTietLopHocPhan>, IR
         return result;
     }
 
-    public async Task<int> UpdateNgayNopDiemChiTietLopHocPhanByLopHocPhanIdAsync(Guid lopHocPhanId)
+    public async Task<int> UpdateNgayNopDiemChiTietLopHocPhanByLopHocPhanIdAsync(Guid lopHocPhanId, bool nopDiem)
     {
         var parameters = new[]
         {
             new MySqlParameter("maLopHocPhan", lopHocPhanId),
+            new MySqlParameter("nopDiem", nopDiem),
         };
         var result = await _context.Database.ExecuteSqlRawAsync(
-            @"CALL sp_updateNgayNopDiemChitietLopHocPhan(?)",
+            @"CALL sp_updateNgayNopDiemChitietLopHocPhan(?,?)",
             parameters
         );
         return result;
