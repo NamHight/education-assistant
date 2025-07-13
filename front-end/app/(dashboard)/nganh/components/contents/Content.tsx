@@ -81,7 +81,7 @@ const Content = ({ queryKey }: ContentProps) => {
     placeholderData: (prev) => prev,
     refetchOnWindowFocus: false
   });
-  const {setTitle} = useBreadcrumb();
+  const { setTitle } = useBreadcrumb();
   const rowCountRef = useRef(data?.meta?.TotalCount || 0);
   const rowCount = useMemo(() => {
     if (data?.meta?.TotalCount !== undefined) {
@@ -113,7 +113,7 @@ const Content = ({ queryKey }: ContentProps) => {
   };
   useEffect(() => {
     setTitle('Danh sách ngành');
-    return () => setTitle('')
+    return () => setTitle('');
   }, []);
   const columns = useMemo((): GridColDef[] => {
     const formatDateBirth = (date: string) => {
@@ -130,7 +130,7 @@ const Content = ({ queryKey }: ContentProps) => {
         sortable: true,
         display: 'flex',
         align: 'center',
-        disableColumnMenu: true,
+        disableColumnMenu: true
       },
       {
         field: 'tenNganh',

@@ -33,24 +33,27 @@ const Content = ({ initialData, id, anotherData }: IContentProps) => {
     gcTime: 0
   });
   useEffect(() => {
-    if(data){
+    if (data) {
       setTitle(`Chỉnh sửa: ${data?.tenNganh}`);
       setBreadcrumbs(
-          <Typography className="relative text-[14px] flex gap-1 items-center">
-          <Typography component={'span'} sx={(theme) => ({
-            color: theme.palette.mode === 'dark' ? 'white !important' : 'black !important',
-            fontWeight: 500
-          })}>
+        <Typography className='relative text-[14px] flex gap-1 items-center'>
+          <Typography
+            component={'span'}
+            sx={(theme) => ({
+              color: theme.palette.mode === 'dark' ? 'white !important' : 'black !important',
+              fontWeight: 500
+            })}
+          >
             {data?.tenNganh}
           </Typography>
-          </Typography>
-      )
+        </Typography>
+      );
       return () => {
-        setTitle('')
+        setTitle('');
         setBreadcrumbs(null);
       };
     }
-  },[data, setTitle, setBreadcrumbs])
+  }, [data, setTitle, setBreadcrumbs]);
   const mutationUpdate = useMutation({
     mutationFn: async (data: FormData) => {
       const result = await NganhService.updateNganh(id, data);

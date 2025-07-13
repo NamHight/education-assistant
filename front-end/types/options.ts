@@ -65,7 +65,7 @@ export const loaiTaiKhoanOptions: IOption[] = [
 
 export const loaiTaiKhoanAdminOptions: IOption[] = [
   { id: LoaiTaiKhoanEnum.ADMIN, name: 'admin' },
-  { id: LoaiTaiKhoanEnum.QUAN_LY_KHOA_BO_MON, name: 'quản lý khoa bộ môn' },
+  { id: LoaiTaiKhoanEnum.QUAN_LY_KHOA_BO_MON, name: 'quản lý khoa bộ môn' }
 ];
 
 export enum TrangThaiEnum {
@@ -250,7 +250,7 @@ export enum ToaNhaEnum {
   C = 'C',
   D = 'D',
   E = 'E',
-  F = 'F',
+  F = 'F'
 }
 
 export const ToaNha: IOption[] = [

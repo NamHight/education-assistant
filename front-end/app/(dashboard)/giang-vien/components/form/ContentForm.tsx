@@ -216,21 +216,17 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
   }, [reset, data]);
   const isAdmin = user?.taiKhoan?.loaiTaiKhoan === 1;
   const filteredLoaiTaiKhoanOptions = useMemo(() => {
-
-  if (isAdmin) {
-    return loaiTaiKhoanOptions;
-  }
-  if(!user){
-    return loaiTaiKhoanOptions;
-  }
-  if(user?.taiKhoan?.loaiTaiKhoan === LoaiTaiKhoaEnum.QUAN_LY_KHOA_BO_MON){
-      return loaiTaiKhoanOptions.filter(
-        (item: any) =>
-          !(item?.id === LoaiTaiKhoaEnum.ADMIN)
-      );
+    if (isAdmin) {
+      return loaiTaiKhoanOptions;
     }
-  return loaiTaiKhoanOptions;
-}, [user, loaiTaiKhoanOptions]);
+    if (!user) {
+      return loaiTaiKhoanOptions;
+    }
+    if (user?.taiKhoan?.loaiTaiKhoan === LoaiTaiKhoaEnum.QUAN_LY_KHOA_BO_MON) {
+      return loaiTaiKhoanOptions.filter((item: any) => !(item?.id === LoaiTaiKhoaEnum.ADMIN));
+    }
+    return loaiTaiKhoanOptions;
+  }, [user, loaiTaiKhoanOptions]);
   return (
     <FormControl fullWidth component={'form'} onSubmit={handleSubmit(handleSubmitForm)} className='flex flex-col gap-4'>
       <Grid container spacing={2} rowSpacing={1}>

@@ -256,7 +256,7 @@ const Content = ({ queryKey, lopHocServer, boMonServer }: IContentProps) => {
   useEffect(() => {
     setTitle('Lịch lớp học');
     return () => setTitle('');
-  },[])
+  }, []);
   const mutationDelete = useMutation({
     mutationFn: async (id: string | number | null) => {
       const result = await LichBieuService.deleteLichBieu(id);

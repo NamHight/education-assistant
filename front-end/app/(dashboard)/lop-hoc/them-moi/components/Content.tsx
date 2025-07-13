@@ -25,7 +25,7 @@ const Content: FC<ContentProps> = ({ initialData, anotherData }) => {
   const notification = useNotifications();
   const router = useRouter();
   const queryClient = useQueryClient();
-  const {setBreadcrumbs,setTitle} = useBreadcrumb();
+  const { setBreadcrumbs, setTitle } = useBreadcrumb();
   const mutationCreate = useMutation({
     mutationFn: async (formData: any) => {
       const response = await LopHocService.createLopHoc(formData);
@@ -50,11 +50,11 @@ const Content: FC<ContentProps> = ({ initialData, anotherData }) => {
     }
   });
   useEffect(() => {
-    setTitle(`Thêm mới lớp học`)
+    setTitle(`Thêm mới lớp học`);
     return () => {
       setTitle('');
     };
-  })
+  });
   const handleSubmitForm = (formData: any) => {
     mutationCreate.mutate(formData);
   };

@@ -66,7 +66,7 @@ const Content = ({ queryKey, nganhs }: ContentProps) => {
     name: string;
   } | null>(null);
   const queryClient = useQueryClient();
-  const {setTitle} = useBreadcrumb();
+  const { setTitle } = useBreadcrumb();
   const { data, isLoading, isFetching } = useQuery({
     queryKey: [queryKey, paginationModel, sortModel, filterModel, nganhOption],
     queryFn: async () => {
@@ -77,7 +77,7 @@ const Content = ({ queryKey, nganhs }: ContentProps) => {
         sortBy: 'createdat',
         sortByOrder: 'desc'
       };
-      if(nganhOption) {
+      if (nganhOption) {
         params.nganhId = nganhOption.id;
       }
       if (sortModel.field && sortModel.sort) {
@@ -96,7 +96,7 @@ const Content = ({ queryKey, nganhs }: ContentProps) => {
     placeholderData: (prev) => prev,
     refetchOnWindowFocus: false
   });
-  const {data:nganhss, isLoading:loadingNganhs} = useQuery({
+  const { data: nganhss, isLoading: loadingNganhs } = useQuery({
     queryKey: ['nganhs'],
     queryFn: async () => {
       const result = await NganhService.getAllNganhNoPage();
@@ -105,7 +105,7 @@ const Content = ({ queryKey, nganhs }: ContentProps) => {
     select: (data: any) => {
       return data?.map((item: any) => ({
         id: item?.id,
-        name: item?.tenNganh,
+        name: item?.tenNganh
       }));
     },
     initialData: nganhs,
@@ -127,7 +127,7 @@ const Content = ({ queryKey, nganhs }: ContentProps) => {
         }}
         sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}
       >
-        <CircleEllipsis className='text-green-500'/>
+        <CircleEllipsis className='text-green-500' />
         <Typography
           className={'!text-[14px] !font-[500] !leading-6 group-hover:!text-blue-800 group-hover:!font-semibold'}
           variant={'body1'}
@@ -141,7 +141,7 @@ const Content = ({ queryKey, nganhs }: ContentProps) => {
   useEffect(() => {
     setTitle('Chương trình đào tạo');
     return () => setTitle('');
-  },[]);
+  }, []);
   const columns = useMemo((): GridColDef[] => {
     const formatDateBirth = (date: string) => {
       return moment(date).utc().format('DD/MM/YYYY');
@@ -175,7 +175,7 @@ const Content = ({ queryKey, nganhs }: ContentProps) => {
         sortable: true,
         display: 'flex',
         align: 'center',
-        disableColumnMenu: true,
+        disableColumnMenu: true
       },
       {
         field: 'maChuongTrinh',

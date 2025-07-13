@@ -46,7 +46,7 @@ interface ContentProps {
 const Content = ({ queryKey }: ContentProps) => {
   const router = useRouter();
   const notification = useNotifications();
-   const [idHocBa, setIdHocBa] = useState<string | null>(null);
+  const [idHocBa, setIdHocBa] = useState<string | null>(null);
   const refTable = useRef<{ handleClose: () => void; handleOpenDelete: () => void; handleCloseDelete: () => void }>(
     null
   );
@@ -76,7 +76,7 @@ const Content = ({ queryKey }: ContentProps) => {
     row: {}
   });
 
-    const [openEdit, setOpenEdit] = React.useState(false);
+  const [openEdit, setOpenEdit] = React.useState(false);
 
   const handleClickOpen = () => {
     setOpenEdit(true);
@@ -86,12 +86,20 @@ const Content = ({ queryKey }: ContentProps) => {
     setOpenEdit(false);
     refTable.current?.handleClose();
   };
-  const {setTitle} = useBreadcrumb();
+  const { setTitle } = useBreadcrumb();
   const open = Boolean(anchorEl);
   const id = open ? 'simple-popover' : undefined;
   const queryClient = useQueryClient();
   const { data, isLoading, isFetching } = useQuery({
-    queryKey: [queryKey, paginationModel, sortModel, filterModel,filterOption?.loaiPhongHoc,filterOption?.toaNha,filterOption?.trangThai],
+    queryKey: [
+      queryKey,
+      paginationModel,
+      sortModel,
+      filterModel,
+      filterOption?.loaiPhongHoc,
+      filterOption?.toaNha,
+      filterOption?.trangThai
+    ],
     queryFn: async () => {
       const searchKeyWord = handleTextSearch(filterModel?.quickFilterValues as any[]);
       let params: IParamPhongHoc = {
@@ -140,7 +148,7 @@ const Content = ({ queryKey }: ContentProps) => {
     return () => {
       setTitle('');
     };
-  },[])
+  }, []);
   const handleClose = () => {
     setAnchorEl(null);
     refTable.current?.handleClose();
@@ -286,7 +294,7 @@ const Content = ({ queryKey }: ContentProps) => {
         align: 'center',
         disableColumnMenu: true,
         valueFormatter: (params: any) => {
-          return params
+          return params;
         }
       },
       {
@@ -298,8 +306,7 @@ const Content = ({ queryKey }: ContentProps) => {
         disableColumnMenu: true,
         sortable: false,
         display: 'flex',
-        flex: 1,
-        
+        flex: 1
       },
       {
         field: 'toaNha',
@@ -403,80 +410,80 @@ const Content = ({ queryKey }: ContentProps) => {
           </button>
         ))}
       </Popover>
-      <ModalEdit queryKey={queryKey} open={openEdit} handleClose={handleClickClose} id={itemRow?.id} name={itemRow?.row?.tenPhong} />
+      <ModalEdit
+        queryKey={queryKey}
+        open={openEdit}
+        handleClose={handleClickClose}
+        id={itemRow?.id}
+        name={itemRow?.row?.tenPhong}
+      />
       <Box className='flex justify-end w-full gap-4 border border-gray-200 rounded-lg p-4 shadow-sm'>
-        <Box className="flex items-center gap-3 w-full">
-          <Grid container className="w-full flex items-center gap-2">
+        <Box className='flex items-center gap-3 w-full'>
+          <Grid container className='w-full flex items-center gap-2'>
             <Grid size={3}>
-              <Typography className="!font-semibold !text-gray-700">
-              Tòa nhà
-            </Typography>
+              <Typography className='!font-semibold !text-gray-700'>Tòa nhà</Typography>
             </Grid>
-           <Grid size={9}>
+            <Grid size={9}>
               <InputSelect2
-              fullWidth
-              name={'ToaNha'}
-              placeholder={'Tòa nhà'}
-              data={ToaNha ?? []}
-              getOptionKey={(option) => option.id}
-              getOptionLabel={(option: any) => option.name}
-              getOnChangeValue={(value: any) => {
-                setFilterOption((prev) => ({
-                  ...prev,
-                  toaNha: value?.id || null
-                }));
-              }}
-            />
-           </Grid>
+                fullWidth
+                name={'ToaNha'}
+                placeholder={'Tòa nhà'}
+                data={ToaNha ?? []}
+                getOptionKey={(option) => option.id}
+                getOptionLabel={(option: any) => option.name}
+                getOnChangeValue={(value: any) => {
+                  setFilterOption((prev) => ({
+                    ...prev,
+                    toaNha: value?.id || null
+                  }));
+                }}
+              />
+            </Grid>
           </Grid>
-          <Grid container className="w-full flex items-center gap-2">
+          <Grid container className='w-full flex items-center gap-2'>
             <Grid size={2}>
-              <Typography className="!font-semibold !text-gray-700">
-              Loại
-            </Typography>
+              <Typography className='!font-semibold !text-gray-700'>Loại</Typography>
             </Grid>
-           <Grid size={10}>
+            <Grid size={10}>
               <InputSelect2
-              fullWidth
-              name={'LoaiPhongHoc'}
-              placeholder={'Loại phòng học'}
-              data={LoaiPhongHoc ?? []}
-              getOptionKey={(option) => option.id}
-              getOptionLabel={(option: any) => option.name}
-              getOnChangeValue={(value: any) => {
-                setFilterOption((prev) => ({
-                  ...prev,
-                  loaiPhongHoc: value?.id || null
-                }));
-              }}
-            />
-           </Grid>
+                fullWidth
+                name={'LoaiPhongHoc'}
+                placeholder={'Loại phòng học'}
+                data={LoaiPhongHoc ?? []}
+                getOptionKey={(option) => option.id}
+                getOptionLabel={(option: any) => option.name}
+                getOnChangeValue={(value: any) => {
+                  setFilterOption((prev) => ({
+                    ...prev,
+                    loaiPhongHoc: value?.id || null
+                  }));
+                }}
+              />
+            </Grid>
           </Grid>
-          <Grid container className="w-full flex items-center gap-2">
+          <Grid container className='w-full flex items-center gap-2'>
             <Grid size={4}>
-              <Typography className="!font-semibold !text-gray-700">
-              Trạng Thái
-            </Typography>
+              <Typography className='!font-semibold !text-gray-700'>Trạng Thái</Typography>
             </Grid>
-           <Grid size={8}>
+            <Grid size={8}>
               <InputSelect2
-              fullWidth
-              name={'TrangThaiPhongHoc'}
-              placeholder={'Trạng thái'}
-              data={TrangThaiPhongHoc ?? []}
-              getOptionKey={(option) => option.id}
-              getOptionLabel={(option: any) => option.name}
-              getOnChangeValue={(value: any) => {
-                setFilterOption((prev) => ({
-                  ...prev,
-                  trangThai: value?.id || null
-                }));
-              }}
-            />
-           </Grid>
+                fullWidth
+                name={'TrangThaiPhongHoc'}
+                placeholder={'Trạng thái'}
+                data={TrangThaiPhongHoc ?? []}
+                getOptionKey={(option) => option.id}
+                getOptionLabel={(option: any) => option.name}
+                getOnChangeValue={(value: any) => {
+                  setFilterOption((prev) => ({
+                    ...prev,
+                    trangThai: value?.id || null
+                  }));
+                }}
+              />
+            </Grid>
           </Grid>
         </Box>
-        <Box className="flex items-center gap-2 w-1/3 justify-end">  
+        <Box className='flex items-center gap-2 w-1/3 justify-end'>
           <Button title={'Thêm mới'} onClick={() => router.push(APP_ROUTE.PHONG_HOC.ADD)} />
         </Box>
       </Box>

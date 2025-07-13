@@ -62,7 +62,7 @@ const Content = ({ queryKey }: IContentProps) => {
   const queryClient = useQueryClient();
   const user = useUser();
   const apiRef = useGridApiRef();
-  const {setTitle} = useBreadcrumb();
+  const { setTitle } = useBreadcrumb();
   const [giangVienOptions, setGiangVienOptions] = useState<{ [khoaId: string]: any[] }>({});
   // const [loaiLopHocPhan, setloaiLopHocPhan] = useState<number | null>(null);
   const [filter, setfilter] = useState<{
@@ -443,10 +443,10 @@ const Content = ({ queryKey }: IContentProps) => {
         disableColumnMenu: true,
         renderCell: (params) => {
           let total = null;
-          if(params.row?.diemThi1 > 10 || params.row?.diemThi1 < 0) {
+          if (params.row?.diemThi1 > 10 || params.row?.diemThi1 < 0) {
             return null;
           }
-          if(params.row?.diemChuyenCan > 10 || params.row?.diemTrungBinh < 0) {
+          if (params.row?.diemChuyenCan > 10 || params.row?.diemTrungBinh < 0) {
             return null;
           }
           if (filter?.lopHocPhan?.loaiMonHoc === LoaiMonHocEnum.LY_THUYET) {
@@ -649,7 +649,7 @@ const Content = ({ queryKey }: IContentProps) => {
         DiemTongKet2: item?.diemTongKet2 || 0,
         SinhVienId: item?.sinhVienId
       }));
-      console.log('convertData', convertData);
+    console.log('convertData', convertData);
     const checkIsDiemTongKet1 = convertData?.some(
       (item) => item?.DiemTongKet1 === 0 || item?.DiemTongKet1 === undefined
     );

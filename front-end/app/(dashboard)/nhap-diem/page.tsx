@@ -19,16 +19,13 @@ const page = async () => {
   console.log('role', role);
   return (
     <Box>
-      {
-        Number(role) === LoaiTaiKhoanEnum.ADMIN ? (
-          <ContentAdmin />
-        ) : (
-      <PopoverLockProvider>
-        <Content queryKey={queryKey} />
-      </PopoverLockProvider>
-        )
-      }
-   
+      {Number(role) === LoaiTaiKhoanEnum.ADMIN ? (
+        <ContentAdmin />
+      ) : (
+        <PopoverLockProvider>
+          <Content queryKey={queryKey} />
+        </PopoverLockProvider>
+      )}
     </Box>
   );
 };

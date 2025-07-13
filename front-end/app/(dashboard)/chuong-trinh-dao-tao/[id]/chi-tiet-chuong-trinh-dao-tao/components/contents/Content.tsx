@@ -77,9 +77,9 @@ const Content = ({ queryKey, id, khoas }: ContentProps) => {
     items: []
   });
   const queryClient = useQueryClient();
-  const { setTitle ,setBreadcrumbs} = useBreadcrumb();
+  const { setTitle, setBreadcrumbs } = useBreadcrumb();
   const { data, isLoading, isFetching } = useQuery({
-    queryKey: [queryKey, paginationModel, sortModel, filterModel,id],
+    queryKey: [queryKey, paginationModel, sortModel, filterModel, id],
     queryFn: async () => {
       const searchKeyWord = handleTextSearch(filterModel?.quickFilterValues as any[]);
       let params: IParamChiTietChuongTrinhDaoTao = {
@@ -87,7 +87,7 @@ const Content = ({ queryKey, id, khoas }: ContentProps) => {
         limit: paginationModel.pageSize,
         sortBy: 'createdAt',
         sortByOrder: 'desc',
-        chuongTrinhDaoTaoId:id
+        chuongTrinhDaoTaoId: id
       };
 
       if (sortModel.field && sortModel.sort) {
@@ -114,29 +114,29 @@ const Content = ({ queryKey, id, khoas }: ContentProps) => {
     return rowCountRef.current;
   }, [data?.meta?.TotalCount]);
   useEffect(() => {
-  if (data?.data?.length > 0) {
-    setNameDaoTao({
-      id: data.data[0]?.chuongTrinhDaoTao?.id || '',
-      name: data.data[0]?.chuongTrinhDaoTao?.tenChuongTrinh || ''
-    });
-  }
-}, [data]);
-const {data: khoass, isLoading: isLoadingKhoa} = useQuery({
-  queryKey: ['khoas'],
-  queryFn: async () => {
-    const result = await KhoaService.getKhoaNoPage();
-    return result;
-  },
-  select: (data) => {
-    return data.map((item: any) => ({
-      id: item.id,
-      name: item.tenKhoa
-    }));
-  },
-  initialData: khoas,
-  refetchOnWindowFocus:false,
-})
- const handleClickOpenEdit = () => {
+    if (data?.data?.length > 0) {
+      setNameDaoTao({
+        id: data.data[0]?.chuongTrinhDaoTao?.id || '',
+        name: data.data[0]?.chuongTrinhDaoTao?.tenChuongTrinh || ''
+      });
+    }
+  }, [data]);
+  const { data: khoass, isLoading: isLoadingKhoa } = useQuery({
+    queryKey: ['khoas'],
+    queryFn: async () => {
+      const result = await KhoaService.getKhoaNoPage();
+      return result;
+    },
+    select: (data) => {
+      return data.map((item: any) => ({
+        id: item.id,
+        name: item.tenKhoa
+      }));
+    },
+    initialData: khoas,
+    refetchOnWindowFocus: false
+  });
+  const handleClickOpenEdit = () => {
     setOpenEdit(true);
   };
   const handleCloseEdit = () => {
@@ -144,27 +144,31 @@ const {data: khoass, isLoading: isLoadingKhoa} = useQuery({
     setGetId(null);
   };
   useEffect(() => {
-    if(nameDaoTao){
+    if (nameDaoTao) {
       setBreadcrumbs(
-        <Link href={APP_ROUTE.CHUONG_TRINH_DAO_TAO.EDIT(id)} className="relative text-[14px] flex gap-1 items-center
+        <Link
+          href={APP_ROUTE.CHUONG_TRINH_DAO_TAO.EDIT(id)}
+          className='relative text-[14px] flex gap-1 items-center
     before:absolute before:left-0 before:bottom-0 before:h-[2px] before:bg-blue-500
-    before:w-0 hover:before:w-full before:transition-all before:duration-400">
-          <Typography sx={(theme) => ({
-            color: theme.palette.mode === 'dark' ? 'white !important' : 'black !important',
-            fontWeight: 500
-          })}>
-           {nameDaoTao?.name}
+    before:w-0 hover:before:w-full before:transition-all before:duration-400'
+        >
+          <Typography
+            sx={(theme) => ({
+              color: theme.palette.mode === 'dark' ? 'white !important' : 'black !important',
+              fontWeight: 500
+            })}
+          >
+            {nameDaoTao?.name}
           </Typography>
-          </Link>
-      )
-      setTitle(`Chi tiết chương trình đào tạo ${nameDaoTao?.name}`)
+        </Link>
+      );
+      setTitle(`Chi tiết chương trình đào tạo ${nameDaoTao?.name}`);
       return () => {
         setBreadcrumbs(null);
         setTitle('');
       };
-
     }
-  },[nameDaoTao, setBreadcrumbs]);
+  }, [nameDaoTao, setBreadcrumbs]);
   const mutationDelete = useMutation({
     mutationFn: async (id: string | number | null) => {
       const result = await ChitietChuongTrinhDaoTaoService.deleteChiTietChuongTrinhDaoTao(id);
@@ -187,7 +191,7 @@ const {data: khoass, isLoading: isLoadingKhoa} = useQuery({
   const handleDelete = (id: string | number | null) => {
     mutationDelete.mutate(id);
   };
- const moreActions = useCallback((id: string | number | null, row: any) => {
+  const moreActions = useCallback((id: string | number | null, row: any) => {
     return [
       <MenuItem
         key='edit'
@@ -247,7 +251,7 @@ const {data: khoass, isLoading: isLoadingKhoa} = useQuery({
         sortable: true,
         display: 'flex',
         align: 'center',
-        disableColumnMenu: true,
+        disableColumnMenu: true
       },
       {
         field: 'monHoc',
@@ -351,7 +355,7 @@ const {data: khoass, isLoading: isLoadingKhoa} = useQuery({
   return (
     <Box className='flex flex-col gap-4'>
       <Box className='flex justify-end w-full items-center gap-2 border border-gray-200 rounded-lg p-4 shadow-sm'>
-        <Button title={'Thêm mới'} onClick={() => handleClickOpenEdit() } />
+        <Button title={'Thêm mới'} onClick={() => handleClickOpenEdit()} />
       </Box>
       <Table
         ref={refTable}
@@ -371,7 +375,15 @@ const {data: khoass, isLoading: isLoadingKhoa} = useQuery({
         urlNavigate='chi-tiet-chuong-trinh-dao-tao'
         placeholderSearch='Tìm kiếm chi tiết chương trình đào tạo...'
       />
-      <PopupEdit queryKey={queryKey} chuongTrinhDaoTao={nameDaoTao} onClose={handleCloseEdit} open={openEdit} khoas={khoass} isLoadingKhoa={isLoadingKhoa} getId={getId} />
+      <PopupEdit
+        queryKey={queryKey}
+        chuongTrinhDaoTao={nameDaoTao}
+        onClose={handleCloseEdit}
+        open={openEdit}
+        khoas={khoass}
+        isLoadingKhoa={isLoadingKhoa}
+        getId={getId}
+      />
     </Box>
   );
 };

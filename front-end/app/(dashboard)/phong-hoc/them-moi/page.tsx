@@ -9,7 +9,7 @@ import { KhoaService } from '@/services/KhoaService';
 
 const page = async () => {
   return (
-    <Box >
+    <Box>
       <Content />
     </Box>
   );

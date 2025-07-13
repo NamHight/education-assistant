@@ -29,20 +29,23 @@ const Content = ({ initialData, id, anotherData }: IContentProps) => {
     gcTime: 0
   });
   useEffect(() => {
-    if(data){
+    if (data) {
       setTitle(`Chỉnh sửa: ${data?.hoTen}`);
       setBreadcrumbs(
-          <Typography className="relative text-[14px] flex gap-1 items-center">
-          <Typography component={'span'} sx={(theme) => ({
-            color: theme.palette.mode === 'dark' ? 'white !important' : 'black !important',
-            fontWeight: 500
-          })}>
+        <Typography className='relative text-[14px] flex gap-1 items-center'>
+          <Typography
+            component={'span'}
+            sx={(theme) => ({
+              color: theme.palette.mode === 'dark' ? 'white !important' : 'black !important',
+              fontWeight: 500
+            })}
+          >
             {data?.hoTen}
           </Typography>
-          </Typography>
-      )
+        </Typography>
+      );
       return () => {
-        setTitle('')
+        setTitle('');
         setBreadcrumbs(null);
       };
     }

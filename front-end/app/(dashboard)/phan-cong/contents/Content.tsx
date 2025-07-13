@@ -48,7 +48,7 @@ const Content = ({ queryKey, ctdtServer }: IContentProps) => {
   const [filterModel, setFilterModel] = useState<GridFilterModel>({
     items: []
   });
-  const {setTitle} = useBreadcrumb();
+  const { setTitle } = useBreadcrumb();
   const [isOpenPopover, setisOpenPopover] = useState<boolean>(false);
   const { data, isLoading } = useQuery({
     queryKey: [

@@ -66,7 +66,7 @@ const Content = ({ queryKey }: ContentProps) => {
   const [filterModel, setFilterModel] = useState<GridFilterModel>({
     items: []
   });
-  const {setTitle} = useBreadcrumb();
+  const { setTitle } = useBreadcrumb();
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
   const open = Boolean(anchorEl);
   const id = open ? 'simple-popover' : undefined;
@@ -140,7 +140,7 @@ const Content = ({ queryKey }: ContentProps) => {
   useEffect(() => {
     setTitle('Lớp học');
     return () => setTitle('');
-},[setTitle])
+  }, [setTitle]);
   const columns = useMemo((): GridColDef[] => {
     const formatDateBirth = (date: string) => {
       return moment(date).utc().format('DD/MM/YYYY');
@@ -192,7 +192,7 @@ const Content = ({ queryKey }: ContentProps) => {
         sortable: true,
         display: 'flex',
         align: 'center',
-        disableColumnMenu: true,
+        disableColumnMenu: true
       },
       {
         field: 'maLopHoc',
