@@ -12,7 +12,6 @@ namespace Education_assistant.Modules.ModuleLopHoc
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Policy = "GiangVien")]
     public class LopHocController : ControllerBase
     {
         private readonly IServiceMaster _serviceMaster;
@@ -21,6 +20,7 @@ namespace Education_assistant.Modules.ModuleLopHoc
         {
             _serviceMaster = serviceMaster;
         }
+        [Authorize(Policy = "GiangVien")]
         [HttpGet]
         public async Task<ActionResult> GetAllLopHocAsync([FromQuery] ParamLopHocDto paramLopHocDto)
         {
@@ -28,20 +28,21 @@ namespace Education_assistant.Modules.ModuleLopHoc
             Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(result.page));
             return Ok(result.data);
         }
+        [Authorize(Policy = "GiangVien")]
         [HttpGet("no-page")]
         public async Task<ActionResult> GetAllLopHocNoPageAsync()
         {
             var result = await _serviceMaster.LopHoc.GetAllLopHocNoPageAsync();
             return Ok(result);
         }
-
+        [Authorize(Policy = "GiangVien")]
         [HttpGet("{id}")]
         public async Task<ActionResult> GetLopHocByIdAsync(Guid id)
         {
             var result = await _serviceMaster.LopHoc.GetLopHocByIdAsync(id, false);
             return Ok(result);
         }
-
+        [Authorize(Policy = "Admin")]
         [HttpPost("")]
         [ServiceFilter(typeof(ValidationFilter))]
         public async Task<ActionResult> AddLopHocAsync([FromForm] RequestAddLopHocDto model)
@@ -49,7 +50,7 @@ namespace Education_assistant.Modules.ModuleLopHoc
             var result = await _serviceMaster.LopHoc.CreateAsync(model);
             return Ok(result);
         }
-
+        [Authorize(Policy = "Admin")]
         [HttpPut("{id}")]
         [ServiceFilter(typeof(ValidationFilter))]
         public async Task<ActionResult> UpdateLopHocAsync(Guid id, [FromForm] RequestUpdateLopHocDto model)
@@ -57,6 +58,7 @@ namespace Education_assistant.Modules.ModuleLopHoc
             await _serviceMaster.LopHoc.UpdateAsync(id, model);
             return NoContent();
         }
+        [Authorize(Policy = "Admin")]
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteLopHocAsync(Guid id)
         {
