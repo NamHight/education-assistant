@@ -1,9 +1,9 @@
 'use client';
 
 import ToolTipImage from '@/components/tooltips/ToolTipImage';
-import { Box, MenuItem, Modal, Typography } from '@mui/material';
+import { Box, MenuItem, Modal, Popover, Typography } from '@mui/material';
 import { GridActionsCellItem, GridColDef, GridFilterModel } from '@mui/x-data-grid';
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { motion } from 'motion/react';
 import Image from 'next/image';
 import moment from 'moment';
@@ -27,9 +27,11 @@ import {
   TinhTrangHocTapSinhVien,
   TinhTrangHocTapSinhVienEnum,
   TrangThaiSinhVien,
+  TrangThaiSinhVien2,
   TrangThaiSinhVienEnum
 } from '@/types/options';
 import { GioiTinhEnum } from '@/models/GiangVien';
+import ChangeCircleOutlinedIcon from '@mui/icons-material/ChangeCircleOutlined';
 import PeopleAltOutlinedIcon from '@mui/icons-material/PeopleAltOutlined';
 import {
   Book,
@@ -48,6 +50,7 @@ import {
 import InputSelect2 from '@/components/selects/InputSelect2';
 import { LopHocService } from '@/services/LopHocService';
 import { saveAs } from 'file-saver';
+import { useBreadcrumb } from '@/hooks/context/BreadCrumbContext';
 const Table = dynamic(() => import('@/components/tables/Table'), {
   ssr: false
 });
@@ -97,17 +100,27 @@ const Content = ({ queryKey, lopHocServers, tinhTrangHocTapServer }: ContentProp
     tinhTrang: number | null;
     lopId: number | null;
     lopName: string | null;
+    trangThai: number | null;
   }>({
     tinhTrang: null,
     lopId: null,
-    lopName: null
+    lopName: null,
+    trangThai: null
   });
   const [filterModel, setFilterModel] = useState<GridFilterModel>({
     items: []
   });
+  const [itemRow, setItemRow] = useState<Record<string, any>>({
+      id: null,
+      row: {}
+    });
+   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
+   const openPopover = Boolean(anchorEl);
+  const id = openPopover ? 'simple-popover' : undefined;
   const queryClient = useQueryClient();
+  const { setTitle } = useBreadcrumb();
   const { data, isLoading, isFetching } = useQuery({
-    queryKey: [queryKey, paginationModel, sortModel, filterModel, filterOption?.lopId, filterOption?.tinhTrang],
+    queryKey: [queryKey, paginationModel, sortModel, filterModel, filterOption?.lopId, filterOption?.tinhTrang,filterOption?.trangThai],
     queryFn: async () => {
       const searchKeyWord = handleTextSearch(filterModel?.quickFilterValues as any[]);
       let params: IParamSinhVien = {
@@ -120,6 +133,12 @@ const Content = ({ queryKey, lopHocServers, tinhTrangHocTapServer }: ContentProp
         params = {
           ...params,
           tinhTrangHocTap: filterOption.tinhTrang
+        };
+      }
+      if( filterOption?.trangThai){
+        params = {
+          ...params,
+          trangThai: filterOption.trangThai
         };
       }
       if (filterOption?.lopId) {
@@ -144,6 +163,14 @@ const Content = ({ queryKey, lopHocServers, tinhTrangHocTapServer }: ContentProp
     placeholderData: (prev) => prev,
     refetchOnWindowFocus: false
   });
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+      setAnchorEl(event.currentTarget);
+    };
+  
+    const handleClosePopover = () => {
+      setAnchorEl(null);
+      refTable.current?.handleClose();
+    };
   const { data: lopHocs, isLoading: isLoadingLopHoc } = useQuery({
     queryKey: ['lop-hoc-list'],
     queryFn: async () => {
@@ -316,25 +343,29 @@ const Content = ({ queryKey, lopHocServers, tinhTrangHocTapServer }: ContentProp
   };
   const moreActions = useCallback((id: string | number | null, row: any) => {
     return (
-      <MenuItem
-        disabled={!row?.deletedAt}
-        onClick={() => {
-          handleRestore(id);
-          refTable.current?.handleClose();
-        }}
-        sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}
-      >
-        <RestoreIcon sx={{ color: 'green' }} />
-        <Typography
-          className={'!text-[14px] !font-[500] !leading-6 group-hover:!text-blue-800 group-hover:!font-semibold'}
-          variant={'body1'}
-          sx={{ width: '100%' }}
+       <MenuItem
+          key='change-status'
+          onClick={(e: React.MouseEvent<HTMLLIElement>) => {
+            handleClick(e as unknown as React.MouseEvent<HTMLButtonElement>);
+            setItemRow({ id, row });
+          }}
+          sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}
         >
-          Khôi phục
-        </Typography>
-      </MenuItem>
+          <ChangeCircleOutlinedIcon sx={{ color: 'green' }} />
+          <Typography
+            className={'!text-[14px] !font-[500] !leading-6 group-hover:!text-blue-800 group-hover:!font-semibold'}
+            variant={'body1'}
+            sx={{ width: '100%' }}
+          >
+            Thay đổi trạng thái
+          </Typography>
+        </MenuItem>
     );
   }, []);
+  useEffect(() => {
+    setTitle('Danh sách sinh viên');
+    return () => setTitle('');
+  }, [setTitle]);
   const formatDateBirth = (date: string) => {
     return moment(date).format('DD/MM/YYYY');
   };
@@ -355,8 +386,6 @@ const Content = ({ queryKey, lopHocServers, tinhTrangHocTapServer }: ContentProp
       switch (status) {
         case TrangThaiSinhVienEnum.DANG_HOC:
           return <ChipOption title='Đang học' color='info' />;
-        case TrangThaiSinhVienEnum.TAM_NGHI:
-          return <ChipOption title='Tạm việc' color='warning' />;
         case TrangThaiSinhVienEnum.DA_TOT_NGHIEP:
           return <ChipOption title='Đã tốt nghiệp' color='success' />;
         case TrangThaiSinhVienEnum.BO_HOC:
@@ -399,31 +428,22 @@ const Content = ({ queryKey, lopHocServers, tinhTrangHocTapServer }: ContentProp
               Xuất sắc
             </Typography>
           );
-        case TinhTrangHocTapSinhVienEnum.DINH_CHI:
-          return (
-            <Typography className='!px-3 !py-1 !rounded-full !border !border-red-400 !bg-red-100 !text-red-700 !font-semibold !text-xs !shadow-sm'>
-              Đình chỉ
-            </Typography>
-          );
         default:
           return '';
       }
     };
     return [
       {
-        field: 'id',
-        headerName: 'ID',
+        field: 'stt',
+        headerName: 'STT',
         type: 'string',
-        headerAlign: 'left',
+        headerAlign: 'center',
         minWidth: 80,
         flex: 0.4,
         sortable: true,
         display: 'flex',
-        align: 'left',
+        align: 'center',
         disableColumnMenu: true,
-        valueFormatter: (params: any) => {
-          return `#${params.slice(0, 2)}`;
-        }
       },
       {
         field: 'anhDaiDien',
@@ -570,29 +590,71 @@ const Content = ({ queryKey, lopHocServers, tinhTrangHocTapServer }: ContentProp
         renderCell: (params: any) => {
           return formatStatus(params.value);
         }
-      },
-      {
-        field: 'deletedAt',
-        headerName: 'Đã xóa',
-        type: 'string',
-        minWidth: 80,
-        disableColumnMenu: true,
-        sortable: false,
-        align: 'center',
-        headerAlign: 'center',
-        display: 'flex',
-        flex: 0.5,
-        renderCell: (params: any) => {
-          return params.value ? <ClearIcon className='text-red-500' /> : '';
-        }
       }
     ];
   }, [data?.data]);
   const handleChooseRow = (id: string | number | null, row: any) => {
     setGetItem({ id: String(id), row });
   };
+const mutationChangeStatus = useMutation({
+    mutationFn: async ({ id, data }: { id: string | number | null; data: any }) => {
+      const result = await SinhVienService.updateSinhVienTrangThai(id, { trangThai: data.trangThai });
+      return result;
+    },
+    onSuccess: () => {
+      notification.show('Thay đổi trạng thái thành công', {
+        severity: 'success',
+        autoHideDuration: 4000
+      });
+      queryClient.invalidateQueries({ queryKey: [queryKey], exact: false });
+    },
+    onError: (error: any) => {
+      notification.show(error?.Message || 'Thay đổi trạng thái thất bại', {
+        severity: 'error',
+        autoHideDuration: 4000
+      });
+    }
+  });
+
+const handleChangeStatus = (id: string | number | null, trangThai: number | string) => {
+    mutationChangeStatus.mutate({ id, data: { trangThai: trangThai } });
+  };
+
   return (
     <Box className='flex flex-col gap-4'>
+      <Popover
+              id={id}
+              open={openPopover}
+              anchorEl={anchorEl}
+              onClose={handleClosePopover}
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'left'
+              }}
+              transformOrigin={{
+                vertical: 'bottom',
+                horizontal: 'right'
+              }}
+              slotProps={{
+                paper: {
+                  className: '!bg-white flex flex-col gap-2 p-2 shadow-lg rounded-lg'
+                }
+              }}
+            >
+              {TrangThaiSinhVien2.map((item) => (
+                <button
+                  key={item?.id}
+                  disabled={item.id === itemRow?.row?.trangThaiSinhVien}
+                  className='px-2 py-1 hover:bg-gray-100 rounded-lg flex items-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed'
+                  onClick={() => {
+                    handleChangeStatus(itemRow?.id, item?.id);
+                    handleClosePopover();
+                  }}
+                >
+                  <Typography>{item.name}</Typography>
+                </button>
+              ))}
+            </Popover>
       <Box className='flex justify-start gap-4  '>
         <Box className='grid grid-cols-1 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full'>
           <Box className='flex flex-col border border-gray-200 rounded-lg p-4 shadow-sm gap-3 w-full'>
@@ -718,6 +780,26 @@ const Content = ({ queryKey, lopHocServers, tinhTrangHocTapServer }: ContentProp
                 }}
               />
             </Box>
+            <Box className='w-full'>
+              <InputSelect2
+                fullWidth
+                name={'TrangThai'}
+                placeholder={'Trạng thái'}
+                data={TrangThaiSinhVien ?? []}
+                getOptionKey={(option) => option.id}
+                getOptionLabel={(option: any) => option.name}
+                getOnChangeValue={(value: any) => {
+                  setFilterOption((prev) => ({
+                    ...prev,
+                    trangThai: value?.id || null
+                  }));
+                  setPaginationModel({
+                    page: 0,
+                    pageSize: paginationModel.pageSize
+                  });
+                }}
+              />
+            </Box>
           </Box>
         </Box>
         <Box className='w-full flex flex-col sm:flex-row justify-end gap-4 items-center flex-1'>
@@ -779,6 +861,7 @@ const Content = ({ queryKey, lopHocServers, tinhTrangHocTapServer }: ContentProp
         customToolBar
         isOpenOption={handleOpen}
         isMoreCellAction
+        isDisableDelete
         handleChooseRow={handleChooseRow}
         urlNavigate='sinh-vien'
         placeholderSearch='Tìm kiếm sinh viên...'

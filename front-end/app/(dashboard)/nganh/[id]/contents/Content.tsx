@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useEffect } from 'react';
 import ContentForm from '../../components/form/ContentForm';
 import { useNotifications } from '@toolpad/core';
 import { useRouter } from 'next/navigation';
@@ -10,6 +10,8 @@ import { SinhVienService } from '@/services/SinhVienService';
 import { KhoaService } from '@/services/KhoaService';
 import { MonHocService } from '@/services/MonHocService';
 import { NganhService } from '@/services/NganhService';
+import { useBreadcrumb } from '@/hooks/context/BreadCrumbContext';
+import { Typography } from '@mui/material';
 interface IContentProps {
   initialData: any;
   anotherData?: any;
@@ -19,6 +21,7 @@ const Content = ({ initialData, id, anotherData }: IContentProps) => {
   const notifications = useNotifications();
   const router = useRouter();
   const queryClient = useQueryClient();
+  const { setTitle, setBreadcrumbs } = useBreadcrumb();
   const { data } = useQuery({
     queryKey: ['nganh', { id: id }],
     queryFn: async () => {
@@ -29,7 +32,25 @@ const Content = ({ initialData, id, anotherData }: IContentProps) => {
     refetchOnWindowFocus: false,
     gcTime: 0
   });
-
+  useEffect(() => {
+    if(data){
+      setTitle(`Chỉnh sửa: ${data?.tenNganh}`);
+      setBreadcrumbs(
+          <Typography className="relative text-[14px] flex gap-1 items-center">
+          <Typography component={'span'} sx={(theme) => ({
+            color: theme.palette.mode === 'dark' ? 'white !important' : 'black !important',
+            fontWeight: 500
+          })}>
+            {data?.tenNganh}
+          </Typography>
+          </Typography>
+      )
+      return () => {
+        setTitle('')
+        setBreadcrumbs(null);
+      };
+    }
+  },[data, setTitle, setBreadcrumbs])
   const mutationUpdate = useMutation({
     mutationFn: async (data: FormData) => {
       const result = await NganhService.updateNganh(id, data);
@@ -53,6 +74,7 @@ const Content = ({ initialData, id, anotherData }: IContentProps) => {
   const handleSubmitForm = (formData: any) => {
     mutationUpdate.mutate(formData);
   };
+
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
       <ContentForm

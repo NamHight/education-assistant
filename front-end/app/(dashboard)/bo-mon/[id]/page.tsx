@@ -18,9 +18,7 @@ const page = async ({ params }: IPageProps) => {
   const { id } = await params;
   const boMon = BoMonService.getBoMonByIdServer(id).catch(() => undefined);
   const khoa = KhoaService.getKhoaNoPageServer().catch(() => []);
-
   const [boMonData, khoaData] = await Promise.all([boMon, khoa]);
-  console.log('boMon', khoa);
   return (
     <div>
       <Content

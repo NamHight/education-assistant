@@ -12,6 +12,7 @@ export interface IParamGiangVien extends IBaseParams {
   active?: boolean;
   trangThai?: number;
   khoaId?: string;
+  vaiTro?: number;
 }
 
 export interface IParamLopHocPhan extends IBaseParams {
@@ -24,7 +25,9 @@ export interface IParamLopHocPhan extends IBaseParams {
   giangVienId?: string;
 }
 
-export interface IParamMonHoc extends IBaseParams {}
+export interface IParamMonHoc extends IBaseParams {
+  khoaId?: string;
+}
 
 export interface IParamLopHoc extends IBaseParams {}
 
@@ -33,6 +36,7 @@ export interface IParamSinhVien extends IBaseParams {
   lopId?: number;
   tinhTrangHocTap?: number;
   lopHocPhanId?: string;
+  trangThai?: number;
 }
 
 export interface IParamKhoa extends IBaseParams {}
@@ -40,7 +44,12 @@ export interface IParamKhoa extends IBaseParams {}
 export interface IParamNganh extends IBaseParams {}
 export interface IParamBoMon extends IBaseParams {}
 
-export interface IParamPhongHoc extends IBaseParams {}
+export interface IParamPhongHoc extends IBaseParams {
+  nganhId?: string;
+  loaiPhongHoc?: string;
+  trangThai?: string;
+  toaNha?: string;
+}
 
 export interface IParamChiTietChuongTrinhDaoTao extends IBaseParams {
   hocKy?: number;

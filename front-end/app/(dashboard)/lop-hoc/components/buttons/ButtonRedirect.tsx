@@ -8,7 +8,7 @@ import React from 'react';
 const ButtonRedirect = () => {
   const router = useRouter();
   return (
-    <Box className='flex justify-start gap-2'>
+    <Box className='flex justify-end gap-2 w-full'>
       <Button title={'Thêm mới'} onClick={() => router.push(APP_ROUTE.LOP_HOC.ADD)} />
     </Box>
   );

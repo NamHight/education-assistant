@@ -9,14 +9,17 @@ public interface IServiceGiangVien
 {
     Task<(IEnumerable<ResponseGiangVienDto> data, PageInfo page)> GetAllGiangVienAsync(
         ParamGiangVienDto paramGiangVienDto);
+
     Task<ResponseGiangVienSummaryDto> GetAllGiangVienSummaryAsync(Guid khoaId);
     Task<IEnumerable<ResponseGiangVienDto>?> GetAllGiangVienNoPageAsync();
     Task<IEnumerable<ResponseGiangVienDto>?> GetAllGiangVienByKhoa(Guid khoaId);
-    Task<IEnumerable<GiangVienSummaryDto>?> GetAllGiangVienByBoMonAsync(Guid boMonId); 
+    Task<IEnumerable<GiangVienSummaryDto>?> GetAllGiangVienByBoMonAsync(Guid boMonId);
     Task<ResponseGiangVienDto> GetGiangVienByIdAsync(Guid id, bool trackChanges);
     Task<ResponseGiangVienDto> ReStoreGiangVienAsync(Guid id);
     Task<ResponseGiangVienDto> CreateAsync(RequestAddGiangVienDto request);
     Task UpdateAsync(Guid id, RequestUpdateGiangVienDto request);
     Task UpdateOptionalAsync(Guid id, RequestUpdateGiangVienOptionDto request);
     Task DeleteAsync(Guid id);
+
+    Task updateGiangVienStatusAsync(Guid id, int trangThai);
 }

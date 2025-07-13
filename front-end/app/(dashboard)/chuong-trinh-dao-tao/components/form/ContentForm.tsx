@@ -52,6 +52,8 @@ import { PhongHoc } from '@/models/PhongHoc';
 import { ChiTietChuongTrinhDaoTao } from '@/models/ChiTietChuongTrinhDaoTao';
 import { ChuongTrinhDaoTao } from '@/models/ChuongTrinhDaoTao';
 import { NganhService } from '@/services/NganhService';
+import { useBreadcrumb } from '@/hooks/context/BreadCrumbContext';
+import Link from 'next/link';
 
 export interface IFormData {
   MaChuongTrinh: string;
@@ -71,6 +73,7 @@ interface IContentFormProps {
 }
 
 const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => {
+  const {setBreadcrumbs, setTitle} = useBreadcrumb();
   const schema = useMemo(() => {
     return yup.object().shape({
       MaChuongTrinh: yup.string().notRequired(),
@@ -183,6 +186,26 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
       });
     }
   }, [reset, data]);
+  useEffect(() => {
+    if(data){
+      setBreadcrumbs(
+        <Typography className="relative text-[14px] flex gap-1 items-center">
+          <Typography component={'span'} sx={(theme) => ({
+            color: theme.palette.mode === 'dark' ? 'white !important' : 'black !important',
+            fontWeight: 500
+          })}>
+           {data?.tenChuongTrinh}
+          </Typography>
+          </Typography>
+      )
+      setTitle(`Chỉnh sửa ${data?.tenChuongTrinh}`)
+      return () => {
+        setBreadcrumbs(null);
+        setTitle('');
+      };
+
+    }
+  },[data, setBreadcrumbs]);
   return (
     <FormControl fullWidth component={'form'} onSubmit={handleSubmit(handleSubmitForm)} className='flex flex-col gap-4'>
       <Grid container spacing={2} rowSpacing={1}>
@@ -265,7 +288,7 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
           />
         </Grid>
       </Grid>
-      <Box>
+      <Box className="flex justify-end w-full">
         <Button
           type={'submit'}
           className='flex items-center gap-3 !bg-blue-500 !px-4 !py-2 rounded !hover:bg-blue-600 transition-all !duration-200 !ease-in-out !shadow-sm !text-white !font-semibold !text-base !leading-6 hover:transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed'

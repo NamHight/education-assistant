@@ -3,10 +3,9 @@ namespace Education_assistant.Models.Enums;
 public enum TrangThaiSinhVienEnum
 {
     DANG_HOC = 1,
-    TAM_NGHI = 2,
-    DA_TOT_NGHIEP = 3,
-    BO_HOC = 4,
-    BUOC_THOI_HOC = 5
+    DA_TOT_NGHIEP = 2,
+    BO_HOC = 3,
+    BUOC_THOI_HOC = 4
 }
 
 public enum TinhTrangHocTapSinhVienEnum

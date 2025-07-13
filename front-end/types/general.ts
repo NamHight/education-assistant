@@ -55,7 +55,9 @@ export const API = {
     GET_ALL: '/PhongHoc',
     GET_BY_ID: '/PhongHoc/:id',
     CHANGE_STATUS: '/PhongHoc/:id/update-trang-thai',
-    GET_ALL_NO_PAGE: '/PhongHoc/no-page'
+    GET_ALL_NO_PAGE: '/PhongHoc/no-page',
+    CREATE_LIST: '/PhongHoc/create-list',
+    UPDATE_OPTION: '/PhongHoc/:id/update-option',
   },
   NGANH: {
     GET_ALL: '/Nganh',
@@ -76,7 +78,8 @@ export const API = {
     DANG_KY_MON_HOC: '/SinhVien/dang-ky-mon-hoc',
     DELETE_LHP: '/SinhVien/:id/lhp/:lopHocPhanId/xoa-sv-khoi-lhp',
     GET_BY_ID_LOP_HOC: '/SinhVien/:lopHocId/by-lop-hoc',
-    CHUYEN_LOP_SINH_VIEN: '/SinhVien/chuyen-lop'
+    CHUYEN_LOP_SINH_VIEN: '/SinhVien/chuyen-lop',
+    UPDATE_TRANG_THAI: '/SinhVien/:id/update-trang-thai',
   },
   GIANG_VIEN: {
     GET_ALL: '/giangviens',
@@ -87,7 +90,8 @@ export const API = {
     UPDATE_PROFILE: '/giangviens/:id/update-giang-vien',
     GET_BY_BO_MON_ID: '/giangviens/:boMonId/by-bomon',
     TINH_TRANG: '/giangviens/tinh-trang-lam-viec',
-    GET_GIANG_VIEN_NO_PAGE: '/giangviens/no-page'
+    GET_GIANG_VIEN_NO_PAGE: '/giangviens/no-page',
+    CHANGE_STATUS: '/giangviens/:id/change-status',
   },
   KHOA: {
     GET_ALL: '/khoa',
@@ -144,7 +148,9 @@ export const APP_ROUTE = {
   CHUONG_TRINH_DAO_TAO: {
     ROOT: '/chuong-trinh-dao-tao',
     ADD: '/chuong-trinh-dao-tao/them-moi',
-    EDIT: (id: string) => `/chuong-trinh-dao-tao/${id}`
+    EDIT: (id: string | undefined) => `/chuong-trinh-dao-tao/${id}`,
+    CHI_TIET: (id: string | number | null) => `/chuong-trinh-dao-tao/${id}/chi-tiet-chuong-trinh-dao-tao`,
+    ADD_CHI_TIET: (id: string | number | null | undefined) => `/chuong-trinh-dao-tao/${id}/chi-tiet-chuong-trinh-dao-tao/them-moi`,
   },
   HOC_BA: {
     ROOT: '/hoc-ba',
@@ -192,11 +198,6 @@ export const APP_ROUTE = {
     ADD: '/bo-mon/them-moi',
     EDIT: (id: string) => `/bo-mon/${id}`
   },
-  CHI_TIET_CHUONG_TRINH_DAO_TAO: {
-    ROOT: '/chi-tiet-chuong-trinh-dao-tao',
-    ADD: '/chi-tiet-chuong-trinh-dao-tao/them-moi',
-    EDIT: (id: string) => `/chi-tiet-chuong-trinh-dao-tao/${id}`
-  },
   TRUONG: {
     ROOT: '/truong'
   },
@@ -215,16 +216,21 @@ export const breadcrumbTranslations: { [key: string]: string } = {
   'sinh-vien': 'Quản lý Sinh viên',
   'lop-hoc': 'Lớp học',
   'lop-hoc-phan': 'Lớp học phần',
-  khoa: 'Khoa',
+  'khoa': 'Khoa',
   'them-moi-hoc-ky-phu': 'Thêm học kỳ phụ',
   'mon-hoc': 'Môn học',
   'chuong-trinh-dao-tao': 'Chương trình đào tạo',
   'chi-tiet-chuong-trinh-dao-tao': 'Chi tiết chương trình đào tạo',
   'bo-mon': 'Bộ môn',
   'phong-hoc': 'Phòng học',
-  nganh: 'Ngành',
+  'nganh': 'Ngành',
   'hoc-ba': 'Học bạ',
-  truong: 'Trường',
-  'phan-cong': 'Phân công'
+  'truong': 'Trường',
+  'phan-cong': 'Phân công',
+  'cai-dat': 'Cài đặt',
+  'chuyen-lop': 'Chuyển lớp',
+  'lich-lop-hoc': 'Lịch lớp học',
+  'nhap-diem': 'Nhập điểm',
+  'thong-ke': 'Thống kê',
   // Thêm các bản dịch khác của bạn ở đây
 };

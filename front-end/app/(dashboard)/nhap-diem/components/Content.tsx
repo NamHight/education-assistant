@@ -28,6 +28,7 @@ import { fi } from 'zod/v4/locales';
 import { ChiTietLopHocPhan } from '@/models/ChiTietLopHocPhan';
 import { HocBaService } from '@/services/HocBaService';
 import { useForm } from 'react-hook-form';
+import { useBreadcrumb } from '@/hooks/context/BreadCrumbContext';
 const TableEdit = dynamic(() => import('./TableEdit'), {
   ssr: false
 });
@@ -61,6 +62,7 @@ const Content = ({ queryKey }: IContentProps) => {
   const queryClient = useQueryClient();
   const user = useUser();
   const apiRef = useGridApiRef();
+  const {setTitle} = useBreadcrumb();
   const [giangVienOptions, setGiangVienOptions] = useState<{ [khoaId: string]: any[] }>({});
   // const [loaiLopHocPhan, setloaiLopHocPhan] = useState<number | null>(null);
   const [filter, setfilter] = useState<{
@@ -136,7 +138,10 @@ const Content = ({ queryKey }: IContentProps) => {
     refetchOnWindowFocus: false,
     enabled: !!user && !!filter?.khoa && !!filter?.hocKy && !!filter?.loaiChuongTrinh
   });
-
+  useEffect(() => {
+    setTitle('Nhập điểm');
+    return () => setTitle('');
+  }, []);
   useEffect(() => {
     filterRef.current = filter;
   }, [filter]);
@@ -171,6 +176,10 @@ const Content = ({ queryKey }: IContentProps) => {
       notification.show('Nộp điểm thành công ', {
         severity: 'success',
         autoHideDuration: 5000
+      });
+      queryClient.invalidateQueries({
+        queryKey: [queryKey],
+        exact: false
       });
     },
     onError: (error: any) => {
@@ -434,6 +443,12 @@ const Content = ({ queryKey }: IContentProps) => {
         disableColumnMenu: true,
         renderCell: (params) => {
           let total = null;
+          if(params.row?.diemThi1 > 10 || params.row?.diemThi1 < 0) {
+            return null;
+          }
+          if(params.row?.diemChuyenCan > 10 || params.row?.diemTrungBinh < 0) {
+            return null;
+          }
           if (filter?.lopHocPhan?.loaiMonHoc === LoaiMonHocEnum.LY_THUYET) {
             if (params.row?.diemThi1) {
               total = (
@@ -634,6 +649,7 @@ const Content = ({ queryKey }: IContentProps) => {
         DiemTongKet2: item?.diemTongKet2 || 0,
         SinhVienId: item?.sinhVienId
       }));
+      console.log('convertData', convertData);
     const checkIsDiemTongKet1 = convertData?.some(
       (item) => item?.DiemTongKet1 === 0 || item?.DiemTongKet1 === undefined
     );

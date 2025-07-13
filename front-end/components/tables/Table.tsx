@@ -54,6 +54,8 @@ import EditIcon from '@mui/icons-material/Edit';
 import theme from '@/theme';
 import { useRouter } from 'next/navigation';
 import { Eye, EyeClosed } from 'lucide-react';
+import { GiangVien } from '@/models/GiangVien';
+import { loaiTaiKhoanAdminOptions, LoaiTaiKhoanEnum } from '@/types/options';
 function TextInput(props: React.InputHTMLAttributes<HTMLInputElement>) {
   return (
     <input
@@ -216,8 +218,10 @@ interface TableProps {
   moreActions?: (id: string | number | null, row: any) => ReactNode;
   urlNavigate?: string;
   isDisableEdit?: boolean;
+  isDisableDelete?: boolean;
   isOpenOption?: () => void;
   isMoreCellAction?: boolean;
+  user?: GiangVien;
   [key: string]: any;
 }
 
@@ -234,6 +238,7 @@ const Table = React.forwardRef<any, TableProps>(function table(
     totalRow,
     apiRefDataGrid,
     paginationModel,
+    isDisableDelete,
     customToolBar,
     placeholderSearch = 'Search...',
     handleChooseRow,
@@ -243,6 +248,7 @@ const Table = React.forwardRef<any, TableProps>(function table(
     isOpenOption,
     isMoreCellAction,
     isDisableEdit,
+    user,
     editMode = 'row',
     ...rest
   },
@@ -426,7 +432,14 @@ const Table = React.forwardRef<any, TableProps>(function table(
       >
         {isDisableEdit ? null : (
           <MenuItem
-            disabled={!!item?.row?.deletedAt}
+            disabled={!!item?.row?.deletedAt || (
+      user?.taiKhoan?.loaiTaiKhoan === LoaiTaiKhoanEnum.ADMIN &&
+      item?.row?.taiKhoan?.loaiTaiKhoan === LoaiTaiKhoanEnum.ADMIN
+    ) ||
+    (
+      user?.taiKhoan?.loaiTaiKhoan === LoaiTaiKhoanEnum.QUAN_LY_KHOA_BO_MON &&
+      item?.row?.taiKhoan?.loaiTaiKhoan === LoaiTaiKhoanEnum.ADMIN
+    )}
             onClick={() => router.push(`${urlNavigate}/${item.id}`)}
             sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}
           >
@@ -440,8 +453,17 @@ const Table = React.forwardRef<any, TableProps>(function table(
             </Typography>
           </MenuItem>
         )}
-        <MenuItem
-          disabled={!!item?.row?.deletedAt}
+        {
+          isDisableDelete ? null : (
+            <MenuItem
+          disabled={!!item?.row?.deletedAt || (
+      user?.taiKhoan?.loaiTaiKhoan === LoaiTaiKhoanEnum.ADMIN &&
+      item?.row?.taiKhoan?.loaiTaiKhoan === LoaiTaiKhoanEnum.ADMIN
+    ) ||
+    (
+      user?.taiKhoan?.loaiTaiKhoan === LoaiTaiKhoanEnum.QUAN_LY_KHOA_BO_MON &&
+      item?.row?.taiKhoan?.loaiTaiKhoan === LoaiTaiKhoanEnum.ADMIN
+    )}
           onClick={handleOpenDelete}
           sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}
         >
@@ -454,6 +476,8 @@ const Table = React.forwardRef<any, TableProps>(function table(
             Xóa
           </Typography>
         </MenuItem>
+          )
+        }
         {handleMoreAction(item.id, item.row)}
       </Menu>
       <Dialog

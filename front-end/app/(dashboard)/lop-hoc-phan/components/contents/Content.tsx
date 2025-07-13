@@ -32,6 +32,7 @@ import InputSelect2 from '@/components/selects/InputSelect2';
 import { MonHocService } from '@/services/MonHocService';
 import EditModal from '../modals/EditModal';
 import AddModal from '../modals/AddModal';
+import { useBreadcrumb } from '@/hooks/context/BreadCrumbContext';
 const Table = dynamic(() => import('@/components/tables/Table'), {
   ssr: false
 });
@@ -51,6 +52,7 @@ const Content = ({ queryKey }: ContentProps) => {
   }>({
     trangThai: null
   });
+   const { setTitle, setBreadcrumbs } = useBreadcrumb();
   const notification = useNotifications();
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
@@ -110,7 +112,12 @@ const Content = ({ queryKey }: ContentProps) => {
     placeholderData: (prev) => prev,
     refetchOnWindowFocus: false
   });
-
+  useEffect(() => {
+    setTitle('Danh sách lớp học phần');
+    return () => {
+      setTitle('');
+    };
+  }, []);
   const rowCountRef = useRef(data?.meta?.TotalCount || 0);
   const rowCount = useMemo(() => {
     if (data?.meta?.TotalCount !== undefined) {
@@ -233,19 +240,17 @@ const Content = ({ queryKey }: ContentProps) => {
     };
     return [
       {
-        field: 'id',
-        headerName: 'ID',
+        field: 'stt',
+        headerName: 'STT',
         type: 'number',
-        headerAlign: 'left',
-        minWidth: 80,
+        headerAlign: 'center',
+        minWidth: 60,
         flex: 0.4,
         sortable: true,
         display: 'flex',
-        align: 'left',
+        align: 'center',
         disableColumnMenu: true,
-        valueFormatter: (params: any) => {
-          return `#${params.slice(0, 2)}`;
-        }
+
       },
       {
         field: 'maHocPhan',
@@ -365,9 +370,7 @@ const Content = ({ queryKey }: ContentProps) => {
   return (
     <Box className='flex flex-col gap-4'>
       <Box className='flex justify-start gap-4 border border-gray-200 rounded-lg p-4 shadow-sm'>
-        <Button title={'Thêm mới học phần'} onClick={() => handleClickOpenAdd()} />
-        <Button title={'Thêm mới học kỳ phụ'} onClick={() => router.push(APP_ROUTE.LOP_HOC_PHAN.ADD_HOC_KY_PHU)} />
-        <Box className='flex-1'>
+         <Box className='flex-1'>
           <InputSelect2
             fullWidth
             name={'TrangThai'}
@@ -383,6 +386,9 @@ const Content = ({ queryKey }: ContentProps) => {
             }}
           />
         </Box>
+        <Button title={'Thêm mới học phần'} onClick={() => handleClickOpenAdd()} />
+        <Button title={'Thêm mới học kỳ phụ'} onClick={() => router.push(APP_ROUTE.LOP_HOC_PHAN.ADD_HOC_KY_PHU)} />
+       
       </Box>
       <Table
         ref={refTable}

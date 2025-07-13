@@ -3,7 +3,7 @@
 import ToolTipImage from '@/components/tooltips/ToolTipImage';
 import { Box, MenuItem, Typography } from '@mui/material';
 import { GridActionsCellItem, GridColDef, GridFilterModel } from '@mui/x-data-grid';
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { motion } from 'motion/react';
 import Image from 'next/image';
 import moment from 'moment';
@@ -12,7 +12,7 @@ import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 import Button from '@/components/buttons/Button';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { GiangVienService } from '@/services/GiangVienService';
-import { IParamGiangVien, IParamKhoa, IParamSinhVien } from '@/types/params';
+import { IParamGiangVien, IParamKhoa, IParamMonHoc, IParamSinhVien } from '@/types/params';
 import dynamic from 'next/dynamic';
 import { handleTextSearch } from '@/lib/string';
 import { useRouter } from 'next/navigation';
@@ -27,15 +27,20 @@ import { TrangThaiSinhVienEnum } from '@/types/options';
 import { GioiTinhEnum } from '@/models/GiangVien';
 import { KhoaService } from '@/services/KhoaService';
 import { MonHocService } from '@/services/MonHocService';
+import InputSelect2 from '@/components/selects/InputSelect2';
+import { useBreadcrumb } from '@/hooks/context/BreadCrumbContext';
 const Table = dynamic(() => import('@/components/tables/Table'), {
   ssr: false
 });
 interface ContentProps {
   queryKey: string;
+  khoas?: any[];
 }
 
-const Content = ({ queryKey }: ContentProps) => {
+const Content = ({ queryKey, khoas }: ContentProps) => {
   const router = useRouter();
+  const [khoaSelected, setKhoaSelected] = useState<any>(null);
+  const { setTitle } = useBreadcrumb();
   const notification = useNotifications();
   const refTable = useRef<{ handleClose: () => void; handleOpenDelete: () => void; handleCloseDelete: () => void }>(
     null
@@ -53,16 +58,18 @@ const Content = ({ queryKey }: ContentProps) => {
   });
   const queryClient = useQueryClient();
   const { data, isLoading, isFetching } = useQuery({
-    queryKey: [queryKey, paginationModel, sortModel, filterModel],
+    queryKey: [queryKey, paginationModel, sortModel, filterModel, khoaSelected],
     queryFn: async () => {
       const searchKeyWord = handleTextSearch(filterModel?.quickFilterValues as any[]);
-      let params: IParamKhoa = {
+      let params: IParamMonHoc = {
         page: paginationModel.page + 1,
         limit: paginationModel.pageSize,
         sortBy: 'createdat',
         sortByOrder: 'desc'
       };
-
+      if(khoaSelected) {
+        params.khoaId = khoaSelected;
+      }
       if (sortModel.field && sortModel.sort) {
         params.sortBy = sortModel.field;
         params.sortByOrder = sortModel.sort === 'asc' ? 'asc' : 'desc';
@@ -76,9 +83,31 @@ const Content = ({ queryKey }: ContentProps) => {
       const result = await MonHocService.getAllMonHoc(params);
       return result;
     },
+    select: (data: any) => {
+      const rows = data?.data?.map((row: any, idx: number) => ({ ...row, stt: idx + 1 }));
+      return {
+        ...data,
+        data: rows
+      };
+    },
     placeholderData: (prev) => prev,
     refetchOnWindowFocus: false
   });
+  const { data: khoass, isLoading: isLoadingKhoa } = useQuery({
+    queryKey: ['khoas'],
+    queryFn: async () => {
+      const response = await KhoaService.getKhoaNoPage();
+      return response;
+    },
+    initialData: khoas,
+    select: (data) => {
+      return data.map((item: any) => ({
+        id: item.id,
+        name: item.tenKhoa
+      }));
+    },
+    refetchOnWindowFocus: false
+  })
   const rowCountRef = useRef(data?.meta?.TotalCount || 0);
   const rowCount = useMemo(() => {
     if (data?.meta?.TotalCount !== undefined) {
@@ -86,6 +115,10 @@ const Content = ({ queryKey }: ContentProps) => {
     }
     return rowCountRef.current;
   }, [data?.meta?.TotalCount]);
+  useEffect(() => {
+    setTitle('Danh sách môn học');
+    return () => setTitle('');
+  }, [setTitle]);
   const mutationDelete = useMutation({
     mutationFn: async (id: string | number | null) => {
       const result = await MonHocService.deleteMonHoc(id);
@@ -115,18 +148,20 @@ const Content = ({ queryKey }: ContentProps) => {
     };
     return [
       {
-        field: 'id',
-        headerName: 'ID',
+        field: 'stt',
+        headerName: 'STT',
         type: 'number',
-        headerAlign: 'left',
-        minWidth: 80,
+        headerAlign: 'center',
+        minWidth: 50,
         flex: 0.4,
-        sortable: true,
+        sortable: false,
         display: 'flex',
-        align: 'left',
+        align: 'center',
         disableColumnMenu: true,
-        valueFormatter: (params: any) => {
-          return `#${params.slice(0, 2)}`;
+        renderCell: (params) => {
+    return (
+        <Typography variant='body2'>{params.row?.stt}</Typography>
+    );
         }
       },
       {
@@ -199,8 +234,27 @@ const Content = ({ queryKey }: ContentProps) => {
   }, [data?.data]);
   return (
     <Box className='flex flex-col gap-4'>
-      <Box className='flex justify-start gap-4 border border-gray-200 rounded-lg p-4 shadow-sm '>
-        <Button title={'Thêm mới'} onClick={() => router.push(APP_ROUTE.MON_HOC.ADD)} />
+      <Box className='flex justify-end gap-4 border border-gray-200 rounded-lg p-4 shadow-sm '>
+        <Box className="flex w-full items-center gap-2">
+           <Box className='flex items-center gap-2 w-1/2 justify-start'>
+          <Typography className='!font-semibold !text-lg'> khoa</Typography>
+          <InputSelect2
+                      fullWidth
+                      name={'Khoa'}
+                      placeholder={'Chọn khoa'}
+                      isLoading={isLoadingKhoa}
+                      data={khoass ?? []}
+                      getOptionKey={(option) => option.id}
+                      getOptionLabel={(option: any) => option.name}
+                      getOnChangeValue={(value) => {
+                        setKhoaSelected(value?.id); 
+                      }}
+                    />
+        </Box>
+        </Box>
+        <Box className='flex items-center gap-2 w-1/3 justify-end'>
+          <Button title={'Thêm mới'} onClick={() => router.push(APP_ROUTE.MON_HOC.ADD)} />
+        </Box>
       </Box>
       <Table
         ref={refTable}

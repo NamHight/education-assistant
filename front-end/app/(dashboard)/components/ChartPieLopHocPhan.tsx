@@ -15,7 +15,7 @@ const ChartPieLopHocPhan = ({ data }: IChartPieLopHocPhan) => {
       const response = ThongKeService.getXepLoaiHocLuc();
       return response;
     },
-    initialData: data,
+    initialData: data?.length > 0 ? data : undefined,
     refetchOnWindowFocus: false
   });
   return (

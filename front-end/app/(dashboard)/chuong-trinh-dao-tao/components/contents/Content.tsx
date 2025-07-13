@@ -3,7 +3,7 @@
 import ToolTipImage from '@/components/tooltips/ToolTipImage';
 import { Box, MenuItem, Typography } from '@mui/material';
 import { GridActionsCellItem, GridColDef, GridFilterModel } from '@mui/x-data-grid';
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { motion } from 'motion/react';
 import Image from 'next/image';
 import moment from 'moment';
@@ -32,14 +32,19 @@ import { BoMonService } from '@/services/BoMonService';
 import { PhongHocService } from '@/services/PhongHocService';
 import { LoaiPhongHocEnum } from '@/models/PhongHoc';
 import { ChuongTrinhDaoTaoService } from '@/services/ChuongTrinhDaoTaoService';
+import InputSelect2 from '@/components/selects/InputSelect2';
+import { useBreadcrumb } from '@/hooks/context/BreadCrumbContext';
+import { CircleEllipsis } from 'lucide-react';
+
 const Table = dynamic(() => import('@/components/tables/Table'), {
   ssr: false
 });
 interface ContentProps {
   queryKey: string;
+  nganhs?: any[];
 }
 
-const Content = ({ queryKey }: ContentProps) => {
+const Content = ({ queryKey, nganhs }: ContentProps) => {
   const router = useRouter();
   const notification = useNotifications();
   const refTable = useRef<{ handleClose: () => void; handleOpenDelete: () => void; handleCloseDelete: () => void }>(
@@ -56,9 +61,14 @@ const Content = ({ queryKey }: ContentProps) => {
   const [filterModel, setFilterModel] = useState<GridFilterModel>({
     items: []
   });
+  const [nganhOption, setNganhOption] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
   const queryClient = useQueryClient();
+  const {setTitle} = useBreadcrumb();
   const { data, isLoading, isFetching } = useQuery({
-    queryKey: [queryKey, paginationModel, sortModel, filterModel],
+    queryKey: [queryKey, paginationModel, sortModel, filterModel, nganhOption],
     queryFn: async () => {
       const searchKeyWord = handleTextSearch(filterModel?.quickFilterValues as any[]);
       let params: IParamPhongHoc = {
@@ -67,7 +77,9 @@ const Content = ({ queryKey }: ContentProps) => {
         sortBy: 'createdat',
         sortByOrder: 'desc'
       };
-
+      if(nganhOption) {
+        params.nganhId = nganhOption.id;
+      }
       if (sortModel.field && sortModel.sort) {
         params.sortBy = sortModel.field;
         params.sortByOrder = sortModel.sort === 'asc' ? 'asc' : 'desc';
@@ -84,6 +96,21 @@ const Content = ({ queryKey }: ContentProps) => {
     placeholderData: (prev) => prev,
     refetchOnWindowFocus: false
   });
+  const {data:nganhss, isLoading:loadingNganhs} = useQuery({
+    queryKey: ['nganhs'],
+    queryFn: async () => {
+      const result = await NganhService.getAllNganhNoPage();
+      return result;
+    },
+    select: (data: any) => {
+      return data?.map((item: any) => ({
+        id: item?.id,
+        name: item?.tenNganh,
+      }));
+    },
+    initialData: nganhs,
+    refetchOnWindowFocus: false
+  });
   const rowCountRef = useRef(data?.meta?.TotalCount || 0);
   const rowCount = useMemo(() => {
     if (data?.meta?.TotalCount !== undefined) {
@@ -91,29 +118,30 @@ const Content = ({ queryKey }: ContentProps) => {
     }
     return rowCountRef.current;
   }, [data?.meta?.TotalCount]);
-  const mutationDelete = useMutation({
-    mutationFn: async (id: string | number | null) => {
-      const result = await ChuongTrinhDaoTaoService.deleteChuongTrinhDaoTao(id);
-      return result;
-    },
-    onSuccess: () => {
-      notification.show('Xoá phòng học thành công', {
-        severity: 'success',
-        autoHideDuration: 4000
-      });
-      queryClient.invalidateQueries({ queryKey: [queryKey], exact: false });
-    },
-    onError: (error: any) => {
-      notification.show(error?.Message || 'Xoá bộ môn thất bại', {
-        severity: 'error',
-        autoHideDuration: 4000
-      });
-    }
-  });
-  const handleDelete = (id: string | number | null) => {
-    mutationDelete.mutate(id);
-  };
-
+  const moreActions = useCallback((id: string | number | null, row: any) => {
+    return [
+      <MenuItem
+        key='change-status'
+        onClick={(e: React.MouseEvent<HTMLLIElement>) => {
+          router.push(APP_ROUTE.CHUONG_TRINH_DAO_TAO.CHI_TIET(id));
+        }}
+        sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}
+      >
+        <CircleEllipsis className='text-green-500'/>
+        <Typography
+          className={'!text-[14px] !font-[500] !leading-6 group-hover:!text-blue-800 group-hover:!font-semibold'}
+          variant={'body1'}
+          sx={{ width: '100%' }}
+        >
+          Xem chi tiết
+        </Typography>
+      </MenuItem>
+    ];
+  }, []);
+  useEffect(() => {
+    setTitle('Chương trình đào tạo');
+    return () => setTitle('');
+  },[]);
   const columns = useMemo((): GridColDef[] => {
     const formatDateBirth = (date: string) => {
       return moment(date).utc().format('DD/MM/YYYY');
@@ -138,19 +166,16 @@ const Content = ({ queryKey }: ContentProps) => {
     };
     return [
       {
-        field: 'id',
-        headerName: 'ID',
+        field: 'stt',
+        headerName: 'STT',
         type: 'string',
-        headerAlign: 'left',
+        headerAlign: 'center',
         minWidth: 80,
         flex: 0.4,
         sortable: true,
         display: 'flex',
-        align: 'left',
+        align: 'center',
         disableColumnMenu: true,
-        valueFormatter: (params: any) => {
-          return `#${params.slice(0, 2)}`;
-        }
       },
       {
         field: 'maChuongTrinh',
@@ -189,13 +214,13 @@ const Content = ({ queryKey }: ContentProps) => {
       {
         field: 'thoiGianDaoTao',
         headerName: 'Thời gian',
-        headerAlign: 'left',
+        headerAlign: 'center',
         type: 'string',
         minWidth: 100,
         disableColumnMenu: true,
-        sortable: false,
+        sortable: true,
         display: 'flex',
-        align: 'left',
+        align: 'center',
         flex: 1
       },
       {
@@ -236,7 +261,7 @@ const Content = ({ queryKey }: ContentProps) => {
         type: 'number',
         minWidth: 50,
         disableColumnMenu: true,
-        sortable: false,
+        sortable: true,
         display: 'flex',
         align: 'left',
         flex: 1
@@ -247,7 +272,7 @@ const Content = ({ queryKey }: ContentProps) => {
         type: 'string',
         minWidth: 100,
         disableColumnMenu: true,
-        sortable: false,
+        sortable: true,
         display: 'flex',
         flex: 1,
         renderCell: (params: any) => {
@@ -258,8 +283,30 @@ const Content = ({ queryKey }: ContentProps) => {
   }, [data?.data]);
   return (
     <Box className='flex flex-col gap-4'>
-      <Box className='flex justify-start gap-4 border border-gray-200 rounded-lg p-4 shadow-sm'>
-        <Button title={'Thêm mới'} onClick={() => router.push(APP_ROUTE.CHUONG_TRINH_DAO_TAO.ADD)} />
+      <Box className='flex justify-end gap-4 border border-gray-200 rounded-lg p-4 shadow-sm'>
+        <Box className='flex w-full justify-start items-center gap-2'>
+          <Box className=' w-1/3 gap-1 flex flex-col'>
+            <Typography className='!font-semibold'>Ngành</Typography>
+            <InputSelect2
+              fullWidth
+              name={'nganh'}
+              placeholder={'Chọn ngành'}
+              data={nganhss ?? []}
+              isLoading={loadingNganhs}
+              getOptionKey={(option) => option.id}
+              getOptionLabel={(option: any) => option.name}
+              getOnChangeValue={(value) => {
+                setNganhOption({
+                  id: value?.id || null,
+                  name: value?.name || null
+                });
+              }}
+            />
+          </Box>
+        </Box>
+        <Box className='flex items-center w-1/3 justify-end gap-2'>
+          <Button title={'Thêm mới'} onClick={() => router.push(APP_ROUTE.CHUONG_TRINH_DAO_TAO.ADD)} />
+        </Box>
       </Box>
       <Table
         ref={refTable}
@@ -272,8 +319,9 @@ const Content = ({ queryKey }: ContentProps) => {
         setSortModel={setSortModel}
         setPaginationModel={setPaginationModel}
         paginationModel={paginationModel}
-        handleDeleteCallBack={handleDelete}
         customToolBar
+        isDisableDelete
+        moreActions={moreActions}
         urlNavigate='chuong-trinh-dao-tao'
         placeholderSearch='Tìm kiếm chương trình đào tạo...'
       />

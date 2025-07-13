@@ -1,6 +1,6 @@
 'use client';
 import ToolTipImage from '@/components/tooltips/ToolTipImage';
-import { Box, MenuItem, Typography } from '@mui/material';
+import { Box, MenuItem, Popover, Typography } from '@mui/material';
 import { GridActionsCellItem, GridColDef, GridFilterModel } from '@mui/x-data-grid';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { motion } from 'motion/react';
@@ -35,13 +35,17 @@ import {
   Funnel,
   GraduationCap,
   LampDesk,
+  PenLine,
+  RotateCcw,
   TrendingUp,
   Unplug
 } from 'lucide-react';
-import { LoaiTaiKhoanEnum, TrangThaiGiangVien } from '@/types/options';
+import { LoaiTaiKhoanEnum, loaiTaiKhoanOptions, TrangThaiGiangVien } from '@/types/options';
 import { PeopleAltTwoTone } from '@mui/icons-material';
 import authApi from '@/lib/authAxios';
 import { filter } from 'lodash';
+import { useUser } from '@/stores/selectors';
+import { useBreadcrumb } from '@/hooks/context/BreadCrumbContext';
 const Table = dynamic(() => import('@/components/tables/Table'), {
   ssr: false
 });
@@ -71,9 +75,18 @@ const Content = ({ queryKey, khoaData, tinhTrangServer }: ContentProps) => {
   const [filterOption, setFilterOption] = useState<{
     khoa?: { id: string; name: string };
     trangThai?: { id: string; name: string };
+    vaiTro?: { id: number; name: string };
   } | null>(null);
+   const [itemRow, setItemRow] = useState<Record<string, any>>({
+      id: null,
+      row: {}
+    });
+    const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
+    const { setTitle } = useBreadcrumb();
   const queryClient = useQueryClient();
-
+  const user = useUser();
+   const open = Boolean(anchorEl);
+  const id = open ? 'simple-popover' : undefined;
   const { data, isLoading, isFetching } = useQuery({
     queryKey: [queryKey, paginationModel, sortModel, filterModel, filterOption],
     queryFn: async () => {
@@ -81,13 +94,18 @@ const Content = ({ queryKey, khoaData, tinhTrangServer }: ContentProps) => {
       let params: IParamGiangVien = {
         page: paginationModel.page + 1,
         limit: paginationModel.pageSize,
-        sortBy: 'createdAt',
         sortByOrder: 'desc'
       };
       if (filterOption?.khoa) {
         params = {
           ...params,
           khoaId: filterOption?.khoa?.id
+        };
+      }
+      if(filterOption?.vaiTro){
+        params = {
+          ...params,
+          vaiTro: filterOption?.vaiTro?.id
         };
       }
       if (filterOption?.trangThai) {
@@ -108,6 +126,13 @@ const Content = ({ queryKey, khoaData, tinhTrangServer }: ContentProps) => {
       }
       const result = await GiangVienService.danhSachGiangVien(params);
       return result;
+    },
+    select: (data: any) => {
+      const rows = data?.data?.map((row: any, idx: number) => ({ ...row, stt: idx + 1 }));
+      return {
+        ...data,
+        data:rows
+      }
     },
     placeholderData: (prev) => prev,
     refetchOnWindowFocus: false
@@ -142,6 +167,18 @@ const Content = ({ queryKey, khoaData, tinhTrangServer }: ContentProps) => {
     placeholderData: (prev) => prev,
     refetchOnWindowFocus: false
   });
+    const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+      setAnchorEl(event.currentTarget);
+    };
+  
+    const handleClose = () => {
+      setAnchorEl(null);
+      refTable.current?.handleClose();
+    };
+    useEffect(() => {
+    setTitle('Danh sách giảng viên');
+    return () => setTitle('');
+    },[])
   const rowCountRef = useRef(data?.meta?.TotalCount || 0);
   const rowCount = useMemo(() => {
     if (data?.meta?.TotalCount !== undefined) {
@@ -149,67 +186,49 @@ const Content = ({ queryKey, khoaData, tinhTrangServer }: ContentProps) => {
     }
     return rowCountRef.current;
   }, [data?.meta?.TotalCount]);
-  const mutationDelete = useMutation({
-    mutationFn: async (id: string | number | null) => {
-      const result = await GiangVienService.deleteGiangVien(id);
+  const mutationStatus = useMutation({
+    mutationFn: async (data: {id: string | number | null, trangThai: number | string}) => {
+      const result = await GiangVienService.changeStatusGiangVien(data.id,data.trangThai);
       return result;
     },
     onSuccess: () => {
-      notification.show('Xoá giảng viên thành công', {
+      notification.show('Thay đổi trạng thái thành công', {
         severity: 'success',
         autoHideDuration: 4000
       });
       queryClient.invalidateQueries({ queryKey: [queryKey], exact: false });
     },
     onError: (error: any) => {
-      notification.show(error?.message || 'Xoá giảng viên thất bại', {
+      notification.show(error?.message || 'Thay đổi trạng thái giảng viên thất bại', {
         severity: 'error',
         autoHideDuration: 4000
       });
     }
   });
-  const mutationRestore = useMutation({
-    mutationFn: async (id: string | number | null) => {
-      const result = await GiangVienService.restoreGiangVien(id);
-      return result;
-    },
-    onSuccess: () => {
-      notification.show('Khôi phục giảng viên thành công', {
-        severity: 'success',
-        autoHideDuration: 4000
-      });
-      queryClient.invalidateQueries({ queryKey: [queryKey], exact: false });
-    },
-    onError: (error: any) => {
-      notification.show(error?.message || 'Khôi phục giảng viên thất bại', {
-        severity: 'error',
-        autoHideDuration: 4000
-      });
-    }
-  });
-  const handleDelete = (id: string | number | null) => {
-    mutationDelete.mutate(id);
-  };
-  const handleRestore = (id: string | number | null) => {
-    mutationRestore.mutate(id);
-  };
+
+  const handleChangeStatus = (id: string | number | null, trangThai: number |string) => {
+      mutationStatus.mutate({ id, trangThai });
+  }
   const moreActions = useCallback((id: string | number | null, row: any) => {
     return (
       <MenuItem
-        disabled={!row?.deletedAt}
-        onClick={() => {
-          handleRestore(id);
-          refTable.current?.handleClose();
+        onClick={(event: any) => {
+          setItemRow({
+            id,
+            row
+          });
+          handleClick(event);
+   
         }}
         sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}
       >
-        <RestoreIcon sx={{ color: 'green' }} />
+        <RotateCcw className="text-green-500" />
         <Typography
           className={'!text-[14px] !font-[500] !leading-6 group-hover:!text-blue-800 group-hover:!font-semibold'}
           variant={'body1'}
           sx={{ width: '100%' }}
         >
-          Khôi phục
+          Thay đổi trạng thái
         </Typography>
       </MenuItem>
     );
@@ -246,19 +265,16 @@ const Content = ({ queryKey, khoaData, tinhTrangServer }: ContentProps) => {
     };
     return [
       {
-        field: 'id',
-        headerName: 'ID',
+        field: 'stt',
+        headerName: 'STT',
         type: 'number',
-        headerAlign: 'left',
-        minWidth: 80,
+        headerAlign: 'center',
+        minWidth: 60,
         flex: 0.4,
         sortable: true,
         display: 'flex',
-        align: 'left',
+        align: 'center',
         disableColumnMenu: true,
-        valueFormatter: (params: any) => {
-          return `#${params.slice(0, 2)}`;
-        }
       },
       {
         field: 'anhDaiDien',
@@ -323,7 +339,14 @@ const Content = ({ queryKey, khoaData, tinhTrangServer }: ContentProps) => {
         display: 'flex',
         flex: 1,
         renderCell: (params: any) => {
-          return !params.row?.deletedAt ? (
+          return (
+                !(user?.taiKhoan?.loaiTaiKhoan === LoaiTaiKhoanEnum.ADMIN) &&
+                !(params?.row?.taiKhoan?.loaiTaiKhoan === LoaiTaiKhoanEnum.ADMIN)
+              ) ||
+              (
+                !(user?.taiKhoan?.loaiTaiKhoan === LoaiTaiKhoanEnum.QUAN_LY_KHOA_BO_MON) &&
+                !(params?.row?.taiKhoan?.loaiTaiKhoan === LoaiTaiKhoanEnum.ADMIN)
+              ) ? (
             <Link href={`${APP_ROUTE.GIANG_VIEN.EDIT(params.row?.id)}`} className='text-blue-500 hover:underline'>
               {params.value}
             </Link>
@@ -395,25 +418,43 @@ const Content = ({ queryKey, khoaData, tinhTrangServer }: ContentProps) => {
           return formatStatus(params.value);
         }
       },
-      {
-        field: 'deletedAt',
-        headerName: 'Xóa',
-        type: 'string',
-        minWidth: 60,
-        disableColumnMenu: true,
-        sortable: false,
-        align: 'center',
-        headerAlign: 'center',
-        display: 'flex',
-        flex: 0.5,
-        renderCell: (params: any) => {
-          return params.value ? <ClearIcon className='text-red-500' /> : '';
-        }
-      }
     ];
-  }, [data?.data]);
+  }, [data?.data,user]);
   return (
     <Box className='flex flex-col gap-4'>
+      <Popover
+              id={id}
+              open={open}
+              anchorEl={anchorEl}
+              onClose={handleClose}
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'left'
+              }}
+              transformOrigin={{
+                vertical: 'bottom',
+                horizontal: 'right'
+              }}
+              slotProps={{
+                paper: {
+                  className: '!bg-white flex flex-col gap-2 p-2 shadow-lg rounded-lg'
+                }
+              }}
+            >
+              {TrangThaiGiangVien.map((item) => (
+                <button
+                  key={item?.id}
+                  disabled={item.id === itemRow?.row?.trangThaiGiangVien}
+                  className='px-2 py-1 hover:bg-gray-100 rounded-lg flex items-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed'
+                  onClick={() => {
+                    handleChangeStatus(itemRow?.id, item?.id);
+                    handleClose();
+                  }}
+                >
+                  <Typography>{item.name}</Typography>
+                </button>
+              ))}
+            </Popover>
       <Box className='flex justify-start gap-4  '>
         <Box className='grid grid-cols-1 sm:grid-cols-3 md:grid-cols-3 gap-4 w-full'>
           <Box className='flex flex-col border border-gray-200 rounded-lg p-4 shadow-sm gap-3 w-full'>
@@ -498,11 +539,34 @@ const Content = ({ queryKey, khoaData, tinhTrangServer }: ContentProps) => {
                 }}
               />
             </Box>
+            <Box className='flex-2 gap-1 flex flex-col'>
+              <Typography className='!font-semibold'>Vai trò</Typography>
+              <InputSelect2
+                fullWidth
+                name={'vaiTro'}
+                placeholder={'Chọn vai trò'}
+                data={loaiTaiKhoanOptions ?? []}
+                getOptionKey={(option) => option.id}
+                getOptionLabel={(option: any) => option.name}
+                getOnChangeValue={(value) => {
+                  setFilterOption((prev: any) => ({
+                    ...prev,
+                    vaiTro: {
+                      id: value?.id,
+                      name: value?.name
+                    }
+                  }));
+                }}
+              />
+            </Box>
           </Box>
+          
         </Box>
       </Box>
       <Table
+      user={user}
         ref={refTable}
+        isDisableDelete
         moreActions={moreActions}
         rows={data?.data}
         columns={columns}
@@ -513,7 +577,6 @@ const Content = ({ queryKey, khoaData, tinhTrangServer }: ContentProps) => {
         setSortModel={setSortModel}
         setPaginationModel={setPaginationModel}
         paginationModel={paginationModel}
-        handleDeleteCallBack={handleDelete}
         customToolBar
         urlNavigate='giang-vien'
         placeholderSearch='Tìm kiếm giảng viên...'

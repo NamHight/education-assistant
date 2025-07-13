@@ -1,45 +1,70 @@
 'use client';
-import { handleTextSearch } from '@/lib/string';
-import { LoaiMonHocEnum } from '@/models/MonHoc';
-import { ChitietChuongTrinhDaoTaoService } from '@/services/ChitietChuongTrinhDaoTaoService';
-import { APP_ROUTE } from '@/types/general';
-import { IParamChiTietChuongTrinhDaoTao } from '@/types/params';
-import { MenuItem, Typography } from '@mui/material';
-import { GridColDef, GridFilterModel, useGridApiRef } from '@mui/x-data-grid';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useNotifications } from '@toolpad/core';
-import { EditIcon } from 'lucide-react';
 
+import ToolTipImage from '@/components/tooltips/ToolTipImage';
+import { Box, MenuItem, Typography } from '@mui/material';
+import { GridActionsCellItem, GridColDef, GridFilterModel } from '@mui/x-data-grid';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { motion } from 'motion/react';
+import Image from 'next/image';
 import moment from 'moment';
+import ChipOption from '@/components/chips/ChipOption';
+import DeleteIcon from '@mui/icons-material/DeleteOutlined';
+import Button from '@/components/buttons/Button';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { GiangVienService } from '@/services/GiangVienService';
+import {
+  IParamBoMon,
+  IParamChiTietChuongTrinhDaoTao,
+  IParamGiangVien,
+  IParamKhoa,
+  IParamNganh,
+  IParamPhongHoc,
+  IParamSinhVien
+} from '@/types/params';
 import dynamic from 'next/dynamic';
-import Link from 'next/link';
+import { handleTextSearch } from '@/lib/string';
 import { useRouter } from 'next/navigation';
-import React, { useCallback, useMemo, useRef, useState } from 'react';
-import PopupEdit from './PopupEdit';
-
+import { APP_ROUTE } from '@/types/general';
+import EditIcon from '@mui/icons-material/Edit';
+import { useNotifications } from '@toolpad/core';
+import ClearIcon from '@mui/icons-material/Clear';
+import RestoreIcon from '@mui/icons-material/Restore';
+import { SinhVienService } from '@/services/SinhVienService';
+import Link from 'next/link';
+import { LoaiChuongTrinhDaoTaoEnum, TrangThaiPhongHocEnum, TrangThaiSinhVienEnum } from '@/types/options';
+import { GioiTinhEnum } from '@/models/GiangVien';
+import { KhoaService } from '@/services/KhoaService';
+import { MonHocService } from '@/services/MonHocService';
+import { NganhService } from '@/services/NganhService';
+import { BoMonService } from '@/services/BoMonService';
+import { PhongHocService } from '@/services/PhongHocService';
+import { LoaiPhongHocEnum } from '@/models/PhongHoc';
+import { ChuongTrinhDaoTaoService } from '@/services/ChuongTrinhDaoTaoService';
+import { ChitietChuongTrinhDaoTaoService } from '@/services/ChitietChuongTrinhDaoTaoService';
+import { LoaiMonHocEnum } from '@/models/MonHoc';
+import { useBreadcrumb } from '@/hooks/context/BreadCrumbContext';
+import PopupEdit from '../popup/PopupEdit';
 const Table = dynamic(() => import('@/components/tables/Table'), {
   ssr: false
 });
-
-interface IListMonHoc {
+interface ContentProps {
   queryKey: string;
-  chuongTrinhDaoTaoId?: string;
-  monHocId?: string | null;
-  hocKy?: string | number | null;
+  id?: string;
   khoas?: any[];
 }
 
-const ListMonHoc = ({ queryKey, chuongTrinhDaoTaoId, monHocId, hocKy, khoas }: IListMonHoc) => {
+const Content = ({ queryKey, id, khoas }: ContentProps) => {
   const router = useRouter();
   const notification = useNotifications();
-  const queryClient = useQueryClient();
-  const [getId, setGetId] = useState<string | null>(null);
-
-  const [openEdit, setOpenEdit] = React.useState(false);
-
   const refTable = useRef<{ handleClose: () => void; handleOpenDelete: () => void; handleCloseDelete: () => void }>(
     null
   );
+  const [getId, setGetId] = useState<string | null>(null);
+  const [openEdit, setOpenEdit] = React.useState(false);
+  const [nameDaoTao, setNameDaoTao] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
     pageSize: 10
@@ -51,20 +76,18 @@ const ListMonHoc = ({ queryKey, chuongTrinhDaoTaoId, monHocId, hocKy, khoas }: I
   const [filterModel, setFilterModel] = useState<GridFilterModel>({
     items: []
   });
+  const queryClient = useQueryClient();
+  const { setTitle ,setBreadcrumbs} = useBreadcrumb();
   const { data, isLoading, isFetching } = useQuery({
-    queryKey: [queryKey, paginationModel, sortModel, filterModel],
+    queryKey: [queryKey, paginationModel, sortModel, filterModel,id],
     queryFn: async () => {
-      if (!chuongTrinhDaoTaoId) {
-        return { data: [], meta: { TotalCount: 0 } };
-      }
       const searchKeyWord = handleTextSearch(filterModel?.quickFilterValues as any[]);
       let params: IParamChiTietChuongTrinhDaoTao = {
         page: paginationModel.page + 1,
         limit: paginationModel.pageSize,
-        sortBy: 'hocky',
-        sortByOrder: 'asc',
-        hocKy: Number(hocKy),
-        chuongTrinhDaoTaoId: chuongTrinhDaoTaoId
+        sortBy: 'createdAt',
+        sortByOrder: 'desc',
+        chuongTrinhDaoTaoId:id
       };
 
       if (sortModel.field && sortModel.sort) {
@@ -81,10 +104,7 @@ const ListMonHoc = ({ queryKey, chuongTrinhDaoTaoId, monHocId, hocKy, khoas }: I
       return result;
     },
     placeholderData: (prev) => prev,
-    refetchOnWindowFocus: false,
-    enabled: !!chuongTrinhDaoTaoId,
-    staleTime: 0,
-    gcTime: 0
+    refetchOnWindowFocus: false
   });
   const rowCountRef = useRef(data?.meta?.TotalCount || 0);
   const rowCount = useMemo(() => {
@@ -93,12 +113,58 @@ const ListMonHoc = ({ queryKey, chuongTrinhDaoTaoId, monHocId, hocKy, khoas }: I
     }
     return rowCountRef.current;
   }, [data?.meta?.TotalCount]);
-  const handleClickOpenEdit = () => {
+  useEffect(() => {
+  if (data?.data?.length > 0) {
+    setNameDaoTao({
+      id: data.data[0]?.chuongTrinhDaoTao?.id || '',
+      name: data.data[0]?.chuongTrinhDaoTao?.tenChuongTrinh || ''
+    });
+  }
+}, [data]);
+const {data: khoass, isLoading: isLoadingKhoa} = useQuery({
+  queryKey: ['khoas'],
+  queryFn: async () => {
+    const result = await KhoaService.getKhoaNoPage();
+    return result;
+  },
+  select: (data) => {
+    return data.map((item: any) => ({
+      id: item.id,
+      name: item.tenKhoa
+    }));
+  },
+  initialData: khoas,
+  refetchOnWindowFocus:false,
+})
+ const handleClickOpenEdit = () => {
     setOpenEdit(true);
   };
   const handleCloseEdit = () => {
     setOpenEdit(false);
+    setGetId(null);
   };
+  useEffect(() => {
+    if(nameDaoTao){
+      setBreadcrumbs(
+        <Link href={APP_ROUTE.CHUONG_TRINH_DAO_TAO.EDIT(id)} className="relative text-[14px] flex gap-1 items-center
+    before:absolute before:left-0 before:bottom-0 before:h-[2px] before:bg-blue-500
+    before:w-0 hover:before:w-full before:transition-all before:duration-400">
+          <Typography sx={(theme) => ({
+            color: theme.palette.mode === 'dark' ? 'white !important' : 'black !important',
+            fontWeight: 500
+          })}>
+           {nameDaoTao?.name}
+          </Typography>
+          </Link>
+      )
+      setTitle(`Chi tiết chương trình đào tạo ${nameDaoTao?.name}`)
+      return () => {
+        setBreadcrumbs(null);
+        setTitle('');
+      };
+
+    }
+  },[nameDaoTao, setBreadcrumbs]);
   const mutationDelete = useMutation({
     mutationFn: async (id: string | number | null) => {
       const result = await ChitietChuongTrinhDaoTaoService.deleteChiTietChuongTrinhDaoTao(id);
@@ -118,7 +184,10 @@ const ListMonHoc = ({ queryKey, chuongTrinhDaoTaoId, monHocId, hocKy, khoas }: I
       });
     }
   });
-  const moreActions = useCallback((id: string | number | null, row: any) => {
+  const handleDelete = (id: string | number | null) => {
+    mutationDelete.mutate(id);
+  };
+ const moreActions = useCallback((id: string | number | null, row: any) => {
     return [
       <MenuItem
         key='edit'
@@ -127,9 +196,9 @@ const ListMonHoc = ({ queryKey, chuongTrinhDaoTaoId, monHocId, hocKy, khoas }: I
           setGetId(id as string);
           refTable.current?.handleClose();
         }}
-        sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}
+        sx={{ display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'center' }}
       >
-        <EditIcon className='!text-blue-500' />
+        <EditIcon className='!text-blue-500 !h-5 !w-5' />
         <Typography
           className={'!text-[14px] !font-[500] !leading-6 group-hover:!text-blue-800 group-hover:!font-semibold'}
           variant={'body1'}
@@ -140,14 +209,7 @@ const ListMonHoc = ({ queryKey, chuongTrinhDaoTaoId, monHocId, hocKy, khoas }: I
       </MenuItem>
     ];
   }, []);
-  const handleDelete = (id: string | number | null) => {
-    mutationDelete.mutate(id);
-  };
-
   const columns = useMemo((): GridColDef[] => {
-    const formatDateBirth = (date: string) => {
-      return moment(date).utc().format('DD/MM/YYYY');
-    };
     const formatType = (value: any) => {
       switch (value) {
         case LoaiMonHocEnum.CHUC_CHUNG_CHI:
@@ -159,7 +221,7 @@ const ListMonHoc = ({ queryKey, chuongTrinhDaoTaoId, monHocId, hocKy, khoas }: I
         case LoaiMonHocEnum.KIEN_TAP:
           return <Typography variant='body2'>KT</Typography>;
         case LoaiMonHocEnum.MODUN:
-          return <Typography variant='body2'>Module</Typography>;
+          return <Typography variant='body2'>Md</Typography>;
         case LoaiMonHocEnum.THI_TOT_NGHIEP_LY_THUYET:
           return <Typography variant='body2'>TTNLT</Typography>;
         case LoaiMonHocEnum.THI_TOT_NGHIEP_THUC_HANH:
@@ -176,19 +238,16 @@ const ListMonHoc = ({ queryKey, chuongTrinhDaoTaoId, monHocId, hocKy, khoas }: I
     };
     return [
       {
-        field: 'id',
-        headerName: 'ID',
+        field: 'stt',
+        headerName: 'STT',
         type: 'string',
-        headerAlign: 'left',
-        minWidth: 80,
+        headerAlign: 'center',
+        minWidth: 50,
         flex: 0.4,
         sortable: true,
         display: 'flex',
-        align: 'left',
+        align: 'center',
         disableColumnMenu: true,
-        valueFormatter: (params: any) => {
-          return `#${params.slice(0, 2)}`;
-        }
       },
       {
         field: 'monHoc',
@@ -199,7 +258,7 @@ const ListMonHoc = ({ queryKey, chuongTrinhDaoTaoId, monHocId, hocKy, khoas }: I
         disableColumnMenu: true,
         sortable: false,
         display: 'flex',
-        flex: 1,
+        flex: 2,
         renderCell: (params: any) => {
           return !params?.value ? null : (
             <Link href={`${APP_ROUTE.MON_HOC.ROOT}/${params.value?.id}`} className='text-blue-500 hover:underline'>
@@ -251,32 +310,34 @@ const ListMonHoc = ({ queryKey, chuongTrinhDaoTaoId, monHocId, hocKy, khoas }: I
       {
         field: 'soTinChi',
         headerName: 'Tín chỉ',
-        headerAlign: 'left',
+        headerAlign: 'center',
         type: 'number',
         minWidth: 70,
         disableColumnMenu: true,
         sortable: false,
         display: 'flex',
-        align: 'left',
-        flex: 1
+        align: 'center',
+        flex: 0.7
       },
       {
         field: 'hocKy',
         headerName: 'Học kỳ',
-        headerAlign: 'left',
+        headerAlign: 'center',
         type: 'number',
         minWidth: 80,
         disableColumnMenu: true,
         sortable: false,
         display: 'flex',
-        align: 'left',
+        align: 'center',
         flex: 1
       },
       {
         field: 'loaiMonHoc',
-        headerName: 'Loại Môn',
+        headerName: 'Loại',
         type: 'string',
         minWidth: 80,
+        headerAlign: 'center',
+        align: 'center',
         disableColumnMenu: true,
         sortable: false,
         display: 'flex',
@@ -288,11 +349,12 @@ const ListMonHoc = ({ queryKey, chuongTrinhDaoTaoId, monHocId, hocKy, khoas }: I
     ];
   }, [data?.data]);
   return (
-    <>
-      <Typography className='!font-semibold !text-[18px]'>Danh sách môn học thuộc chương trình đào tạo</Typography>
+    <Box className='flex flex-col gap-4'>
+      <Box className='flex justify-end w-full items-center gap-2 border border-gray-200 rounded-lg p-4 shadow-sm'>
+        <Button title={'Thêm mới'} onClick={() => handleClickOpenEdit() } />
+      </Box>
       <Table
         ref={refTable}
-        isDisableEdit
         rows={data?.data}
         columns={columns}
         rowCount={rowCount}
@@ -304,13 +366,14 @@ const ListMonHoc = ({ queryKey, chuongTrinhDaoTaoId, monHocId, hocKy, khoas }: I
         paginationModel={paginationModel}
         handleDeleteCallBack={handleDelete}
         customToolBar
+        isDisableEdit
         moreActions={moreActions}
         urlNavigate='chi-tiet-chuong-trinh-dao-tao'
         placeholderSearch='Tìm kiếm chi tiết chương trình đào tạo...'
       />
-      <PopupEdit queryKey={queryKey} onClose={handleCloseEdit} open={openEdit} khoas={khoas} getId={getId} />
-    </>
+      <PopupEdit queryKey={queryKey} chuongTrinhDaoTao={nameDaoTao} onClose={handleCloseEdit} open={openEdit} khoas={khoass} isLoadingKhoa={isLoadingKhoa} getId={getId} />
+    </Box>
   );
 };
 
-export default ListMonHoc;
+export default Content;

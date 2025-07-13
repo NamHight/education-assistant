@@ -15,7 +15,7 @@ import {
   Typography
 } from '@mui/material';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -29,7 +29,9 @@ interface IProps {
   open: boolean;
   onClose: () => void;
   getId: any;
+  chuongTrinhDaoTao?: IOption | null;
   queryKey?: string;
+  isLoadingKhoa?: boolean;
 }
 
 export interface IFormData {
@@ -41,11 +43,13 @@ export interface IFormData {
   LoaiMonHoc: IOption;
   HocKy: IOption;
   Khoa: IOption;
+  
 }
 
-const PopupEdit = ({ khoas, open, onClose, getId, queryKey }: IProps) => {
+const PopupEdit = ({ khoas, open, onClose, getId, queryKey, chuongTrinhDaoTao, isLoadingKhoa }: IProps) => {
   const notifications = useNotifications();
   const queryClient = useQueryClient();
+  const notification = useNotifications();
   const [khoa, setkhoa] = useState<{
     id: string | number | null;
     name: string;
@@ -57,7 +61,9 @@ const PopupEdit = ({ khoas, open, onClose, getId, queryKey }: IProps) => {
       return result;
     },
     refetchOnWindowFocus: false,
-    enabled: !!getId
+    enabled: !!getId,
+    gcTime: 0,
+    staleTime: 0
   });
   const schema = useMemo(() => {
     return yup.object().shape({
@@ -164,7 +170,25 @@ const PopupEdit = ({ khoas, open, onClose, getId, queryKey }: IProps) => {
         HocKy: HocKyLopHocPhan.find((item) => item.id === data.hocKy) || null
       });
     }
+
   }, [reset, data]);
+  useEffect(() => {
+  if (open && !getId) {
+    reset({
+      MonHoc: null,
+      ChuongTrinhDaoTao: {
+        id: chuongTrinhDaoTao?.id || null,
+        name: chuongTrinhDaoTao?.name || ''
+      },
+      BoMon: null,
+      SoTinChi: '',
+      DiemTichLuy: true,
+      LoaiMonHoc: null,
+      HocKy: null,
+      Khoa: null
+    });
+  }
+}, [open, getId, reset]);
   const mutationUpdate = useMutation({
     mutationFn: async (data: FormData) => {
       console.log('data', getId);
@@ -189,9 +213,43 @@ const PopupEdit = ({ khoas, open, onClose, getId, queryKey }: IProps) => {
       });
     }
   });
-  const handleSubmitForm = (formData: IFormData) => {
+  const mutationCreate = useMutation({
+     mutationFn: async (formData: any) => {
+          const response = await ChitietChuongTrinhDaoTaoService.createChiTietChuongTrinhDaoTao(formData);
+          return response;
+        },
+    onSuccess: async (data) => {
+      console.log('Thêm chi tiết chương trình đào tạo thành công:', data);
+      notification.show('Thêm thành công', {
+        severity: 'success',
+        autoHideDuration: 4000
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['chi-tiet-chuong-trinh-dao-tao-list'],
+        exact: false
+      });
+      reset();
+      onClose();
+      await queryClient.invalidateQueries({
+        queryKey: [queryKey],
+        exact: false
+      });
+    },
+    onError: (error: any) => {
+      notification.show(error?.Message || 'Thêm thất bại', {
+        severity: 'error',
+        autoHideDuration: 4000
+      });
+    }
+  })
+  useEffect(() => {
+  if (open && getId) {
+    queryClient.invalidateQueries({ queryKey: ['chi-tiet-chuong-trinh-dao-tao', { id: getId }] });
+  }
+  }, [open, getId, queryClient]);
+
+  const handleSubmitForm = useCallback((formData: IFormData) => {
     const form = new FormData();
-    console.log('khoa', formData);
     if (data?.id) form.append('id', String(data.id));
     if (formData.BoMon) form.append('BoMonId', String(formData.BoMon?.id));
     if (formData.MonHoc) form.append('MonHocId', String(formData.MonHoc?.id));
@@ -200,25 +258,29 @@ const PopupEdit = ({ khoas, open, onClose, getId, queryKey }: IProps) => {
     form.append('DiemTichLuy', String(formData.DiemTichLuy || false));
     if (formData.LoaiMonHoc) form.append('LoaiMonHoc', String(formData.LoaiMonHoc?.id));
     if (formData.HocKy) form.append('HocKy', String(formData.HocKy?.id));
-    mutationUpdate.mutate(form);
-  };
-
+    if(data){
+      mutationUpdate.mutate(form);
+    }else{
+      mutationCreate.mutate(form);
+    }
+  },[data]);
+  const handleClose = () => {
+    onClose();
+    reset({});
+  }
   return (
     <Dialog
       open={open}
-      onClose={() => {
-        onClose();
-        reset();
-      }}
+      onClose={handleClose}
       slotProps={{
         paper: {
-          className: 'p-2 w-full max-w-[600px]',
+          className: 'p-2 w-full max-w-[600px] bg-white',
           component: 'form',
           onSubmit: handleSubmit(handleSubmitForm)
         }
       }}
     >
-      <DialogTitle>Chỉnh sửa chi tiết đào tạo</DialogTitle>
+      <DialogTitle>{data ? "Chỉnh sửa chi tiết đào tạo" : "Thêm mới chi tiết đào tạo"}</DialogTitle>
       <DialogContent>
         <Grid container spacing={2} rowSpacing={1}>
           <Grid size={{ xs: 12, sm: 6, md: 6, lg: 6 }}>
@@ -230,7 +292,7 @@ const PopupEdit = ({ khoas, open, onClose, getId, queryKey }: IProps) => {
                 className='rounded bg-gray-100 px-3 py-2 border border-gray-200 text-[15px] text-gray-800 font-medium'
                 style={{ minHeight: 40, display: 'flex', alignItems: 'center' }}
               >
-                {data?.chuongTrinhDaoTao?.tenChuongTrinh || ''}
+                {chuongTrinhDaoTao?.name || ''}
               </Box>
             </Box>
           </Grid>
@@ -256,6 +318,7 @@ const PopupEdit = ({ khoas, open, onClose, getId, queryKey }: IProps) => {
               placeholder={'Chọn khoa'}
               title={'Khoa'}
               data={khoas ?? []}
+              isLoading={isLoadingKhoa}
               getOptionKey={(option) => option.id}
               getOptionLabel={(option: any) => option.name}
               getOnChangeValue={(option) => {
@@ -327,7 +390,7 @@ const PopupEdit = ({ khoas, open, onClose, getId, queryKey }: IProps) => {
                 <Controller
                   name='DiemTichLuy'
                   control={control}
-                  render={({ field }) => <Checkbox checked={field.value} {...field} />}
+                  render={({ field }) => <Checkbox checked={!!field.value} {...field} />}
                 />
               }
               label='Điểm tích lũy'
@@ -354,7 +417,7 @@ const PopupEdit = ({ khoas, open, onClose, getId, queryKey }: IProps) => {
           Hủy
         </Button>
         <Button title='Cập nhật' type='submit' className='!bg-blue-500 !text-white hover:!bg-blue-600'>
-          Cập nhật
+          {data? 'Cập nhật' : 'Thêm mới'}
         </Button>
       </DialogActions>
     </Dialog>

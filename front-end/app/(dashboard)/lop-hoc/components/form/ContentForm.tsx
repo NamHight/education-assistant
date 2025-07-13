@@ -68,7 +68,7 @@ interface IContentFormProps {
 }
 
 const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => {
-  const [getKhoa, setKhoa] = React.useState<number>(0);
+  const [getKhoa, setKhoa] = React.useState<string>("");
   const schema = useMemo(() => {
     return yup.object().shape({
       MaLopHoc: yup
@@ -178,6 +178,7 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
   };
   useEffect(() => {
     if (data) {
+      setKhoa(data.nganh?.khoa?.id || '');
       reset({
         MaLopHoc: data.maLopHoc,
         SiSo: data.siSo,
@@ -197,7 +198,6 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
       });
     }
   }, [reset, data]);
-
   return (
     <FormControl fullWidth component={'form'} onSubmit={handleSubmit(handleSubmitForm)} className='flex flex-col gap-4'>
       <Grid container spacing={2} rowSpacing={1}>
@@ -288,7 +288,7 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
           className='flex items-center gap-3 !bg-blue-500 !px-4 !py-2 rounded !hover:bg-blue-600 transition-all !duration-200 !ease-in-out !shadow-sm !text-white !font-semibold !text-base !leading-6 hover:transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed'
         >
           <SaveIcon className='!text-white !w-6 !h-6' />
-          <Typography className='!text-lg !text-white !leading-6 !font-semibold'>Lưu</Typography>
+          <Typography className='!text-lg !text-white !leading-6 !font-semibold'>{data? 'Lưu': 'Tạo'}</Typography>
         </Button>
       </Box>
     </FormControl>

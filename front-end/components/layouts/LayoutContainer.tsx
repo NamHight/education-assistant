@@ -1,25 +1,29 @@
-'use client';
+"use client"
 import { useDynamicBreadcrumbs } from '@/hooks/useDynamicBreadcrumbs';
 import { PageContainer } from '@toolpad/core';
 import React from 'react';
 import PageHeaderCustom from '../headers/PageHeaderCustom';
 import { CopilotKit } from '@copilotkit/react-core';
 import Copilot from '../copilot/Copilot';
+import Breadcrumb from '../breadcrumbs/Breadcrumb';
+import { BreadcrumbProvider } from '@/hooks/context/BreadCrumbContext';
 
 const LayoutContainer = ({ children }: { children: React.ReactNode }) => {
-  const { title, breadcrumbs } = useDynamicBreadcrumbs();
   return (
     // // <CopilotKit publicApiKey={process.env.NEXT_PUBLIC_COPILOT_API_KEY || ''}
     <PageContainer
+     suppressHydrationWarning
+      suppressContentEditableWarning
       slots={{
-        header: () =>
-          PageHeaderCustom({
-            title: title,
-            breadcrumbs: breadcrumbs
-          })
+        header: () => null,
       }}
+      title=''
+      breadcrumbs={[]}
     >
-      {children}
+      <BreadcrumbProvider>
+            <Breadcrumb/>
+              {children}
+      </BreadcrumbProvider>
     </PageContainer>
   );
 };

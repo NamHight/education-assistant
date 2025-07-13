@@ -3,7 +3,7 @@
 import ToolTipImage from '@/components/tooltips/ToolTipImage';
 import { Box, MenuItem, Typography } from '@mui/material';
 import { GridActionsCellItem, GridColDef, GridFilterModel } from '@mui/x-data-grid';
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { motion } from 'motion/react';
 import Image from 'next/image';
 import moment from 'moment';
@@ -28,6 +28,7 @@ import { GioiTinhEnum } from '@/models/GiangVien';
 import { KhoaService } from '@/services/KhoaService';
 import { MonHocService } from '@/services/MonHocService';
 import { NganhService } from '@/services/NganhService';
+import { useBreadcrumb } from '@/hooks/context/BreadCrumbContext';
 const Table = dynamic(() => import('@/components/tables/Table'), {
   ssr: false
 });
@@ -80,6 +81,7 @@ const Content = ({ queryKey }: ContentProps) => {
     placeholderData: (prev) => prev,
     refetchOnWindowFocus: false
   });
+  const {setTitle} = useBreadcrumb();
   const rowCountRef = useRef(data?.meta?.TotalCount || 0);
   const rowCount = useMemo(() => {
     if (data?.meta?.TotalCount !== undefined) {
@@ -109,26 +111,26 @@ const Content = ({ queryKey }: ContentProps) => {
   const handleDelete = (id: string | number | null) => {
     mutationDelete.mutate(id);
   };
-
+  useEffect(() => {
+    setTitle('Danh sách ngành');
+    return () => setTitle('')
+  }, []);
   const columns = useMemo((): GridColDef[] => {
     const formatDateBirth = (date: string) => {
       return moment(date).utc().format('DD/MM/YYYY');
     };
     return [
       {
-        field: 'id',
-        headerName: 'ID',
+        field: 'stt',
+        headerName: 'STT',
         type: 'number',
-        headerAlign: 'left',
+        headerAlign: 'center',
         minWidth: 80,
         flex: 0.4,
         sortable: true,
         display: 'flex',
-        align: 'left',
+        align: 'center',
         disableColumnMenu: true,
-        valueFormatter: (params: any) => {
-          return `#${params.slice(0, 2)}`;
-        }
       },
       {
         field: 'tenNganh',
@@ -221,7 +223,7 @@ const Content = ({ queryKey }: ContentProps) => {
   }, [data?.data]);
   return (
     <Box className='flex flex-col gap-4'>
-      <Box className='flex justify-start gap-4 border border-gray-200 rounded-lg p-4 shadow-sm'>
+      <Box className='flex justify-end gap-4 border border-gray-200 rounded-lg p-4 shadow-sm'>
         <Button title={'Thêm mới'} onClick={() => router.push(APP_ROUTE.NGANH.ADD)} />
       </Box>
       <Table

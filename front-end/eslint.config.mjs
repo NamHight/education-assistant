@@ -8,8 +8,8 @@ export default defineConfig([
   { files: ["**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"], 
     languageOptions: { globals: globals.browser }, 
     rules: {
-      "@typescript-eslint/no-explicit-any": "off",
-      "react/react-in-jsx-scope": "off",
+      "@typescript-eslint/no-explicit-any": "on",
+      "react/react-in-jsx-scope": "on",
     },
     settings: {
       react: {
