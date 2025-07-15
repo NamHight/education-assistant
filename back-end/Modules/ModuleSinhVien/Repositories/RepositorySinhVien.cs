@@ -40,8 +40,7 @@ public class RepositorySinhVien : RepositoryBase<SinhVien>, IRepositorySinhVien
             .IgnoreQueryFilters()
             .Where(item => item.LopHocPhanId == lopHocPhanId)
             .Where(item => item.SinhVien != null &&
-                           item.SinhVien.DeletedAt == null &&
-                           item.SinhVien.TrangThaiSinhVien == (int)TrangThaiSinhVienEnum.DANG_HOC)
+                           item.SinhVien.DeletedAt == null)
             .Include(item => item.SinhVien)
             .ThenInclude(item => item.LopHoc)
             .Select(item => item.SinhVien!)

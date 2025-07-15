@@ -384,18 +384,15 @@ public class ServiceSinhVien : IServiceSinhVien
     public async Task<ResponseSinhVienDangKyMonHocDto> CreateSinhVienDangKyMonHocAsync(
         RequestSinhVienDangKyMonHocDto request)
     {
-        var dangKyMonHoc =
-            await _repositoryMaster.DangKyMonHoc.GetDangKyMonHocBySinhVienIdAndLopHocPhanIdAsync(request.SinhVienId,
-                request.LopHocPhanId);
-        if (dangKyMonHoc is not null)
-            throw new DangKyMonHocBadRequestException("Sinh viên đã trong lớp học phần không thể thêm.");
-        var lopHocPhan = await _repositoryMaster.LopHocPhan.GetLopHocPhanByIdAsync(request.LopHocPhanId, true);
+        var dangKyMonHoc = await _repositoryMaster.DangKyMonHoc.GetDangKyMonHocBySinhVienIdAndLopHocPhanIdAsync(request.SinhVienId, request.LopHocPhanId);
+        if (dangKyMonHoc is not null) throw new DangKyMonHocBadRequestException("Sinh viên đã trong lớp học phần không thể thêm.");
+
+        var sinhVien = await _repositoryMaster.SinhVien.GetSinhVienByIdAsync(request.SinhVienId, false);
+        if (sinhVien is null) throw new SinhVienNotFoundException(request.LopHocPhanId);
+        var lopHocPhan = await _repositoryMaster.LopHocPhan.GetLopHocPhanByIdAsync(request.LopHocPhanId, false);
         if (lopHocPhan is null) throw new LopHocPhanNotFoundException(request.LopHocPhanId);
-        var chiTietLopHocPhan =
-            await _repositoryMaster.ChiTietLopHocPhan.GetChiTietLopHocPhanByLopHocPhanIdAsync(request.LopHocPhanId);
-        if (chiTietLopHocPhan is null) throw new LopHocPhanNotFoundException(request.LopHocPhanId);
-        var hocBa = await _repositoryMaster.HocBa.GetHocBaByLopHocPhanIdAsync(request.LopHocPhanId);
-        if (hocBa is null) throw new LopHocPhanNotFoundException(request.LopHocPhanId);
+
+        var chiTietLopHocPhan = await _repositoryMaster.ChiTietLopHocPhan.GetChiTietLopHocPhanByLopHocPhanIdAsync(request.LopHocPhanId);
         try
         {
             var sinhVienDangKyMonHoc = new DangKyMonHoc
@@ -407,33 +404,26 @@ public class ServiceSinhVien : IServiceSinhVien
             };
             var newChiTietLopHocPhan = new ChiTietLopHocPhan
             {
-                HocKy = chiTietLopHocPhan.HocKy,
+                HocKy = chiTietLopHocPhan?.HocKy ?? 0,
                 SinhVienId = request.SinhVienId,
-                MonHocId = chiTietLopHocPhan.MonHocId,
-                GiangVienId = chiTietLopHocPhan.GiangVienId,
-                LopHocPhanId = chiTietLopHocPhan.LopHocPhanId,
+                MonHocId = lopHocPhan.MonHocId,
+                GiangVienId = lopHocPhan.GiangVienId,
+                LopHocPhanId = request.LopHocPhanId,
                 CreatedAt = DateTime.Now
             };
-            var newHocBa = new HocBa
-            {
-                SinhVienId = request.SinhVienId,
-                LopHocPhanId = hocBa.LopHocPhanId,
-                ChiTietChuongTrinhDaoTaoId = hocBa.ChiTietChuongTrinhDaoTaoId,
-                CreatedAt = DateTime.Now
-            };
+ 
             await _repositoryMaster.ExecuteInTransactionAsync(async () =>
             {
                 await _repositoryMaster.DangKyMonHoc.CreateAsync(sinhVienDangKyMonHoc);
                 await _repositoryMaster.ChiTietLopHocPhan.CreateAsync(newChiTietLopHocPhan);
-                await _repositoryMaster.HocBa.CreateAsync(newHocBa);
             });
 
-            var countSinhVienDangKyMonHoc =
-                await _repositoryMaster.DangKyMonHoc.GetCountSinhVienDangKyMonHocAsync(request.LopHocPhanId);
+            var countSinhVienDangKyMonHoc = await _repositoryMaster.DangKyMonHoc.GetCountSinhVienDangKyMonHocAsync(request.LopHocPhanId);
 
             await _repositoryMaster.ExecuteInTransactionAsync(async () =>
             {
                 lopHocPhan.SiSo = countSinhVienDangKyMonHoc;
+                _repositoryMaster.LopHocPhan.UpdateLopHocPhan(lopHocPhan);
                 await Task.CompletedTask;
             });
 

@@ -43,7 +43,7 @@ namespace Education_assistant.Modules.ModuleLopHocPhan
             var result = await _serviceMaster.LopHocPhan.GetAllLopHocPhanByGiangVienAsync(paramLopHocPhanSimpleDto);
             return Ok(result);
         }
-        [Authorize(Policy = "QLKhoa")]
+        [Authorize(Policy = "GiangVien")]
         [HttpGet("by-lop-hoc-and-hoc-ky")]
         public async Task<ActionResult> GetAllLopHocPhanByLopHocAndHocKyAsync([FromQuery] ParamLopHocPhanForLichBieuDto paramLopHocPhanForLichBieuDto)
         {

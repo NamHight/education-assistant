@@ -108,8 +108,6 @@ const ListClass = ({ id, queryKey }: IListtClassProps) => {
       switch (status) {
         case TrangThaiSinhVienEnum.DANG_HOC:
           return <ChipOption title='Đang học' color='info' />;
-        case TrangThaiSinhVienEnum.TAM_NGHI:
-          return <ChipOption title='Tạm việc' color='warning' />;
         case TrangThaiSinhVienEnum.DA_TOT_NGHIEP:
           return <ChipOption title='Đã tốt nghiệp' color='success' />;
         case TrangThaiSinhVienEnum.BO_HOC:

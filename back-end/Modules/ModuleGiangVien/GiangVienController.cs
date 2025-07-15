@@ -83,7 +83,7 @@ public class GiangVienController : ControllerBase
         var result = await _serviceMaster.GiangVien.CreateAsync(model);
         return Ok(result);
     }
-    [Authorize(Policy = "QLKhoa")]
+    [Authorize(Policy = "GiangVien")]
     [HttpPut("{id}")]
     [ServiceFilter(typeof(ValidationFilter))]
     public async Task<ActionResult> UpdateGiangVienAsync(Guid id, [FromForm] RequestUpdateGiangVienDto model)
