@@ -79,12 +79,12 @@ public class RepositoryLopHocPhan : RepositoryBase<LopHocPhan>, IRepositoryLopHo
             .Include(x => x.MonHoc)
             .ThenInclude(mh => mh.DanhSachChiTietChuongTrinhDaoTao)!
             .ThenInclude(ct => ct.ChuongTrinhDaoTao)
+            .IgnoreQueryFilters()
             .Include(x => x.GiangVien)
-            .AsNoTracking();
+            .AsQueryable();
 
         if (loaiLopHoc.HasValue && loaiLopHoc != 0)
         {
-            System.Console.WriteLine($"tesst loai lop");
             query = query.Where(item => item.Loai == loaiLopHoc.Value);
         }
 
@@ -95,10 +95,8 @@ public class RepositoryLopHocPhan : RepositoryBase<LopHocPhan>, IRepositoryLopHo
         }
             
         
-        System.Console.WriteLine($"tesst chuong trình: {chuongTrinhId} : khóa : {khoa}, loai choungw tình: {loaiChuongTrinh} , hoc kỳ {hocKy}");
         if (chuongTrinhId.HasValue && chuongTrinhId != Guid.Empty && khoa.HasValue && loaiChuongTrinh.HasValue && hocKy.HasValue)
         {
-            System.Console.WriteLine($"tesst điều kiện:");
             query = query.Where(lhp =>
                 lhp.MonHoc != null &&
                 lhp.MonHoc.DanhSachChiTietChuongTrinhDaoTao != null &&
@@ -112,6 +110,7 @@ public class RepositoryLopHocPhan : RepositoryBase<LopHocPhan>, IRepositoryLopHo
                     !chuongTrinhId.HasValue ||
                     (!khoa.HasValue || _context.LopHocs!.Any(lh =>
                         lh.NamHoc == khoa.Value &&
+                        lh.NganhId == nganhId &&
                         lhp.MaHocPhan.StartsWith(lh.MaLopHoc + "_")
                     ))
                 )
@@ -156,7 +155,8 @@ public class RepositoryLopHocPhan : RepositoryBase<LopHocPhan>, IRepositoryLopHo
                     MaMonHoc = lhp.MonHoc.MaMonHoc,
                     KhoaId = lhp.MonHoc.KhoaId,
                     Khoa = lhp.MonHoc.Khoa,
-                    DanhSachChiTietChuongTrinhDaoTao = lhp.MonHoc.DanhSachChiTietChuongTrinhDaoTao!
+                    DanhSachChiTietChuongTrinhDaoTao = (chuongTrinhId.HasValue && chuongTrinhId != Guid.Empty && khoa.HasValue && loaiChuongTrinh.HasValue && hocKy.HasValue)
+                    ? lhp.MonHoc.DanhSachChiTietChuongTrinhDaoTao!
                         .Where(ct =>
                             (!chuongTrinhId.HasValue || ct.ChuongTrinhDaoTaoId == chuongTrinhId) &&
                             (!khoa.HasValue || ct.ChuongTrinhDaoTao!.Khoa == khoa) &&
@@ -164,7 +164,7 @@ public class RepositoryLopHocPhan : RepositoryBase<LopHocPhan>, IRepositoryLopHo
                             (!hocKy.HasValue || ct.HocKy == hocKy) &&
                             !chuongTrinhId.HasValue || _context.LopHocs!.Any(lh =>
                                 lh.NamHoc == khoa!.Value
-                                // && lh.NganhId == nganhId
+                                && lh.NganhId == nganhId
                                 && lhp.MaHocPhan.StartsWith(lh.MaLopHoc + "_"))
                         )
                         .Select(ct => new ChiTietChuongTrinhDaoTao
@@ -183,6 +183,23 @@ public class RepositoryLopHocPhan : RepositoryBase<LopHocPhan>, IRepositoryLopHo
                                 TenChuongTrinh = ct.ChuongTrinhDaoTao.TenChuongTrinh
                             }
                         }).ToList()
+                    :   lhp.MonHoc.DanhSachChiTietChuongTrinhDaoTao!
+                            .Select(ct => new ChiTietChuongTrinhDaoTao
+                            {
+                                Id = ct.Id,
+                                HocKy = ct.HocKy,
+                                SoTinChi = ct.SoTinChi,
+                                DiemTichLuy = ct.DiemTichLuy,
+                                LoaiMonHoc = ct.LoaiMonHoc,
+                                BoMonId = ct.BoMonId,
+                                ChuongTrinhDaoTaoId = ct.ChuongTrinhDaoTaoId,
+                                ChuongTrinhDaoTao = new ChuongTrinhDaoTao
+                                {
+                                    Id = ct.ChuongTrinhDaoTao!.Id,
+                                    MaChuongTrinh = ct.ChuongTrinhDaoTao.MaChuongTrinh,
+                                    TenChuongTrinh = ct.ChuongTrinhDaoTao.TenChuongTrinh
+                                }
+                            }).ToList()
                 }
                 : null
         }).ToList();
