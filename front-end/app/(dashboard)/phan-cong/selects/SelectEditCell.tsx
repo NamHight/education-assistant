@@ -35,6 +35,11 @@ export default function SelectEditCell({ params, giangVienOptions, fetchGiangVie
         fontFamily: 'inherit'
       }}
     >
+      <option value='' disabled>
+        <Typography variant='body2' className='text-gray-500'>
+          Chọn giảng viên
+        </Typography>
+      </option>
       {options.map((item: any) => (
         <option
           key={item.value}

@@ -113,14 +113,25 @@ const Content = ({ queryKey, id, khoas }: ContentProps) => {
     }
     return rowCountRef.current;
   }, [data?.meta?.TotalCount]);
+  const {data: chuongTrinhDaoTao} = useQuery({
+    queryKey: ['chuongtrinhdaotao', id],
+    queryFn: async () => {
+      const result = await ChuongTrinhDaoTaoService.getChuongTrinhDaoTaoById(id as string);
+      return result;
+    },
+    placeholderData: (prev) => prev,
+    refetchOnWindowFocus: false,
+    enabled: !!id,
+  })
   useEffect(() => {
-    if (data?.data?.length > 0) {
+    if (chuongTrinhDaoTao) {
       setNameDaoTao({
-        id: data.data[0]?.chuongTrinhDaoTao?.id || '',
-        name: data.data[0]?.chuongTrinhDaoTao?.tenChuongTrinh || ''
+        id: chuongTrinhDaoTao?.id || '',
+        name: chuongTrinhDaoTao?.tenChuongTrinh || ''
       });
+      setGetId(chuongTrinhDaoTao?.id)
     }
-  }, [data]);
+  }, [chuongTrinhDaoTao]);
   const { data: khoass, isLoading: isLoadingKhoa } = useQuery({
     queryKey: ['khoas'],
     queryFn: async () => {
@@ -146,7 +157,8 @@ const Content = ({ queryKey, id, khoas }: ContentProps) => {
   useEffect(() => {
     if (nameDaoTao) {
       setBreadcrumbs(
-        <Link
+        [
+          <Link
           href={APP_ROUTE.CHUONG_TRINH_DAO_TAO.EDIT(id)}
           className='relative text-[14px] flex gap-1 items-center
     before:absolute before:left-0 before:bottom-0 before:h-[2px] before:bg-blue-500
@@ -161,10 +173,11 @@ const Content = ({ queryKey, id, khoas }: ContentProps) => {
             {nameDaoTao?.name}
           </Typography>
         </Link>
+        ]
       );
       setTitle(`Chi tiết chương trình đào tạo ${nameDaoTao?.name}`);
       return () => {
-        setBreadcrumbs(null);
+        setBreadcrumbs([]);
         setTitle('');
       };
     }
