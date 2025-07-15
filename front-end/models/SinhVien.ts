@@ -30,10 +30,9 @@ export interface SinhVien extends BaseEntity {
 
 export enum TrangThaiSinhVienEnum {
   DANG_HOC = 1,
-  TAM_NGHI = 2,
-  DA_TOT_NGHIEP = 3,
-  BO_HOC = 4,
-  BUOC_THOI_HOC = 5
+  DA_TOT_NGHIEP = 2,
+  BO_HOC = 3,
+  BUOC_THOI_HOC = 4
 }
 export enum TinhTrangHocTapSinhVienEnum {
   YEU = 1,

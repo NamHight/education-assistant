@@ -12,7 +12,6 @@ namespace Education_assistant.Modules.ModuleChiTietChuongTrinhDaoTao
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Policy = "Admin")]
     public class ChiTietChuongTrinhDaoTaoController : ControllerBase
     {
         private readonly IServiceMaster _serviceMaster;
@@ -21,6 +20,7 @@ namespace Education_assistant.Modules.ModuleChiTietChuongTrinhDaoTao
         {
             _serviceMaster = serviceMaster;
         }
+        [Authorize(Policy = "GiangVien")]
         [HttpGet("")]
         public async Task<ActionResult> GetAllChiTietChuongTrinhDaoTaoAsync([FromQuery] ParamChiTietChuongTrinhDaoTaoDto paramChiTietChuongTrinhDaoTaoDto)
         {
@@ -28,12 +28,14 @@ namespace Education_assistant.Modules.ModuleChiTietChuongTrinhDaoTao
             Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(result.page));
             return Ok(result.data);
         }
+        [Authorize(Policy = "GiangVien")]
         [HttpGet("{id}")]
         public async Task<ActionResult> GetChiTietChuongTrinhDaoTaoByIdAsync(Guid id)
         {
             var result = await _serviceMaster.ChiTietChuongTrinhDaoTao.GetChiTietChuongTrinhDaoTaoByIdAsync(id, false);
             return Ok(result);
         }
+        [Authorize(Policy = "Admin")]
         [HttpPost]
         [ServiceFilter(typeof(ValidationFilter))]
         public async Task<ActionResult> AddChiTietChuongTrinhDaoTaoAsync([FromForm] RequestAddChiTietChuongTrinhDaoTaoDto model)
@@ -41,6 +43,7 @@ namespace Education_assistant.Modules.ModuleChiTietChuongTrinhDaoTao
             var result = await _serviceMaster.ChiTietChuongTrinhDaoTao.CreateAsync(model);
             return Ok(result);
         }
+        [Authorize(Policy = "Admin")]
         [HttpPut("{id}")]
         [ServiceFilter(typeof(ValidationFilter))]
         public async Task<ActionResult> UpdateChiTietChuongTrinhDaoTaoAsync(Guid id, [FromForm] RequestUpdateChiTietChuongTrinhDaoTaoDto model)
@@ -48,13 +51,14 @@ namespace Education_assistant.Modules.ModuleChiTietChuongTrinhDaoTao
             await _serviceMaster.ChiTietChuongTrinhDaoTao.UpdateAsync(id, model);
             return NoContent();
         }
+        [Authorize(Policy = "Admin")]
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteChiTietChuongTrinhDaoTaoAsync(Guid id)
         {
             await _serviceMaster.ChiTietChuongTrinhDaoTao.DeleteAsync(id);
             return NoContent();
         }
-
+        [Authorize(Policy = "GiangVien")]
         [HttpGet("ChuongTrinhDaoTao/{id}")]
         public async Task<ActionResult> GetChiTietChuongTrinhDaoTaoByCTDTIdAsync(Guid id, [FromQuery] int? hocKy = null)
         {
@@ -68,6 +72,7 @@ namespace Education_assistant.Modules.ModuleChiTietChuongTrinhDaoTao
             return Ok(result);
 
         }
+        [Authorize(Policy = "GiangVien")]
         [HttpGet("by-subject/{monHocId}")]
         public async Task<ActionResult> GetChiTietChuongTrinhDaoTaoByMonHocIdAsync(Guid monHocId)
         {

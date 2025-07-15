@@ -26,7 +26,7 @@ public class RepositoryDangKyMonHoc : RepositoryBase<DangKyMonHoc>, IRepositoryD
     {
         return await _context.DangKyMonHocs!
                     .AsNoTracking()
-                    .Where(item => item.LopHocPhanId == lopHocPhanid)
+                    .Where(item => item.LopHocPhanId == lopHocPhanid && item.SinhVien != null)
                     .CountAsync();
     }
 

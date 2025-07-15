@@ -204,7 +204,7 @@ public sealed class ServiceGiangVien : IServiceGiangVien
 
         var giangVien = await _repositoryMaster.GiangVien.GetGiangVienByIdAsync(id, true);
         if (giangVien is null) throw new GiangVienNotFoundException(id);
-        if (giangVienUser.TaiKhoan.LoaiTaiKhoan < giangVien.TaiKhoan.LoaiTaiKhoan)
+        if (giangVienUser.TaiKhoan.LoaiTaiKhoan < giangVien.TaiKhoan.LoaiTaiKhoan || giangVienUser.Email == giangVien.Email)
         {
             if (request.File != null && request.File.Length > 0)
             {
