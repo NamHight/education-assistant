@@ -271,7 +271,7 @@ public class RepositoryLopHocPhan : RepositoryBase<LopHocPhan>, IRepositoryLopHo
                     .ThenInclude(n => n!.Khoa)
                     .Include(lhp => lhp.GiangVien)
                     .Where(lhp => lhp.GiangVien != null
-                          && lhp.DanhSachChiTietLopHocPhan!.Any(ct => ct.NgayNopDiem != null && ct.HocKy == hocKy)
+                          && lhp.DanhSachChiTietLopHocPhan!.Any(ct => ct.NgayNopDiem != null)
                           && lhp.MonHoc != null
                           && lhp.MonHoc.DanhSachChiTietChuongTrinhDaoTao!
                               .Any(ct => ct.ChuongTrinhDaoTao != null
