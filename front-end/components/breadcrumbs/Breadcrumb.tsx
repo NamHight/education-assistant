@@ -6,7 +6,6 @@ import Link from 'next/link';
 import { useBreadcrumb } from '@/hooks/context/BreadCrumbContext';
 import { usePathname } from 'next/navigation';
 import { breadcrumbTranslations } from '@/types/general';
-import { DiamondPlus, House } from 'lucide-react';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
 import { AnimatePresence, motion } from 'motion/react';

@@ -1,4 +1,4 @@
-import { DashboardLayout, PageContainer } from '@toolpad/core';
+import { DashboardLayout } from '@toolpad/core';
 import React, { ReactNode } from 'react';
 import ToolBarAccount from '../customs/ToolBarAccount';
 

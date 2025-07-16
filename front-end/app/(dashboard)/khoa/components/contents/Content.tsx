@@ -1,30 +1,18 @@
 'use client';
 
-import ToolTipImage from '@/components/tooltips/ToolTipImage';
-import { Box, MenuItem, Typography } from '@mui/material';
-import { GridActionsCellItem, GridColDef, GridFilterModel } from '@mui/x-data-grid';
-import React, { use, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { motion } from 'motion/react';
-import Image from 'next/image';
+import { Box } from '@mui/material';
+import { GridColDef, GridFilterModel } from '@mui/x-data-grid';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import moment from 'moment';
-import ChipOption from '@/components/chips/ChipOption';
-import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 import Button from '@/components/buttons/Button';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { GiangVienService } from '@/services/GiangVienService';
-import { IParamGiangVien, IParamKhoa, IParamSinhVien } from '@/types/params';
+import { IParamKhoa } from '@/types/params';
 import dynamic from 'next/dynamic';
 import { handleTextSearch } from '@/lib/string';
 import { useRouter } from 'next/navigation';
 import { APP_ROUTE } from '@/types/general';
-import EditIcon from '@mui/icons-material/Edit';
 import { useNotifications } from '@toolpad/core';
-import ClearIcon from '@mui/icons-material/Clear';
-import RestoreIcon from '@mui/icons-material/Restore';
-import { SinhVienService } from '@/services/SinhVienService';
 import Link from 'next/link';
-import { TrangThaiSinhVienEnum } from '@/types/options';
-import { GioiTinhEnum } from '@/models/GiangVien';
 import { KhoaService } from '@/services/KhoaService';
 import { useBreadcrumb } from '@/hooks/context/BreadCrumbContext';
 const Table = dynamic(() => import('@/components/tables/Table'), {

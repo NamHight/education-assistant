@@ -2,8 +2,6 @@
 import React, { ReactNode, useState } from 'react';
 import MessageError from '../texts/MessageError';
 import { Box, IconButton, InputAdornment, TextField, Typography } from '@mui/material';
-import { optional } from 'zod';
-import clsx from 'clsx';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 

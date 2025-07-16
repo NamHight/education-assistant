@@ -4,11 +4,7 @@ import ContentForm from '../../components/form/ContentForm';
 import { useNotifications } from '@toolpad/core';
 import { useRouter } from 'next/navigation';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { AnimatePresence, motion } from 'motion/react';
-import { GiangVienService } from '@/services/GiangVienService';
-import { SinhVienService } from '@/services/SinhVienService';
-import { KhoaService } from '@/services/KhoaService';
-import { MonHocService } from '@/services/MonHocService';
+import { motion } from 'motion/react';
 import { NganhService } from '@/services/NganhService';
 import { useBreadcrumb } from '@/hooks/context/BreadCrumbContext';
 import { Typography } from '@mui/material';
@@ -36,7 +32,8 @@ const Content = ({ initialData, id, anotherData }: IContentProps) => {
     if (data) {
       setTitle(`Chỉnh sửa: ${data?.tenNganh}`);
       setBreadcrumbs(
-        <Typography className='relative text-[14px] flex gap-1 items-center'>
+       [
+         <Typography key={data?.tenNganh} className='relative text-[14px] flex gap-1 items-center'>
           <Typography
             component={'span'}
             sx={(theme) => ({
@@ -47,10 +44,11 @@ const Content = ({ initialData, id, anotherData }: IContentProps) => {
             {data?.tenNganh}
           </Typography>
         </Typography>
+       ]
       );
       return () => {
         setTitle('');
-        setBreadcrumbs(null);
+        setBreadcrumbs([]);
       };
     }
   }, [data, setTitle, setBreadcrumbs]);

@@ -1,14 +1,10 @@
 'use client';
 import React, { FC, memo, useEffect, useMemo } from 'react';
 import {
-  alpha,
   Box,
   Button,
-  Checkbox,
   FormControl,
-  FormControlLabel,
   Grid,
-  TextField,
   Typography
 } from '@mui/material';
 import { Controller, useForm } from 'react-hook-form';
@@ -17,8 +13,6 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { GiangVien } from '@/models/GiangVien';
 import * as yup from 'yup';
 import Input2 from '@/components/inputs/Input2';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { emailPattern } from '@/lib/pattern';
 import CustomEmailInput from '@/components/inputs/InputEmail';
 import InputSelect2 from '@/components/selects/InputSelect2';
 import {

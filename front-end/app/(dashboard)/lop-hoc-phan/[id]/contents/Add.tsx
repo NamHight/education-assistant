@@ -1,6 +1,6 @@
 'use client';
 import { useOpenLHP, useOptionActions } from '@/stores/selectors';
-import { Box, Button, IconButton, Tooltip } from '@mui/material';
+import { Box, IconButton, Tooltip } from '@mui/material';
 import { CirclePlus } from 'lucide-react';
 import React from 'react';
 

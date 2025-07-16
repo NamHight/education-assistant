@@ -1,4 +1,3 @@
-import { Person, Work } from '@mui/icons-material';
 import { type Navigation } from '@toolpad/core/AppProvider';
 import PeopleIcon from '@mui/icons-material/People';
 import ClassIcon from '@mui/icons-material/Class';
@@ -8,19 +7,14 @@ import WorkOutlineIcon from '@mui/icons-material/WorkOutline';
 import SubjectIcon from '@mui/icons-material/Subject';
 import AnchorIcon from '@mui/icons-material/Anchor';
 import HistoryEduIcon from '@mui/icons-material/HistoryEdu';
-import SchoolIcon from '@mui/icons-material/School';
 import HotelClassIcon from '@mui/icons-material/HotelClass';
 import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
 import SquareFootIcon from '@mui/icons-material/SquareFoot';
 import GroupWorkIcon from '@mui/icons-material/GroupWork';
-import AddchartIcon from '@mui/icons-material/Addchart';
 import HouseIcon from '@mui/icons-material/House';
 import ScoreIcon from '@mui/icons-material/Score';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
-import useCheckPermission from '@/helper/useCheckPermission';
 import ChangeCircleOutlinedIcon from '@mui/icons-material/ChangeCircleOutlined';
-import cookieStorage from '@/lib/cookie';
-import { ROLE } from '@/types/general';
 import { LoaiTaiKhoaEnum } from '@/models/TaiKhoan';
 import { SettingsIcon } from 'lucide-react';
 

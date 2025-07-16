@@ -1,4 +1,3 @@
-import { GiangVien } from '@/models/GiangVien';
 import authApi from '@/lib/authAxios';
 import authApiServer from '@/lib/authAxiosServer';
 import { API } from '@/types/general';

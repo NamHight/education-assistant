@@ -1,6 +1,6 @@
 import { GiangVien } from '@/models/GiangVien';
 import authApiServer from './authAxiosServer';
-import { API, ROLE } from '@/types/general';
+import { API } from '@/types/general';
 
 export interface IStoreHydration {
   auth: {

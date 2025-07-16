@@ -1,7 +1,9 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  // ✅ Image optimization
+  eslint: {
+    ignoreDuringBuilds: true, 
+  },
   images: {
     remotePatterns: [
       {
@@ -40,8 +42,15 @@ const nextConfig: NextConfig = {
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;"
   },
 
-  // ✅ External packages cho server components
-  serverExternalPackages: ['@prisma/client', 'bcrypt']
+  serverExternalPackages: ['@prisma/client', 'bcrypt'],
+  output: 'standalone', 
+  telemetry: false,
+  experimental: {
+    optimizeCss: true, // Tối ưu CSS
+  },
+  productionBrowserSourceMaps: false,
+
+  swcMinify: true
 };
 
 export default nextConfig;

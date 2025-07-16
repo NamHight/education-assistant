@@ -1,8 +1,7 @@
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
-import { APP_ROUTE, REFRESH_TOKEN, TOKEN_ACCESS } from './types/general';
+import { APP_ROUTE, REFRESH_TOKEN } from './types/general';
 import { cookies } from 'next/headers';
-import path from 'path';
 
 const routeBlock = ['/', '/giang-vien', '/giang-vien/them-moi'];
 const routeHaveToken = ['/dang-nhap', '/quen-mat-khau'];

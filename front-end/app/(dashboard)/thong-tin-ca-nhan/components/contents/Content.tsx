@@ -1,22 +1,16 @@
 'use client';
 import DatePicke from '@/components/datepickes/DatePicke';
 import Input2 from '@/components/inputs/Input2';
-import CustomEmailInput from '@/components/inputs/InputEmail';
-import InputSelect2 from '@/components/selects/InputSelect2';
 import UploadImage from '@/components/uploads/UploadImage';
-import { Box, Button, FormControl, Grid, Typography } from '@mui/material';
+import { Box, FormControl, Grid, Typography } from '@mui/material';
 import React, { useEffect, useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import SaveIcon from '@mui/icons-material/Save';
 import * as yup from 'yup';
 import { GiangVien } from '@/models/GiangVien';
 import {
   chucVuOptions,
   gioiTinhOptions,
-  IOption,
-  loaiTaiKhoanOptions,
-  TrangThaiGiangVien,
-  trinhDoOptions
+  loaiTaiKhoanOptions
 } from '@/types/options';
 import moment from 'moment';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -25,7 +19,6 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { GiangVienService } from '@/services/GiangVienService';
 import { AuthenticateService } from '@/services/AuthenticateService';
 import TextArea from '@/components/textarea/TextArea';
-import UpdateIcon from '@mui/icons-material/Update';
 import { useNotifications } from '@toolpad/core';
 export interface IFormData {
   HoTen: string;
