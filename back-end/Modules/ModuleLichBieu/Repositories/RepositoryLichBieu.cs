@@ -148,6 +148,11 @@ public class RepositoryLichBieu : RepositoryBase<LichBieu>, IRepositoryLichBieu
             .Include(item => item.LopHocPhan).Include(item => item.PhongHoc).FirstOrDefaultAsync();
     }
 
+    public async Task<LichBieu?> GetLichBieuByTuanIdAndThuAndTietAndPhongAsync(Guid tuanId, int tietBatDau, int TietKetThuc, int thu, Guid phongHocId)
+    {
+        return await FindByCondition(item => item.TuanId == tuanId && item.Thu == thu && item.PhongHocId == phongHocId && item.TietBatDau <= TietKetThuc && item.TietKetThuc >= tietBatDau, false).FirstOrDefaultAsync();
+    }
+
     public void UpdateLichBieu(LichBieu lichBieu)
     {
         Update(lichBieu);

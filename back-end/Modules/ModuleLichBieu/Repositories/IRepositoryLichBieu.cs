@@ -13,6 +13,7 @@ public interface IRepositoryLichBieu
     Task<IEnumerable<LichBieu>> GetAllLichBieuNoPageLopHocAsync(int hocKy, string maLop, Guid chuongTrinhDaoTaoId, Guid tuanId,string? search, string? sortBy, string? sortByOrder,int? namHoc);
     Task<IEnumerable<LichBieu>> GetAllLichBieuByLopHocAndHocKyForCopyLichBieuAsync(int hocKy, string maLop, Guid chuongTrinhDaoTaoId, Guid tuanId, int? namHoc);
     Task<IEnumerable<LichBieu>?> GetCheckLichBieuByLopHocPhanIdAsync(Guid tuanId, List<Guid> lopHocPhanIds);
+    Task<LichBieu?> GetLichBieuByTuanIdAndThuAndTietAndPhongAsync(Guid tuanId, int tietBatDau, int TietKetThuc, int thu, Guid phongHocId);
     Task<LichBieu?> GetLichBieuByIdAsync(Guid id, bool trackChanges);
     Task CreateAsync(LichBieu lichBieu);
     void UpdateLichBieu(LichBieu lichBieu);
