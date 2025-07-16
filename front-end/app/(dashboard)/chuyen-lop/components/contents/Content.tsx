@@ -3,7 +3,7 @@ import React from 'react';
 import InputSelect2 from '@/components/selects/InputSelect2';
 import { LopHocService } from '@/services/LopHocService';
 import { SinhVienService } from '@/services/SinhVienService';
-import { Box, Button, FormControl, InputLabel, MenuItem, Select, Typography } from '@mui/material';
+import { Box, Button, Typography } from '@mui/material';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNotifications } from '@toolpad/core';
 import { SaveIcon } from 'lucide-react';
@@ -12,7 +12,6 @@ import { useEffect, useState } from 'react';
 import CloseIcon from '@mui/icons-material/Close';
 import CheckBoxOutlineBlankOutlinedIcon from '@mui/icons-material/CheckBoxOutlineBlankOutlined';
 import CheckIcon from '@mui/icons-material/Check';
-import { error } from 'console';
 import { useBreadcrumb } from '@/hooks/context/BreadCrumbContext';
 
 interface ContentProps {

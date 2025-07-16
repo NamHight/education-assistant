@@ -1,7 +1,6 @@
-import { useAuthStore } from '@/stores/authStore';
 import React from 'react';
 import ChartPieLopHocPhan from './components/ChartPieLopHocPhan';
-import { Box, Grid } from '@mui/material';
+import { Box } from '@mui/material';
 import { ThongKeService } from '@/services/ThongKeService';
 import ChartPieThiLai from './components/ChartPieTyLeThiLai';
 

@@ -1,12 +1,10 @@
 'use client';
-import React, { Dispatch, forwardRef, RefObject, useEffect, useMemo, useRef, useState } from 'react';
+import React, { Dispatch, forwardRef, useEffect, useState } from 'react';
 import {
   DataGrid,
   GridRowId,
   GridValidRowModel,
   DataGridProps,
-  useGridApiRef,
-  GridActionsCellItem,
   GridColDef,
   gridClasses,
   GridCellModes,
@@ -19,36 +17,24 @@ import {
   QuickFilterClear
 } from '@mui/x-data-grid';
 import Button from '@mui/material/Button';
-import DeleteIcon from '@mui/icons-material/Delete';
-import RestoreIcon from '@mui/icons-material/Restore';
 import LoadingButton from '@mui/lab/LoadingButton';
-import SaveIcon from '@mui/icons-material/Save';
 import { darken } from '@mui/material/styles';
-import { GridApiCommunity } from '@mui/x-data-grid/internals';
 import { motion } from 'motion/react';
-import { Box, Grid, Popover, Typography } from '@mui/material';
-import { HocKyLopHocPhan, IOption, LoaiChuongTrinhDaoTao, LoaiMonHoc, weekOptions, yearOptions } from '@/types/options';
+import { Box, Grid, Typography } from '@mui/material';
+import { HocKyLopHocPhan, IOption, yearOptions } from '@/types/options';
 import { ToolbarButton } from '@mui/x-data-grid';
 import SearchIcon from '@mui/icons-material/Search';
 import clsx from 'clsx';
 import CancelIcon from '@mui/icons-material/Cancel';
 import FilterListIcon from '@mui/icons-material/FilterList';
-import { PopoverLockProvider, usePopoverLock } from '@/hooks/context/PopoverLock';
+import { usePopoverLock } from '@/hooks/context/PopoverLock';
 import InputSelect2 from '@/components/selects/InputSelect2';
-import AddToPhotosIcon from '@mui/icons-material/AddToPhotos';
-import GetAppIcon from '@mui/icons-material/GetApp';
-import ImportExportIcon from '@mui/icons-material/ImportExport';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { ChiTietLopHocPhanService } from '@/services/ChiTietLopHocPhanService';
-import { saveAs } from 'file-saver';
+import { useQueryClient } from '@tanstack/react-query';
 import { useNotifications } from '@toolpad/core';
-import moment from 'moment';
 import { useUser } from '@/stores/selectors';
 import useCheckPermission from '@/helper/useCheckPermission';
-import { fi } from 'zod/v4/locales';
 import { Add } from '@mui/icons-material';
 import { CalendarFold } from 'lucide-react';
-import { LichBieuService } from '@/services/LichBieuService';
 import { useForm } from 'react-hook-form';
 function TextInput(props: React.InputHTMLAttributes<HTMLInputElement>) {
   return (

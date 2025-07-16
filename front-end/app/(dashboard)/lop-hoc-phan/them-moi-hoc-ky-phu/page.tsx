@@ -2,12 +2,8 @@
 import React from 'react';
 import Content from './components/Content';
 import { Box } from '@mui/material';
-import authApiServer from '@/lib/authAxiosServer';
-import { API } from '@/types/general';
 import { MonHocService } from '@/services/MonHocService';
 import { GiangVienService } from '@/services/GiangVienService';
-import { LopHocService } from '@/services/LopHocService';
-import { ChuongTrinhDaoTaoService } from '@/services/ChuongTrinhDaoTaoService';
 
 const page = async () => {
   const monHoc = MonHocService.getAllMonHocServer({

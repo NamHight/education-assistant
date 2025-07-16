@@ -1,53 +1,21 @@
 'use client';
-import React, { FC, memo, useEffect, useMemo, useState } from 'react';
+import React, { FC, memo, useState } from 'react';
 import {
-  alpha,
   Box,
   Button,
-  Checkbox,
   FormControl,
-  FormControlLabel,
   Grid,
   TextField,
   Typography
 } from '@mui/material';
-import { Controller, useForm } from 'react-hook-form';
-import SaveIcon from '@mui/icons-material/Save';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { GiangVien } from '@/models/GiangVien';
-import * as yup from 'yup';
-import Input2 from '@/components/inputs/Input2';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { emailPattern } from '@/lib/pattern';
-import CustomEmailInput from '@/components/inputs/InputEmail';
-import InputSelect2 from '@/components/selects/InputSelect2';
 import {
-  chucVuOptions,
-  gioiTinhOptions,
-  HocKyLopHocPhan,
   IOption,
-  loaiTaiKhoanOptions,
-  TrangThaiGiangVien,
-  TrangThaiLopHocPhan,
-  trinhDoOptions
+  TrangThaiLopHocPhan
 } from '@/types/options';
-import DatePicke from '@/components/datepickes/DatePicke';
-import { KhoaService } from '@/services/KhoaService';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { BoMonService } from '@/services/BoMonService';
-import UploadImage from '@/components/uploads/UploadImage';
-import clsx from 'clsx';
-import moment from 'moment';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { LopHocPhan } from '@/models/LopHocPhan';
-import { MonHocService } from '@/services/MonHocService';
-import { GiangVienService } from '@/services/GiangVienService';
-import { LopHocService } from '@/services/LopHocService';
-import { ChuongTrinhDaoTaoService } from '@/services/ChuongTrinhDaoTaoService';
-import Table from '@/components/tables/Table';
-import { SinhVienService } from '@/services/SinhVienService';
 import { LopHocPhanService } from '@/services/LopHocPhanService';
 import { useNotifications } from '@toolpad/core';
-import useDebounce from '@/hooks/useDebounce';
 
 export interface IFormData {
   siSo?: string;

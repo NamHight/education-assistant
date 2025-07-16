@@ -1,9 +1,7 @@
 import { immer } from 'zustand/middleware/immer';
-import { createAuthSlice, IAuthState } from './slices/authSlice';
 import { createSettingSlice, ISettingState } from './slices/settingSlice';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import { create } from 'zustand';
-import cookieStorage from '@/lib/cookie';
 import localStorage from '@/lib/localStorage';
 import { TOOLPAD_MODE } from '@/types/general';
 import { createOptionSlice, IOptionState } from './slices/optionSlice';

@@ -37,6 +37,7 @@
     "axios": "^1.9.0",
     "axios-auth-refresh": "^3.3.6",
     "clsx": "^2.1.1",
+    "critters": "^0.0.23",
     "dayjs": "^1.11.13",
     "file-saver": "^2.0.5",
     "groq-sdk": "^0.26.0",
@@ -64,7 +65,7 @@
     "zustand": "^5.0.5"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3",
+    "@eslint/eslintrc": "^3.3.1",
     "@tailwindcss/postcss": "^4.1.10",
     "@types/lodash": "^4.17.18",
     "@types/node": "^20",
@@ -72,7 +73,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "autoprefixer": "^10.4.21",
-    "eslint": "^9.30.1",
+    "eslint": "^9.31.0",
     "eslint-config-next": "15.3.2",
     "eslint-config-prettier": "^10.1.5",
     "eslint-plugin-prettier": "^5.4.0",

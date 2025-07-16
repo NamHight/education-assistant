@@ -1,18 +1,8 @@
 'use client';
 
-import ToolTipImage from '@/components/tooltips/ToolTipImage';
 import {
-  alpha,
-  Autocomplete,
   Box,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
   Grid,
-  IconButton,
-  MenuItem,
-  Modal,
   Paper,
   Table,
   TableBody,
@@ -20,64 +10,30 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  TextField,
   Typography
 } from '@mui/material';
-import { GridActionsCellItem, GridColDef, GridFilterModel } from '@mui/x-data-grid';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { motion } from 'motion/react';
-import Image from 'next/image';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import moment from 'moment';
-import ChipOption from '@/components/chips/ChipOption';
-import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 import Button from '@/components/buttons/Button';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { GiangVienService } from '@/services/GiangVienService';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import {
-  IParamBoMon,
-  IParamGiangVien,
-  IParamHocBa,
-  IParamKhoa,
-  IParamNganh,
-  IParamPhongHoc,
-  IParamSinhVien
+  IParamHocBa
 } from '@/types/params';
-import dynamic from 'next/dynamic';
-import { handleTextSearch } from '@/lib/string';
 import { useRouter } from 'next/navigation';
-import { APP_ROUTE } from '@/types/general';
-import EditIcon from '@mui/icons-material/Edit';
 import { useNotifications } from '@toolpad/core';
-import ClearIcon from '@mui/icons-material/Clear';
-import RestoreIcon from '@mui/icons-material/Restore';
-import { SinhVienService } from '@/services/SinhVienService';
-import Link from 'next/link';
 import {
   gioiTinhOptions,
   HocKyLopHocPhan,
-  IOption,
-  TrangThaiLopHocPhanEnum,
-  TrangThaiPhongHocEnum,
-  TrangThaiSinhVienEnum
+  IOption
 } from '@/types/options';
-import { GioiTinhEnum } from '@/models/GiangVien';
-import { KhoaService } from '@/services/KhoaService';
-import { MonHocService } from '@/services/MonHocService';
-import { NganhService } from '@/services/NganhService';
-import { BoMonService } from '@/services/BoMonService';
-import { PhongHocService } from '@/services/PhongHocService';
-import { LoaiPhongHocEnum } from '@/models/PhongHoc';
 import { HocBaService } from '@/services/HocBaService';
-import { HocBa, KetQuaHocBaEnum } from '@/models/HocBa';
-import InputSelect2 from '@/components/selects/InputSelect2';
-import { LopHocPhanService } from '@/services/LopHocPhanService';
+import { HocBa } from '@/models/HocBa';
 import Input2 from '@/components/inputs/Input2';
-import { Controller, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import LoadingButton from '@mui/lab/LoadingButton';
 import { LoaiMonHocEnum } from '@/models/MonHoc';
-import { PrinterIcon, Trash2 } from 'lucide-react';
+import { PrinterIcon } from 'lucide-react';
 import useCheckPermission from '@/helper/useCheckPermission';
-import ModalEdit from '../../../phong-hoc/components/Modals/ModalEdit';
 import { useBreadcrumb } from '@/hooks/context/BreadCrumbContext';
 import { useReactToPrint } from 'react-to-print';
 interface ContentProps {

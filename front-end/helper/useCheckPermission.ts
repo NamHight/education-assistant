@@ -1,6 +1,5 @@
 'use client';
 import { useUser } from '@/stores/selectors';
-import React from 'react';
 
 const enum ROLE {
   ADMIN = 1,

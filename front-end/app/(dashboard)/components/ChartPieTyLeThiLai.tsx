@@ -1,12 +1,11 @@
 'use client';
-import Pie from '@/components/charts/Pie';
 import InputSelect2 from '@/components/selects/InputSelect2';
 import { ThongKeService } from '@/services/ThongKeService';
-import { yearOptions, yearOptionsCurrent } from '@/types/options';
+import { yearOptionsCurrent } from '@/types/options';
 import { Box, Typography } from '@mui/material';
 import { PieChart } from '@mui/x-charts';
 import { useQuery } from '@tanstack/react-query';
-import React, { use, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 
 interface IChartPieThiLai {

@@ -1,58 +1,27 @@
 'use client';
 
-import ToolTipImage from '@/components/tooltips/ToolTipImage';
-import { Box, Grid, MenuItem, Popover, Typography } from '@mui/material';
-import { GridActionsCellItem, GridColDef, GridFilterModel } from '@mui/x-data-grid';
+import { Box, Grid, MenuItem, Typography } from '@mui/material';
+import { GridColDef, GridFilterModel } from '@mui/x-data-grid';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { motion } from 'motion/react';
-import Image from 'next/image';
 import moment from 'moment';
 import ChipOption from '@/components/chips/ChipOption';
-import DeleteIcon from '@mui/icons-material/DeleteOutlined';
-import Button from '@/components/buttons/Button';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { GiangVienService } from '@/services/GiangVienService';
 import {
-  IParamBoMon,
-  IParamGiangVien,
-  IParamKhoa,
-  IParamLopHocPhan,
-  IParamLopHocPhan2,
-  IParamNganh,
-  IParamPhongHoc,
-  IParamSinhVien
+  IParamLopHocPhan
 } from '@/types/params';
 import dynamic from 'next/dynamic';
 import { handleTextSearch } from '@/lib/string';
 import { useRouter } from 'next/navigation';
 import { APP_ROUTE } from '@/types/general';
-import EditIcon from '@mui/icons-material/Edit';
 import { useNotifications } from '@toolpad/core';
-import ClearIcon from '@mui/icons-material/Clear';
-import RestoreIcon from '@mui/icons-material/Restore';
-import { SinhVienService } from '@/services/SinhVienService';
 import Link from 'next/link';
 import {
   HocKyLopHocPhan,
   IOption,
-  LoaiChuongTrinhDaoTao,
-  LoaiLopHocEnum,
-  LoaiPhongHoc,
-  ToaNha,
-  TrangThaiPhongHoc,
-  TrangThaiPhongHocEnum,
-  TrangThaiSinhVienEnum
+  LoaiChuongTrinhDaoTao
 } from '@/types/options';
-import { GioiTinhEnum } from '@/models/GiangVien';
 import { KhoaService } from '@/services/KhoaService';
-import { MonHocService } from '@/services/MonHocService';
-import { NganhService } from '@/services/NganhService';
-import { BoMonService } from '@/services/BoMonService';
-import { PhongHocService } from '@/services/PhongHocService';
-import ChangeCircleOutlinedIcon from '@mui/icons-material/ChangeCircleOutlined';
-import { LoaiPhongHocEnum } from '@/models/PhongHoc';
 import { useBreadcrumb } from '@/hooks/context/BreadCrumbContext';
-import ModalEdit from '@/app/(dashboard)/phong-hoc/components/Modals/ModalEdit';
 import InputSelect2 from '@/components/selects/InputSelect2';
 import { LopHocPhanService } from '@/services/LopHocPhanService';
 import { useForm } from 'react-hook-form';

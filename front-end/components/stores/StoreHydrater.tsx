@@ -1,14 +1,13 @@
 'use client';
-import authApi from '@/lib/authAxios';
 import cookieStorage from '@/lib/cookie';
 import { GiangVien } from '@/models/GiangVien';
 import { AuthenticateService } from '@/services/AuthenticateService';
 import { useAuthStore } from '@/stores/authStore';
 import { useUserActions } from '@/stores/selectors';
 import { useAppStore } from '@/stores/store';
-import { API, REFRESH_TOKEN, ROLE } from '@/types/general';
-import { usePrefetchQuery, useQuery, useQueryClient } from '@tanstack/react-query';
-import React, { useEffect, useState } from 'react';
+import { ROLE } from '@/types/general';
+import { useQuery } from '@tanstack/react-query';
+import { useEffect, useState } from 'react';
 
 interface StoreHydraterProps {
   auth: {

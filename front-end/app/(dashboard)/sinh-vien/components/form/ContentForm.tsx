@@ -1,41 +1,28 @@
 'use client';
 import React, { FC, memo, useEffect, useMemo } from 'react';
 import {
-  alpha,
   Box,
   Button,
-  Checkbox,
   FormControl,
-  FormControlLabel,
   Grid,
-  TextField,
   Typography
 } from '@mui/material';
 import { Controller, useForm } from 'react-hook-form';
 import SaveIcon from '@mui/icons-material/Save';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { GiangVien } from '@/models/GiangVien';
 import * as yup from 'yup';
 import Input2 from '@/components/inputs/Input2';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { emailPattern } from '@/lib/pattern';
 import CustomEmailInput from '@/components/inputs/InputEmail';
 import InputSelect2 from '@/components/selects/InputSelect2';
 import {
-  chucVuOptions,
   gioiTinhOptions,
   IOption,
-  loaiTaiKhoanOptions,
-  TrangThaiGiangVien,
   TrangThaiSinhVien,
   TrangThaiSinhVien2,
-  TrangThaiSinhVienEnum,
-  trinhDoOptions
+  TrangThaiSinhVienEnum
 } from '@/types/options';
 import DatePicke from '@/components/datepickes/DatePicke';
-import { KhoaService } from '@/services/KhoaService';
 import { useQuery } from '@tanstack/react-query';
-import { BoMonService } from '@/services/BoMonService';
 import UploadImage from '@/components/uploads/UploadImage';
 import clsx from 'clsx';
 import moment from 'moment';
@@ -146,7 +133,8 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
   useEffect(() => {
     setTitle(`Chỉnh sửa sinh viên: ${data?.hoTen || ''}`);
     setBreadcrumbs(
-      <Typography className='relative text-[14px] flex gap-1 items-center'>
+     [
+       <Typography key={data?.hoTen} className='relative text-[14px] flex gap-1 items-center'>
         <Typography
           component={'span'}
           sx={(theme) => ({
@@ -157,10 +145,11 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
           {data?.hoTen}
         </Typography>
       </Typography>
+     ]
     );
     return () => {
       setTitle('');
-      setBreadcrumbs(null);
+      setBreadcrumbs([]);
     };
   }, [data?.hoTen]);
   const handleSubmitForm = (formData: IFormData) => {

@@ -13,7 +13,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNotifications } from '@toolpad/core';
 import { TriangleAlert } from 'lucide-react';
 import React, { forwardRef, useEffect, useImperativeHandle, useMemo, useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 interface ModalAddProps {
   open: boolean;

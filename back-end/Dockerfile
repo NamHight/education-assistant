@@ -1,20 +1,23 @@
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
-WORKDIR /app
-EXPOSE 80
-ENV ASPNETCORE_URLS=http://+:80
-
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build                                                                                     Dockerfile                                                                                                 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
-COPY ./back-end/Education-assistant.csproj ./back-end/
-RUN dotnet restore "back-end/Education-assistant.csproj"
-COPY ./back-end/. ./back-end/
-WORKDIR "/src/back-end"
-RUN dotnet build "Education-assistant.csproj" -c Release -o /app/build
+COPY . ./
 
-FROM build AS publish
-RUN dotnet publish "Education-assistant.csproj" -c Release -o /app/publish /p:UseAppHost=false
+ARG PROJECT_NAME=Education-assistant
 
-FROM base AS final
+RUN dotnet restore "$PROJECT_NAME.csproj"
+
+RUN dotnet publish "$PROJECT_NAME.csproj" \
+    -c Release \
+    -o /app/publish \
+    /p:UseAppHost=false
+
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
-COPY --from=publish /app/publish .
-ENTRYPOINT [ "dotnet", "Education-assistant.dll" ]
+ENV ASPNETCORE_ENVIRONMENT=Production
+COPY --from=build /app/publish .
+COPY ./https/aspnetapp.pfx ./aspnetapp.pfx
+COPY ./appsettings.json ./appsettings.json
+ENV ASPNETCORE_URLS=http://+:90
+EXPOSE 90
+EXPOSE 9090
+ENTRYPOINT ["dotnet", "Education-assistant.dll"]

@@ -5,7 +5,7 @@ import ToolTipImage from '@/components/tooltips/ToolTipImage';
 import { handleTextSearch } from '@/lib/string';
 import { TinhTrangHocTapSinhVienEnum, TrangThaiSinhVienEnum } from '@/models/SinhVien';
 import { SinhVienService } from '@/services/SinhVienService';
-import { IParamLopHocPhan, IParamSinhVien } from '@/types/params';
+import { IParamSinhVien } from '@/types/params';
 import { Box, Link, Typography } from '@mui/material';
 import { GridColDef, GridFilterModel } from '@mui/x-data-grid';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -14,7 +14,6 @@ import Image from 'next/image';
 import React, { useMemo, useRef, useState } from 'react';
 import { motion } from 'motion/react';
 import { APP_ROUTE } from '@/types/general';
-import ClearIcon from '@mui/icons-material/Clear';
 import moment from 'moment';
 import dynamic from 'next/dynamic';
 

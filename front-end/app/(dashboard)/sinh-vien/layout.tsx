@@ -1,6 +1,5 @@
 'use server';
 import React from 'react';
-import { DashboardLayout, PageContainer } from '@toolpad/core';
 import { Box } from '@mui/material';
 
 interface LayoutProps {

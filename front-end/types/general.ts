@@ -1,4 +1,3 @@
-import { GET } from '@/app/api/copilotkit/route';
 
 export const TOKEN_ACCESS: string = 'access_token';
 export const REFRESH_TOKEN: string = 'refresh_token';

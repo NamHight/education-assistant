@@ -1,10 +1,8 @@
 'use client';
 import { login } from '@/types/validate/login';
-import { useAnimationFrame } from 'motion/react';
-import React, { use } from 'react';
+import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import MessageError from '@/components/texts/MessageError';
 import Input from '@/components/inputs/Input';
 import { FormControl } from '@mui/material';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -36,6 +34,12 @@ const Content = () => {
     },
     mode: 'onChange'
   });
+  useEffect(() => {
+    const topad = localStorage.getItem('toolpad-mode');
+    if (!topad) {
+      localStorage.setItem('toolpad-mode', 'light');
+    }
+  }, []); 
   const mutation = useMutation({
     mutationFn: async (data: FormData) => {
       const result = await AuthenticateService.login(data);

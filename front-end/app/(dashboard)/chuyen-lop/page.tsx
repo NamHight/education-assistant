@@ -1,7 +1,6 @@
 'use server';
 import { Box } from '@mui/material';
 import React from 'react';
-import { clsx as cn } from 'clsx';
 import Content from './components/contents/Content';
 import { LopHocService } from '@/services/LopHocService';
 export default async function Page() {

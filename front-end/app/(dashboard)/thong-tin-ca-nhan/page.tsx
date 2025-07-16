@@ -1,5 +1,5 @@
 import { Box } from '@mui/material';
-import React, { Fragment } from 'react';
+import React from 'react';
 import Content from './components/contents/Content';
 import ChangePassword from './components/contents/ChangePassword';
 const Page = () => {

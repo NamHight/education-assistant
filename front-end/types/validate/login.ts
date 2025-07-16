@@ -1,4 +1,3 @@
-import { DashboardLayout } from '@toolpad/core';
 import { z } from 'zod';
 
 export const login = z.object({

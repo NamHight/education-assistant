@@ -1,64 +1,33 @@
 'use client';
-import React, { FC, forwardRef, memo, useEffect, useImperativeHandle, useMemo, useState } from 'react';
+import React, { forwardRef, memo, useEffect, useImperativeHandle, useMemo, useState } from 'react';
 import {
-  alpha,
   Box,
   Button,
   Checkbox,
-  Divider,
   FormControl,
   FormControlLabel,
   Grid,
-  TextField,
   Typography
 } from '@mui/material';
 import { Controller, useForm } from 'react-hook-form';
 import SaveIcon from '@mui/icons-material/Save';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { GiangVien } from '@/models/GiangVien';
 import * as yup from 'yup';
 import Input2 from '@/components/inputs/Input2';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { emailPattern } from '@/lib/pattern';
-import CustomEmailInput from '@/components/inputs/InputEmail';
 import InputSelect2 from '@/components/selects/InputSelect2';
 import {
-  chucVuOptions,
-  gioiTinhOptions,
   HocKyLopHocPhan,
   IOption,
-  LoaiChuongTrinhDaoTao,
-  LoaiMonHoc,
-  LoaiPhongHoc,
-  loaiTaiKhoanOptions,
-  TrangThaiGiangVien,
-  TrangThaiPhongHoc,
-  TrangThaiSinhVien,
-  trinhDoOptions,
-  yearOptions
+  LoaiMonHoc
 } from '@/types/options';
-import DatePicke from '@/components/datepickes/DatePicke';
 import { KhoaService } from '@/services/KhoaService';
 import { useQuery } from '@tanstack/react-query';
 import { BoMonService } from '@/services/BoMonService';
-import UploadImage from '@/components/uploads/UploadImage';
-import clsx from 'clsx';
-import moment from 'moment';
-import { SinhVien } from '@/models/SinhVien';
-import { LopHocService } from '@/services/LopHocService';
-import { Khoa } from '@/models/Khoa';
-import { MonHoc } from '@/models/MonHoc';
-import TextArea from '@/components/textarea/TextArea';
-import { Nganh } from '@/models/Nganh';
-import { BoMon } from '@/models/BoMon';
-import { PhongHoc } from '@/models/PhongHoc';
 import { ChiTietChuongTrinhDaoTao } from '@/models/ChiTietChuongTrinhDaoTao';
-import { ChuongTrinhDaoTao } from '@/models/ChuongTrinhDaoTao';
-import { NganhService } from '@/services/NganhService';
 import { MonHocService } from '@/services/MonHocService';
 import { ChuongTrinhDaoTaoService } from '@/services/ChuongTrinhDaoTaoService';
 import { TriangleAlert } from 'lucide-react';
-import ListMonHoc from '../../them-moi/components/ListMonHoc';
+
 
 export interface IFormData {
   MonHoc: IOption;

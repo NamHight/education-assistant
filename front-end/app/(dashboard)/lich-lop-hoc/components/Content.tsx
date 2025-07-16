@@ -1,14 +1,7 @@
 'use client';
 import { handleTextSearch } from '@/lib/string';
-import { LopHocPhanService } from '@/services/LopHocPhanService';
 import {
-  IParamBoMon,
-  IParamChiTietLopHocPhan,
-  IParamChuongTrinhDaoTao,
-  IParamGiangVien,
   IParamLichBieu,
-  IParamLopHocPhan,
-  IParamLopHocPhan2,
   IParamTuan
 } from '@/types/params';
 import {
@@ -18,40 +11,23 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  MenuItem,
-  Select,
   Typography
 } from '@mui/material';
 import { GridActionsCellItem, GridColDef, GridFilterModel, useGridApiRef } from '@mui/x-data-grid';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-import React, { Fragment, memo, ReactNode, use, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { memo, useEffect, useMemo, useRef, useState } from 'react';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import { GiangVienService } from '@/services/GiangVienService';
-import SelectEditCell from '../selects/SelectEditCell';
 import dynamic from 'next/dynamic';
-import { ChuongTrinhDaoTaoService } from '@/services/ChuongTrinhDaoTaoService';
 import { LoaiMonHocEnum } from '@/models/MonHoc';
 import moment from 'moment';
 import { useNotifications } from '@toolpad/core';
-import { IOption, LoaiLopHocPhan, TrangThaiLopHocPhanEnum } from '@/types/options';
-import InputSelect2 from '@/components/selects/InputSelect2';
-import { usePopoverLock } from '@/hooks/context/PopoverLock';
-import { set, sortBy } from 'lodash';
-import { ChiTietLopHocPhanService } from '@/services/ChiTietLopHocPhanService';
 import { useUser } from '@/stores/selectors';
-import Link from 'next/link';
-import { APP_ROUTE } from '@/types/general';
-import WarningAmberIcon from '@mui/icons-material/WarningAmber';
-import { fi } from 'zod/v4/locales';
-import { ChiTietLopHocPhan } from '@/models/ChiTietLopHocPhan';
-import { HocBaService } from '@/services/HocBaService';
 import { LichBieuService } from '@/services/LichBieuService';
-import { BoMonService } from '@/services/BoMonService';
 import { TuanService } from '@/services/TuanService';
 import ModalAdd from './ModalAdd';
 import { LopHocService } from '@/services/LopHocService';
-import { Delete, Edit, Trash2 } from 'lucide-react';
+import { Edit, Trash2 } from 'lucide-react';
 import { motion } from 'motion/react';
 import ModalEdit from './ModalEdit';
 import { useBreadcrumb } from '@/hooks/context/BreadCrumbContext';

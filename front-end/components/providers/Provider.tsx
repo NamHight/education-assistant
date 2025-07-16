@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useEffect } from 'react';
 import moment from 'moment-timezone';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { isServer, QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -7,7 +7,6 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { NotificationsProvider } from '@toolpad/core';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import 'moment/locale/vi';
-import { PopoverLockProvider } from '@/hooks/context/PopoverLock';
 interface ProviderProps {
   children?: React.ReactNode;
 }

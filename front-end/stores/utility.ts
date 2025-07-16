@@ -1,4 +1,4 @@
-import { StateCreator, StoreApi, useStore } from 'zustand';
+import { StateCreator } from 'zustand';
 import { PersistOptions } from 'zustand/middleware';
 
 type WithSelectors<S> = S extends { getState: () => infer T } ? S & { use: { [K in keyof T]: () => T[K] } } : never;

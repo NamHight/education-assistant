@@ -1,6 +1,6 @@
 'use client';
 import React, { useEffect } from 'react';
-import { Avatar, Box, CircularProgress, MenuItem, Popover, Stack, Tooltip, Typography } from '@mui/material';
+import { Avatar, Box, MenuItem, Popover, Stack, Tooltip, Typography } from '@mui/material';
 import PersonIcon from '@mui/icons-material/Person';
 import LogoutIcon from '@mui/icons-material/Logout';
 

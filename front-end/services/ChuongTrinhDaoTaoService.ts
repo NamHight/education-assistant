@@ -2,7 +2,6 @@ import authApi from '@/lib/authAxios';
 import authApiServer from '@/lib/authAxiosServer';
 import { API } from '@/types/general';
 import { IParamChuongTrinhDaoTao } from '@/types/params';
-import { ca } from 'zod/v4/locales';
 
 export class ChuongTrinhDaoTaoService {
   static async getAllChuongTrinhDaoTao(params?: IParamChuongTrinhDaoTao) {
