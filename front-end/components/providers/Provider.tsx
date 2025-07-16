@@ -33,9 +33,6 @@ function getQueryClient() {
 }
 const Provider = ({ children }: ProviderProps) => {
   const queryClient = getQueryClient();
-  useEffect(() => {
-    localStorage.setItem('toolpad-mode', 'light');
-  },[])
   return (
     <QueryClientProvider client={queryClient}>
       <LocalizationProvider dateAdapter={AdapterMoment} adapterLocale='vi' dateLibInstance={moment}>

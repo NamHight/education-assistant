@@ -1,6 +1,6 @@
 'use client';
 import { login } from '@/types/validate/login';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Input from '@/components/inputs/Input';
@@ -34,6 +34,12 @@ const Content = () => {
     },
     mode: 'onChange'
   });
+  useEffect(() => {
+    const topad = localStorage.getItem('toolpad-mode');
+    if (!topad) {
+      localStorage.setItem('toolpad-mode', 'light');
+    }
+  }, []); 
   const mutation = useMutation({
     mutationFn: async (data: FormData) => {
       const result = await AuthenticateService.login(data);
