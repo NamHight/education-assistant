@@ -1,10 +1,10 @@
-﻿using Education_assistant.Mappers;
-using Newtonsoft.Json;
-using Microsoft.AspNetCore.Mvc;
+﻿using System.Text;
+using Education_assistant.Mappers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using Education_assistant.Models.Enums;
+using Microsoft.OpenApi.Models;
+using Newtonsoft.Json;
 
 namespace Education_assistant.Extensions;
 
@@ -15,7 +15,7 @@ namespace Education_assistant.Extensions;
 //   + websocket
 public static class PresentationExtensions
 {
-    public static IServiceCollection AddPresentation(this IServiceCollection services,IConfiguration configuration)
+    public static IServiceCollection AddPresentation(this IServiceCollection services, IConfiguration configuration)
     {
         var assembly = typeof(PresentationExtensions).Assembly;
         var jwtSettings = configuration.GetSection("Jwt");
@@ -28,7 +28,7 @@ public static class PresentationExtensions
         services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme; 
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             })
             .AddJwtBearer("CustomJWT", options =>
             {
@@ -40,7 +40,7 @@ public static class PresentationExtensions
                     ValidateIssuerSigningKey = true,
                     ValidIssuer = jwtSettings["Issuer"],
                     ValidAudience = jwtSettings["Audience"],
-                    ClockSkew= TimeSpan.Zero,
+                    ClockSkew = TimeSpan.Zero,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["SecretKey"]!))
                 };
                 options.Events = new JwtBearerEvents
@@ -66,15 +66,44 @@ public static class PresentationExtensions
             {
                 policy.AddAuthenticationSchemes("CustomJWT");
                 policy.RequireAuthenticatedUser();
-                policy.RequireRole("1","2");
+                policy.RequireRole("1", "2");
             });
             options.AddPolicy("GiangVien", policy =>
             {
                 policy.AddAuthenticationSchemes("CustomJWT");
                 policy.RequireAuthenticatedUser();
-                policy.RequireRole("1","2","3");
+                policy.RequireRole("1", "2", "3");
             });
         });
+
+        services.AddSwaggerGen(c =>
+        {
+            c.SwaggerDoc("v1", new OpenApiInfo { Title = "Education assistant", Version = "v1" });
+            // Thêm phần JWT Bearer Authorization
+            c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+            {
+                In = ParameterLocation.Header,
+                Description = "Nhập JWT token vào đây:",
+                Name = "Authorization",
+                Type = SecuritySchemeType.ApiKey,
+                Scheme = "Bearer"
+            });
+            c.AddSecurityRequirement(new OpenApiSecurityRequirement
+            {
+                {
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference
+                        {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = "Bearer"
+                        }
+                    },
+                    new string[] { }
+                }
+            });
+        });
+
         services.AddAutoMapper(typeof(MapperProfile).Assembly);
         services.Configure<ApiBehaviorOptions>(options => { options.SuppressModelStateInvalidFilter = true; });
         return services;
