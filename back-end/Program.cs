@@ -35,7 +35,12 @@ app.ConfigureExceptionHandler(logger);
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Education Assistant API V1");
+        c.RoutePrefix = string.Empty;
+        c.DocumentTitle = "Education Assistant API Documentation";
+    });
     // app.UseDeveloperExceptionPage();
 }
 else
