@@ -196,7 +196,7 @@ public class ServicePhongHoc : IServicePhongHoc
                 "Danh sách phong học đã tạo trước đó rồi, hãy tạo danh sách phòng khác");
         await _repositoryMaster.ExecuteInTransactionBulkEntityAsync(async () =>
         {
-            await _repositoryMaster.BulkAddEntityAsync(danhSachPhongMoi);
+            await _repositoryMaster.BulkAddEntityAsync<PhongHoc>(danhSachPhongMoi);
         });
         _loggerService.LogInfo("Thêm thành công list phòng học");
         return new ResponsePhongHocAutoDto

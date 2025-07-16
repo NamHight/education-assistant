@@ -89,6 +89,10 @@ namespace Education_assistant.Modules.ModuleLichBieu.Services
         {
             try
             {
+                var lichBieuExisting = await _repositoryMaster.LichBieu.GetLichBieuByTuanIdAndThuAndTietAndPhongAsync(request.TuanId.Value, request.TietBatDau, request.TietKetThuc, request.Thu, request.PhongHocId);
+                if (lichBieuExisting is not null) {
+                    throw new LichBieuBadRequestException("Phòng học vào tuần thứ tiết đã có lớp học rồi, hãy tạo thời gian khác");
+                }
                 var newLichBieu = _mapper.Map<LichBieu>(request);
                 await _repositoryMaster.ExecuteInTransactionAsync(async () =>
                 {

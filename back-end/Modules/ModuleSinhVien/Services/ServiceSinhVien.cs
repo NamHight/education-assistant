@@ -483,7 +483,14 @@ public class ServiceSinhVien : IServiceSinhVien
     {
         var lopHoc = await _repositoryMaster.LopHoc.GetLopHocByIdAsync(request.LopHocId, false);
         if (lopHoc is null) throw new LopHocNotFoundException(request.LopHocId);
-        var sinhViens = await _repositoryMaster.SinhVien.GetAllSinhVienByIds(request.SinhVienIds, false);
+
+        var sinhVienIdKiemTraLop = request.SinhVienIds.FirstOrDefault();
+        var sinhVienKiemTraCapLop = await _repositoryMaster.SinhVien.GetSinhVienByIdAsync(sinhVienIdKiemTraLop, false);
+        if (sinhVienKiemTraCapLop?.LopHoc?.NamHoc > lopHoc.NamHoc)
+        {
+            throw new LopHocBadRequestException($"Chuyển sinh viên sang lớp khác không được chuyển lên lớp khóa trước");
+        }
+            var sinhViens = await _repositoryMaster.SinhVien.GetAllSinhVienByIds(request.SinhVienIds, false);
         if (!sinhViens.Any()) throw new GenericNotFoundException("Danh sách sinh viên trong tìm thấy, thử lại.");
         var sinhVienIds = sinhViens.Select(item => item.Id).ToList();
         var chuongTrinhDaoTao =

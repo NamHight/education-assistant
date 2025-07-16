@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Education_assistant.Migrations
 {
     /// <inheritdoc />
-    public partial class v1 : Migration
+    public partial class InitilDb : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -80,6 +80,9 @@ namespace Education_assistant.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     resetpasswordexpires = table.Column<DateTime>(name: "reset-password-expires", type: "datetime(6)", nullable: true),
                     trang_thai = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    otpcode = table.Column<string>(name: "otp-code", type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    otpexpires = table.Column<DateTime>(name: "otp-expires", type: "datetime(6)", nullable: true),
                     loai_tai_khoan = table.Column<int>(type: "int", nullable: true),
                     created_at = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     updated_at = table.Column<DateTime>(type: "datetime(6)", nullable: true),
@@ -88,25 +91,6 @@ namespace Education_assistant.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_tai_khoan", x => x.id);
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateTable(
-                name: "truong",
-                columns: table => new
-                {
-                    id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    key = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    value = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    created_at = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    updated_at = table.Column<DateTime>(type: "datetime(6)", nullable: true),
-                    deleted_at = table.Column<DateTime>(type: "datetime(6)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_truong", x => x.id);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -134,6 +118,8 @@ namespace Education_assistant.Migrations
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    ma_bo_mon = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     ten_bo_mon = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     email = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
@@ -194,6 +180,7 @@ namespace Education_assistant.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     mo_ta = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
+                    nganh_cha_id = table.Column<Guid>(type: "char(36)", nullable: true, collation: "ascii_general_ci"),
                     khoa_id = table.Column<Guid>(type: "char(36)", nullable: true, collation: "ascii_general_ci"),
                     created_at = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     updated_at = table.Column<DateTime>(type: "datetime(6)", nullable: true),
@@ -206,6 +193,11 @@ namespace Education_assistant.Migrations
                         name: "FK_nganh_khoa_khoa_id",
                         column: x => x.khoa_id,
                         principalTable: "khoa",
+                        principalColumn: "id");
+                    table.ForeignKey(
+                        name: "FK_nganh_nganh_nganh_cha_id",
+                        column: x => x.nganh_cha_id,
+                        principalTable: "nganh",
                         principalColumn: "id");
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
@@ -274,9 +266,7 @@ namespace Education_assistant.Migrations
                     ten_chuong_trinh = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     loai_chuong_trinh_dao_tao = table.Column<int>(type: "int", nullable: true),
-                    thoi_gian_dao_tao = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    hoc_phi = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    thoi_gian_dao_tao = table.Column<int>(type: "int", nullable: false),
                     mo_ta = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     tong_so_tin_chi = table.Column<int>(type: "int", nullable: false),
@@ -337,6 +327,7 @@ namespace Education_assistant.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     si_so = table.Column<int>(type: "int", nullable: false),
                     trang_thai = table.Column<int>(type: "int", nullable: true),
+                    loai_lop = table.Column<int>(type: "int", nullable: true),
                     mon_hoc_id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
                     giang_vien_id = table.Column<Guid>(type: "char(36)", nullable: true, collation: "ascii_general_ci"),
                     created_at = table.Column<DateTime>(type: "datetime(6)", nullable: false),
@@ -402,7 +393,8 @@ namespace Education_assistant.Migrations
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    mssv = table.Column<int>(type: "int", nullable: false),
+                    mssv = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     cccd = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     anh_dai_dien = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
@@ -419,8 +411,8 @@ namespace Education_assistant.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     trang_thai_sinh_vien = table.Column<int>(type: "int", nullable: true),
                     tinh_trang_hoc_tap = table.Column<int>(type: "int", nullable: true),
-                    ngay_tot_nghiep = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    ngay_nhap_hoc = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    ngay_tot_nghiep = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    ngay_nhap_hoc = table.Column<DateTime>(type: "datetime(6)", nullable: true),
                     lop_hoc_id = table.Column<Guid>(type: "char(36)", nullable: true, collation: "ascii_general_ci"),
                     created_at = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     updated_at = table.Column<DateTime>(type: "datetime(6)", nullable: true),
@@ -561,10 +553,9 @@ namespace Education_assistant.Migrations
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    diem_tong_ket = table.Column<decimal>(type: "decimal(4,2)", precision: 4, scale: 2, nullable: false),
+                    diem_tong_ket = table.Column<decimal>(type: "decimal(4,2)", precision: 4, scale: 2, nullable: true),
                     mo_ta = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    lan_hoc = table.Column<int>(type: "int", nullable: false),
                     ket_qua = table.Column<int>(type: "int", nullable: true),
                     sinh_vien_id = table.Column<Guid>(type: "char(36)", nullable: true, collation: "ascii_general_ci"),
                     lop_hoc_phan_id = table.Column<Guid>(type: "char(36)", nullable: true, collation: "ascii_general_ci"),
@@ -753,6 +744,11 @@ namespace Education_assistant.Migrations
                 column: "khoa_id");
 
             migrationBuilder.CreateIndex(
+                name: "IX_nganh_nganh_cha_id",
+                table: "nganh",
+                column: "nganh_cha_id");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_sinh_vien_lop_hoc_id",
                 table: "sinh_vien",
                 column: "lop_hoc_id");
@@ -766,79 +762,6 @@ namespace Education_assistant.Migrations
                 name: "IX_sinh_vien_chuong_trinh_dao_tao_sinh_vien_id",
                 table: "sinh_vien_chuong_trinh_dao_tao",
                 column: "sinh_vien_id");
-                migrationBuilder.Sql(@"
-                    DROP PROCEDURE IF EXISTS sp_taoChiTietLopHocPhanVaHocBa;
-
-                    CREATE PROCEDURE sp_taoChiTietLopHocPhanVaHocBa(
-                        IN maLop CHAR(36),
-                        IN maLhp CHAR(36),
-                        IN maGiangVien CHAR(36),
-                        IN maMonHoc CHAR(36),
-                        IN maChiTietCTDT CHAR(36),
-                        IN hocKy INT
-                    )
-                    BEGIN 
-
-                        INSERT INTO chi_tiet_lop_hoc_phan(
-                            id,
-                            sinh_vien_id,
-                            mon_hoc_id,
-                            giang_vien_id,
-                            lop_hoc_phan_id,
-                            hoc_ky,
-                            created_at
-                        )
-                        SELECT UUID(), s.id, maMonHoc, maGiangVien, maLhp, hocKy, NOW()
-                        FROM sinh_vien s
-                        WHERE s.lop_hoc_id = maLop
-                        AND NOT EXISTS (
-                            SELECT 1
-                            FROM chi_tiet_lop_hoc_phan ct
-                            WHERE ct.sinh_vien_id = s.id
-                                AND ct.lop_hoc_phan_id = maLhp
-                                AND ct.mon_hoc_id = maMonHoc
-                                AND ct.hoc_ky = hocKy
-                        );
-
-                        INSERT INTO hoc_ba(
-                            id,
-                            sinh_vien_id,
-                            lop_hoc_phan_id,
-                            chi_tiet_chuong_trinh_dao_tao_id,
-                            diem_tong_ket,
-                            lan_hoc,
-                            ket_qua,
-                            created_at
-                        )
-                        SELECT UUID(), s.id, maLhp, maChiTietCTDT, 0, 0, 2, NOW()
-                        FROM sinh_vien s
-                        WHERE s.lop_hoc_id = maLop
-                        AND NOT EXISTS (
-                            SELECT 1
-                            FROM hoc_ba hb
-                            WHERE hb.sinh_vien_id = s.id
-                                AND hb.lop_hoc_phan_id = maLhp
-                                AND hb.chi_tiet_chuong_trinh_dao_tao_id = maChiTietCTDT
-                        );
-
-                    END;
-                ");
-                 migrationBuilder.Sql(@"
-                    DROP PROCEDURE IF EXISTS sp_updateChiTietLopHocPhan;
-
-                    CREATE PROCEDURE sp_updateChiTietLopHocPhan(
-                        IN maLhp CHAR(36),
-                        IN maGiangVien CHAR(36),
-                        IN maMonHoc CHAR(36)
-                    )
-                    BEGIN 
-                        UPDATE chi_tiet_lop_hoc_phan
-                        SET giang_vien_id = maGiangVien,
-                            updated_at = NOW()
-                        WHERE lop_hoc_phan_id = maLhp
-                        AND mon_hoc_id = maMonHoc;
-                    END;
-                ");
         }
 
         /// <inheritdoc />
@@ -858,9 +781,6 @@ namespace Education_assistant.Migrations
 
             migrationBuilder.DropTable(
                 name: "sinh_vien_chuong_trinh_dao_tao");
-
-            migrationBuilder.DropTable(
-                name: "truong");
 
             migrationBuilder.DropTable(
                 name: "chi_tiet_chuong_trinh_dao_tao");
