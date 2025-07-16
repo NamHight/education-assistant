@@ -4,14 +4,7 @@ import ContentForm from '../../components/form/ContentForm';
 import { useNotifications } from '@toolpad/core';
 import { useRouter } from 'next/navigation';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { AnimatePresence, motion } from 'motion/react';
-import { GiangVienService } from '@/services/GiangVienService';
-import { SinhVienService } from '@/services/SinhVienService';
-import { KhoaService } from '@/services/KhoaService';
-import { MonHocService } from '@/services/MonHocService';
-import { NganhService } from '@/services/NganhService';
-import { BoMonService } from '@/services/BoMonService';
-import { PhongHocService } from '@/services/PhongHocService';
+import { motion } from 'motion/react';
 import { ChuongTrinhDaoTaoService } from '@/services/ChuongTrinhDaoTaoService';
 interface IContentProps {
   initialData: any;

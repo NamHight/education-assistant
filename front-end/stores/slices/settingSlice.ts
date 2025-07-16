@@ -1,5 +1,5 @@
 import { RootState } from '../store';
-import { createPersistedSlice, createSlice } from '../utility';
+import { createSlice } from '../utility';
 
 export interface ISettingState {
   theme: 'light' | 'dark';

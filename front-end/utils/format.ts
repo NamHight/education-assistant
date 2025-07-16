@@ -1,4 +1,3 @@
-import { replace } from 'lodash';
 import numeral from 'numeral';
 
 export const formatFileSize = (bytes: number): string => {

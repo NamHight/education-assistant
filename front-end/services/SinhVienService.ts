@@ -2,7 +2,6 @@ import authApi from '@/lib/authAxios';
 import authApiServer from '@/lib/authAxiosServer';
 import { API } from '@/types/general';
 import { IParamSinhVien } from '@/types/params';
-import { error } from 'console';
 
 export class SinhVienService {
   static async getAllSinhVien(params: IParamSinhVien) {

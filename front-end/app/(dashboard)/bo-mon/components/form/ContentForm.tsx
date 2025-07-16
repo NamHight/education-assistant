@@ -1,48 +1,24 @@
 'use client';
 import React, { FC, memo, useEffect, useMemo } from 'react';
 import {
-  alpha,
   Box,
   Button,
-  Checkbox,
   FormControl,
-  FormControlLabel,
   Grid,
-  TextField,
   Typography
 } from '@mui/material';
-import { Controller, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import SaveIcon from '@mui/icons-material/Save';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { GiangVien } from '@/models/GiangVien';
 import * as yup from 'yup';
 import Input2 from '@/components/inputs/Input2';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { emailPattern } from '@/lib/pattern';
-import CustomEmailInput from '@/components/inputs/InputEmail';
 import InputSelect2 from '@/components/selects/InputSelect2';
 import {
-  chucVuOptions,
-  gioiTinhOptions,
-  IOption,
-  loaiTaiKhoanOptions,
-  TrangThaiGiangVien,
-  TrangThaiSinhVien,
-  trinhDoOptions
+  IOption
 } from '@/types/options';
-import DatePicke from '@/components/datepickes/DatePicke';
 import { KhoaService } from '@/services/KhoaService';
 import { useQuery } from '@tanstack/react-query';
-import { BoMonService } from '@/services/BoMonService';
-import UploadImage from '@/components/uploads/UploadImage';
-import clsx from 'clsx';
-import moment from 'moment';
-import { SinhVien } from '@/models/SinhVien';
-import { LopHocService } from '@/services/LopHocService';
-import { Khoa } from '@/models/Khoa';
-import { MonHoc } from '@/models/MonHoc';
-import TextArea from '@/components/textarea/TextArea';
-import { Nganh } from '@/models/Nganh';
 import { BoMon } from '@/models/BoMon';
 
 export interface IFormData {

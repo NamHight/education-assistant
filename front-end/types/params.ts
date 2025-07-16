@@ -1,5 +1,3 @@
-import { GiangVien } from './../models/GiangVien';
-import { giangVien } from './validate/login';
 interface IBaseParams {
   page?: number;
   limit?: number;

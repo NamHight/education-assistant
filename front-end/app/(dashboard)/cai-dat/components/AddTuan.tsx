@@ -1,6 +1,5 @@
 'use client';
 import DatePicke from '@/components/datepickes/DatePicke';
-import Input2 from '@/components/inputs/Input2';
 import InputSelect2 from '@/components/selects/InputSelect2';
 import { TuanService } from '@/services/TuanService';
 import { IOption, yearOptions } from '@/types/options';

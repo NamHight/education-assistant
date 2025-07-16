@@ -1,18 +1,12 @@
 import Input2 from '@/components/inputs/Input2';
 import InputSelect2 from '@/components/selects/InputSelect2';
-import { HocBa } from '@/models/HocBa';
-import { TrangThaiLopHocPhanEnum } from '@/models/LopHocPhan';
-import { ChitietChuongTrinhDaoTaoService } from '@/services/ChitietChuongTrinhDaoTaoService';
-import { LopHocPhanService } from '@/services/LopHocPhanService';
-import { IOption, KetQuaHocBa, LoaiPhongHoc, ToaNha, TrangThaiPhongHoc } from '@/types/options';
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, Typography } from '@mui/material';
+import { IOption, LoaiPhongHoc, TrangThaiPhongHoc } from '@/types/options';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, Typography } from '@mui/material';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import * as yup from 'yup';
 import React, { useEffect, useMemo } from 'react';
-import { SinhVienService } from '@/services/SinhVienService';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
-import { HocBaService } from '@/services/HocBaService';
 import { useNotifications } from '@toolpad/core';
 import { PhongHocService } from '@/services/PhongHocService';
 

@@ -1,12 +1,10 @@
 'use client';
-import React, { Dispatch, forwardRef, RefObject, useEffect, useMemo, useState } from 'react';
+import React, { Dispatch, forwardRef, useState } from 'react';
 import {
   DataGrid,
   GridRowId,
   GridValidRowModel,
   DataGridProps,
-  useGridApiRef,
-  GridActionsCellItem,
   GridColDef,
   gridClasses,
   GridCellModes,
@@ -19,21 +17,18 @@ import {
   QuickFilterClear
 } from '@mui/x-data-grid';
 import Button from '@mui/material/Button';
-import DeleteIcon from '@mui/icons-material/Delete';
-import RestoreIcon from '@mui/icons-material/Restore';
 import LoadingButton from '@mui/lab/LoadingButton';
 import SaveIcon from '@mui/icons-material/Save';
 import { darken } from '@mui/material/styles';
-import { GridApiCommunity } from '@mui/x-data-grid/internals';
 import { motion } from 'motion/react';
-import { Box, Popover, Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { HocKyLopHocPhan, LoaiChuongTrinhDaoTao, LoaiMonHoc, yearOptions } from '@/types/options';
 import { ToolbarButton } from '@mui/x-data-grid';
 import SearchIcon from '@mui/icons-material/Search';
 import clsx from 'clsx';
 import CancelIcon from '@mui/icons-material/Cancel';
 import FilterListIcon from '@mui/icons-material/FilterList';
-import { PopoverLockProvider, usePopoverLock } from '@/hooks/context/PopoverLock';
+import { usePopoverLock } from '@/hooks/context/PopoverLock';
 import InputSelect2 from '@/components/selects/InputSelect2';
 import AddToPhotosIcon from '@mui/icons-material/AddToPhotos';
 import GetAppIcon from '@mui/icons-material/GetApp';
@@ -46,7 +41,6 @@ import moment from 'moment';
 import { UseFormSetValue } from 'react-hook-form';
 import { IFilter } from './Content';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
-import useCheckPermission from '@/helper/useCheckPermission';
 function TextInput(props: React.InputHTMLAttributes<HTMLInputElement>) {
   return (
     <input
@@ -268,7 +262,7 @@ interface ITableEditProps {
   isMutateNopDiemPending?: boolean;
 }
 
-const TableEdit = forwardRef(
+const TableEdit = forwardRef(function TableEditRef
   (
     {
       columns,
@@ -295,7 +289,7 @@ const TableEdit = forwardRef(
       isMutateNopDiemPending
     }: ITableEditProps,
     ref
-  ) => {
+  ) {
     const [file, setFile] = useState<File | null>(null);
     const [cellModesModel, setCellModesModel] = React.useState<GridCellModesModel>({});
     const notification = useNotifications();

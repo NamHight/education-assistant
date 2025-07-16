@@ -1,12 +1,9 @@
-import { TaiKhoan } from './../models/TaiKhoan';
 import { immer } from 'zustand/middleware/immer';
 import { createAuthSlice, IAuthState } from './slices/authSlice';
-import { createSettingSlice, ISettingState } from './slices/settingSlice';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import { create } from 'zustand';
 import cookieStorage from '@/lib/cookie';
-import localStorage from '@/lib/localStorage';
-import { REFRESH_TOKEN, ROLE, TOKEN_ACCESS, USER } from '@/types/general';
+import { REFRESH_TOKEN, TOKEN_ACCESS } from '@/types/general';
 import { GiangVien } from '@/models/GiangVien';
 
 export interface IPartializeState {

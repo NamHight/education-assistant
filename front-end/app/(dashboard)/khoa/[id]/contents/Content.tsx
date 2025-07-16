@@ -4,9 +4,7 @@ import ContentForm from '../../components/form/ContentForm';
 import { useNotifications } from '@toolpad/core';
 import { useRouter } from 'next/navigation';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { AnimatePresence, motion } from 'motion/react';
-import { GiangVienService } from '@/services/GiangVienService';
-import { SinhVienService } from '@/services/SinhVienService';
+import { motion } from 'motion/react';
 import { KhoaService } from '@/services/KhoaService';
 import { useBreadcrumb } from '@/hooks/context/BreadCrumbContext';
 import { Typography } from '@mui/material';
@@ -34,7 +32,8 @@ const Content = ({ initialData, id, anotherData }: IContentProps) => {
     if (data) {
       setTitle(`Chỉnh sửa: ${data?.tenKhoa}`);
       setBreadcrumbs(
-        <Typography className='relative text-[14px] flex gap-1 items-center'>
+       [
+         <Typography key={data?.tenKhoa} className='relative text-[14px] flex gap-1 items-center'>
           <Typography
             component={'span'}
             sx={(theme) => ({
@@ -45,10 +44,11 @@ const Content = ({ initialData, id, anotherData }: IContentProps) => {
             {data?.tenKhoa}
           </Typography>
         </Typography>
+       ]
       );
       return () => {
         setTitle('');
-        setBreadcrumbs(null);
+        setBreadcrumbs([]);
       };
     }
   }, [data, setTitle, setBreadcrumbs]);

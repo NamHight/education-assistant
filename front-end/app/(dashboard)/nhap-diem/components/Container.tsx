@@ -5,7 +5,6 @@ import React, { useEffect, useState } from 'react'
 import ContentAdmin from './ContentAdmin';
 import { PopoverLockProvider } from '@/hooks/context/PopoverLock';
 import Content from './Content';
-import { init } from 'next/dist/compiled/webpack/webpack';
 import { useQuery } from '@tanstack/react-query';
 import { AuthenticateService } from '@/services/AuthenticateService';
 

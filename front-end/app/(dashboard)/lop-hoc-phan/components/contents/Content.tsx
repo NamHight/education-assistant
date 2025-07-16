@@ -1,18 +1,13 @@
 'use client';
 
-import ToolTipImage from '@/components/tooltips/ToolTipImage';
-import { Box, Dialog, DialogActions, DialogContent, DialogTitle, Grid, MenuItem, Typography } from '@mui/material';
-import { GridActionsCellItem, GridColDef, GridFilterModel } from '@mui/x-data-grid';
-import React, { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { motion } from 'motion/react';
-import Image from 'next/image';
+import { Box, MenuItem, Typography } from '@mui/material';
+import { GridColDef, GridFilterModel } from '@mui/x-data-grid';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import moment from 'moment';
 import ChipOption from '@/components/chips/ChipOption';
-import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 import Button from '@/components/buttons/Button';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { GiangVienService } from '@/services/GiangVienService';
-import { IParamGiangVien, IParamLopHocPhan } from '@/types/params';
+import { IParamLopHocPhan } from '@/types/params';
 import dynamic from 'next/dynamic';
 import { handleTextSearch } from '@/lib/string';
 import { useRouter } from 'next/navigation';
@@ -22,19 +17,14 @@ import { LopHocPhanService } from '@/services/LopHocPhanService';
 import { useNotifications } from '@toolpad/core';
 import Link from 'next/link';
 import { TrangThaiLopHocPhanEnum } from '@/models/LopHocPhan';
-import { IOption, LoaiLopHocEnum, TrangThaiLopHocPhan } from '@/types/options';
+import { TrangThaiLopHocPhan } from '@/types/options';
 import ChangeCircleOutlinedIcon from '@mui/icons-material/ChangeCircleOutlined';
-import Input2 from '@/components/inputs/Input2';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { useForm } from 'react-hook-form';
 
 import InputSelect2 from '@/components/selects/InputSelect2';
-import { MonHocService } from '@/services/MonHocService';
 import EditModal from '../modals/EditModal';
 import AddModal from '../modals/AddModal';
 import { useBreadcrumb } from '@/hooks/context/BreadCrumbContext';
 import { LoaiMonHocEnum } from '@/models/MonHoc';
-import { ArrowUpWideNarrow } from 'lucide-react';
 const Table = dynamic(() => import('@/components/tables/Table'), {
   ssr: false
 });

@@ -1,31 +1,22 @@
 'use client';
 import { handleTextSearch } from '@/lib/string';
 import { LopHocPhanService } from '@/services/LopHocPhanService';
-import { IParamChiTietLopHocPhan, IParamChuongTrinhDaoTao, IParamLopHocPhan, IParamLopHocPhan2 } from '@/types/params';
-import { Box, MenuItem, Select, Typography } from '@mui/material';
+import { IParamChiTietLopHocPhan, IParamLopHocPhan2 } from '@/types/params';
+import { Box, Typography } from '@mui/material';
 import { GridColDef, GridFilterModel, useGridApiRef } from '@mui/x-data-grid';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-import React, { Fragment, memo, ReactNode, use, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { GiangVienService } from '@/services/GiangVienService';
-import SelectEditCell from '../selects/SelectEditCell';
 import dynamic from 'next/dynamic';
-import { ChuongTrinhDaoTaoService } from '@/services/ChuongTrinhDaoTaoService';
 import { LoaiMonHocEnum } from '@/models/MonHoc';
 import moment from 'moment';
 import { useNotifications } from '@toolpad/core';
-import { IOption, LoaiLopHocPhan, TrangThaiLopHocPhanEnum } from '@/types/options';
-import InputSelect2 from '@/components/selects/InputSelect2';
-import { usePopoverLock } from '@/hooks/context/PopoverLock';
-import { get, set, sortBy } from 'lodash';
+import { IOption } from '@/types/options';
 import { ChiTietLopHocPhanService } from '@/services/ChiTietLopHocPhanService';
 import { useUser } from '@/stores/selectors';
 import Link from 'next/link';
 import { APP_ROUTE } from '@/types/general';
-import WarningAmberIcon from '@mui/icons-material/WarningAmber';
-import { fi } from 'zod/v4/locales';
-import { ChiTietLopHocPhan } from '@/models/ChiTietLopHocPhan';
 import { HocBaService } from '@/services/HocBaService';
 import { useForm } from 'react-hook-form';
 import { useBreadcrumb } from '@/hooks/context/BreadCrumbContext';
@@ -129,7 +120,7 @@ const Content = ({ queryKey }: IContentProps) => {
     select: (data) => {
       return data?.map((item: any) => ({
         id: item.id,
-        name: item.maHocPhan.split('_')[0],
+        name: item.maHocPhan,
         loaiMonHoc: item.monHoc?.chiTietChuongTrinhDaoTao?.loaiMonHoc,
         monHocId: item.monHocId,
         chuongTrinhDaoTaoId: item.monHoc?.chiTietChuongTrinhDaoTao?.chuongTrinhDaoTao?.id

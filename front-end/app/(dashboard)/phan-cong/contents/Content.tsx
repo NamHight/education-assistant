@@ -2,11 +2,11 @@
 import { handleTextSearch } from '@/lib/string';
 import { LopHocPhanService } from '@/services/LopHocPhanService';
 import { IParamChuongTrinhDaoTao, IParamLopHocPhan } from '@/types/params';
-import { Box, MenuItem, Select, Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { GridColDef, GridFilterModel } from '@mui/x-data-grid';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-import React, { Fragment, memo, ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { memo, useEffect, useMemo, useState } from 'react';
 
 import { GiangVienService } from '@/services/GiangVienService';
 import SelectEditCell from '../selects/SelectEditCell';
@@ -15,10 +15,7 @@ import { ChuongTrinhDaoTaoService } from '@/services/ChuongTrinhDaoTaoService';
 import { LoaiMonHocEnum } from '@/models/MonHoc';
 import moment from 'moment';
 import { useNotifications } from '@toolpad/core';
-import { LoaiLopHocPhan, TrangThaiLopHocPhanEnum } from '@/types/options';
-import InputSelect2 from '@/components/selects/InputSelect2';
-import { usePopoverLock } from '@/hooks/context/PopoverLock';
-import { set } from 'lodash';
+import { TrangThaiLopHocPhanEnum } from '@/types/options';
 import { useBreadcrumb } from '@/hooks/context/BreadCrumbContext';
 
 const TableEdit = dynamic(() => import('@/app/(dashboard)/phan-cong/tables/TableEdit'), {
@@ -68,7 +65,7 @@ const Content = ({ queryKey, ctdtServer }: IContentProps) => {
         hocKy: filter?.hocKy,
         khoa: filter?.khoa,
         loaiChuongTrinhDaoTao: filter?.loaiChuongTrinh,
-        limit: 99999999999999
+        limit: 99999999
       };
       if (sortModel.field && sortModel.sort) {
         params.sortBy = sortModel.field;
@@ -91,7 +88,7 @@ const Content = ({ queryKey, ctdtServer }: IContentProps) => {
     queryKey: ['ctdt-list'],
     queryFn: async () => {
       const params: IParamChuongTrinhDaoTao = {
-        limit: 99999999999999,
+        limit: 999999,
         sortBy: 'createdat',
         sortByOrder: 'desc'
       };
