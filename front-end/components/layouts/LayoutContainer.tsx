@@ -6,7 +6,6 @@ import { BreadcrumbProvider } from '@/hooks/context/BreadCrumbContext';
 
 const LayoutContainer = ({ children }: { children: React.ReactNode }) => {
   return (
-    // // <CopilotKit publicApiKey={process.env.NEXT_PUBLIC_COPILOT_API_KEY || ''}
     <PageContainer
       suppressHydrationWarning
       suppressContentEditableWarning
