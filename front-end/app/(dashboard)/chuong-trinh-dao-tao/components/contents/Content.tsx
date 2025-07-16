@@ -246,13 +246,14 @@ const Content = ({ queryKey, nganhs }: ContentProps) => {
         field: 'khoa',
         headerName: 'Khóa',
         headerAlign: 'left',
-        type: 'number',
+        type: 'string',
         minWidth: 70,
         disableColumnMenu: true,
         sortable: false,
         display: 'flex',
         align: 'left',
-        flex: 1
+        flex: 1,
+        valueFormatter: (params: any) => params
       },
       {
         field: 'tongSoTinChi',

@@ -1,4 +1,5 @@
 import authApi from '@/lib/authAxios';
+import authApiServer from '@/lib/authAxiosServer';
 import { API } from '@/types/general';
 
 export class AuthenticateService {
@@ -12,6 +13,13 @@ export class AuthenticateService {
   }
   static async getMe() {
     return authApi
+      .get(`${API.AUTH.USER}`)
+      .then((response) => Promise.resolve(response.data))
+      .catch((error) => Promise.reject(error.response?.data));
+  }
+
+  static async getMeServer(){
+    return authApiServer
       .get(`${API.AUTH.USER}`)
       .then((response) => Promise.resolve(response.data))
       .catch((error) => Promise.reject(error.response?.data));
