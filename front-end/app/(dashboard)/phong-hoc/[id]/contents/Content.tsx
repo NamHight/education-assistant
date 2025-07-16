@@ -23,7 +23,7 @@ const Content = ({ initialData, id, anotherData }: IContentProps) => {
   const notifications = useNotifications();
   const router = useRouter();
   const queryClient = useQueryClient();
-     const {setBreadcrumbs,setTitle} = useBreadcrumb();
+  const { setBreadcrumbs, setTitle } = useBreadcrumb();
   const { data } = useQuery({
     queryKey: ['phong-hoc', { id: id }],
     queryFn: async () => {
@@ -35,25 +35,28 @@ const Content = ({ initialData, id, anotherData }: IContentProps) => {
     gcTime: 0
   });
   console.log('data', data);
-useEffect(() => {
-      if(data){
-      setTitle(`Chỉnh sửa ${data?.tenPhong}`)
+  useEffect(() => {
+    if (data) {
+      setTitle(`Chỉnh sửa ${data?.tenPhong}`);
       setBreadcrumbs(
-        <Typography className="relative text-[14px] flex gap-1 items-center">
-          <Typography component={'span'} sx={(theme) => ({
-            color: theme.palette.mode === 'dark' ? 'white !important' : 'black !important',
-            fontWeight: 500
-          })}>
+        <Typography className='relative text-[14px] flex gap-1 items-center'>
+          <Typography
+            component={'span'}
+            sx={(theme) => ({
+              color: theme.palette.mode === 'dark' ? 'white !important' : 'black !important',
+              fontWeight: 500
+            })}
+          >
             {data?.tenPhong}
           </Typography>
-          </Typography>
-      )
+        </Typography>
+      );
       return () => {
         setTitle('');
         setBreadcrumbs(null);
       };
-      }
-    },[data,setTitle,setBreadcrumbs])
+    }
+  }, [data, setTitle, setBreadcrumbs]);
   const mutationUpdate = useMutation({
     mutationFn: async (data: FormData) => {
       const result = await PhongHocService.updatePhongHoc(id, data);

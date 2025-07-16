@@ -129,7 +129,7 @@ const Content = ({ queryKey }: ContentProps) => {
         sortable: true,
         display: 'flex',
         align: 'center',
-        disableColumnMenu: true,
+        disableColumnMenu: true
       },
       {
         field: 'tenKhoa',

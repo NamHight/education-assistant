@@ -18,10 +18,12 @@ const Pie = ({ width, height, data, ...rest }: IPieProps) => {
       data-testid='pie-chart'
       series={[
         {
-          data: Array.isArray(data) ? data?.map((item) => ({
-            ...item,
-            label: item?.label // chỉ để label, không kèm value
-          })) : [],
+          data: Array.isArray(data)
+            ? data?.map((item) => ({
+                ...item,
+                label: item?.label // chỉ để label, không kèm value
+              }))
+            : [],
           arcLabel: (item) => `${item?.value}`, // chỉ hiện value trên vòng tròn
           arcLabelMinAngle: 10,
           arcLabelRadius: '70%',

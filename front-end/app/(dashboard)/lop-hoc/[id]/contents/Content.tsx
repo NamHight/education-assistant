@@ -24,7 +24,7 @@ const Content = ({ initialData, id, anotherData }: IContentProps) => {
   const notifications = useNotifications();
   const router = useRouter();
   const queryClient = useQueryClient();
-   const {setBreadcrumbs,setTitle} = useBreadcrumb();
+  const { setBreadcrumbs, setTitle } = useBreadcrumb();
   const { data } = useQuery({
     queryKey: ['lop-hoc', { id: id }],
     queryFn: async () => {
@@ -37,24 +37,25 @@ const Content = ({ initialData, id, anotherData }: IContentProps) => {
   });
   console.log('data', anotherData);
   useEffect(() => {
-      setTitle(`Chỉnh sửa ${data?.maLopHoc}`)
-      setBreadcrumbs(
-       [
-         <Typography className="relative text-[14px] flex gap-1 items-center">
-          <Typography component={'span'} sx={(theme) => ({
+    setTitle(`Chỉnh sửa ${data?.maLopHoc}`);
+    setBreadcrumbs([
+      <Typography className='relative text-[14px] flex gap-1 items-center'>
+        <Typography
+          component={'span'}
+          sx={(theme) => ({
             color: theme.palette.mode === 'dark' ? 'white !important' : 'black !important',
             fontWeight: 500
-          })}>
-            {data?.maLopHoc}
-          </Typography>
-          </Typography>
-       ]
-      )
-      return () => {
-        setTitle('');
-        setBreadcrumbs([]);
-      };
-    },[data, setTitle, setBreadcrumbs]);
+          })}
+        >
+          {data?.maLopHoc}
+        </Typography>
+      </Typography>
+    ]);
+    return () => {
+      setTitle('');
+      setBreadcrumbs([]);
+    };
+  }, [data, setTitle, setBreadcrumbs]);
   const mutationUpdate = useMutation({
     mutationFn: async (data: FormData) => {
       const result = await LopHocService.updateLopHoc(id, data);

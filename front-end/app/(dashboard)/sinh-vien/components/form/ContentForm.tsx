@@ -65,7 +65,7 @@ interface IContentFormProps {
 }
 
 const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => {
-  const {setBreadcrumbs,setTitle} = useBreadcrumb();
+  const { setBreadcrumbs, setTitle } = useBreadcrumb();
   const schema = useMemo(() => {
     return yup.object().shape({
       HoTen: yup.string().max(200, 'Họ và tên không được quá 220 ký tự').required('Họ và tên là bắt buộc'),
@@ -145,19 +145,24 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
   });
   useEffect(() => {
     setTitle(`Chỉnh sửa sinh viên: ${data?.hoTen || ''}`);
-    setBreadcrumbs(<Typography className="relative text-[14px] flex gap-1 items-center">
-              <Typography component={'span'} sx={(theme) => ({
-                color: theme.palette.mode === 'dark' ? 'white !important' : 'black !important',
-                fontWeight: 500
-              })}>
-               {data?.hoTen}
-              </Typography>
-              </Typography>)
+    setBreadcrumbs(
+      <Typography className='relative text-[14px] flex gap-1 items-center'>
+        <Typography
+          component={'span'}
+          sx={(theme) => ({
+            color: theme.palette.mode === 'dark' ? 'white !important' : 'black !important',
+            fontWeight: 500
+          })}
+        >
+          {data?.hoTen}
+        </Typography>
+      </Typography>
+    );
     return () => {
       setTitle('');
       setBreadcrumbs(null);
-    }
-  },[data?.hoTen]);
+    };
+  }, [data?.hoTen]);
   const handleSubmitForm = (formData: IFormData) => {
     const form = new FormData();
     if (data?.id) form.append('Id', data.id);
@@ -347,8 +352,7 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
           />
         </Grid>
         <Grid size={{ xs: 12, sm: 6, md: 6, lg: 6 }}>
-          {
-            data?.trangThaiSinhVien === TrangThaiSinhVienEnum.DA_TOT_NGHIEP ? (
+          {data?.trangThaiSinhVien === TrangThaiSinhVienEnum.DA_TOT_NGHIEP ? (
             <Box className='flex flex-col gap-1'>
               <Typography className='!text-[16px] !font-[500] !leading-6 !text-gray-500 mb-1'>Trình độ</Typography>
               <Box
@@ -358,20 +362,19 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
                 Đã tốt nghiệp
               </Box>
             </Box>
-            ) : (
-              <InputSelect2
-                control={control}
-                fullWidth
-                name={'TrangThaiSinhVienEnum'}
-                placeholder={'Trạng thái'}
-                title={'Trạng thái'}
-                data={TrangThaiSinhVien2 ?? []}
-                getOptionKey={(option) => option.id}
-                getOptionLabel={(option: any) => option.name}
-                error={(errors.TrangThaiSinhVienEnum as any)?.message}
-              />
-            )
-          }
+          ) : (
+            <InputSelect2
+              control={control}
+              fullWidth
+              name={'TrangThaiSinhVienEnum'}
+              placeholder={'Trạng thái'}
+              title={'Trạng thái'}
+              data={TrangThaiSinhVien2 ?? []}
+              getOptionKey={(option) => option.id}
+              getOptionLabel={(option: any) => option.name}
+              error={(errors.TrangThaiSinhVienEnum as any)?.message}
+            />
+          )}
         </Grid>
         <Grid size={{ xs: 12, sm: 12, md: 12, lg: 12 }}>
           <Input2

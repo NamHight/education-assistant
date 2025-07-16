@@ -62,7 +62,7 @@ const Content = ({ queryKey }: IContentProps) => {
   const queryClient = useQueryClient();
   const user = useUser();
   const apiRef = useGridApiRef();
-  const {setTitle} = useBreadcrumb();
+  const { setTitle } = useBreadcrumb();
   const [giangVienOptions, setGiangVienOptions] = useState<{ [khoaId: string]: any[] }>({});
   // const [loaiLopHocPhan, setloaiLopHocPhan] = useState<number | null>(null);
   const [filter, setfilter] = useState<{
@@ -295,7 +295,6 @@ const Content = ({ queryKey }: IContentProps) => {
             return { ...params.props, value: null, error: false };
           }
           const value = Number(rawValue);
-          console.log('value', params.hasChanged);
           if (isNaN(value) || value < 1 || value > 10) {
             return { ...params.props, value: null, error: false };
           }
@@ -443,10 +442,13 @@ const Content = ({ queryKey }: IContentProps) => {
         disableColumnMenu: true,
         renderCell: (params) => {
           let total = null;
-          if(params.row?.diemThi1 > 10 || params.row?.diemThi1 < 0) {
+          if (params.row?.diemThi1 > 10 || params.row?.diemThi1 < 0) {
             return null;
           }
-          if(params.row?.diemChuyenCan > 10 || params.row?.diemTrungBinh < 0) {
+          if (params.row?.diemChuyenCan > 10 || params.row?.diemChuyenCan < 0) {
+            return null;
+          }
+          if (params.row?.diemTrungBinh > 10 || params.row?.diemTrungBinh < 0) {
             return null;
           }
           if (filter?.lopHocPhan?.loaiMonHoc === LoaiMonHocEnum.LY_THUYET) {
@@ -480,6 +482,15 @@ const Content = ({ queryKey }: IContentProps) => {
         disableColumnMenu: true,
         renderCell: (params) => {
           let total = null;
+          if (params.row?.diemThi2 > 10 || params.row?.diemThi2 < 0) {
+            return null;
+          }
+          if (params.row?.diemChuyenCan > 10 || params.row?.diemChuyenCan < 0) {
+            return null;
+          }
+          if (params.row?.diemTrungBinh > 10 || params.row?.diemTrungBinh < 0) {
+            return null;
+          }
           if (params.row?.diemThi2) {
             total = (
               params.row?.diemChuyenCan * 0.1 +
@@ -649,7 +660,7 @@ const Content = ({ queryKey }: IContentProps) => {
         DiemTongKet2: item?.diemTongKet2 || 0,
         SinhVienId: item?.sinhVienId
       }));
-      console.log('convertData', convertData);
+    console.log('convertData', convertData);
     const checkIsDiemTongKet1 = convertData?.some(
       (item) => item?.DiemTongKet1 === 0 || item?.DiemTongKet1 === undefined
     );

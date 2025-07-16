@@ -12,7 +12,7 @@ export const API = {
   TUAN: {
     GET_ALL_BY_NAM_HOC: '/Tuan/by-nam-hoc',
     GET_ALL_DEN_BY_TUAN_VAO: '/Tuan/combobox-copy',
-    CREATE_AUTO: '/Tuan/tao-auto-tuan',
+    CREATE_AUTO: '/Tuan/tao-auto-tuan'
   },
   LICH_BIEU: {
     GET_ALL: '/LichBieu',
@@ -37,7 +37,7 @@ export const API = {
     UPDATE_POINT: '/ChiTietLopHocPhan/update-list',
     EXPORT_FILE: '/ChiTietLopHocPhan/:id/export',
     IMPORT_FILE: '/ChiTietLopHocPhan/import',
-    UPDATE_NOP_DIEM: '/ChiTietLopHocPhan/:id/update-nop-diem',
+    UPDATE_NOP_DIEM: '/ChiTietLopHocPhan/:id/update-nop-diem'
   },
   HOC_BA: {
     GET_ALL: '/HocBa',
@@ -58,7 +58,7 @@ export const API = {
     CHANGE_STATUS: '/PhongHoc/:id/update-trang-thai',
     GET_ALL_NO_PAGE: '/PhongHoc/no-page',
     CREATE_LIST: '/PhongHoc/create-list',
-    UPDATE_OPTION: '/PhongHoc/:id/update-option',
+    UPDATE_OPTION: '/PhongHoc/:id/update-option'
   },
   NGANH: {
     GET_ALL: '/Nganh',
@@ -80,7 +80,7 @@ export const API = {
     DELETE_LHP: '/SinhVien/:id/lhp/:lopHocPhanId/xoa-sv-khoi-lhp',
     GET_BY_ID_LOP_HOC: '/SinhVien/:lopHocId/by-lop-hoc',
     CHUYEN_LOP_SINH_VIEN: '/SinhVien/chuyen-lop',
-    UPDATE_TRANG_THAI: '/SinhVien/:id/update-trang-thai',
+    UPDATE_TRANG_THAI: '/SinhVien/:id/update-trang-thai'
   },
   GIANG_VIEN: {
     GET_ALL: '/giangviens',
@@ -92,7 +92,7 @@ export const API = {
     GET_BY_BO_MON_ID: '/giangviens/:boMonId/by-bomon',
     TINH_TRANG: '/giangviens/tinh-trang-lam-viec',
     GET_GIANG_VIEN_NO_PAGE: '/giangviens/no-page',
-    CHANGE_STATUS: '/giangviens/:id/change-status',
+    CHANGE_STATUS: '/giangviens/:id/change-status'
   },
   KHOA: {
     GET_ALL: '/khoa',
@@ -116,7 +116,7 @@ export const API = {
     GET_BY_GIANG_VIEN_ID: '/LopHocPhan/by-giang-vien',
     GET_ALL_NO_PAGE: '/LopHocPhan/no-page',
     GET_BY_LOP_HOC_AND_HOC_KY: '/LopHocPhan/by-lop-hoc-and-hoc-ky',
-    GET_DA_NOP: '/LopHocPhan/lop-da-nop',
+    GET_DA_NOP: '/LopHocPhan/lop-da-nop'
   },
   MON_HOC: {
     GET_ALL: '/MonHoc',
@@ -152,7 +152,8 @@ export const APP_ROUTE = {
     ADD: '/chuong-trinh-dao-tao/them-moi',
     EDIT: (id: string | undefined) => `/chuong-trinh-dao-tao/${id}`,
     CHI_TIET: (id: string | number | null) => `/chuong-trinh-dao-tao/${id}/chi-tiet-chuong-trinh-dao-tao`,
-    ADD_CHI_TIET: (id: string | number | null | undefined) => `/chuong-trinh-dao-tao/${id}/chi-tiet-chuong-trinh-dao-tao/them-moi`,
+    ADD_CHI_TIET: (id: string | number | null | undefined) =>
+      `/chuong-trinh-dao-tao/${id}/chi-tiet-chuong-trinh-dao-tao/them-moi`
   },
   HOC_BA: {
     ROOT: '/hoc-ba',
@@ -218,21 +219,21 @@ export const breadcrumbTranslations: { [key: string]: string } = {
   'sinh-vien': 'Quản lý Sinh viên',
   'lop-hoc': 'Lớp học',
   'lop-hoc-phan': 'Lớp học phần',
-  'khoa': 'Khoa',
+  khoa: 'Khoa',
   'them-moi-hoc-ky-phu': 'Thêm học kỳ phụ',
   'mon-hoc': 'Môn học',
   'chuong-trinh-dao-tao': 'Chương trình đào tạo',
   'chi-tiet-chuong-trinh-dao-tao': 'Chi tiết chương trình đào tạo',
   'bo-mon': 'Bộ môn',
   'phong-hoc': 'Phòng học',
-  'nganh': 'Ngành',
+  nganh: 'Ngành',
   'hoc-ba': 'Học bạ',
-  'truong': 'Trường',
+  truong: 'Trường',
   'phan-cong': 'Phân công',
   'cai-dat': 'Cài đặt',
   'chuyen-lop': 'Chuyển lớp',
   'lich-lop-hoc': 'Lịch lớp học',
   'nhap-diem': 'Nhập điểm',
-  'thong-ke': 'Thống kê',
+  'thong-ke': 'Thống kê'
   // Thêm các bản dịch khác của bạn ở đây
 };

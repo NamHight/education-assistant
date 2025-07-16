@@ -54,7 +54,7 @@ const Content = ({ queryKey }: ContentProps) => {
   }>({
     trangThai: null
   });
-   const { setTitle, setBreadcrumbs } = useBreadcrumb();
+  const { setTitle, setBreadcrumbs } = useBreadcrumb();
   const notification = useNotifications();
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
@@ -230,32 +230,32 @@ const Content = ({ queryKey }: ContentProps) => {
           return '';
       }
     };
-     const formatType = (value: any) => {
-                  switch (value) {
-                    case LoaiMonHocEnum.CHUC_CHUNG_CHI:
-                      return <Typography variant='body2'>CCH</Typography>;
-                    case LoaiMonHocEnum.DO_AN_TOT_NGHIEP:
-                      return <Typography variant='body2'>ĐATN</Typography>;
-                    case LoaiMonHocEnum.KHOA_LUAN_TOT_NGHIEP:
-                      return <Typography variant='body2'>KLTN</Typography>;
-                    case LoaiMonHocEnum.KIEN_TAP:
-                      return <Typography variant='body2'>KT</Typography>;
-                    case LoaiMonHocEnum.MODUN:
-                      return <Typography variant='body2'>Md</Typography>;
-                    case LoaiMonHocEnum.THI_TOT_NGHIEP_LY_THUYET:
-                      return <Typography variant='body2'>TTNLT</Typography>;
-                    case LoaiMonHocEnum.THI_TOT_NGHIEP_THUC_HANH:
-                      return <Typography variant='body2'>TTNTH</Typography>;
-                    case LoaiMonHocEnum.THUC_HANH:
-                      return <Typography variant='body2'>TH</Typography>;
-                    case LoaiMonHocEnum.THUC_TAP_TOT_NGHIEP:
-                      return <Typography variant='body2'>TTTN</Typography>;
-                    case LoaiMonHocEnum.LY_THUYET:
-                      return <Typography variant='body2'>LT</Typography>;
-                    default:
-                      return null;
-                  }
-                };
+    const formatType = (value: any) => {
+      switch (value) {
+        case LoaiMonHocEnum.CHUC_CHUNG_CHI:
+          return <Typography variant='body2'>CCH</Typography>;
+        case LoaiMonHocEnum.DO_AN_TOT_NGHIEP:
+          return <Typography variant='body2'>ĐATN</Typography>;
+        case LoaiMonHocEnum.KHOA_LUAN_TOT_NGHIEP:
+          return <Typography variant='body2'>KLTN</Typography>;
+        case LoaiMonHocEnum.KIEN_TAP:
+          return <Typography variant='body2'>KT</Typography>;
+        case LoaiMonHocEnum.MODUN:
+          return <Typography variant='body2'>Md</Typography>;
+        case LoaiMonHocEnum.THI_TOT_NGHIEP_LY_THUYET:
+          return <Typography variant='body2'>TTNLT</Typography>;
+        case LoaiMonHocEnum.THI_TOT_NGHIEP_THUC_HANH:
+          return <Typography variant='body2'>TTNTH</Typography>;
+        case LoaiMonHocEnum.THUC_HANH:
+          return <Typography variant='body2'>TH</Typography>;
+        case LoaiMonHocEnum.THUC_TAP_TOT_NGHIEP:
+          return <Typography variant='body2'>TTTN</Typography>;
+        case LoaiMonHocEnum.LY_THUYET:
+          return <Typography variant='body2'>LT</Typography>;
+        default:
+          return null;
+      }
+    };
     return [
       {
         field: 'stt',
@@ -267,8 +267,7 @@ const Content = ({ queryKey }: ContentProps) => {
         sortable: true,
         display: 'flex',
         align: 'center',
-        disableColumnMenu: true,
-
+        disableColumnMenu: true
       },
       {
         field: 'maHocPhan',
@@ -373,9 +372,8 @@ const Content = ({ queryKey }: ContentProps) => {
 
   return (
     <Box className='flex flex-col gap-4'>
-  
       <Box className='flex justify-start gap-4 border border-gray-200 rounded-lg p-4 shadow-sm'>
-         <Box className='flex-1'>
+        <Box className='flex-1'>
           <InputSelect2
             fullWidth
             name={'TrangThai'}
@@ -393,7 +391,6 @@ const Content = ({ queryKey }: ContentProps) => {
         </Box>
         <Button title={'Thêm mới học phần'} onClick={() => handleClickOpenAdd()} />
         <Button title={'Thêm mới học kỳ phụ'} onClick={() => router.push(APP_ROUTE.LOP_HOC_PHAN.ADD_HOC_KY_PHU)} />
-       
       </Box>
       <Table
         ref={refTable}

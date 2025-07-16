@@ -67,7 +67,7 @@ const Content = ({ queryKey, khoas }: ContentProps) => {
         sortBy: 'createdat',
         sortByOrder: 'desc'
       };
-      if(khoaSelected) {
+      if (khoaSelected) {
         params.khoaId = khoaSelected;
       }
       if (sortModel.field && sortModel.sort) {
@@ -107,7 +107,7 @@ const Content = ({ queryKey, khoas }: ContentProps) => {
       }));
     },
     refetchOnWindowFocus: false
-  })
+  });
   const rowCountRef = useRef(data?.meta?.TotalCount || 0);
   const rowCount = useMemo(() => {
     if (data?.meta?.TotalCount !== undefined) {
@@ -159,9 +159,7 @@ const Content = ({ queryKey, khoas }: ContentProps) => {
         align: 'center',
         disableColumnMenu: true,
         renderCell: (params) => {
-    return (
-        <Typography variant='body2'>{params.row?.stt}</Typography>
-    );
+          return <Typography variant='body2'>{params.row?.stt}</Typography>;
         }
       },
       {
@@ -235,22 +233,22 @@ const Content = ({ queryKey, khoas }: ContentProps) => {
   return (
     <Box className='flex flex-col gap-4'>
       <Box className='flex justify-end gap-4 border border-gray-200 rounded-lg p-4 shadow-sm '>
-        <Box className="flex w-full items-center gap-2">
-           <Box className='flex items-center gap-2 w-1/2 justify-start'>
-          <Typography className='!font-semibold !text-lg'> khoa</Typography>
-          <InputSelect2
-                      fullWidth
-                      name={'Khoa'}
-                      placeholder={'Chọn khoa'}
-                      isLoading={isLoadingKhoa}
-                      data={khoass ?? []}
-                      getOptionKey={(option) => option.id}
-                      getOptionLabel={(option: any) => option.name}
-                      getOnChangeValue={(value) => {
-                        setKhoaSelected(value?.id); 
-                      }}
-                    />
-        </Box>
+        <Box className='flex w-full items-center gap-2'>
+          <Box className='flex items-center gap-2 w-1/2 justify-start'>
+            <Typography className='!font-semibold !text-lg'> khoa</Typography>
+            <InputSelect2
+              fullWidth
+              name={'Khoa'}
+              placeholder={'Chọn khoa'}
+              isLoading={isLoadingKhoa}
+              data={khoass ?? []}
+              getOptionKey={(option) => option.id}
+              getOptionLabel={(option: any) => option.name}
+              getOnChangeValue={(value) => {
+                setKhoaSelected(value?.id);
+              }}
+            />
+          </Box>
         </Box>
         <Box className='flex items-center gap-2 w-1/3 justify-end'>
           <Button title={'Thêm mới'} onClick={() => router.push(APP_ROUTE.MON_HOC.ADD)} />

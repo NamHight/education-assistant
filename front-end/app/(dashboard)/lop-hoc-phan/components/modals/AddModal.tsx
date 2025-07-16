@@ -49,12 +49,8 @@ const AddModal = ({ openAdd, handleCloseAdd }: IAddModalProps) => {
   const { data: nganhs, isLoading: isLoadingNganh } = useQuery({
     queryKey: ['nganhs'],
     queryFn: async () => {
-      const response = await NganhService.getAllNganh({
-        limit: 99999999999,
-        sortBy: 'createdAt',
-        sortByOrder: 'desc'
-      });
-      return response?.data;
+      const response = await NganhService.getAllNganhNoPage();
+      return response;
     },
     select: (data: any) => {
       return data.map((item: any) => ({

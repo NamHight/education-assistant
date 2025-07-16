@@ -24,7 +24,7 @@ const Content: FC<ContentProps> = ({ initialData, anotherData }) => {
   const notification = useNotifications();
   const router = useRouter();
   const queryClient = useQueryClient();
-     const {setBreadcrumbs,setTitle} = useBreadcrumb();
+  const { setBreadcrumbs, setTitle } = useBreadcrumb();
   const mutationCreate = useMutation({
     mutationFn: async (formData: any) => {
       const response = await PhongHocService.createPhongHocList(formData);
@@ -49,11 +49,11 @@ const Content: FC<ContentProps> = ({ initialData, anotherData }) => {
     }
   });
   useEffect(() => {
-    setTitle(`Thêm mới phòng học`)
+    setTitle(`Thêm mới phòng học`);
     return () => {
       setTitle('');
     };
-  },[])
+  }, []);
   const handleSubmitForm = (formData: any) => {
     mutationCreate.mutate(formData);
   };

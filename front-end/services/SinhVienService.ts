@@ -186,7 +186,7 @@ export class SinhVienService {
       throw error.response?.data;
     }
   }
-  static async updateSinhVienTrangThai(id: string | number | null, data: any){
+  static async updateSinhVienTrangThai(id: string | number | null, data: any) {
     try {
       const result = await authApi.put(`${API.SINH_VIEN.UPDATE_TRANG_THAI}`.replace(':id', `${id}`), data);
       return result.data;

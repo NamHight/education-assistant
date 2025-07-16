@@ -16,8 +16,8 @@ import { PhongHocService } from '@/services/PhongHocService';
 import { ChuongTrinhDaoTaoService } from '@/services/ChuongTrinhDaoTaoService';
 import { ChitietChuongTrinhDaoTaoService } from '@/services/ChitietChuongTrinhDaoTaoService';
 
-interface IPageProps{
-  params: Promise<{id: string}>;
+interface IPageProps {
+  params: Promise<{ id: string }>;
 }
 
 export default async function Page({ params }: IPageProps) {
@@ -25,15 +25,15 @@ export default async function Page({ params }: IPageProps) {
   const queryClient = getQueryClient();
   const queryKey = 'chi-tiet-chuong-trinh-dao-tao-list';
   await queryClient.prefetchQuery({
-    queryKey: [queryKey, { page: 0, pageSize: 10 }, { field: '', sort: '' }, { items: [] },id],
+    queryKey: [queryKey, { page: 0, pageSize: 10 }, { field: '', sort: '' }, { items: [] }, id],
     queryFn: async () => {
-      const result =await  ChitietChuongTrinhDaoTaoService.getChiTietChuongTrinhDaoTaoServer({
-      page: 1,
-      limit: 10,
-      sortBy: 'createdAt',
-      sortByOrder: 'desc',
-      chuongTrinhDaoTaoId: id
-    }).catch(() => ({ data: [] }));
+      const result = await ChitietChuongTrinhDaoTaoService.getChiTietChuongTrinhDaoTaoServer({
+        page: 1,
+        limit: 10,
+        sortBy: 'createdAt',
+        sortByOrder: 'desc',
+        chuongTrinhDaoTaoId: id
+      }).catch(() => ({ data: [] }));
 
       return result?.data?.length > 0 ? result : undefined;
     }

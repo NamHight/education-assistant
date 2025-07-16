@@ -38,7 +38,6 @@ export const useAuthStore = create<RootAuthState>()(
         },
         setItem: (name, value) => {
           const parsedValue = JSON.parse(value).state;
-          cookieStorage.set(ROLE, parsedValue?.user?.taiKhoan?.loaiTaiKhoan);
         },
         removeItem: () => {
           cookieStorage.remove(TOKEN_ACCESS);

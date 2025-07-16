@@ -178,6 +178,9 @@ const ModalAdd = forwardRef(({ open, handleClose, queryKey, filter }: ModalAddPr
   };
   useEffect(() => {
     if (filter?.namHoc && filter?.tuan?.id) {
+      setFilterAdd({
+        namHoc: filter.namHoc.id
+      });
       reset({
         namHoc: filter.namHoc,
         Tuan: filter.tuan
@@ -197,6 +200,7 @@ const ModalAdd = forwardRef(({ open, handleClose, queryKey, filter }: ModalAddPr
   useImperativeHandle(ref, () => ({
     reset: () => reset()
   }));
+
   return (
     <Dialog
       open={open}

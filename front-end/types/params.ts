@@ -75,7 +75,7 @@ export interface IParamLopHocPhan2 {
   lopHocPhanid?: string;
   lopHocId?: string;
   hocKy?: number | string;
-  khoaId?:string;
+  khoaId?: string;
 }
 
 export interface IParamLichBieu extends IBaseParams {
