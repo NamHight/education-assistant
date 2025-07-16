@@ -104,6 +104,7 @@ public static class PresentationExtensions
             });
         });
 
+
         services.AddAutoMapper(typeof(MapperProfile).Assembly);
         services.Configure<ApiBehaviorOptions>(options => { options.SuppressModelStateInvalidFilter = true; });
         return services;
