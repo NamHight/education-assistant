@@ -25,7 +25,7 @@ import { LoaiTaiKhoaEnum } from '@/models/TaiKhoan';
 import { SettingsIcon } from 'lucide-react';
 
 export const NAVIGATION = (role?: string): Navigation => {
-  const isAdmin = Number(role) === LoaiTaiKhoaEnum.ADMIN 
+  const isAdmin = Number(role) === LoaiTaiKhoaEnum.ADMIN;
   const isQuanLyBoMon = Number(role) === LoaiTaiKhoaEnum.QUAN_LY_KHOA_BO_MON;
   const allNavigate = [
     {
@@ -104,7 +104,7 @@ export const NAVIGATION = (role?: string): Navigation => {
       segment: 'chuong-trinh-dao-tao',
       title: 'Chương trình đào tạo',
       icon: <SquareFootIcon />,
-      pattern: `chuong-trinh-dao-tao/:rest*`,
+      pattern: `chuong-trinh-dao-tao/:rest*`
     },
     {
       segment: 'phong-hoc',
@@ -133,10 +133,21 @@ export const NAVIGATION = (role?: string): Navigation => {
   ];
 
   return allNavigate.filter((item) => {
-    const adminOnlyRoutes = ['bo-mon','chuyen-lop','chuong-trinh-dao-tao','khoa','lop-hoc','lop-hoc-phan','mon-hoc','nganh','phong-hoc','phan-cong'];
-    const quanLyRoutes = ['phan-cong']
+    const adminOnlyRoutes = [
+      'bo-mon',
+      'chuyen-lop',
+      'chuong-trinh-dao-tao',
+      'khoa',
+      'lop-hoc',
+      'lop-hoc-phan',
+      'mon-hoc',
+      'nganh',
+      'phong-hoc',
+      'phan-cong'
+    ];
+    const quanLyRoutes = ['phan-cong'];
     if (!isAdmin && adminOnlyRoutes.includes(item.segment)) {
-      if(isQuanLyBoMon && quanLyRoutes.includes(item.segment)) {
+      if (isQuanLyBoMon && quanLyRoutes.includes(item.segment)) {
         return true;
       }
       return false;

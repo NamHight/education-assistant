@@ -43,7 +43,6 @@ export interface IFormData {
   LoaiMonHoc: IOption;
   HocKy: IOption;
   Khoa: IOption;
-  
 }
 
 const PopupEdit = ({ khoas, open, onClose, getId, queryKey, chuongTrinhDaoTao, isLoadingKhoa }: IProps) => {
@@ -170,25 +169,24 @@ const PopupEdit = ({ khoas, open, onClose, getId, queryKey, chuongTrinhDaoTao, i
         HocKy: HocKyLopHocPhan.find((item) => item.id === data.hocKy) || null
       });
     }
-
   }, [reset, data]);
   useEffect(() => {
-  if (open && !getId) {
-    reset({
-      MonHoc: null,
-      ChuongTrinhDaoTao: {
-        id: chuongTrinhDaoTao?.id || null,
-        name: chuongTrinhDaoTao?.name || ''
-      },
-      BoMon: null,
-      SoTinChi: '',
-      DiemTichLuy: true,
-      LoaiMonHoc: null,
-      HocKy: null,
-      Khoa: null
-    });
-  }
-}, [open, getId, reset]);
+    if (open && !getId) {
+      reset({
+        MonHoc: null,
+        ChuongTrinhDaoTao: {
+          id: chuongTrinhDaoTao?.id || null,
+          name: chuongTrinhDaoTao?.name || ''
+        },
+        BoMon: null,
+        SoTinChi: '',
+        DiemTichLuy: true,
+        LoaiMonHoc: null,
+        HocKy: null,
+        Khoa: null
+      });
+    }
+  }, [open, getId, reset]);
   const mutationUpdate = useMutation({
     mutationFn: async (data: FormData) => {
       console.log('data', getId);
@@ -214,10 +212,10 @@ const PopupEdit = ({ khoas, open, onClose, getId, queryKey, chuongTrinhDaoTao, i
     }
   });
   const mutationCreate = useMutation({
-     mutationFn: async (formData: any) => {
-          const response = await ChitietChuongTrinhDaoTaoService.createChiTietChuongTrinhDaoTao(formData);
-          return response;
-        },
+    mutationFn: async (formData: any) => {
+      const response = await ChitietChuongTrinhDaoTaoService.createChiTietChuongTrinhDaoTao(formData);
+      return response;
+    },
     onSuccess: async (data) => {
       console.log('Thêm chi tiết chương trình đào tạo thành công:', data);
       notification.show('Thêm thành công', {
@@ -241,33 +239,36 @@ const PopupEdit = ({ khoas, open, onClose, getId, queryKey, chuongTrinhDaoTao, i
         autoHideDuration: 4000
       });
     }
-  })
+  });
   useEffect(() => {
-  if (open && getId) {
-    queryClient.invalidateQueries({ queryKey: ['chi-tiet-chuong-trinh-dao-tao', { id: getId }] });
-  }
+    if (open && getId) {
+      queryClient.invalidateQueries({ queryKey: ['chi-tiet-chuong-trinh-dao-tao', { id: getId }] });
+    }
   }, [open, getId, queryClient]);
 
-  const handleSubmitForm = useCallback((formData: IFormData) => {
-    const form = new FormData();
-    if (data?.id) form.append('id', String(data.id));
-    if (formData.BoMon) form.append('BoMonId', String(formData.BoMon?.id));
-    if (formData.MonHoc) form.append('MonHocId', String(formData.MonHoc?.id));
-    if (formData.ChuongTrinhDaoTao) form.append('ChuongTrinhDaoTaoId', String(formData.ChuongTrinhDaoTao?.id));
-    form.append('SoTinChi', String(formData.SoTinChi || 0));
-    form.append('DiemTichLuy', String(formData.DiemTichLuy || false));
-    if (formData.LoaiMonHoc) form.append('LoaiMonHoc', String(formData.LoaiMonHoc?.id));
-    if (formData.HocKy) form.append('HocKy', String(formData.HocKy?.id));
-    if(data){
-      mutationUpdate.mutate(form);
-    }else{
-      mutationCreate.mutate(form);
-    }
-  },[data]);
+  const handleSubmitForm = useCallback(
+    (formData: IFormData) => {
+      const form = new FormData();
+      if (data?.id) form.append('id', String(data.id));
+      if (formData.BoMon) form.append('BoMonId', String(formData.BoMon?.id));
+      if (formData.MonHoc) form.append('MonHocId', String(formData.MonHoc?.id));
+      if (formData.ChuongTrinhDaoTao) form.append('ChuongTrinhDaoTaoId', String(formData.ChuongTrinhDaoTao?.id));
+      form.append('SoTinChi', String(formData.SoTinChi || 0));
+      form.append('DiemTichLuy', String(formData.DiemTichLuy || false));
+      if (formData.LoaiMonHoc) form.append('LoaiMonHoc', String(formData.LoaiMonHoc?.id));
+      if (formData.HocKy) form.append('HocKy', String(formData.HocKy?.id));
+      if (data) {
+        mutationUpdate.mutate(form);
+      } else {
+        mutationCreate.mutate(form);
+      }
+    },
+    [data]
+  );
   const handleClose = () => {
     onClose();
     reset({});
-  }
+  };
   return (
     <Dialog
       open={open}
@@ -280,7 +281,7 @@ const PopupEdit = ({ khoas, open, onClose, getId, queryKey, chuongTrinhDaoTao, i
         }
       }}
     >
-      <DialogTitle>{data ? "Chỉnh sửa chi tiết đào tạo" : "Thêm mới chi tiết đào tạo"}</DialogTitle>
+      <DialogTitle>{data ? 'Chỉnh sửa chi tiết đào tạo' : 'Thêm mới chi tiết đào tạo'}</DialogTitle>
       <DialogContent>
         <Grid container spacing={2} rowSpacing={1}>
           <Grid size={{ xs: 12, sm: 6, md: 6, lg: 6 }}>
@@ -417,7 +418,7 @@ const PopupEdit = ({ khoas, open, onClose, getId, queryKey, chuongTrinhDaoTao, i
           Hủy
         </Button>
         <Button title='Cập nhật' type='submit' className='!bg-blue-500 !text-white hover:!bg-blue-600'>
-          {data? 'Cập nhật' : 'Thêm mới'}
+          {data ? 'Cập nhật' : 'Thêm mới'}
         </Button>
       </DialogActions>
     </Dialog>

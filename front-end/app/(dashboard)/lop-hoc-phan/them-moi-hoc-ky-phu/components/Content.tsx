@@ -19,7 +19,7 @@ const Content: FC<ContentProps> = ({ initialData, anotherData }) => {
   const notification = useNotifications();
   const router = useRouter();
   const queryClient = useQueryClient();
-   const { setTitle } = useBreadcrumb();
+  const { setTitle } = useBreadcrumb();
   const mutationCreate = useMutation({
     mutationFn: async (formData: any) => {
       const response = await LopHocPhanService.createHocKyPhu(formData);

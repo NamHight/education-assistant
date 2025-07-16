@@ -23,7 +23,7 @@ const Content: FC<ContentProps> = ({ initialData, anotherData }) => {
   const notification = useNotifications();
   const router = useRouter();
   const queryClient = useQueryClient();
-    const {setTitle} = useBreadcrumb();
+  const { setTitle } = useBreadcrumb();
   const mutationCreate = useMutation({
     mutationFn: async (formData: any) => {
       const response = await BoMonService.createBoMon(formData);
@@ -49,8 +49,8 @@ const Content: FC<ContentProps> = ({ initialData, anotherData }) => {
   });
   useEffect(() => {
     setTitle('Thêm mới bộ môn');
-    return () => setTitle('')
-  },[])
+    return () => setTitle('');
+  }, []);
   const handleSubmitForm = (formData: any) => {
     mutationCreate.mutate(formData);
   };

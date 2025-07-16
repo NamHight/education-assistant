@@ -1,4 +1,4 @@
-"use client"
+'use client';
 import { useDynamicBreadcrumbs } from '@/hooks/useDynamicBreadcrumbs';
 import { PageContainer } from '@toolpad/core';
 import React from 'react';
@@ -12,17 +12,17 @@ const LayoutContainer = ({ children }: { children: React.ReactNode }) => {
   return (
     // // <CopilotKit publicApiKey={process.env.NEXT_PUBLIC_COPILOT_API_KEY || ''}
     <PageContainer
-     suppressHydrationWarning
+      suppressHydrationWarning
       suppressContentEditableWarning
       slots={{
-        header: () => null,
+        header: () => null
       }}
       title=''
       breadcrumbs={[]}
     >
       <BreadcrumbProvider>
-            <Breadcrumb/>
-              {children}
+        <Breadcrumb />
+        {children}
       </BreadcrumbProvider>
     </PageContainer>
   );

@@ -24,7 +24,7 @@ interface ContentProps {
 const Content: FC<ContentProps> = ({ initialData, anotherData }) => {
   const notification = useNotifications();
   const router = useRouter();
-  const {setTitle} = useBreadcrumb();
+  const { setTitle } = useBreadcrumb();
   const queryClient = useQueryClient();
   const mutationCreate = useMutation({
     mutationFn: async (formData: any) => {
@@ -52,7 +52,7 @@ const Content: FC<ContentProps> = ({ initialData, anotherData }) => {
   useEffect(() => {
     setTitle('Thêm mới chương trình đào tạo');
     return () => setTitle('');
-  },[setTitle])
+  }, [setTitle]);
   const handleSubmitForm = (formData: any) => {
     mutationCreate.mutate(formData);
   };

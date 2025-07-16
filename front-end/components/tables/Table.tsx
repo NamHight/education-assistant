@@ -300,12 +300,12 @@ const Table = React.forwardRef<any, TableProps>(function table(
     [moreActions]
   );
   const columnsMemo = useMemo((): GridColDef[] => {
-    if(isDiableActions){
+    if (isDiableActions) {
       return columns;
     }
     return [
       ...columns,
-    {
+      {
         field: 'actions',
         type: 'actions',
         headerName: 'Thao tác',
@@ -363,21 +363,27 @@ const Table = React.forwardRef<any, TableProps>(function table(
                   }}
                   color='inherit'
                 />,
-              {...(!isDisableActionOption ?  <GridActionsCellItem
-                  key={id}
-                  icon={<MoreVertIcon />}
-                  label='Edit'
-                  onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
-                    event.stopPropagation();
-                    handleChooseRow?.(id, row);
-                    handleClick(event);
-                    setItem({
-                      id: id,
-                      row: row
-                    });
-                  }}
-                  color='inherit'
-                /> : <></>)}
+                {
+                  ...(!isDisableActionOption ? (
+                    <GridActionsCellItem
+                      key={id}
+                      icon={<MoreVertIcon />}
+                      label='Edit'
+                      onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
+                        event.stopPropagation();
+                        handleChooseRow?.(id, row);
+                        handleClick(event);
+                        setItem({
+                          id: id,
+                          row: row
+                        });
+                      }}
+                      color='inherit'
+                    />
+                  ) : (
+                    <></>
+                  ))
+                }
               ]
             : [
                 <GridActionsCellItem
@@ -439,14 +445,13 @@ const Table = React.forwardRef<any, TableProps>(function table(
       >
         {isDisableEdit ? null : (
           <MenuItem
-            disabled={!!item?.row?.deletedAt || (
-      user?.taiKhoan?.loaiTaiKhoan === LoaiTaiKhoanEnum.ADMIN &&
-      item?.row?.taiKhoan?.loaiTaiKhoan === LoaiTaiKhoanEnum.ADMIN
-    ) ||
-    (
-      user?.taiKhoan?.loaiTaiKhoan === LoaiTaiKhoanEnum.QUAN_LY_KHOA_BO_MON &&
-      item?.row?.taiKhoan?.loaiTaiKhoan === LoaiTaiKhoanEnum.ADMIN
-    )}
+            disabled={
+              !!item?.row?.deletedAt ||
+              (user?.taiKhoan?.loaiTaiKhoan === LoaiTaiKhoanEnum.ADMIN &&
+                item?.row?.taiKhoan?.loaiTaiKhoan === LoaiTaiKhoanEnum.ADMIN) ||
+              (user?.taiKhoan?.loaiTaiKhoan === LoaiTaiKhoanEnum.QUAN_LY_KHOA_BO_MON &&
+                item?.row?.taiKhoan?.loaiTaiKhoan === LoaiTaiKhoanEnum.ADMIN)
+            }
             onClick={() => router.push(`${urlNavigate}/${item.id}`)}
             sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}
           >
@@ -460,31 +465,28 @@ const Table = React.forwardRef<any, TableProps>(function table(
             </Typography>
           </MenuItem>
         )}
-        {
-          isDisableDelete ? null : (
-            <MenuItem
-          disabled={!!item?.row?.deletedAt || (
-      user?.taiKhoan?.loaiTaiKhoan === LoaiTaiKhoanEnum.ADMIN &&
-      item?.row?.taiKhoan?.loaiTaiKhoan === LoaiTaiKhoanEnum.ADMIN
-    ) ||
-    (
-      user?.taiKhoan?.loaiTaiKhoan === LoaiTaiKhoanEnum.QUAN_LY_KHOA_BO_MON &&
-      item?.row?.taiKhoan?.loaiTaiKhoan === LoaiTaiKhoanEnum.ADMIN
-    )}
-          onClick={handleOpenDelete}
-          sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}
-        >
-          <DeleteIcon sx={{ color: 'red' }} />
-          <Typography
-            className={'!text-[14px] !font-[500] !leading-6 group-hover:!text-red-700 group-hover:!font-semibold'}
-            variant={'body1'}
-            sx={{ width: '100%' }}
+        {isDisableDelete ? null : (
+          <MenuItem
+            disabled={
+              !!item?.row?.deletedAt ||
+              (user?.taiKhoan?.loaiTaiKhoan === LoaiTaiKhoanEnum.ADMIN &&
+                item?.row?.taiKhoan?.loaiTaiKhoan === LoaiTaiKhoanEnum.ADMIN) ||
+              (user?.taiKhoan?.loaiTaiKhoan === LoaiTaiKhoanEnum.QUAN_LY_KHOA_BO_MON &&
+                item?.row?.taiKhoan?.loaiTaiKhoan === LoaiTaiKhoanEnum.ADMIN)
+            }
+            onClick={handleOpenDelete}
+            sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}
           >
-            Xóa
-          </Typography>
-        </MenuItem>
-          )
-        }
+            <DeleteIcon sx={{ color: 'red' }} />
+            <Typography
+              className={'!text-[14px] !font-[500] !leading-6 group-hover:!text-red-700 group-hover:!font-semibold'}
+              variant={'body1'}
+              sx={{ width: '100%' }}
+            >
+              Xóa
+            </Typography>
+          </MenuItem>
+        )}
         {handleMoreAction(item.id, item.row)}
       </Menu>
       <Dialog

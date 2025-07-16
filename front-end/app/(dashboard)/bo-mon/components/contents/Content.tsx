@@ -54,7 +54,7 @@ const Content = ({ queryKey }: ContentProps) => {
   const [filterModel, setFilterModel] = useState<GridFilterModel>({
     items: []
   });
-    const {setTitle} = useBreadcrumb();
+  const { setTitle } = useBreadcrumb();
   const queryClient = useQueryClient();
   const { data, isLoading, isFetching } = useQuery({
     queryKey: [queryKey, paginationModel, sortModel, filterModel],
@@ -85,8 +85,8 @@ const Content = ({ queryKey }: ContentProps) => {
   });
   useEffect(() => {
     setTitle('Danh sách bộ môn');
-    return () => setTitle('')
-  },[])
+    return () => setTitle('');
+  }, []);
   const rowCountRef = useRef(data?.meta?.TotalCount || 0);
   const rowCount = useMemo(() => {
     if (data?.meta?.TotalCount !== undefined) {
@@ -132,7 +132,7 @@ const Content = ({ queryKey }: ContentProps) => {
         sortable: true,
         display: 'flex',
         align: 'center',
-        disableColumnMenu: true,
+        disableColumnMenu: true
       },
       {
         field: 'tenBoMon',

@@ -53,6 +53,7 @@ import { LopHocService } from '@/services/LopHocService';
 import { saveAs } from 'file-saver';
 import { useBreadcrumb } from '@/hooks/context/BreadCrumbContext';
 import { useUser } from '@/stores/selectors';
+import useCheckPermission from '@/helper/useCheckPermission';
 const Table = dynamic(() => import('@/components/tables/Table'), {
   ssr: false
 });
@@ -113,17 +114,26 @@ const Content = ({ queryKey, lopHocServers, tinhTrangHocTapServer }: ContentProp
     items: []
   });
   const [itemRow, setItemRow] = useState<Record<string, any>>({
-      id: null,
-      row: {}
-    });
-    const user = useUser();
-   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
-   const openPopover = Boolean(anchorEl);
+    id: null,
+    row: {}
+  });
+  const user = useUser();
+  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
+  const openPopover = Boolean(anchorEl);
   const id = openPopover ? 'simple-popover' : undefined;
   const queryClient = useQueryClient();
   const { setTitle } = useBreadcrumb();
+  const { isAdmin } = useCheckPermission();
   const { data, isLoading, isFetching } = useQuery({
-    queryKey: [queryKey, paginationModel, sortModel, filterModel, filterOption?.lopId, filterOption?.tinhTrang,filterOption?.trangThai],
+    queryKey: [
+      queryKey,
+      paginationModel,
+      sortModel,
+      filterModel,
+      filterOption?.lopId,
+      filterOption?.tinhTrang,
+      filterOption?.trangThai
+    ],
     queryFn: async () => {
       const searchKeyWord = handleTextSearch(filterModel?.quickFilterValues as any[]);
       let params: IParamSinhVien = {
@@ -138,7 +148,7 @@ const Content = ({ queryKey, lopHocServers, tinhTrangHocTapServer }: ContentProp
           tinhTrangHocTap: filterOption.tinhTrang
         };
       }
-      if( filterOption?.trangThai){
+      if (filterOption?.trangThai) {
         params = {
           ...params,
           trangThai: filterOption.trangThai
@@ -167,13 +177,13 @@ const Content = ({ queryKey, lopHocServers, tinhTrangHocTapServer }: ContentProp
     refetchOnWindowFocus: false
   });
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-      setAnchorEl(event.currentTarget);
-    };
-  
-    const handleClosePopover = () => {
-      setAnchorEl(null);
-      refTable.current?.handleClose();
-    };
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClosePopover = () => {
+    setAnchorEl(null);
+    refTable.current?.handleClose();
+  };
   const { data: lopHocs, isLoading: isLoadingLopHoc } = useQuery({
     queryKey: ['lop-hoc-list'],
     queryFn: async () => {
@@ -346,23 +356,23 @@ const Content = ({ queryKey, lopHocServers, tinhTrangHocTapServer }: ContentProp
   };
   const moreActions = useCallback((id: string | number | null, row: any) => {
     return (
-       <MenuItem
-          key='change-status'
-          onClick={(e: React.MouseEvent<HTMLLIElement>) => {
-            handleClick(e as unknown as React.MouseEvent<HTMLButtonElement>);
-            setItemRow({ id, row });
-          }}
-          sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}
+      <MenuItem
+        key='change-status'
+        onClick={(e: React.MouseEvent<HTMLLIElement>) => {
+          handleClick(e as unknown as React.MouseEvent<HTMLButtonElement>);
+          setItemRow({ id, row });
+        }}
+        sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}
+      >
+        <ChangeCircleOutlinedIcon sx={{ color: 'green' }} />
+        <Typography
+          className={'!text-[14px] !font-[500] !leading-6 group-hover:!text-blue-800 group-hover:!font-semibold'}
+          variant={'body1'}
+          sx={{ width: '100%' }}
         >
-          <ChangeCircleOutlinedIcon sx={{ color: 'green' }} />
-          <Typography
-            className={'!text-[14px] !font-[500] !leading-6 group-hover:!text-blue-800 group-hover:!font-semibold'}
-            variant={'body1'}
-            sx={{ width: '100%' }}
-          >
-            Thay đổi trạng thái
-          </Typography>
-        </MenuItem>
+          Thay đổi trạng thái
+        </Typography>
+      </MenuItem>
     );
   }, []);
   useEffect(() => {
@@ -446,7 +456,7 @@ const Content = ({ queryKey, lopHocServers, tinhTrangHocTapServer }: ContentProp
         sortable: true,
         display: 'flex',
         align: 'center',
-        disableColumnMenu: true,
+        disableColumnMenu: true
       },
       {
         field: 'anhDaiDien',
@@ -599,7 +609,7 @@ const Content = ({ queryKey, lopHocServers, tinhTrangHocTapServer }: ContentProp
   const handleChooseRow = (id: string | number | null, row: any) => {
     setGetItem({ id: String(id), row });
   };
-const mutationChangeStatus = useMutation({
+  const mutationChangeStatus = useMutation({
     mutationFn: async ({ id, data }: { id: string | number | null; data: any }) => {
       const result = await SinhVienService.updateSinhVienTrangThai(id, { trangThai: data.trangThai });
       return result;
@@ -619,45 +629,45 @@ const mutationChangeStatus = useMutation({
     }
   });
 
-const handleChangeStatus = (id: string | number | null, trangThai: number | string) => {
+  const handleChangeStatus = (id: string | number | null, trangThai: number | string) => {
     mutationChangeStatus.mutate({ id, data: { trangThai: trangThai } });
   };
 
   return (
     <Box className='flex flex-col gap-4'>
       <Popover
-              id={id}
-              open={openPopover}
-              anchorEl={anchorEl}
-              onClose={handleClosePopover}
-              anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'left'
-              }}
-              transformOrigin={{
-                vertical: 'bottom',
-                horizontal: 'right'
-              }}
-              slotProps={{
-                paper: {
-                  className: '!bg-white flex flex-col gap-2 p-2 shadow-lg rounded-lg'
-                }
-              }}
-            >
-              {TrangThaiSinhVien2.map((item) => (
-                <button
-                  key={item?.id}
-                  disabled={item.id === itemRow?.row?.trangThaiSinhVien}
-                  className='px-2 py-1 hover:bg-gray-100 rounded-lg flex items-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed'
-                  onClick={() => {
-                    handleChangeStatus(itemRow?.id, item?.id);
-                    handleClosePopover();
-                  }}
-                >
-                  <Typography>{item.name}</Typography>
-                </button>
-              ))}
-            </Popover>
+        id={id}
+        open={openPopover}
+        anchorEl={anchorEl}
+        onClose={handleClosePopover}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'left'
+        }}
+        transformOrigin={{
+          vertical: 'bottom',
+          horizontal: 'right'
+        }}
+        slotProps={{
+          paper: {
+            className: '!bg-white flex flex-col gap-2 p-2 shadow-lg rounded-lg'
+          }
+        }}
+      >
+        {TrangThaiSinhVien2.map((item) => (
+          <button
+            key={item?.id}
+            disabled={item.id === itemRow?.row?.trangThaiSinhVien}
+            className='px-2 py-1 hover:bg-gray-100 rounded-lg flex items-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed'
+            onClick={() => {
+              handleChangeStatus(itemRow?.id, item?.id);
+              handleClosePopover();
+            }}
+          >
+            <Typography>{item.name}</Typography>
+          </button>
+        ))}
+      </Popover>
       <Box className='flex justify-start gap-4  '>
         <Box className='grid grid-cols-1 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full'>
           <Box className='flex flex-col border border-gray-200 rounded-lg p-4 shadow-sm gap-3 w-full'>
@@ -814,30 +824,33 @@ const handleChangeStatus = (id: string | number | null, trangThai: number | stri
               onClick={() => handleExportFile()}
             />
           </Box>
-          <Box className='w-full'>
-            <input
-              id='import-file'
-              accept='.xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel'
-              type='file'
-              className='hidden'
-              onChange={handleFileChange}
-            />
-            <Button
-              className='flex items-center gap-3 w-full justify-center'
-              icon={<Download className='h-5 w-5 text-white' />}
-              title={'Import'}
-              onClick={() => {
-                if (!filterOption?.lopId) {
-                  notification.show('Vui lòng chọn lớp học để import', {
-                    severity: 'warning',
-                    autoHideDuration: 4000
-                  });
-                  return;
-                }
-                document.getElementById('import-file')?.click();
-              }}
-            />
-          </Box>
+          {isAdmin && (
+            <Box className='w-full'>
+              <input
+                id='import-file'
+                accept='.xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel'
+                type='file'
+                className='hidden'
+                onChange={handleFileChange}
+              />
+              <Button
+                className='flex items-center gap-3 w-full justify-center'
+                icon={<Download className='h-5 w-5 text-white' />}
+                title={'Import'}
+                onClick={() => {
+                  if (!filterOption?.lopId) {
+                    notification.show('Vui lòng chọn lớp học để import', {
+                      severity: 'warning',
+                      autoHideDuration: 4000
+                    });
+                    return;
+                  }
+                  document.getElementById('import-file')?.click();
+                }}
+              />
+            </Box>
+          )}
+
           <Box className='w-full'>
             <Button
               title={'Thêm'}

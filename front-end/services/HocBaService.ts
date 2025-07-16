@@ -75,7 +75,6 @@ export class HocBaService {
     }
   }
 
-
   static async deleteHocBa(id: string | number | null) {
     try {
       const response = await authApi.delete(`${API.HOC_BA.GET_BY_ID.replace(':id', `${id}`)}`);

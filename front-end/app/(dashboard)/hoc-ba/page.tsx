@@ -22,7 +22,7 @@ export default async function Page() {
   const queryKey = 'hoc-ba-list';
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <Content queryKey={queryKey}  />
+      <Content queryKey={queryKey} />
     </HydrationBoundary>
   );
 }

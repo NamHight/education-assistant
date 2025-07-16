@@ -504,7 +504,6 @@ const TableEdit = forwardRef(
                     <InputSelect2
                       fullWidth
                       control={control}
-                      isDisabled={!isAdmin}
                       name={'HocKy'}
                       placeholder={'Chọn học kỳ'}
                       data={HocKyLopHocPhan ?? []}

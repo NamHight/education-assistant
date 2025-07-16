@@ -65,7 +65,7 @@ export interface IFormTenPhong {
       id: number;
       name: string;
     }
-  ]
+  ];
 }
 
 interface IContentFormProps {
@@ -90,7 +90,7 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
         .min(1, 'Sức chứa phải lớn hơn 1')
         .typeError('Sức chứa phải là một số')
         .required('Sức chứa không được để trống'),
-      LoaiPhongHoc: yup.object().required('Loại phòng học không được để trống'),
+      LoaiPhongHoc: yup.object().required('Loại phòng học không được để trống')
     });
   }, [data]);
   const {
@@ -114,10 +114,10 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
   });
   const { fields, append, remove, insert, replace } = useFieldArray<IFormTenPhong>({
     control,
-    name:'phongHoc',
-  })
+    name: 'phongHoc'
+  });
   const handleSubmitForm = (formData: IFormData) => {
-    if(fields.length === 0) {
+    if (fields.length === 0) {
       notification.show('Vui lòng thêm ít nhất một phòng học', {
         severity: 'error',
         autoHideDuration: 5000
@@ -128,9 +128,9 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
       TenPhongs: fields.map((item) => item.name),
       ToaNha: formData.ToaNha.id,
       SucChua: formData.SucChua,
-      LoaiPhongHoc: formData.LoaiPhongHoc.id,
-    }
-    console.log("convertData", convertData);
+      LoaiPhongHoc: formData.LoaiPhongHoc.id
+    };
+    console.log('convertData', convertData);
     if (onSubmit) {
       onSubmit(convertData);
     }
@@ -148,117 +148,140 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
   }, [reset, data]);
   const soLuongPhongHoc = watch('SoPhong');
   useEffect(() => {
- const toaNha = getValues('ToaNha').name;
+    const toaNha = getValues('ToaNha').name;
     const lau = getValues('Lau');
-    const convertName = (phong:number) => {
+    const convertName = (phong: number) => {
       return `${toaNha}${lau}.${phong}`;
-    } 
+    };
     const phongHoc = Array.from({ length: soLuongPhongHoc }, (_, index) => ({
       id: index + 1,
       name: convertName(index + 1)
     }));
     replace(phongHoc);
-  },[soLuongPhongHoc])
+  }, [soLuongPhongHoc]);
   const handleRemovePhongHoc = (index: number) => {
     remove(index);
-  }
-  console.log("fields",fields.map(item => item.name));
+  };
+  console.log(
+    'fields',
+    fields.map((item) => item.name)
+  );
   return (
     <Grid container spacing={2} rowSpacing={1}>
-        <Grid size={8}>
-             <FormControl fullWidth component={'form'} onSubmit={handleSubmit(handleSubmitForm)} className='flex flex-col gap-4'>
-          <Grid container spacing={2} rowSpacing={1} className='flex flex-col border border-gray-200 rounded-lg p-4 shadow-sm'>
-          <Grid size={12} container>
-          <Grid size={{ xs: 12, sm: 6, md: 4, lg: 4 }}>
-          <InputSelect2
-              fullWidth
-              name={'ToaNha'}
-              control={control}
-              title='Tòa nhà'
-              placeholder={'Chọn tòa nhà'}
-              data={ToaNha ?? []}
-              getOptionKey={(option) => option.id}
-              getOptionLabel={(option: any) => option.name}
-              error={(errors.ToaNha as any)?.message}
-            />
-        </Grid>
-        <Grid size={{ xs: 12, sm: 6, md: 4, lg: 4 }}>
-          <Input2
-            {...register('Lau')}
-            title='Lầu'
-            placeholder='Nhập lầu'
-            error={errors.Lau?.message}
-            isDisabled={false}
-            type='number'
-          />
-        </Grid>
-        <Grid size={{ xs: 12, sm: 6, md: 4, lg: 4 }}>
-          <Input2
-            {...register('SoPhong')}
-            title='Số lượng phòng học'
-            placeholder='Nhập số lượng phòng học'
-            error={errors.SoPhong?.message}
-            isDisabled={false}
-            type='text'
-          />
-        </Grid>
-        </Grid>
-        <Grid size={{ xs: 12, sm: 6, md: 6, lg: 6 }}>
-          <Input2
-            {...register('SucChua')}
-            title='Sức chứa'
-            placeholder='Nhập sức chứa'
-            error={errors.SucChua?.message}
-            isDisabled={false}
-            type='text'
-          />
-        </Grid>
-        <Grid size={{ xs: 12, sm: 6, md: 6, lg: 6 }}>
-          <InputSelect2
-            control={control}
-            fullWidth
-            name={'LoaiPhongHoc'}
-            placeholder={'Chọn loại phòng học'}
-            title={'Loại phòng học'}
-            data={LoaiPhongHoc ?? []}
-            getOptionKey={(option) => option.id}
-            getOptionLabel={(option: any) => option.name}
-            error={(errors.LoaiPhongHoc as any)?.message}
-          />
-        </Grid>
-        <Grid className="flex justify-end" size={12}>
-        <Button
-          type={'submit'}
-          className='flex items-center gap-3 !bg-blue-500 !px-4 !py-2 rounded !hover:bg-blue-600 transition-all !duration-200 !ease-in-out !shadow-sm !text-white !font-semibold !text-base !leading-6 hover:transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed'
+      <Grid size={8}>
+        <FormControl
+          fullWidth
+          component={'form'}
+          onSubmit={handleSubmit(handleSubmitForm)}
+          className='flex flex-col gap-4'
         >
-          <SaveIcon className='!text-white !w-6 !h-6' />
-          <Typography className='!text-lg !text-white !leading-6 !font-semibold'>Tạo</Typography>
-        </Button>
-        </Grid>
-        </Grid>
-
-    </FormControl>
-        </Grid>
-         <Grid size={4} direction="row" spacing={0}  container className='h-auto max-h-[238px] border overflow-y-hidden border-gray-300 rounded-lg shadow-sm' >
-          <Grid size={12} className="p-2 overflow-hidden max-h-[40px] h-full">
-            <Typography className='!font-semibold !text-[15px]'>Danh sách phòng học</Typography>
+          <Grid
+            container
+            spacing={2}
+            rowSpacing={1}
+            className='flex flex-col border border-gray-200 rounded-lg p-4 shadow-sm'
+          >
+            <Grid size={12} container>
+              <Grid size={{ xs: 12, sm: 6, md: 4, lg: 4 }}>
+                <InputSelect2
+                  fullWidth
+                  name={'ToaNha'}
+                  control={control}
+                  title='Tòa nhà'
+                  placeholder={'Chọn tòa nhà'}
+                  data={ToaNha ?? []}
+                  getOptionKey={(option) => option.id}
+                  getOptionLabel={(option: any) => option.name}
+                  error={(errors.ToaNha as any)?.message}
+                />
+              </Grid>
+              <Grid size={{ xs: 12, sm: 6, md: 4, lg: 4 }}>
+                <Input2
+                  {...register('Lau')}
+                  title='Lầu'
+                  placeholder='Nhập lầu'
+                  error={errors.Lau?.message}
+                  isDisabled={false}
+                  type='number'
+                />
+              </Grid>
+              <Grid size={{ xs: 12, sm: 6, md: 4, lg: 4 }}>
+                <Input2
+                  {...register('SoPhong')}
+                  title='Số lượng phòng học'
+                  placeholder='Nhập số lượng phòng học'
+                  error={errors.SoPhong?.message}
+                  isDisabled={false}
+                  type='text'
+                />
+              </Grid>
+            </Grid>
+            <Grid size={{ xs: 12, sm: 6, md: 6, lg: 6 }}>
+              <Input2
+                {...register('SucChua')}
+                title='Sức chứa'
+                placeholder='Nhập sức chứa'
+                error={errors.SucChua?.message}
+                isDisabled={false}
+                type='text'
+              />
+            </Grid>
+            <Grid size={{ xs: 12, sm: 6, md: 6, lg: 6 }}>
+              <InputSelect2
+                control={control}
+                fullWidth
+                name={'LoaiPhongHoc'}
+                placeholder={'Chọn loại phòng học'}
+                title={'Loại phòng học'}
+                data={LoaiPhongHoc ?? []}
+                getOptionKey={(option) => option.id}
+                getOptionLabel={(option: any) => option.name}
+                error={(errors.LoaiPhongHoc as any)?.message}
+              />
+            </Grid>
+            <Grid className='flex justify-end' size={12}>
+              <Button
+                type={'submit'}
+                className='flex items-center gap-3 !bg-blue-500 !px-4 !py-2 rounded !hover:bg-blue-600 transition-all !duration-200 !ease-in-out !shadow-sm !text-white !font-semibold !text-base !leading-6 hover:transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed'
+              >
+                <SaveIcon className='!text-white !w-6 !h-6' />
+                <Typography className='!text-lg !text-white !leading-6 !font-semibold'>Tạo</Typography>
+              </Button>
+            </Grid>
           </Grid>
-          <Grid size={12} className='flex flex-col gap-2 w-full h-full max-h-[198px] overflow-y-auto px-2 pb-3'>
-            {
-            fields.map((item,idx) => (
-<Box key={item.id} className="max-h-12 flex w-full items-center justify-between gap-4 border border-gray-500 rounded-lg p-4 shadow-sm">
-            <Box className="flex gap-2 items-center justify-center">
-              <Typography className='!font-semibold !text-[15px]'>Tên phòng:</Typography>
-              <Typography>{item.name}</Typography>
-          </Box>
-              <Button onClick={() => handleRemovePhongHoc(idx)} className="!p-1 !min-h-0 !min-w-0 !h-auto hover:!px-1 !rounded-full"><Close className='h-3 w-3' /></Button>
-          </Box>
-            ))
-          }
-          </Grid>
+        </FormControl>
+      </Grid>
+      <Grid
+        size={4}
+        direction='row'
+        spacing={0}
+        container
+        className='h-auto max-h-[238px] border overflow-y-hidden border-gray-300 rounded-lg shadow-sm'
+      >
+        <Grid size={12} className='p-2 overflow-hidden max-h-[40px] h-full'>
+          <Typography className='!font-semibold !text-[15px]'>Danh sách phòng học</Typography>
         </Grid>
+        <Grid size={12} className='flex flex-col gap-2 w-full h-full max-h-[198px] overflow-y-auto px-2 pb-3'>
+          {fields.map((item, idx) => (
+            <Box
+              key={item.id}
+              className='max-h-12 flex w-full items-center justify-between gap-4 border border-gray-500 rounded-lg p-4 shadow-sm'
+            >
+              <Box className='flex gap-2 items-center justify-center'>
+                <Typography className='!font-semibold !text-[15px]'>Tên phòng:</Typography>
+                <Typography>{item.name}</Typography>
+              </Box>
+              <Button
+                onClick={() => handleRemovePhongHoc(idx)}
+                className='!p-1 !min-h-0 !min-w-0 !h-auto hover:!px-1 !rounded-full'
+              >
+                <Close className='h-3 w-3' />
+              </Button>
+            </Box>
+          ))}
+        </Grid>
+      </Grid>
     </Grid>
- 
   );
 };
 

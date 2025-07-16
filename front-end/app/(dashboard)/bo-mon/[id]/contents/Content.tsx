@@ -21,7 +21,7 @@ interface IContentProps {
 const Content = ({ initialData, id, anotherData }: IContentProps) => {
   const notifications = useNotifications();
   const router = useRouter();
-    const {setTitle,setBreadcrumbs} = useBreadcrumb();
+  const { setTitle, setBreadcrumbs } = useBreadcrumb();
   const queryClient = useQueryClient();
   const { data } = useQuery({
     queryKey: ['bo-mon', { id: id }],
@@ -55,24 +55,27 @@ const Content = ({ initialData, id, anotherData }: IContentProps) => {
     }
   });
   useEffect(() => {
-    if(data){
+    if (data) {
       setTitle(`Chỉnh sửa: ${data?.tenBoMon}`);
       setBreadcrumbs(
-          <Typography className="relative text-[14px] flex gap-1 items-center">
-          <Typography component={'span'} sx={(theme) => ({
-            color: theme.palette.mode === 'dark' ? 'white !important' : 'black !important',
-            fontWeight: 500
-          })}>
+        <Typography className='relative text-[14px] flex gap-1 items-center'>
+          <Typography
+            component={'span'}
+            sx={(theme) => ({
+              color: theme.palette.mode === 'dark' ? 'white !important' : 'black !important',
+              fontWeight: 500
+            })}
+          >
             {data?.tenBoMon}
           </Typography>
-          </Typography>
-      )
+        </Typography>
+      );
       return () => {
-        setTitle('')
+        setTitle('');
         setBreadcrumbs(null);
       };
     }
-  },[data, setTitle])
+  }, [data, setTitle]);
   const handleSubmitForm = (formData: any) => {
     mutationUpdate.mutate(formData);
   };

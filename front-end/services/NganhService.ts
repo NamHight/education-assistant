@@ -16,6 +16,7 @@ export class NganhService {
       .catch((error) => error.response?.data);
   }
 
+
   static async getAllNganhServer(params: IParamNganh) {
     return await authApiServer
       .get(`${API.NGANH.GET_ALL}`, {
