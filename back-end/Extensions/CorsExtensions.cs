@@ -9,21 +9,23 @@ public static class CorsExtensions
         var allowedMethods = corsSettings["AllowMethods"]?.Split(',');
         var allowedHeaders = corsSettings["AllowHeaders"]?.Split(',');
         var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+        Console.WriteLine($"test 99999999999999999999 {environment}");
         services.AddCors(options =>
         {
-            if (environment == "Development")
+            if (environment == "Production")
                 options.AddPolicy("ProductionPolicy", builder => builder
                     .WithOrigins(allowedOrigins!)
                     .WithMethods(allowedMethods!)
                     .WithHeaders(allowedHeaders!)
                     .WithExposedHeaders("x-pagination")
                     .AllowCredentials());
-            options.AddPolicy("DevelopmentPolicy", builder => builder
-                .WithOrigins(allowedOrigins!)
-                .WithMethods(allowedMethods!)
-                .WithHeaders(allowedHeaders!)
-                .WithExposedHeaders("x-pagination")
-                .AllowCredentials());
+            else
+                options.AddPolicy("DevelopmentPolicy", builder => builder
+                    .WithOrigins(allowedOrigins!)
+                    .WithMethods(allowedMethods!)
+                    .WithHeaders(allowedHeaders!)
+                    .WithExposedHeaders("x-pagination")
+                    .AllowCredentials());
         });
 
         return services;

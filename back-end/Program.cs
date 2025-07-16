@@ -19,7 +19,11 @@ builder.Configuration
 LogManager.LoadConfiguration(string.Concat(Directory.GetCurrentDirectory(), "/nlog.config"));
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.ListenAnyIP(90);
+    options.ListenAnyIP(9090, listenOptions => { listenOptions.UseHttps("https/aspnetapp.pfx", "tiennam1"); });
+});
 
 builder.Services
     .AddCorsService(builder.Configuration)

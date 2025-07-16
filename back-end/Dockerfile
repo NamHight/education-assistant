@@ -15,7 +15,9 @@ FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
 ENV ASPNETCORE_ENVIRONMENT=Production
 COPY --from=build /app/publish .
+COPY ./https/aspnetapp.pfx ./aspnetapp.pfx
 COPY ./appsettings.json ./appsettings.json
 ENV ASPNETCORE_URLS=http://+:90
 EXPOSE 90
+EXPOSE 9090
 ENTRYPOINT ["dotnet", "Education-assistant.dll"]

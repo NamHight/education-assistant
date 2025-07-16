@@ -112,3 +112,5 @@ yarn-error.log*
 next-env.d.ts
 front-end/.next/package.json
 front-end/package-lock.json
+
+https/aspnetapp.pfx
