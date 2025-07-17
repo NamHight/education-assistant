@@ -30,7 +30,7 @@ interface IContentProps {
 const Content = ({ queryKey, ctdtServer }: IContentProps) => {
   const notification = useNotifications();
   const queryClient = useQueryClient();
-  const [giangVienOptions, setGiangVienOptions] = useState<{ [khoaId: string]: any[] }>({});
+  const [giangVienOptions, setGiangVienOptions] = useState<{ [boMonId: string]: any[] }>({});
   // const [loaiLopHocPhan, setloaiLopHocPhan] = useState<number | null>(null);
   const [filter, setfilter] = useState<{
     hocKy: number;
@@ -130,15 +130,15 @@ const Content = ({ queryKey, ctdtServer }: IContentProps) => {
     setTitle('Phân công');
     return () => setTitle('');
   }, []);
-  const fetchGiangVienByKhoaId = async (khoaId: string) => {
-    if (giangVienOptions[khoaId]) return giangVienOptions[khoaId];
-    const result = await GiangVienService.getGiangVienByKhoaId(khoaId);
+  const fetchGiangVienByBoMonId = async (boMonId: string) => {
+    if (giangVienOptions[boMonId]) return giangVienOptions[boMonId];
+    const result = await GiangVienService.getGiangVienByBoMonId(boMonId);
     const options =
       result?.map((item: any) => ({
         value: item.id,
         label: item.hoTen
       })) || [];
-    setGiangVienOptions((prev) => ({ ...prev, [khoaId]: options }));
+    setGiangVienOptions((prev) => ({ ...prev, [boMonId]: options }));
     return options;
   };
 
@@ -238,13 +238,13 @@ const Content = ({ queryKey, ctdtServer }: IContentProps) => {
           <SelectEditCell
             params={params}
             giangVienOptions={giangVienOptions}
-            fetchGiangVienByKhoaId={fetchGiangVienByKhoaId}
+            fetchGiangVienByBoMonId={fetchGiangVienByBoMonId}
           />
         ),
         renderCell: (params) => {
           if (!params.value) return null;
-          const khoaId = params.row?.monHoc?.khoaId;
-          const giangVien = giangVienOptions[khoaId]?.find((item: any) => item.value === params.value);
+          const boMonId = params.row?.monHoc?.chiTietChuongTrinhDaoTao?.boMonId;
+          const giangVien = giangVienOptions[boMonId]?.find((item: any) => item.value === params.value);
           return giangVien ? (
             <Typography variant='body2' className='text-blue-500 hover:underline'>
               {giangVien.label}

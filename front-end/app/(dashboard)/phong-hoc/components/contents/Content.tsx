@@ -477,6 +477,7 @@ const Content = ({ queryKey }: ContentProps) => {
         ref={refTable}
         rows={data?.data}
         columns={columns}
+        isDisableDelete
         rowCount={rowCount}
         isFetching={isFetching}
         isLoading={isLoading}

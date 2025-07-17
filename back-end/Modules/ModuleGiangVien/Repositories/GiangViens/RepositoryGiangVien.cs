@@ -184,9 +184,7 @@ public class RepositoryGiangVien : RepositoryBase<GiangVien>, IRepositoryGiangVi
         if (trangThai.HasValue && trangThai != 0) query = query.Where(item => item.TrangThai == trangThai);
         return await PagedListAsync<GiangVien>.ToPagedListAsync(query
             .SearchBy(search, item => item.HoTen!)
-            .IgnoreQueryFilters()
-            .OrderBy(item => item.DeletedAt != null)
-            .ThenBy(item => item.TrangThai == (int)TrangThaiGiangVienEnum.NGHI_VIEC)
+            .OrderBy(item => item.TrangThai == (int)TrangThaiGiangVienEnum.NGHI_VIEC)
             .ThenBy(item => item.TrangThai == (int)TrangThaiGiangVienEnum.NGHI_HUU)
             .ThenBy(item => item.TrangThai == (int)TrangThaiGiangVienEnum.NGHI_PHEP)
             .ThenByDescending(item => item.TrangThai == (int)TrangThaiGiangVienEnum.DANG_CONG_TAC)

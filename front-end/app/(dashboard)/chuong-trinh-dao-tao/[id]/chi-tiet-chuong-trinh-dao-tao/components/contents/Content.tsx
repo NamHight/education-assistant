@@ -106,7 +106,6 @@ const Content = ({ queryKey, id, khoas }: ContentProps) => {
         id: chuongTrinhDaoTao?.id || '',
         name: chuongTrinhDaoTao?.tenChuongTrinh || ''
       });
-      setGetId(chuongTrinhDaoTao?.id)
     }
   }, [chuongTrinhDaoTao]);
   const { data: khoass, isLoading: isLoadingKhoa } = useQuery({

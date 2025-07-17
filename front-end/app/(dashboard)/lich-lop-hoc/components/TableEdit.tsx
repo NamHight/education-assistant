@@ -330,7 +330,6 @@ const TableEdit = forwardRef(
     const [file, setFile] = useState<File | null>(null);
     const [cellModesModel, setCellModesModel] = React.useState<GridCellModesModel>({});
     const notification = useNotifications();
-
     const user = useUser();
     const { isAdmin, isQuanLyKhoaBoMon, isGiangVien } = useCheckPermission();
     const unsavedChangesRef = React.useRef<{
@@ -532,8 +531,8 @@ const TableEdit = forwardRef(
                 </Grid>
               </Box>
             </Box>
-            <Box className='flex flex-col gap-4 items-center h-full justify-start'>
-              <Box></Box>
+            {
+              isAdmin && (<Box className='flex flex-col gap-4 items-center h-full justify-start py-3'>
               <LoadingButton
                 disabled={false}
                 loading={false}
@@ -544,8 +543,8 @@ const TableEdit = forwardRef(
               >
                 <Typography className='!text-[16px] !leading-6 !font-semibold'>Thêm</Typography>
               </LoadingButton>
-              <Box></Box>
-            </Box>
+            </Box>)
+            }
           </Box>
 
           <Box className='flex flex-col !max-w-[300px] w-full gap-4 p-4 border border-gray-200 rounded-lg shadow-sm light:bg-white justify-center items-center'>

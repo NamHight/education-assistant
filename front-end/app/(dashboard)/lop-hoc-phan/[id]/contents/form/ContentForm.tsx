@@ -118,72 +118,18 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData, query
     mutationUpdate.mutate(formData);
     handleChangeSiSo();
   };
-  const handleOnKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      isChangeSiSo ? handleChangeSiSoSubmit() : handleChangeSiSo();
-    }
-  };
   return (
     <FormControl fullWidth component={'form'} className='flex flex-col gap-4'>
       <Grid container spacing={2} rowSpacing={1}>
         <Grid size={{ xs: 12, sm: 6, md: 6, lg: 6 }} className='relative'>
-          <Button
-            className='!absolute !top-3 right-0 !p-0 !h-0 hover:!underline !text-blue-500 '
-            sx={{
-              color: errorSiSo ? 'red !important' : 'inherit'
-            }}
-            onClick={() => (isChangeSiSo ? handleChangeSiSoSubmit() : handleChangeSiSo())}
-          >
-            {isChangeSiSo ? 'Lưu' : 'Thay đổi'}
-          </Button>
           <Box className='flex flex-col gap-1'>
             <Typography className='!text-[16px] !font-[500] !leading-6 !text-gray-500 mb-1'>Sỉ số</Typography>
-            {isChangeSiSo ? (
-              <>
-                <TextField
-                  name='siSo'
-                  type='number'
-                  onChange={(e: any) => {
-                    setNumberSiSo(e.target.value);
-                  }}
-                  value={numberSiSo}
-                  onKeyDown={handleOnKeyDown}
-                  sx={(theme) => ({
-                    '& .MuiOutlinedInput-root': {
-                      mt: '0px !important',
-                      borderColor: errorSiSo ? 'red' : theme.palette.grey[500],
-                      '& fieldset': {
-                        borderColor: errorSiSo ? 'red' : theme.palette.grey[500]
-                      },
-                      '&:hover fieldset': {
-                        borderColor: theme.palette.primary.main
-                      },
-                      '&.Mui-focused fieldset': {
-                        borderColor: theme.palette.primary.main
-                      }
-                    },
-                    '& .MuiInputBase-input': {
-                      padding: '10px 2px',
-                      fontSize: '14px',
-                      color: theme.palette.text.primary
-                    }
-                  })}
-                  className='border-gray-200'
-                  id='outlined-basic'
-                  placeholder='Nhập sỉ số'
-                  variant='outlined'
-                />
-                {errorSiSo && <Typography className='!text-red-600 !text-sm mt-1'>{errorSiSo}</Typography>}
-              </>
-            ) : (
               <Box
                 className='rounded bg-gray-100 px-3 py-2 border border-gray-200 text-[15px] text-gray-800 font-medium'
                 style={{ minHeight: 40, display: 'flex', alignItems: 'center' }}
               >
                 {data?.siSo || 0}
               </Box>
-            )}
           </Box>
         </Grid>
         <Grid size={{ xs: 12, sm: 6, md: 6, lg: 6 }}>
@@ -209,12 +155,6 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData, query
           </Box>
         </Grid>
         <Grid size={{ xs: 12, sm: 6, md: 6, lg: 6 }} className='relative'>
-          <Button
-            className='!absolute !top-3 right-0 !p-0 !h-0 hover:!underline !text-blue-500'
-            onClick={() => handleChangeStatus()}
-          >
-            Thay đổi
-          </Button>
           <Box className='flex flex-col gap-1'>
             <Typography className='!text-[16px] !font-[500] !leading-6 !text-gray-500 mb-1'>Trạng thái</Typography>
             <Box

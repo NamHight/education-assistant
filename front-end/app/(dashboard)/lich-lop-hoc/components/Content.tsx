@@ -482,11 +482,11 @@ const Content = ({ queryKey, lopHocServer, boMonServer }: IContentProps) => {
       },
       {
         field: 't8',
-        headerName: 'Thứ 8',
+        headerName: 'Chủ nhật',
         type: 'string',
         headerAlign: 'left',
         minWidth: 80,
-        flex: 0.5,
+        flex: 0.8 ,
         sortable: false,
         display: 'flex',
         align: 'left',

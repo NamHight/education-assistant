@@ -20,6 +20,7 @@ import { GiangVienService } from '@/services/GiangVienService';
 import { AuthenticateService } from '@/services/AuthenticateService';
 import TextArea from '@/components/textarea/TextArea';
 import { useNotifications } from '@toolpad/core';
+import { useBreadcrumb } from '@/hooks/context/BreadCrumbContext';
 export interface IFormData {
   HoTen: string;
   NgaySinh?: string;
@@ -42,6 +43,7 @@ const Content = ({ data }: IContentProps) => {
   });
   const notification = useNotifications();
   const queryClient = useQueryClient();
+   const { setTitle } = useBreadcrumb();
   const schema = useMemo(() => {
     return yup.object().shape({
       HoTen: yup.string().when([], {
@@ -116,6 +118,10 @@ const Content = ({ data }: IContentProps) => {
       NgayVaoTruong: null
     }
   });
+  useEffect(() => {
+    setTitle('Thông tin cá nhân');
+    return () => setTitle('');
+  }, []);
   const mutationUpdateProfile = useMutation({
     mutationFn: async (data: FormData) => {
       const response = await GiangVienService.updateProfile(giangVien?.id, data);

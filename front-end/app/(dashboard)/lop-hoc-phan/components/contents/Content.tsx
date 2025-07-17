@@ -102,7 +102,8 @@ const Content = ({ queryKey }: ContentProps) => {
       return result;
     },
     placeholderData: (prev) => prev,
-    refetchOnWindowFocus: false
+    refetchOnWindowFocus: false,
+    refetchOnMount: "always",
   });
   useEffect(() => {
     setTitle('Danh sách lớp học phần');
@@ -166,28 +167,6 @@ const Content = ({ queryKey }: ContentProps) => {
 
   const moreActions = useCallback((id: string | number | null, row: any) => {
     return [
-      <MenuItem
-        key='change-status'
-        onClick={() => {
-          handleChangeStatus(
-            id,
-            row.trangThai === TrangThaiLopHocPhanEnum.DANG_HOAT_DONG
-              ? TrangThaiLopHocPhanEnum.KHONG_HOAT_DONG
-              : TrangThaiLopHocPhanEnum.DANG_HOAT_DONG
-          );
-          refTable.current?.handleClose();
-        }}
-        sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}
-      >
-        <ChangeCircleOutlinedIcon sx={{ color: 'green' }} />
-        <Typography
-          className={'!text-[14px] !font-[500] !leading-6 group-hover:!text-blue-800 group-hover:!font-semibold'}
-          variant={'body1'}
-          sx={{ width: '100%' }}
-        >
-          Thay đổi trạng thái
-        </Typography>
-      </MenuItem>,
       <MenuItem
         key='edit'
         onClick={() => {
@@ -397,6 +376,7 @@ const Content = ({ queryKey }: ContentProps) => {
         urlNavigate='lop-hoc-phan'
         handleDeleteCallBack={handleDelete}
         isDisableEdit
+        isDisableDelete
         placeholderSearch='Tìm kiếm mã lớp học phần...'
         moreActions={moreActions}
       />

@@ -1,4 +1,3 @@
-using System;
 using AutoMapper;
 using ClosedXML.Excel;
 using Education_assistant.Contracts.LoggerServices;
@@ -11,7 +10,6 @@ using Education_assistant.Modules.ModuleChiTietLopHocPhan.DTOs.Request;
 using Education_assistant.Modules.ModuleChiTietLopHocPhan.DTOs.Response;
 using Education_assistant.Repositories.Paginations;
 using Education_assistant.Repositories.RepositoryMaster;
-using Education_assistant.Services.BaseDtos;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
@@ -20,8 +18,9 @@ namespace Education_assistant.Modules.ModuleChiTietLopHocPhan.Services;
 public class ServiceChiTietLopHocPhan : IServiceChiTietLopHocPhan
 {
     private readonly ILoggerService _loggerService;
-    private readonly IRepositoryMaster _repositoryMaster;
     private readonly IMapper _mapper;
+    private readonly IRepositoryMaster _repositoryMaster;
+
     public ServiceChiTietLopHocPhan(IRepositoryMaster repositoryMaster, ILoggerService loggerService, IMapper mapper)
     {
         _repositoryMaster = repositoryMaster;
@@ -31,7 +30,6 @@ public class ServiceChiTietLopHocPhan : IServiceChiTietLopHocPhan
 
     public async Task<ResponseChiTietLopHocPhanDto> CreateAsync(RequestAddChiTietLopHocPhanDto request)
     {
-
         try
         {
             var newDiemSo = _mapper.Map<ChiTietLopHocPhan>(request);
@@ -41,7 +39,7 @@ public class ServiceChiTietLopHocPhan : IServiceChiTietLopHocPhan
             });
             _loggerService.LogInfo("Thêm thông tin chi tiết lớp học phần thành công.");
             var diemSoDto = _mapper.Map<ResponseChiTietLopHocPhanDto>(newDiemSo);
-            return diemSoDto;      
+            return diemSoDto;
         }
         catch (DbUpdateException ex)
         {
@@ -51,14 +49,10 @@ public class ServiceChiTietLopHocPhan : IServiceChiTietLopHocPhan
 
     public async Task DeleteAsync(Guid id)
     {
-
         try
         {
             var diemSo = await _repositoryMaster.ChiTietLopHocPhan.GetChiTietLopHocPhanByIdAsync(id, false);
-            if (diemSo is null)
-            {
-                throw new ChiTietLopHocPhanNotFoundException(id);
-            }
+            if (diemSo is null) throw new ChiTietLopHocPhanNotFoundException(id);
             await _repositoryMaster.ExecuteInTransactionAsync(async () =>
             {
                 _repositoryMaster.ChiTietLopHocPhan.DeleteChiTietLopHocPhan(diemSo);
@@ -74,10 +68,7 @@ public class ServiceChiTietLopHocPhan : IServiceChiTietLopHocPhan
 
     public async Task DeleteListChiTietLopHocPhanAsync(RequestDeleteChiTietLopHocPhanDto request)
     {
-        if (request is null)
-        {
-            throw new ChiTietLopHocPhanBadRequestException("Danh sách id không được bỏ trống.");
-        }
+        if (request is null) throw new ChiTietLopHocPhanBadRequestException("Danh sách id không được bỏ trống.");
         await _repositoryMaster.ExecuteInTransactionBulkEntityAsync(async () =>
         {
             await _repositoryMaster.BulkDeleteEntityAsync<ChiTietLopHocPhan>(request.Ids!);
@@ -88,11 +79,9 @@ public class ServiceChiTietLopHocPhan : IServiceChiTietLopHocPhan
     public async Task<byte[]> ExportFileExcelAsync(Guid lopHocPhanId)
     {
         if (lopHocPhanId == Guid.Empty)
-        {
             throw new ChiTietLopHocPhanBadRequestException("Id lớp học phần không được bỏ trống");
-        }
         var diemSoList = await _repositoryMaster.ChiTietLopHocPhan.GetAllDiemSoExportFileAsync(lopHocPhanId);
-        System.Console.WriteLine($"diemSoList: {JsonConvert.SerializeObject(diemSoList)}");
+        Console.WriteLine($"diemSoList: {JsonConvert.SerializeObject(diemSoList)}");
         using (var workbook = new XLWorkbook())
         {
             var worksheet = workbook.Worksheets.Add("DanhSachDiemSo");
@@ -115,7 +104,7 @@ public class ServiceChiTietLopHocPhan : IServiceChiTietLopHocPhan
             headerRange.Style.Font.Bold = true;
             headerRange.Style.Fill.BackgroundColor = XLColor.LightGray;
 
-            for (int i = 0; i < diemSoList.Count; i++)
+            for (var i = 0; i < diemSoList.Count; i++)
             {
                 var item = diemSoList[i];
                 worksheet.Cell(i + 2, 1).Value = i + 1;
@@ -132,6 +121,7 @@ public class ServiceChiTietLopHocPhan : IServiceChiTietLopHocPhan
                 worksheet.Cell(i + 2, 12).Value = item.HocKy;
                 worksheet.Cell(i + 2, 13).Value = item.GhiChu;
             }
+
             worksheet.Column(6).Style.NumberFormat.Format = "0.00";
             worksheet.Column(7).Style.NumberFormat.Format = "0.00";
             worksheet.Column(8).Style.NumberFormat.Format = "0.00";
@@ -146,48 +136,50 @@ public class ServiceChiTietLopHocPhan : IServiceChiTietLopHocPhan
                 return stream.ToArray();
             }
         }
-    }   
+    }
 
-    public async Task<(IEnumerable<ResponseChiTietLopHocPhanDto> data, PageInfo page)> GetAllChiTietLopHocPhanAsync(ParamChiTietLopHocPhanDto paramChiTietLopHocPhanDto)
+    public async Task<(IEnumerable<ResponseChiTietLopHocPhanDto> data, PageInfo page)> GetAllChiTietLopHocPhanAsync(
+        ParamChiTietLopHocPhanDto paramChiTietLopHocPhanDto)
     {
         var page = paramChiTietLopHocPhanDto.page;
         var limit = paramChiTietLopHocPhanDto.limit;
-        var diemSos = await _repositoryMaster.ChiTietLopHocPhan.GetAllChiTietLopHocPhanAsync(paramChiTietLopHocPhanDto.page,
-                                                                        paramChiTietLopHocPhanDto.limit,
-                                                                        paramChiTietLopHocPhanDto.search,
-                                                                        paramChiTietLopHocPhanDto.sortBy,
-                                                                        paramChiTietLopHocPhanDto.sortByOrder,
-                                                                        paramChiTietLopHocPhanDto.lopHocPhanId,
-                                                                        paramChiTietLopHocPhanDto.ngayNopDiem);
+        var diemSos = await _repositoryMaster.ChiTietLopHocPhan.GetAllChiTietLopHocPhanAsync(
+            paramChiTietLopHocPhanDto.page,
+            paramChiTietLopHocPhanDto.limit,
+            paramChiTietLopHocPhanDto.search,
+            paramChiTietLopHocPhanDto.sortBy,
+            paramChiTietLopHocPhanDto.sortByOrder,
+            paramChiTietLopHocPhanDto.lopHocPhanId,
+            paramChiTietLopHocPhanDto.ngayNopDiem);
         var startIndex = (page - 1) * limit;
         var diemSoDto = _mapper.Map<IEnumerable<ResponseChiTietLopHocPhanDto>>(diemSos)
-                .Select((item, index) =>
-                {
-                    item.STT = startIndex + index + 1;
-                    return item;
-                });
+            .Select((item, index) =>
+            {
+                item.STT = startIndex + index + 1;
+                return item;
+            });
         return (data: diemSoDto, page: diemSos!.PageInfo);
     }
 
-    public async Task<IEnumerable<ResponseChiTietLopHocPhanByLopHocPhanDto>> GetAllChiTietLopHocPhanByLopHocPhanIdAsync(Guid lopHocPhanId, ParamChiTietLopHocPhanSimpleDto ParamChiTietLopHocPhanSimpleDto)
+    public async Task<IEnumerable<ResponseChiTietLopHocPhanByLopHocPhanDto>> GetAllChiTietLopHocPhanByLopHocPhanIdAsync(
+        Guid lopHocPhanId, ParamChiTietLopHocPhanSimpleDto ParamChiTietLopHocPhanSimpleDto)
     {
-        var diemSos = await _repositoryMaster.ChiTietLopHocPhan.GetAllChiTietLopHocPhanByLopHocPhanIdAsync(lopHocPhanId, ParamChiTietLopHocPhanSimpleDto.search);
+        var diemSos =
+            await _repositoryMaster.ChiTietLopHocPhan.GetAllChiTietLopHocPhanByLopHocPhanIdAsync(lopHocPhanId,
+                ParamChiTietLopHocPhanSimpleDto.search);
         var diemSoDtos = _mapper.Map<IEnumerable<ResponseChiTietLopHocPhanByLopHocPhanDto>>(diemSos)
-                .Select((dto, index) =>
-                {
-                    dto.STT = index + 1;
-                    return dto;
-                });
+            .Select((dto, index) =>
+            {
+                dto.STT = index + 1;
+                return dto;
+            });
         return diemSoDtos;
     }
 
     public async Task<ResponseChiTietLopHocPhanDto> GetChiTietLopHocPhanByIdAsync(Guid id, bool trackChanges)
     {
         var diemSo = await _repositoryMaster.ChiTietLopHocPhan.GetChiTietLopHocPhanByIdAsync(id, false);
-        if (diemSo is null)
-        {
-            throw new ChiTietLopHocPhanNotFoundException(id);
-        }
+        if (diemSo is null) throw new ChiTietLopHocPhanNotFoundException(id);
         var diemSoDto = _mapper.Map<ResponseChiTietLopHocPhanDto>(diemSo);
         return diemSoDto;
     }
@@ -195,14 +187,9 @@ public class ServiceChiTietLopHocPhan : IServiceChiTietLopHocPhan
     public async Task ImportFileExcelAsync(RequestImportFileDiemSoDto request)
     {
         var lopHocPhan = await _repositoryMaster.LopHocPhan.GetLopHocPhanByIdAsync(request.LopHocPhanId, false);
-        if (lopHocPhan == null)
-        {
-            throw new LopHocPhanNotFoundException(request.LopHocPhanId);
-        }
+        if (lopHocPhan == null) throw new LopHocPhanNotFoundException(request.LopHocPhanId);
         if (request.File == null || request.File.Length == 0)
-        {
             throw new ArgumentException("File không được để trống hoặc rỗng.");
-        }
         try
         {
             var importData = new List<ImportDiemSoDto>();
@@ -213,7 +200,7 @@ public class ServiceChiTietLopHocPhan : IServiceChiTietLopHocPhan
                 var rows = worksheet.RowsUsed().Skip(1);
 
                 foreach (var row in rows)
-                { 
+                {
                     var dto = new ImportDiemSoDto
                     {
                         STT = row.Cell(1).GetValue<int>(),
@@ -233,10 +220,13 @@ public class ServiceChiTietLopHocPhan : IServiceChiTietLopHocPhan
                     importData.Add(dto);
                 }
             }
+
             var listChiTiets = new List<ChiTietLopHocPhan>();
             foreach (var item in importData)
             {
-                var existingRecord = await _repositoryMaster.ChiTietLopHocPhan.GetByMaSinhVienAndLopHocPhanIdAsync(item.MaSinhVien, request.LopHocPhanId);
+                var existingRecord =
+                    await _repositoryMaster.ChiTietLopHocPhan.GetByMaSinhVienAndLopHocPhanIdAsync(item.MaSinhVien,
+                        request.LopHocPhanId);
                 if (existingRecord != null)
                 {
                     existingRecord.DiemChuyenCan = item.DiemChuyenCan;
@@ -255,12 +245,11 @@ public class ServiceChiTietLopHocPhan : IServiceChiTietLopHocPhan
 
             await _repositoryMaster.ExecuteInTransactionBulkEntityAsync(async () =>
             {
-                await _repositoryMaster.BulkUpdateEntityAsync<ChiTietLopHocPhan>(listChiTiets);
+                await _repositoryMaster.BulkUpdateEntityAsync(listChiTiets);
             });
         }
         catch (Exception ex)
         {
-
             throw new Exception($"Lỗi hệ thống import file: {ex.Message}");
         }
     }
@@ -270,14 +259,10 @@ public class ServiceChiTietLopHocPhan : IServiceChiTietLopHocPhan
         try
         {
             if (id != request.Id)
-            {
-                throw new ChiTietLopHocPhanBadRequestException($"Id: {id} và Id: {request.Id} của bộ môn không giống nhau!");
-            }
+                throw new ChiTietLopHocPhanBadRequestException(
+                    $"Id: {id} và Id: {request.Id} của bộ môn không giống nhau!");
             var diemSoExstting = await _repositoryMaster.ChiTietLopHocPhan.GetChiTietLopHocPhanByIdAsync(id, true);
-            if (diemSoExstting is null)
-            {
-                throw new ChiTietLopHocPhanNotFoundException(id);
-            }
+            if (diemSoExstting is null) throw new ChiTietLopHocPhanNotFoundException(id);
 
             await _repositoryMaster.ExecuteInTransactionAsync(async () =>
             {
@@ -294,9 +279,10 @@ public class ServiceChiTietLopHocPhan : IServiceChiTietLopHocPhan
                 await Task.CompletedTask;
             });
             _loggerService.LogInfo("Cập nhật chi tiết lớp học phần thành công.");
-        }catch (DbUpdateException ex)
+        }
+        catch (DbUpdateException ex)
         {
-            throw new Exception($"Lỗi hệ thống!: {ex.Message}");   
+            throw new Exception($"Lỗi hệ thống!: {ex.Message}");
         }
     }
 
@@ -306,26 +292,24 @@ public class ServiceChiTietLopHocPhan : IServiceChiTietLopHocPhan
 
         foreach (var diemSo in request.ListDiemSo!)
         {
-            var existingDiemSo = await _repositoryMaster.ChiTietLopHocPhan.GetChiTietLopHocPhanByIdAsync(diemSo.Id, false);
-            if (existingDiemSo is null)
-            {
-                continue;
-            }
+            var existingDiemSo =
+                await _repositoryMaster.ChiTietLopHocPhan.GetChiTietLopHocPhanByIdAsync(diemSo.Id, false);
+            if (existingDiemSo is null) continue;
             existingDiemSo.DiemChuyenCan = diemSo.DiemChuyenCan;
             existingDiemSo.DiemTrungBinh = diemSo.DiemTrungBinh;
             existingDiemSo.DiemThi1 = diemSo.DiemThi1;
             existingDiemSo.DiemThi2 = diemSo.DiemThi2;
             if (request.LoaiMonHoc == (int)LoaiMonHocEnum.LY_THUYET)
             {
-                existingDiemSo.DiemTongKet1 = (diemSo.DiemChuyenCan * 0.1m) + (diemSo.DiemTrungBinh * 0.4m) + (diemSo.DiemThi1 * 0.5m);
+                existingDiemSo.DiemTongKet1 =
+                    diemSo.DiemChuyenCan * 0.1m + diemSo.DiemTrungBinh * 0.4m + diemSo.DiemThi1 * 0.5m;
                 if (diemSo.DiemThi2.HasValue)
-                {
-                    existingDiemSo.DiemTongKet2 = (diemSo.DiemChuyenCan * 0.1m) + (diemSo.DiemTrungBinh * 0.4m) + (diemSo.DiemThi2 * 0.5m);
-                }
+                    existingDiemSo.DiemTongKet2 = diemSo.DiemChuyenCan * 0.1m + diemSo.DiemTrungBinh * 0.4m +
+                                                  diemSo.DiemThi2 * 0.5m;
             }
             else if (request.LoaiMonHoc == (int)LoaiMonHocEnum.MODUN)
             {
-                existingDiemSo.DiemTongKet1 = (diemSo.DiemTrungBinh * 0.4m) + (diemSo.DiemThi1 * 0.6m);
+                existingDiemSo.DiemTongKet1 = diemSo.DiemTrungBinh * 0.4m + diemSo.DiemThi1 * 0.6m;
             }
             else
             {
@@ -336,7 +320,7 @@ public class ServiceChiTietLopHocPhan : IServiceChiTietLopHocPhan
             existingDiemSo.NgayLuuDiem = DateTime.Now;
             diemSos.Add(existingDiemSo);
         }
-        
+
         await _repositoryMaster.ExecuteInTransactionBulkEntityAsync(async () =>
         {
             await _repositoryMaster.BulkUpdateEntityAsync<ChiTietLopHocPhan>(diemSos);
@@ -346,16 +330,15 @@ public class ServiceChiTietLopHocPhan : IServiceChiTietLopHocPhan
 
     public async Task UpdateNopDiemChiTietLopHocPhanAsync(Guid lopHocPhanId)
     {
-        var lopHocPhan = await _repositoryMaster.LopHocPhan.GetLopHocPhanByIdAsync(lopHocPhanId, false);
-        if (lopHocPhan == null)
-        {
-            throw new LopHocPhanNotFoundException(lopHocPhanId);
-        }
+        var lopHocPhan = await _repositoryMaster.LopHocPhan.GetLopHocPhanByIdAsync(lopHocPhanId, true);
+        if (lopHocPhan == null) throw new LopHocPhanNotFoundException(lopHocPhanId);
         try
         {
             await _repositoryMaster.ExecuteInTransactionAsync(async () =>
             {
-                await _repositoryMaster.ChiTietLopHocPhan.UpdateNgayNopDiemChiTietLopHocPhanByLopHocPhanIdAsync(lopHocPhanId, false);
+                lopHocPhan.TrangThai = (int)TrangThaiLopHocPhanEnum.DANG_HOAT_DONG;
+                await _repositoryMaster.ChiTietLopHocPhan.UpdateNgayNopDiemChiTietLopHocPhanByLopHocPhanIdAsync(
+                    lopHocPhanId, false);
             });
         }
         catch (Exception ex)
