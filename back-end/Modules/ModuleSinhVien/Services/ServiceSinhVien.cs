@@ -294,6 +294,13 @@ public class ServiceSinhVien : IServiceSinhVien
                 });
                 var listSinhVienIds = new List<Guid>(newSinhViens.Select(item => item.Id));
                 await CreatedListSinhVienChuongTrinhDaoTaoAsync(listSinhVienIds, request.lopHocId);
+                var countSinhVien = listSinhVienIds.Count();
+                var lopHocAfter = await _repositoryMaster.LopHoc.GetLopHocByIdAsync(request.lopHocId, true);
+                await _repositoryMaster.ExecuteInTransactionAsync(async () =>
+                {
+                    lopHocAfter!.SiSo = countSinhVien;
+                    await Task.CompletedTask;
+                });
             }
         }
         catch (DbUpdateException ex)

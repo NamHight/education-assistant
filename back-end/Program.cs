@@ -19,11 +19,6 @@ builder.Configuration
 LogManager.LoadConfiguration(string.Concat(Directory.GetCurrentDirectory(), "/nlog.config"));
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.WebHost.ConfigureKestrel(options =>
-{
-    options.ListenAnyIP(90);
-    options.ListenAnyIP(9090, listenOptions => { listenOptions.UseHttps("https/aspnetapp.pfx", "tiennam1"); });
-});
 
 builder.Services
     .AddCorsService(builder.Configuration)
@@ -43,7 +38,6 @@ if (app.Environment.IsDevelopment())
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "Education Assistant API V1");
         c.RoutePrefix = string.Empty;
-        c.DocumentTitle = "Education Assistant API Documentation";
     });
     // app.UseDeveloperExceptionPage();
 }
@@ -54,7 +48,6 @@ else
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "Education Assistant API V1");
         c.RoutePrefix = string.Empty;
-        c.DocumentTitle = "Education Assistant API Documentation";
     });
     app.UseHsts();
 }

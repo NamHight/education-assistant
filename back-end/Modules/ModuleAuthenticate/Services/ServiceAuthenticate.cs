@@ -68,7 +68,7 @@ public class ServiceAuthenticate : IServiceAuthenticate
         {
             Expires = DateTimeOffset.Now.AddMinutes(30),
             IsEssential = true,
-            Secure = true,
+            Secure = false,
             HttpOnly = false,
             SameSite = SameSiteMode.None,
             Path = "/"
@@ -77,7 +77,7 @@ public class ServiceAuthenticate : IServiceAuthenticate
         {
             Expires = DateTimeOffset.Now.AddDays(7),
             IsEssential = true,
-            Secure = true,
+            Secure = false,
             HttpOnly = false,
             SameSite = SameSiteMode.None,
             Path = "/"
