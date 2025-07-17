@@ -22,18 +22,14 @@ export default async function Page() {
       return result?.data?.length > 0 ? result : undefined;
     }
   });
-  const lopHoc = await LopHocService.getAllLopHocServer({
-    limit: 9999999999,
-    sortBy: 'createdAt',
-    sortByOrder: 'desc'
-  }).catch(() => ({ data: [] }));
+  const lopHoc = await LopHocService.getLopHocNoPageServer().catch(() => []);
   const tinhTrangHocTap = await SinhVienService.getAllTinhTrangHocTapServer().catch(() => undefined);
   const [lopHocData, tinhTrangHocTapData] = await Promise.all([lopHoc, tinhTrangHocTap]);
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
       <Content
         queryKey={queryKey}
-        lopHocServers={lopHocData?.data?.length > 0 ? lopHocData.data : undefined}
+        lopHocServers={lopHocData?.length > 0 ? lopHocData : undefined}
         tinhTrangHocTapServer={tinhTrangHocTapData}
       />
     </HydrationBoundary>
