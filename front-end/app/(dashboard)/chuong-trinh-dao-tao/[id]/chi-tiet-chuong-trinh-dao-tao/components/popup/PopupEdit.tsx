@@ -307,7 +307,7 @@ const PopupEdit = ({ khoas, open, onClose, getId, queryKey, chuongTrinhDaoTao, i
                             className='rounded bg-gray-100 px-3 py-2 border border-gray-200 text-[15px] text-gray-800 font-medium'
                             style={{ minHeight: 40, display: 'flex', alignItems: 'center' }}
                           >
-                            {HocKyLopHocPhan.find((item) => item.id === data.hocKy).name || ""}
+                            {HocKyLopHocPhan.find((item) => item.id === data?.hocKy)?.name || ""}
                           </Box>
                         </Box>
                         ) : (

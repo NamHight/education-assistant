@@ -155,7 +155,7 @@ const ModalAdd = forwardRef(({ open, handleClose, queryKey, filter }: ModalAddPr
       handleClose();
       reset();
     },
-    onError: (error) => {
+    onError: (error: any) => {
       notification.show(error?.Message || 'Thêm lịch công tác thất bại', {
         severity: 'error',
         autoHideDuration: 3000
