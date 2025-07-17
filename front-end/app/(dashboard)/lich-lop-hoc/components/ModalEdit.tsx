@@ -48,7 +48,7 @@ export interface IFormData {
   LopHocPhan?: IOption;
   PhongHoc?: IOption;
 }
-const ModalEdit = forwardRef(({ open, handleClose, queryKey, filter, id }: ModalAddProps, ref) => {
+const ModalEdit = forwardRef(function ModalEdit({ open, handleClose, queryKey, filter, id }: ModalAddProps, ref) {
   const { data, refetch } = useQuery({
     queryKey: ['lich-lop-hoc', id],
     queryFn: async () => {
@@ -309,7 +309,7 @@ const ModalEdit = forwardRef(({ open, handleClose, queryKey, filter, id }: Modal
                 className='rounded bg-gray-100 px-3 py-2 border border-gray-200 text-[15px] text-gray-800 font-medium'
                 style={{ minHeight: 40, display: 'flex', alignItems: 'center' }}
               >
-                {`${data.tuan.namHoc}` || ""}
+                {`${data?.tuan?.namHoc}` || ""}
               </Box>
             </Box>
           </Grid>
@@ -320,7 +320,7 @@ const ModalEdit = forwardRef(({ open, handleClose, queryKey, filter, id }: Modal
                 className='rounded bg-gray-100 px-3 py-2 border border-gray-200 text-[15px] text-gray-800 font-medium'
                 style={{ minHeight: 40, display: 'flex', alignItems: 'center' }}
               >
-                {`${data.tuan.soTuan}` || ""}
+                {`${data?.tuan?.soTuan}` || ""}
               </Box>
             </Box>
           </Grid>

@@ -300,14 +300,27 @@ const TableEdit = forwardRef(function TableEditRef
       unsavedRows: {},
       rowsBeforeChange: {}
     });
+    const isValidScore = (val: any) => {
+      const num = Number(val);
+      return !isNaN(num) && num >= 1 && num <= 10;
+    };
     const processRowUpdate = React.useCallback<NonNullable<DataGridProps['processRowUpdate']>>((newRow, oldRow) => {
       const rowId = newRow.id;
-      unsavedChangesRef.current.unsavedRows[rowId] = newRow;
-      if (!unsavedChangesRef.current.rowsBeforeChange[rowId]) {
-        unsavedChangesRef.current.rowsBeforeChange[rowId] = oldRow;
-      }
+      const fixedRow = {
+    ...newRow,
+    diemChuyenCan: isValidScore(newRow.diemChuyenCan) ? newRow.diemChuyenCan : null,
+    diemTrungBinh: isValidScore(newRow.diemTrungBinh) ? newRow.diemTrungBinh : null,
+    diemThi1: isValidScore(newRow.diemThi1) ? newRow.diemThi1 : null,
+    diemThi2: isValidScore(newRow.diemThi2) ? newRow.diemThi2 : null,
+    diemTongKet1: isValidScore(newRow.diemTongKet1) ? newRow.diemTongKet1 : null,
+    diemTongKet2: isValidScore(newRow.diemTongKet2) ? newRow.diemTongKet2 : null,
+  };
+  unsavedChangesRef.current.unsavedRows[rowId] = fixedRow;
+  if (!unsavedChangesRef.current.rowsBeforeChange[rowId]) {
+    unsavedChangesRef.current.rowsBeforeChange[rowId] = oldRow;
+  }
 
-      return newRow;
+  return fixedRow;
     }, []);
     const queryClient = useQueryClient();
     const handleCellClick = React.useCallback((params: GridCellParams) => {

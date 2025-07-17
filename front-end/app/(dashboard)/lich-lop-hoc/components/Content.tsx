@@ -178,8 +178,8 @@ const Content = ({ queryKey, lopHocServer, boMonServer }: IContentProps) => {
     },
     select: (data) => {
       return data?.map((item: any) => ({
-        id: item.id,
-        name: `${item.soTuan}`
+        id: item?.id,
+        name: `${item?.soTuan}`
       }));
     },
     refetchOnWindowFocus: false,

@@ -47,7 +47,7 @@ export interface IFormData {
   LopHocPhan?: IOption;
   PhongHoc?: IOption;
 }
-const ModalAdd = forwardRef(({ open, handleClose, queryKey, filter }: ModalAddProps, ref) => {
+const ModalAdd = forwardRef(function ModalAdd({ open, handleClose, queryKey, filter }: ModalAddProps, ref) {
   const notification = useNotifications();
   const queryClient = useQueryClient();
   const [filterAdd, setFilterAdd] = useState<{
@@ -155,7 +155,7 @@ const ModalAdd = forwardRef(({ open, handleClose, queryKey, filter }: ModalAddPr
       handleClose();
       reset();
     },
-    onError: (error) => {
+    onError: (error: any) => {
       notification.show(error?.Message || 'Thêm lịch công tác thất bại', {
         severity: 'error',
         autoHideDuration: 3000
@@ -179,8 +179,8 @@ const ModalAdd = forwardRef(({ open, handleClose, queryKey, filter }: ModalAddPr
         namHoc: filter.namHoc.id
       });
       reset({
-        namHoc: filter.namHoc,
-        Tuan: filter.tuan
+        namHoc: filter?.namHoc,
+        Tuan: filter?.tuan
       });
     } else {
       reset({

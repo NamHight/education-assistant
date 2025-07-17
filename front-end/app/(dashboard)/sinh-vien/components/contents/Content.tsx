@@ -181,12 +181,8 @@ const Content = ({ queryKey, lopHocServers, tinhTrangHocTapServer }: ContentProp
   const { data: lopHocs, isLoading: isLoadingLopHoc } = useQuery({
     queryKey: ['lop-hoc-list'],
     queryFn: async () => {
-      const result = await LopHocService.getAllLopHoc({
-        limit: 9999999999,
-        sortBy: 'createdAt',
-        sortByOrder: 'desc'
-      });
-      return result?.data;
+      const result = await LopHocService.getLopHocNoPage();
+      return result;
     },
     initialData: lopHocServers,
     select: (data) => {
