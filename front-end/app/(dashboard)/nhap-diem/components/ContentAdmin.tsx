@@ -267,7 +267,7 @@ const ContentAdmin = ({ queryKey }: ContentProps) => {
         type: 'string',
         headerAlign: 'left',
         minWidth: 130,
-        flex: 1.2,
+        flex: 2,
         sortable: true,
         display: 'flex',
         align: 'left',
@@ -341,22 +341,9 @@ const ContentAdmin = ({ queryKey }: ContentProps) => {
         disableColumnMenu: true,
         sortable: false,
         display: 'flex',
-        flex: 0.8,
+        flex: 0.6,
         renderCell: (params: any) => {
           return formatType(params.row?.monHoc?.chiTietChuongTrinhDaoTao?.loaiMonHoc);
-        }
-      },
-      {
-        field: 'trangThai',
-        headerName: 'Trạng thái',
-        type: 'string',
-        minWidth: 100,
-        disableColumnMenu: true,
-        sortable: true,
-        display: 'flex',
-        flex: 0.8,
-        renderCell: (params: any) => {
-          return formatStatus(params.value);
         }
       }
     ];

@@ -20,6 +20,7 @@ import { APP_ROUTE } from '@/types/general';
 import { HocBaService } from '@/services/HocBaService';
 import { useForm } from 'react-hook-form';
 import { useBreadcrumb } from '@/hooks/context/BreadCrumbContext';
+import { toPath } from 'lodash';
 const TableEdit = dynamic(() => import('./TableEdit'), {
   ssr: false
 });
@@ -72,6 +73,7 @@ const Content = ({ queryKey }: IContentProps) => {
   const [filterModel, setFilterModel] = useState<GridFilterModel>({
     items: []
   });
+
   const [isOpenPopover, setisOpenPopover] = useState<boolean>(false);
   const { data: queryData, isLoading } = useQuery({
     queryKey: [queryKey, filterModel, filter?.lopHocPhan?.id],
@@ -94,7 +96,7 @@ const Content = ({ queryKey }: IContentProps) => {
     },
     enabled: !!filter?.lopHocPhan?.id && !!filter?.khoa && !!filter?.hocKy && !!filter?.loaiChuongTrinh,
     refetchOnWindowFocus: false,
-    gcTime: 0
+    refetchOnMount: "always"
   });
   const data = useMemo(() => {
     const hasRequiredValues =
@@ -126,6 +128,7 @@ const Content = ({ queryKey }: IContentProps) => {
         chuongTrinhDaoTaoId: item.monHoc?.chiTietChuongTrinhDaoTao?.chuongTrinhDaoTao?.id
       }));
     },
+    refetchOnMount:"always",
     refetchOnWindowFocus: false,
     enabled: !!user && !!filter?.khoa && !!filter?.hocKy && !!filter?.loaiChuongTrinh
   });
@@ -184,6 +187,8 @@ const Content = ({ queryKey }: IContentProps) => {
     const formatDateBirth = (date: string) => {
       return moment(date).format('DD/MM/YYYY');
     };
+    const isEditable = filter?.lopHocPhan?.loaiMonHoc === LoaiMonHocEnum.LY_THUYET || filter?.lopHocPhan?.loaiMonHoc === LoaiMonHocEnum.MODUN;
+    console.log('isEditable', isEditable);
     return [
       {
         field: 'stt',
@@ -278,7 +283,7 @@ const Content = ({ queryKey }: IContentProps) => {
         sortable: false,
         display: 'flex',
         align: 'center',
-        editable: true,
+        editable: isEditable,
         disableColumnMenu: true,
         preProcessEditCellProps: (params) => {
           const rawValue = params.props.value;
@@ -315,7 +320,7 @@ const Content = ({ queryKey }: IContentProps) => {
         sortable: false,
         display: 'flex',
         align: 'center',
-        editable: true,
+        editable: isEditable,
         disableColumnMenu: true,
         cellClassName: (params) => {
           return 'cursor-pointer hover:bg-gray-100 transition-colors duration-200 ease-in-out';
@@ -326,7 +331,6 @@ const Content = ({ queryKey }: IContentProps) => {
             return { ...params.props, value: null, error: false };
           }
           const value = Number(rawValue);
-          console.log('value', params.hasChanged);
           if (isNaN(value) || value < 1 || value > 10) {
             return { ...params.props, value: null, error: false };
           }
@@ -353,7 +357,7 @@ const Content = ({ queryKey }: IContentProps) => {
         sortable: false,
         display: 'flex',
         align: 'center',
-        editable: true,
+        editable: isEditable,
         disableColumnMenu: true,
         preProcessEditCellProps: (params) => {
           const rawValue = params.props.value;
@@ -361,7 +365,6 @@ const Content = ({ queryKey }: IContentProps) => {
             return { ...params.props, value: null, error: false };
           }
           const value = Number(rawValue);
-          console.log('value', params.hasChanged);
           if (isNaN(value) || value < 1 || value > 10) {
             return { ...params.props, value: null, error: false };
           }
@@ -391,7 +394,7 @@ const Content = ({ queryKey }: IContentProps) => {
         sortable: false,
         display: 'flex',
         align: 'center',
-        editable: true,
+        editable: isEditable,
         disableColumnMenu: true,
         preProcessEditCellProps: (params) => {
           const rawValue = params.props.value;
@@ -399,7 +402,6 @@ const Content = ({ queryKey }: IContentProps) => {
             return { ...params.props, value: null, error: false };
           }
           const value = Number(rawValue);
-          console.log('value', params.hasChanged);
           if (isNaN(value) || value < 1 || value > 10) {
             return { ...params.props, value: null, error: false };
           }
@@ -429,35 +431,58 @@ const Content = ({ queryKey }: IContentProps) => {
         sortable: false,
         display: 'flex',
         align: 'center',
-        editable: false,
+        editable: !isEditable,
         disableColumnMenu: true,
-        renderCell: (params) => {
+        ...isEditable ? {
+          renderCell: (params: any) => {
           let total = null;
-          if (params.row?.diemThi1 > 10 || params.row?.diemThi1 < 0) {
-            return null;
-          }
-          if (params.row?.diemChuyenCan > 10 || params.row?.diemChuyenCan < 0) {
-            return null;
-          }
-          if (params.row?.diemTrungBinh > 10 || params.row?.diemTrungBinh < 0) {
-            return null;
-          }
-          if (filter?.lopHocPhan?.loaiMonHoc === LoaiMonHocEnum.LY_THUYET) {
-            if (params.row?.diemThi1) {
-              total = (
-                params.row?.diemChuyenCan * 0.1 +
-                params.row?.diemTrungBinh * 0.4 +
-                params.row?.diemThi1 * 0.5
-              ).toFixed(1);
+          if (!isEditable) {
+            if (params.row?.diemThi1 > 10 || params.row?.diemThi1 < 0) {
+              return null;
+            }
+            if (params.row?.diemChuyenCan > 10 || params.row?.diemChuyenCan < 0) {
+              return null;
+            }
+            if (params.row?.diemTrungBinh > 10 || params.row?.diemTrungBinh < 0) {
+              return null;
             }
           }
-          if (filter?.lopHocPhan?.loaiMonHoc === LoaiMonHocEnum.MODUN) {
-            if (params.row?.diemThi1) {
-              total = (params.row?.diemTrungBinh * 0.4 + params.row?.diemThi1 * 0.5).toFixed(1);
-            }
+          if (params.row?.diemThi2) {
+            total = (
+              params.row?.diemChuyenCan * 0.1 +
+              params.row?.diemTrungBinh * 0.4 +
+              params.row?.diemThi2 * 0.5
+            ).toFixed(1);
           }
           return total;
         }
+      } : {
+        preProcessEditCellProps: (params) => {
+          const rawValue = params.props.value;
+          if (rawValue === '' || rawValue === null || rawValue === undefined) {
+            return { ...params.props, value: null, error: false };
+          }
+          const value = Number(rawValue);
+          if (isNaN(value) || value < 1 || value > 10) {
+            return { ...params.props, value: null, error: false };
+          }
+          return { ...params.props, value, error: false };
+        },
+        cellClassName: (params) => {
+          return 'cursor-pointer hover:bg-gray-100 transition-colors duration-200 ease-in-out';
+        },
+          valueGetter: (params) => {
+          console.log('params', params);
+          if (params === null || params === '' || params === undefined) {
+            return null;
+          }
+          const convertNumber = Number(params);
+          if (isNaN(convertNumber) || convertNumber < 1 || convertNumber > 10) {
+            return null;
+          }
+          return params;
+        },
+      }
       },
       {
         field: 'diemTongKet2',
@@ -469,18 +494,21 @@ const Content = ({ queryKey }: IContentProps) => {
         sortable: false,
         display: 'flex',
         align: 'center',
-        editable: false,
+        editable: !isEditable,
         disableColumnMenu: true,
-        renderCell: (params) => {
+        ...isEditable ? {
+          renderCell: (params: any) => {
           let total = null;
-          if (params.row?.diemThi2 > 10 || params.row?.diemThi2 < 0) {
-            return null;
-          }
-          if (params.row?.diemChuyenCan > 10 || params.row?.diemChuyenCan < 0) {
-            return null;
-          }
-          if (params.row?.diemTrungBinh > 10 || params.row?.diemTrungBinh < 0) {
-            return null;
+          if (!isEditable) {
+            if (params.row?.diemThi1 > 10 || params.row?.diemThi1 < 0) {
+              return null;
+            }
+            if (params.row?.diemChuyenCan > 10 || params.row?.diemChuyenCan < 0) {
+              return null;
+            }
+            if (params.row?.diemTrungBinh > 10 || params.row?.diemTrungBinh < 0) {
+              return null;
+            }
           }
           if (params.row?.diemThi2) {
             total = (
@@ -491,7 +519,36 @@ const Content = ({ queryKey }: IContentProps) => {
           }
           return total;
         }
-      },
+      } : {
+        preProcessEditCellProps: (params) => {
+          const rawValue = params.props.value;
+          console.log('rawValue', rawValue);
+          if (rawValue === '' || rawValue === null || rawValue === undefined) {
+            return { ...params.props, value: null, error: false };
+          }
+          const value = Number(rawValue);
+          console.log('value', params.hasChanged);
+          if (isNaN(value) || value < 1 || value > 10) {
+            return { ...params.props, value: null, error: false };
+          }
+          return { ...params.props, value, error: false };
+        },
+        cellClassName: (params) => {
+          return 'cursor-pointer hover:bg-gray-100 transition-colors duration-200 ease-in-out';
+        },
+          valueGetter: (params) => {
+          console.log('params', params);
+          if (params === null || params === '' || params === undefined) {
+            return null;
+          }
+          const convertNumber = Number(params);
+          if (isNaN(convertNumber) || convertNumber < 1 || convertNumber > 10) {
+            return null;
+          }
+          return params;
+        },
+      }
+    },
       {
         field: 'ghiChu',
         headerName: 'Ghi chú',
@@ -541,7 +598,7 @@ const Content = ({ queryKey }: IContentProps) => {
         )
       }
     ];
-  }, [data?.data, giangVienOptions, filter?.lopHocPhan?.loaiMonHoc]);
+  }, [filter?.lopHocPhan?.loaiMonHoc,data?.data, giangVienOptions, filter?.lopHocPhan?.loaiMonHoc]);
   const handleOpenPopover = () => {
     setisOpenPopover(true);
   };

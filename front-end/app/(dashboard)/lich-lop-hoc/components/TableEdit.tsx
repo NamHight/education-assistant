@@ -293,7 +293,7 @@ interface IFormData {
 }
 
 const TableEdit = forwardRef(
-  (
+  function TableEdit(
     {
       isLoadingMutationCopy,
       columns,
@@ -326,7 +326,7 @@ const TableEdit = forwardRef(
       filterWeek
     }: ITableEditProps,
     ref
-  ) => {
+  ){
     const [file, setFile] = useState<File | null>(null);
     const [cellModesModel, setCellModesModel] = React.useState<GridCellModesModel>({});
     const notification = useNotifications();

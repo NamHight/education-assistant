@@ -47,7 +47,7 @@ export interface IFormData {
   LopHocPhan?: IOption;
   PhongHoc?: IOption;
 }
-const ModalAdd = forwardRef(({ open, handleClose, queryKey, filter }: ModalAddProps, ref) => {
+const ModalAdd = forwardRef(function ModalAdd({ open, handleClose, queryKey, filter }: ModalAddProps, ref) {
   const notification = useNotifications();
   const queryClient = useQueryClient();
   const [filterAdd, setFilterAdd] = useState<{
@@ -179,8 +179,8 @@ const ModalAdd = forwardRef(({ open, handleClose, queryKey, filter }: ModalAddPr
         namHoc: filter.namHoc.id
       });
       reset({
-        namHoc: filter.namHoc,
-        Tuan: filter.tuan
+        namHoc: filter?.namHoc,
+        Tuan: filter?.tuan
       });
     } else {
       reset({
