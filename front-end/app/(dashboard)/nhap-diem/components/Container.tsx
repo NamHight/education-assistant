@@ -36,7 +36,7 @@ const Container = ({role, queryKey,user} : IContainerProps) => {
     <Box className="flex flex-col gap-4">
         {
         role === LoaiTaiKhoaEnum.ADMIN && (
-            <Box className="flex justify-end">
+            <Box className="flex justify-end border border-gray-200 rounded-lg shadow-sm p-4">
                 <Button  className='!bg-blue-600 hover:!bg-blue-500 !px-3 !text-white' onClick={() => setisCheckAdmin(!isCheckAdmin)}>
                     {isCheckAdmin ? 'Đổi qua nhập điểm' : 'Đổi qua Admin giao diện'}
                 </Button>
