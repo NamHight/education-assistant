@@ -57,11 +57,6 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
         .min(1, 'Thời gian đào tạo phải lớn hơn hoặc bằng 1')
         .required('Thời gian đào tạo không được để trống'),
       MoTa: yup.string().optional(),
-      TongSoTinChi: yup
-        .number()
-        .required('Tổng số tín chỉ không được để trống')
-        .min(1, 'Tổng số tín chỉ phải lớn hơn hoặc bằng 1')
-        .transform((value, originalValue) => (originalValue === '' ? null : value)),
       Khoa: yup.object().required('Khóa không được để trống'),
       Nganh: yup.object().required('Ngành không được để trống')
     });
@@ -231,16 +226,6 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
             )
           }
           
-        </Grid>
-        <Grid size={{ xs: 12, sm: 6, md: 6, lg: 6 }}>
-          <Input2
-            {...register('TongSoTinChi')}
-            title='Tổng số tín chỉ'
-            placeholder='Nhập tổng số tín chỉ'
-            error={errors.TongSoTinChi?.message}
-            isDisabled={false}
-            type='text'
-          />
         </Grid>
         <Grid size={{ xs: 12, sm: 6, md: 6, lg: 6 }}>
           {

@@ -1,6 +1,7 @@
 using AutoMapper;
 using Education_assistant.Contracts.LoggerServices;
 using Education_assistant.Exceptions.ThrowError.ChiTietChuongTrinhDaoTaoExceptions;
+using Education_assistant.Exceptions.ThrowError.ChuongTrinhDaoTaoExceptions;
 using Education_assistant.Models;
 using Education_assistant.Modules.ModuleChiTietChuongTrinhDaoTao.DTOs.Param;
 using Education_assistant.Modules.ModuleChiTietChuongTrinhDaoTao.DTOs.Request;
@@ -36,8 +37,13 @@ public class ServiceChiTietChuongTrinhDaoTao : IServiceChiTietChuongTrinhDaoTao
             if (ctctDaoTaoExisting is not null)
                 throw new ChiTietChuongTrinhDaoTaoBadRequestException("Môn học đã có trong chương trình đào tạo rồi.");
             var newctctDaoTao = _mapper.Map<ChiTietChuongTrinhDaoTao>(request);
+            var chuongTrinhDaoTao = await _repositoryMaster.ChuongTrinhDaoTao
+                .GetChuongTrinhDaoTaoByIdAsync(request.ChuongTrinhDaoTaoId, true);
+            if (chuongTrinhDaoTao is null)
+                throw new ChuongTrinhDaoTaoNotFoundException(request.ChuongTrinhDaoTaoId);
             await _repositoryMaster.ExecuteInTransactionAsync(async () =>
             {
+                chuongTrinhDaoTao.TongSoTinChi += request.SoTinChi;
                 await _repositoryMaster.ChiTietChuongTrinhDaoTao.CreateAsync(newctctDaoTao);
             });
             _loggerService.LogInfo("Thêm thông tin chi tiết chương trình đào tạo thành công");
@@ -58,15 +64,15 @@ public class ServiceChiTietChuongTrinhDaoTao : IServiceChiTietChuongTrinhDaoTao
                 throw new ChiTietChuongTrinhDaoTaoBadRequestException(
                     $"Chi tiết chương trình đào tạo với {id} không được bỏ trống!");
             var ctctDaoTao =
-                await _repositoryMaster.ChiTietChuongTrinhDaoTao.GetChiTietChuongTrinhDaoTaoByIdAsync(id, false);
+                await _repositoryMaster.ChiTietChuongTrinhDaoTao.GetChiTietChuongTrinhDaoTaoByIdAsync(id, true);
             if (ctctDaoTao is null) throw new ChiTietChuongTrinhDaoTaoNotFoundException();
             ctctDaoTao.DeletedAt = DateTime.Now;
             await _repositoryMaster.ExecuteInTransactionAsync(async () =>
             {
                 _repositoryMaster.ChiTietChuongTrinhDaoTao.UpdateChiTietChuongTrinhDaoTao(ctctDaoTao);
+                ctctDaoTao.ChuongTrinhDaoTao!.TongSoTinChi -= ctctDaoTao.SoTinChi;
                 await Task.CompletedTask;
             });
-            _loggerService.LogInfo("Xóa chi tiết chương trình đào tạo thành công.");
         }
         catch (DbUpdateException ex)
         {
@@ -93,11 +99,11 @@ public class ServiceChiTietChuongTrinhDaoTao : IServiceChiTietChuongTrinhDaoTao
 
         var startIndex = (page - 1) * limit;
         var ctctDaoTaoDtos = _mapper.Map<IEnumerable<ResponseChiTietChuongTrinhDaoTaoDto>>(ctctDaoTaos)
-                .Select((item, index) =>
-                {
-                    item.STT = startIndex + index + 1;
-                    return item;
-                });
+            .Select((item, index) =>
+            {
+                item.STT = startIndex + index + 1;
+                return item;
+            });
         return (data: ctctDaoTaoDtos, page: ctctDaoTaos!.PageInfo);
     }
 
@@ -130,9 +136,9 @@ public class ServiceChiTietChuongTrinhDaoTao : IServiceChiTietChuongTrinhDaoTao
             var ctctDaoTao =
                 await _repositoryMaster.ChiTietChuongTrinhDaoTao.GetChiTietChuongTrinhDaoTaoByIdAsync(id, true);
             if (ctctDaoTao is null) throw new ChiTietChuongTrinhDaoTaoNotFoundException();
-
             await _repositoryMaster.ExecuteInTransactionAsync(async () =>
             {
+                ctctDaoTao.ChuongTrinhDaoTao!.TongSoTinChi += request.SoTinChi;
                 ctctDaoTao.MonHocId = request.MonHocId;
                 ctctDaoTao.ChuongTrinhDaoTaoId = request.ChuongTrinhDaoTaoId;
                 ctctDaoTao.BoMonId = request.BoMonId;
