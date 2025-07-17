@@ -12,7 +12,7 @@ const cookieStorage = {
         : {
             path: '/',
             sameSite: 'lax',
-            secure: process.env.NODE_ENV === 'production',
+            secure: window.location.protocol === 'https:',
             expires: time ? time : 1
           }
     );

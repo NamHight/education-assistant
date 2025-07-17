@@ -431,8 +431,8 @@ const TableEdit = forwardRef(function TableEditRef
         style={{
           display: 'flex',
           flexDirection: 'column',
-          minHeight: '500px', // ✅ Minimum height
-          maxHeight: '600px',
+          minHeight: '800px', // ✅ Minimum height
+          maxHeight: '900px',
           overflow: 'hidden'
         }}
       >
@@ -648,6 +648,7 @@ const TableEdit = forwardRef(function TableEditRef
             flex: 1,
             height: '100%',
             overflowY: 'auto',
+           
             '& input[type=number]::-webkit-inner-spin-button, & input[type=number]::-webkit-outer-spin-button': {
               WebkitAppearance: 'none',
               margin: 0
