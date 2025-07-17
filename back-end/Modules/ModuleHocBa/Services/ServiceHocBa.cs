@@ -145,9 +145,6 @@ public class ServiceHocBa : IServiceHocBa
         if (allSvCtdt is null || !allSvCtdt.Any())
             throw new SinhVienChuongTrinhDaoTaoNotFoundException(
                 "Không tìm thấy sinh viên trong chương trình đào tạo tương ứng với danh sách điểm số.");
-        // var svCtdtDict = allSvCtdt
-        //     .GroupBy(s => s.SinhVienId!.Value)s
-        //     .ToDictionary(g => g.Key, g => g.ToList());
         var allChuongTrinhIds = allSvCtdt
             .Select(s => s.ChuongTrinhDaoTaoId!.Value)
             .Distinct()
@@ -225,11 +222,12 @@ public class ServiceHocBa : IServiceHocBa
                         sinhVien!.TinhTrangHocTap = (int)TinhTrangHocTapSinhVienEnum.YEU;
                 }
         });
-
         try
         {
+            var lhp = await _repositoryMaster.LopHocPhan.GetLopHocPhanByIdAsync(request.LopHocPhanId, true);
             await _repositoryMaster.ExecuteInTransactionAsync(async () =>
             {
+                lhp.TrangThai = (int)TrangThaiLopHocPhanEnum.KHONG_HOAT_DONG;
                 await _repositoryMaster.ChiTietLopHocPhan.UpdateNgayNopDiemChiTietLopHocPhanByLopHocPhanIdAsync(
                     request.LopHocPhanId, true);
             });

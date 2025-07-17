@@ -4,7 +4,6 @@ import { cookies } from 'next/headers';
 import { TOKEN_ACCESS } from '@/types/general';
 const authApiServer = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api',
-  withCredentials: true
 });
 const getAccessToken = async () => {
   const cookie = await cookies();

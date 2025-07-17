@@ -8,7 +8,7 @@ import { TuanService } from '@/services/TuanService';
 import { IOption, ThuTrongTuan, yearOptions } from '@/types/options';
 import { IParamTuan } from '@/types/params';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, Typography } from '@mui/material';
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, Typography } from '@mui/material';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNotifications } from '@toolpad/core';
 import { TriangleAlert } from 'lucide-react';
@@ -288,59 +288,7 @@ const ModalEdit = forwardRef(({ open, handleClose, queryKey, filter, id }: Modal
               error={(errors.Thu as any)?.message}
             />
           </Grid>
-          <Grid size={{ xs: 12, sm: 6, md: 6, lg: 6 }}>
-            <InputSelect2
-              control={control}
-              fullWidth
-              name={'namHoc'}
-              placeholder={'Chọn năm học'}
-              title={'Năm học'}
-              data={yearOptions ?? []}
-              getOptionKey={(option) => option.id}
-              getOptionLabel={(option: any) => option.name}
-              error={(errors.namHoc as any)?.message}
-              getOnChangeValue={(value: any) => {
-                setFilterAdd((prev) => ({
-                  ...prev,
-                  namHoc: value?.id
-                }));
-                setValue('Tuan', null);
-              }}
-            />
-          </Grid>
-          <Grid size={{ xs: 12, sm: 6, md: 6, lg: 6 }}>
-            <InputSelect2
-              control={control}
-              fullWidth
-              name={'Tuan'}
-              placeholder={'Chọn tuần'}
-              title={'Tuần'}
-              isLoading={isLoadingTuan}
-              data={tuans ?? []}
-              getOptionKey={(option) => option.id}
-              getOptionLabel={(option: any) => option.name}
-              error={(errors.Tuan as any)?.message}
-            />
-            <Typography color='warning.main' variant='caption' display='flex' alignItems='center' gap={0.5}>
-              <TriangleAlert className='h-4 w-4' />
-              Vui lòng chọn năm trước khi chọn tuần
-            </Typography>
-          </Grid>
-          <Grid size={{ xs: 12, sm: 6, md: 6, lg: 6 }}>
-            <InputSelect2
-              control={control}
-              fullWidth
-              name={'LopHocPhan'}
-              isLoading={isLoadingLHP}
-              placeholder={'Chọn lớp học phần'}
-              title={'Lớp học phần'}
-              data={lopHocPhans ?? []}
-              getOptionKey={(option) => option.id}
-              getOptionLabel={(option: any) => option.name}
-              error={(errors.LopHocPhan as any)?.message}
-            />
-          </Grid>
-          <Grid size={{ xs: 12, sm: 6, md: 6, lg: 6 }}>
+                <Grid size={{ xs: 12, sm: 6, md: 6, lg: 6 }}>
             <InputSelect2
               control={control}
               fullWidth
@@ -354,6 +302,40 @@ const ModalEdit = forwardRef(({ open, handleClose, queryKey, filter, id }: Modal
               error={(errors.PhongHoc as any)?.message}
             />
           </Grid>
+          <Grid size={{ xs: 12, sm: 6, md: 6, lg: 6 }}>
+            <Box className='flex flex-col gap-1'>
+              <Typography className='!text-[16px] !font-[500] !leading-6 !text-gray-500 mb-1'>Năm học</Typography>
+              <Box
+                className='rounded bg-gray-100 px-3 py-2 border border-gray-200 text-[15px] text-gray-800 font-medium'
+                style={{ minHeight: 40, display: 'flex', alignItems: 'center' }}
+              >
+                {`${data.tuan.namHoc}` || ""}
+              </Box>
+            </Box>
+          </Grid>
+          <Grid size={{ xs: 12, sm: 6, md: 6, lg: 6 }}>
+            <Box className='flex flex-col gap-1'>
+              <Typography className='!text-[16px] !font-[500] !leading-6 !text-gray-500 mb-1'>Tuần</Typography>
+              <Box
+                className='rounded bg-gray-100 px-3 py-2 border border-gray-200 text-[15px] text-gray-800 font-medium'
+                style={{ minHeight: 40, display: 'flex', alignItems: 'center' }}
+              >
+                {`${data.tuan.soTuan}` || ""}
+              </Box>
+            </Box>
+          </Grid>
+          <Grid size={{ xs: 12, sm: 6, md: 6, lg: 6 }}>
+            <Box className='flex flex-col gap-1'>
+              <Typography className='!text-[16px] !font-[500] !leading-6 !text-gray-500 mb-1'>Lớp học phần</Typography>
+              <Box
+                className='rounded bg-gray-100 px-3 py-2 border border-gray-200 text-[15px] text-gray-800 font-medium'
+                style={{ minHeight: 40, display: 'flex', alignItems: 'center' }}
+              >
+                {data?.lopHocPhan?.maHocPhan || ""}
+              </Box>
+            </Box>
+          </Grid>
+    
         </Grid>
       </DialogContent>
       <DialogActions className='!px-3 !pb-'>
@@ -361,7 +343,7 @@ const ModalEdit = forwardRef(({ open, handleClose, queryKey, filter, id }: Modal
           Hủy
         </Button>
         <Button autoFocus type='submit' variant='contained' color='info'>
-          Thêm
+          Cập nhật
         </Button>
       </DialogActions>
     </Dialog>

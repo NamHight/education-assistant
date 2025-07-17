@@ -101,7 +101,6 @@ const ModalAdd = forwardRef(({ open, handleClose, queryKey, filter }: ModalAddPr
         name: `${item.soTuan}`
       }));
     },
-    placeholderData: (prev) => prev,
     refetchOnWindowFocus: false,
     enabled: !!filterAdd?.namHoc
   });
@@ -120,7 +119,6 @@ const ModalAdd = forwardRef(({ open, handleClose, queryKey, filter }: ModalAddPr
         name: item.maHocPhan
       }));
     },
-    placeholderData: (prev) => prev,
     refetchOnWindowFocus: false,
     enabled: open
   });
@@ -158,7 +156,7 @@ const ModalAdd = forwardRef(({ open, handleClose, queryKey, filter }: ModalAddPr
       reset();
     },
     onError: (error) => {
-      notification.show('Thêm lịch công tác thất bại', {
+      notification.show(error?.Message || 'Thêm lịch công tác thất bại', {
         severity: 'error',
         autoHideDuration: 3000
       });

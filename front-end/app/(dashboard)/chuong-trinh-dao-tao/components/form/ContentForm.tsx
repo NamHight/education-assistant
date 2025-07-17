@@ -205,6 +205,18 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
           />
         </Grid>
         <Grid size={{ xs: 12, sm: 6, md: 6, lg: 6 }}>
+          {
+            data ? ( 
+              <Box className='flex flex-col gap-1'>
+              <Typography className='!text-[16px] !font-[500] !leading-6 !text-gray-500 mb-1'>Khóa</Typography>
+              <Box
+                className='rounded bg-gray-100 px-3 py-2 border border-gray-200 text-[15px] text-gray-800 font-medium'
+                style={{ minHeight: 40, display: 'flex', alignItems: 'center' }}
+              >
+                {data?.khoa || ""}
+              </Box>
+            </Box>
+            ) : (
           <InputSelect2
             control={control}
             fullWidth
@@ -216,6 +228,9 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
             getOptionLabel={(option: any) => option.name}
             error={(errors.Khoa as any)?.message}
           />
+            )
+          }
+          
         </Grid>
         <Grid size={{ xs: 12, sm: 6, md: 6, lg: 6 }}>
           <Input2
@@ -228,19 +243,45 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
           />
         </Grid>
         <Grid size={{ xs: 12, sm: 6, md: 6, lg: 6 }}>
-          <InputSelect2
-            control={control}
-            fullWidth
-            name={'LoaiChuonTrinhDaoTao'}
-            placeholder={'Chọn loại chương trình đào tạo'}
-            title={'Loại chương trình đào tạo'}
-            data={LoaiChuongTrinhDaoTao ?? []}
-            getOptionKey={(option) => option.id}
-            getOptionLabel={(option: any) => option.name}
-            error={(errors.LoaiChuonTrinhDaoTao as any)?.message}
-          />
+          {
+            data ? ( 
+              <Box className='flex flex-col gap-1'>
+              <Typography className='!text-[16px] !font-[500] !leading-6 !text-gray-500 mb-1'>Loại đào tạo</Typography>
+              <Box
+                className='rounded bg-gray-100 px-3 py-2 border border-gray-200 text-[15px] text-gray-800 font-medium'
+                style={{ minHeight: 40, display: 'flex', alignItems: 'center' }}
+              >
+                {LoaiChuongTrinhDaoTao.find((item) => item.id === data.loaiChuonTrinhDaoTao)?.name || ""}
+              </Box>
+            </Box>
+            ) : (
+              <InputSelect2
+                control={control}
+                fullWidth
+                name={'LoaiChuonTrinhDaoTao'}
+                placeholder={'Chọn loại chương trình đào tạo'}
+                title={'Loại chương trình đào tạo'}
+                data={LoaiChuongTrinhDaoTao ?? []}
+                getOptionKey={(option) => option.id}
+                getOptionLabel={(option: any) => option.name}
+                error={(errors.LoaiChuonTrinhDaoTao as any)?.message}
+              />
+            )
+          }
         </Grid>
         <Grid size={{ xs: 12, sm: 6, md: 6, lg: 6 }}>
+           {
+            data ? ( 
+              <Box className='flex flex-col gap-1'>
+              <Typography className='!text-[16px] !font-[500] !leading-6 !text-gray-500 mb-1'>Ngành</Typography>
+              <Box
+                className='rounded bg-gray-100 px-3 py-2 border border-gray-200 text-[15px] text-gray-800 font-medium'
+                style={{ minHeight: 40, display: 'flex', alignItems: 'center' }}
+              >
+                {data.nganh?.tenNganh || ""}
+              </Box>
+            </Box>
+            ) : (
           <InputSelect2
             control={control}
             fullWidth
@@ -253,7 +294,10 @@ const ContentForm: FC<IContentFormProps> = ({ onSubmit, data, initialData }) => 
             getOptionLabel={(option: any) => option.name}
             error={(errors.Nganh as any)?.message}
           />
-        </Grid>
+           )
+            }
+            </Grid>
+           
         <Grid size={{ xs: 12, sm: 6, md: 12, lg: 12 }}>
           <TextArea
             {...register('MoTa')}

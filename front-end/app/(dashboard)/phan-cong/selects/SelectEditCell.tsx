@@ -1,21 +1,29 @@
 'use client';
-import { Typography } from '@mui/material';
-import React, { useEffect } from 'react';
+import { MenuItem, Select, Typography } from '@mui/material';
+import React, { use, useEffect, useMemo } from 'react';
 
-export default function SelectEditCell({ params, giangVienOptions, fetchGiangVienByKhoaId }: any) {
-  const khoaId = params.row?.monHoc?.khoaId;
-  const [options, setOptions] = React.useState<any[]>(giangVienOptions[khoaId] || []);
-
+export default function SelectEditCell({ params, giangVienOptions, fetchGiangVienByBoMonId }: {
+  params: any;
+  giangVienOptions: { [boMonId: string]: any[] };
+  fetchGiangVienByBoMonId: (boMonId: string) => Promise<any[]>;
+}) {
+  const boMonId = useMemo(() => params.row?.monHoc?.chiTietChuongTrinhDaoTao?.boMonId, [params.row]);
+  const [options, setOptions] = React.useState<any[]>(giangVienOptions[boMonId] || []);
   useEffect(() => {
-    if (!giangVienOptions[khoaId]) {
-      fetchGiangVienByKhoaId(khoaId).then(setOptions);
-    } else {
-      setOptions(giangVienOptions[khoaId]);
+    const fetchOptions = async () => {
+    if (boMonId) {
+      if (!giangVienOptions[boMonId]) {
+        const result = await fetchGiangVienByBoMonId(boMonId);
+        setOptions(result);
+      } else {
+        setOptions(giangVienOptions[boMonId]);
+      }
     }
-  }, [khoaId, giangVienOptions]);
-
+  };
+  fetchOptions();
+  }, [boMonId, giangVienOptions]);
   return (
-    <select
+    <Select
       className='bg-white border z-99 border-gray-300 p-1 text-[13px] focus:outline-none focus:ring-2 focus:ring-blue-500'
       value={params.value || ''}
       onChange={(e) =>
@@ -25,6 +33,13 @@ export default function SelectEditCell({ params, giangVienOptions, fetchGiangVie
           value: e.target.value === '' ? null : e.target.value
         })
       }
+      MenuProps={{
+      PaperProps: {
+        style: {
+          maxHeight: 200, // chiều cao tối đa, có scroll
+        },
+      },
+    }}
       style={{
         width: '100%',
         overflowY: 'auto',
@@ -35,13 +50,13 @@ export default function SelectEditCell({ params, giangVienOptions, fetchGiangVie
         fontFamily: 'inherit'
       }}
     >
-      <option value='' disabled>
+      <MenuItem value='' disabled>
         <Typography variant='body2' className='text-gray-500'>
           Chọn giảng viên
         </Typography>
-      </option>
+      </MenuItem>
       {options.map((item: any) => (
-        <option
+        <MenuItem
           key={item.value}
           value={item.value}
           style={{
@@ -51,8 +66,8 @@ export default function SelectEditCell({ params, giangVienOptions, fetchGiangVie
           }}
         >
           {item.label}
-        </option>
+        </MenuItem>
       ))}
-    </select>
+    </Select>
   );
 }

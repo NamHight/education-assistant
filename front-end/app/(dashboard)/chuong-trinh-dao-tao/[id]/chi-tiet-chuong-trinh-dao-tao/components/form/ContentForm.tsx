@@ -121,7 +121,7 @@ const ContentForm = forwardRef(({ onSubmit, data, initialData, setKhoas }: ICont
     queryKey: ['chuongTrinhDaoTaos'],
     queryFn: async () => {
       const response = await ChuongTrinhDaoTaoService.getAllChuongTrinhDaoTao({
-        limit: 99999999999,
+        limit: 99999999,
         sortBy: 'createdAt',
         sortByOrder: 'desc'
       });
