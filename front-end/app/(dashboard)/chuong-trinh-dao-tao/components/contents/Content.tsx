@@ -78,7 +78,8 @@ const Content = ({ queryKey, nganhs }: ContentProps) => {
       return result;
     },
     placeholderData: (prev) => prev,
-    refetchOnWindowFocus: false
+    refetchOnWindowFocus: false,
+    refetchOnMount: "always"
   });
   const { data: nganhss, isLoading: loadingNganhs } = useQuery({
     queryKey: ['nganhs'],
