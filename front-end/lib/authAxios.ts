@@ -2,8 +2,7 @@ import axios from 'axios';
 import cookieStorage from './cookie';
 import { API, REFRESH_TOKEN, TOKEN_ACCESS } from '@/types/general';
 const authApi = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api',
-  withCredentials: true
+  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api'
 });
 const getAccessToken = async () => {
   return cookieStorage.get(TOKEN_ACCESS);

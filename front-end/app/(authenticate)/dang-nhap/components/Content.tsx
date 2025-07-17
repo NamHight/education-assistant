@@ -11,6 +11,8 @@ import { useAuthStore } from '@/stores/authStore';
 import { useNotifications } from '@toolpad/core';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import cookieStorage from '@/lib/cookie';
+import { REFRESH_TOKEN, TOKEN_ACCESS } from '@/types/general';
 
 interface LoginData {
   email: string;
@@ -49,10 +51,12 @@ const Content = () => {
       actions?.login(data.user, data.accessToken, data.refreshToken);
       queryClient.clear();
       await queryClient.invalidateQueries({ queryKey: ['user'] });
+      cookieStorage.set(TOKEN_ACCESS, data.accessToken);
+      cookieStorage.set(REFRESH_TOKEN, data.refreshToken);
       window.location.href = '/';
     },
     onError: (error: any) => {
-      notification.show(error?.Message, {
+      notification.show(error?.Message || "Đăng nhập thất bại", {
         severity: 'error',
         autoHideDuration: 4000
       });

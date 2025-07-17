@@ -14,18 +14,16 @@ public static class CorsExtensions
         {
             if (environment == "Production")
                 options.AddPolicy("ProductionPolicy", builder => builder
-                    .WithOrigins(allowedOrigins!)
+                    .AllowAnyOrigin()
                     .WithMethods(allowedMethods!)
                     .WithHeaders(allowedHeaders!)
-                    .WithExposedHeaders("x-pagination")
-                    .AllowCredentials());
+                    .WithExposedHeaders("x-pagination"));
             else
                 options.AddPolicy("DevelopmentPolicy", builder => builder
-                    .WithOrigins(allowedOrigins!)
+                    .AllowAnyOrigin()
                     .WithMethods(allowedMethods!)
                     .WithHeaders(allowedHeaders!)
-                    .WithExposedHeaders("x-pagination")
-                    .AllowCredentials());
+                    .WithExposedHeaders("x-pagination"));
         });
 
         return services;

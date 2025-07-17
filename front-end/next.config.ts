@@ -1,5 +1,5 @@
 import type { NextConfig } from 'next';
-
+import path from 'path';
 const nextConfig: NextConfig = {
   eslint: {
     ignoreDuringBuilds: true, 
@@ -49,7 +49,13 @@ const nextConfig: NextConfig = {
     optimizeCss: true, // Tối ưu CSS
   },
   productionBrowserSourceMaps: false,
-
+webpack(config) {
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      '@': path.resolve(__dirname),  // Trỏ alias "@" tới thư mục gốc
+    };
+    return config;
+  },
   swcMinify: true
 };
 
